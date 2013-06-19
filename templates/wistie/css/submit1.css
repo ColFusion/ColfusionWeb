@@ -1,0 +1,31 @@
+@CHARSET "UTF-8";
+
+.stepHeader {
+	margin: 0;
+	font-size: 16px;
+	color: grey;
+}
+
+#open-wizard {
+margin-top: 15px;
+}
+
+#step1_table {
+margin: 20px 0 15px 0;
+}
+
+#step1_table tr {
+height: 45px;
+}
+
+.step1_input_title {
+width: 100px;
+}
+
+#step1_table input, #step1_table select,  #step1_table textarea{
+	margin-bottom: 0;
+}
+
+#bodytext{
+	width: 500px;
+}

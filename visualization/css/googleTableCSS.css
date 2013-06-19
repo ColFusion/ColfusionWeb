@@ -1,0 +1,81 @@
+/* All css information for google table */
+.header-row {
+    font-weight: bold; text-align: center;
+    background-color: white;
+}
+
+.table-row {}
+
+/* Odd Table Row */
+.odd-table-row-blue {
+    background-color: #E5F3F6;
+}
+.odd-table-row-purple {
+    background-color: #E1D6E9;
+}
+.odd-table-row-green {
+    background-color: #E3F0D3;
+}
+.odd-table-row-orange {
+    background-color: #FFE3CD;
+}
+
+/* Selected Table Row */
+.selected-table-row-blue {
+    background-color: #71BED3;
+    font-weight: bold; color: white;
+}
+.selected-table-row-purple {
+    background-color: #65427C;
+    font-weight: bold; color: white;
+}
+.selected-table-row-green {
+    background-color: #6C9830;
+    font-weight: bold; color: white;
+}
+.selected-table-row-orange {
+    background-color: #F46000;
+    font-weight: bold; color: white;
+}
+
+.hover-table-row {
+    background-color: lightgrey;
+}
+
+/* Header Cell */
+.header-cell-blue {
+    border: 1px solid #C3E2EB; width: auto;
+    font-family: "Arial"; font-size: 14px;
+}
+.header-cell-purple {
+    border: 1px solid #875BA5; width: auto;
+    font-family: "Arial"; font-size: 14px;
+}
+.header-cell-green {
+    border: 1px solid #90C24D; width: auto;
+    font-family: "Arial"; font-size: 14px;
+}
+.header-cell-orange {
+    border: 1px solid #FF902B; width: auto;
+    font-family: "Arial"; font-size: 14px;
+}
+
+/* Table Cell */
+.table-cell-blue {
+    border: 1px solid #C3E2EB; width: auto;
+    font-family: "Cambria"; font-size: 14px;
+}
+.table-cell-purple {
+    border: 1px solid #875BA5; width: auto;
+    font-family: "Cambria"; font-size: 14px;
+}
+.table-cell-green {
+    border: 1px solid #90C24D; width: auto;
+    font-family: "Cambria"; font-size: 14px;
+}
+.table-cell-orange {
+    border: 1px solid #FF902B; width: auto;
+    font-family: "Cambria"; font-size: 14px;
+}
+
+.row-number-cell {}

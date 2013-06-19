@@ -1,0 +1,491 @@
+var importWizard = (function() {
+    var importWizard = {};
+
+    /* Variables */
+
+    var sourceType = "";
+
+    importWizard.loadingGif = "";
+
+    /*************/
+
+    /* Functions */
+
+
+    importWizard.Init = function() {
+        wizardFromFile.Init();
+
+        $("#computer").click(function() {
+            $('#divFromComputer').show();
+            $('#divFromDatabase').hide();
+            $('#divFromInternet').hide();
+        });
+
+        $("#internet").click(function() {
+            $('#divFromComputer').hide();
+            $('#divFromDatabase').hide();
+            $('#divFromInternet').show();
+        });
+
+        $("#database").click(function() {
+            $('#divFromComputer').hide();
+            $('#divFromDatabase').show();
+            $('#divFromInternet').hide();
+        });
+
+
+        $('#divFromComputer').hide();
+        $('#divFromInternet').hide();
+        $('#divFromDatabase').hide();
+        $('#h1').hide();
+        $('#h2').hide();
+        $('#h3').hide();
+        $('#h4').hide();
+
+        $('div[id^=inDiv]').hide();
+        $('div[id^=suggested]').hide();
+        $('div[id^=sugmoreDiv]').hide();
+
+        $('#more').click(function(event) {
+
+            $("#inDiv").dialog({
+                width: 600,
+                modal: true,
+                //position: relative,
+                //zIndex: 39990,
+                close: function(event, ui) {
+                    $("#inDiv").hide();
+                }
+            });
+        });
+
+
+        $("#help1").click(function() {
+            $('#h1').show();
+        });
+
+        $("#hd1").click(function() {
+            $('#h1').hide();
+        });
+
+        $("#help2").click(function() {
+            $('#h2').show();
+        });
+
+        $("#hd2").click(function() {
+            $('#h2').hide();
+        });
+
+        $("#help3").click(function() {
+            $('#h3').show();
+        });
+
+        $("#hd3").click(function() {
+            $('#h3').hide();
+        });
+
+        $("#help4").click(function() {
+            $('#h4').show();
+        });
+
+        $("#hd4").click(function() {
+            $('#h4').hide();
+        });
+
+        $("#toggleAllColumns").click(function() {
+            $('#toggleAllColumns').change(function() {
+                $('input[name="columns[]"]').prop('checked', this.checked);
+            });
+        });
+
+        $("#done").click(function() {
+            document.getElementById("final").disabled = false;
+        });
+
+        $("img").tooltip();
+
+        initBootstrapWizard();
+
+        importWizard.loadingGif = "<img src='" + my_pligg_base + "/templates/wistie/images/ajax-loader_cp.gif'/>";
+    };
+
+
+    importWizard.getXMLHttp = function() {
+        var xmlHttp
+        try {
+            //Firefox, Opera 8.0+, Safari
+            xmlHttp = new XMLHttpRequest();
+        }
+        catch (e) {
+            //Internet Explorer
+            try {
+                xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
+            }
+            catch (e) {
+                try {
+                    xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                catch (e) {
+                    alert("Your browser does not support AJAX!")
+                    return false;
+                }
+            }
+        }
+        return xmlHttp;
+    };
+
+    //***********************************************************************************************
+    // For STEP 3 in wizard (Schems Matching)
+
+    // is callsed by dropdown change event which coming from generate_ktr.php file
+    // Candidate for knowout.js
+    importWizard.checkToEnableInputByUserOnSchemaMatchingStep = function(name) {
+
+        if (document.getElementById(name).value == 'other') {
+            //var input = document.getElementById(name+'2');
+            var input = $('#' + name + '2');
+            input.toggle();
+            //input.disabled = false;
+
+            if (input.id != "Location2" && input.id != "AggrType2" && input.value == "")
+            {
+                var d = new Date();
+
+                var month = d.getMonth() + 1;
+                var day = d.getDate();
+
+                var output = d.getFullYear() + '/' +
+                        (month < 10 ? '0' : '') + month + '/' +
+                        (day < 10 ? '0' : '') + day;
+
+                input.val(output);
+            }
+        }
+        else {
+            $('#' + name + '2').toggle();
+            //document.getElementById(name+'2').disabled = true;
+            document.getElementById(name).focus();
+        }
+    };
+
+    importWizard.checkToEnableNextButtonOnSchemaMatchinStep = function() {
+        if ((document.getElementById('Spd').value != -1) && (document.getElementById('Drd').value != -1) && (document.getElementById('Location').value != -1) &&
+                (document.getElementById('AggrType').value != -1) && (document.getElementById('Start').value != -1) && (document.getElementById('End').value != -1)) {
+            wizard.enableNextButton();
+        }
+    };
+
+    importWizard.getSchemaMatchingUserInputs = function() {
+        var spd = $('#Spd').val();
+        var drd = $('#Drd').val();
+        var start = $('#Start').val();
+        var end = $('#End').val();
+        var location = $('#Location').val();
+        var aggrtype = $('#AggrType').val();
+
+        var spd2 = $('#Spd2').val();
+        var drd2 = $('#Drd2').val();
+        var start2 = $('#Start2').val();
+        var end2 = $('#End2').val();
+        var location2 = $('#Location2').val();
+        var aggrtype2 = $('#AggrType2').val();
+
+        return {"spd": spd, "spd2": spd2, "drd": drd, "drd2": drd2, "start": start, "end2": end2, "start2": start2, "end": end, "location": location,
+            'location2': location2, 'aggrtype': aggrtype, 'aggrtype2': aggrtype2};
+    }
+
+    importWizard.getDataMatchingUserInputs = function() {
+        var result = new Array();
+
+        var checkboxes = document.getElementsByName('columns[]');
+
+        for (var i = 0; i < checkboxes.length; i++) {
+
+            if (checkboxes[i].checked == true) {
+
+                var m_check = "match_checkbox" + i;
+                var suggest = "suggest_from_user" + i;
+
+                var metadata = new Array();
+
+                var metaCheckboxes = document.getElementsByName(m_check);
+                for (var j = 0; j < metaCheckboxes.length; j++) {
+
+                    if (metaCheckboxes[j].checked == true) {
+
+                        metadata.push({
+                            'category': metaCheckboxes[j].value,
+                            'suggestedValue': document.getElementsByName(suggest)[j].value
+                        });
+                    }
+                }
+
+
+                result.push({
+                    'originalDname': checkboxes[i].value,
+                    'newDname': document.getElementsByName('Dname')[i].value,
+                    'type': document.getElementsByName('dname_value_type')[i].value,
+                    'unit': document.getElementsByName('dname_value_unit')[i].value,
+                    'description': document.getElementsByName('dname_value_description')[i].value,
+                    'metadata': metadata
+                });
+            }
+        }
+
+        return result;
+    }
+
+    importWizard.passInfofromDisplayOptionsStep = function() {
+        $('#schemaMatchinStepInProgressWrapper').show();
+        document.getElementById("schemaMatchinTable").innerHTML = '';
+        if (getImportSource() == "database") {
+            wizardFromDB.passSelectedTablesFromDisplayOptionStep();
+        }
+        else {
+            wizardFromFile.passSheetInfoFromDisplayOptionStep();
+        }
+    }
+
+    importWizard.showSchemaMatchingStep = function(data) {
+        
+        $('#schemaMatchinStepInProgressWrapper').hide();
+        document.getElementById("schemaMatchinTable").innerHTML = data;
+        importWizard.checkToEnableNextButtonOnSchemaMatchinStep();
+
+        var datePickerOption = {
+            changeMonth: true,
+            changeYear: true,
+            dateFormat: "yy/mm/dd",
+            yearRange: "0:2023"
+        };
+
+        $("#Spd2").datepicker(datePickerOption);
+        $("#Drd2").datepicker(datePickerOption);
+        $("#Start2").datepicker(datePickerOption);
+        $("#End2").datepicker(datePickerOption);
+    };
+
+    importWizard.passSchemaMatchinInfo = function() {
+        if (getImportSource() == "database") {
+            wizardFromDB.passSchemaMatchinInfo();
+        }
+        else {
+            wizardFromFile.passSchemaMatchinInfo();
+        }
+    };
+
+    importWizard.showDataMatchingStep = function(data) {
+        document.getElementById("dataMatchingTable").innerHTML = data;
+        $('#dataMatchingStepInProgress').hide();
+    };
+    //***********************************************************************************************  
+
+
+    /*************/
+
+    /* Helper functions */
+
+    function initBootstrapWizard() {
+        $.fn.wizard.logging = true;
+
+        wizard = $("#wizard-demo").wizard();
+
+        wizard.cards['displayOptionsStepCard'].on("validate", function(card) {
+            if (getImportSource() == 'database') {
+                return isDbSourceSelected($('#displayOptoinsStepCardFromDBForm'));
+            } else {
+                return isFileSourceSelected($('#displayOptoinsStepCardFromFileForm'));
+            }
+        });
+
+        $(".chzn-select").chosen();
+
+        wizard.el.find(".wizard-ns-select").change(function() {
+            wizard.el.find(".wizard-ns-detail").show();
+        });
+
+        wizard.el.find(".create-server-service-list").change(function() {
+            var noOption = $(this).find("option:selected").length == 0;
+            wizard.getCard(this).toggleAlert(null, noOption);
+        });
+
+        wizard.cards["UploadOptionStepCard"].on("validated", function(card) {
+            var hostname = card.el.find("#new-server-fqdn").val();
+        });
+
+        wizard.cards["displayOptionsStepCard"].on("loaded", displayOptionsStepCardOnLoad);
+
+        wizard.cards["schemaMatchinStepCard"].on("selected", function(card) {
+            wizard.disableNextButton();
+            importWizard.passInfofromDisplayOptionsStep();
+        });
+
+        wizard.cards["dataMatchingStepCard"].on("selected", function(card) {
+            importWizard.passSchemaMatchinInfo();
+        });
+
+        wizard.on("submit", function(wizard) {
+            $('#dataMatchingStepInProgress').show();
+
+            var submit = {
+                "hostname": $("#new-server-fqdn").val()
+            };
+
+            var bck_btn = '<button class="btn wizard-back" type="button">Back</button>';
+
+            $('button.wizard-close').hide();
+            execute().done(function(resultJson) {
+                $('button.wizard-close').show();
+
+                $("#exe").html(resultJson.message);
+                if (resultJson.isSuccessful) {
+                    wizard.trigger("success");
+
+                    // Load table list.
+                    dataPreviewViewModel.getTablesList();
+
+                    //TODO: good candidate for ko
+                    dataPreviewViewModel.mineRelationships(10, 1);
+
+                    wizard.hideButtons();
+                    wizard._submitting = false;
+                    wizard.showSubmitCard("success");
+
+                    // Load dataset for adding relationship.
+                    loadInitialFromDataSet();
+                    $('#fromDataSetWrapper').find('.sidInput').val('New Dataset');
+                } else {
+                    wizard.trigger("error");
+                    wizard._submitting = false;
+                    wizard.showSubmitCard("error");
+                    wizard.updateProgressBar(0);
+                }
+            }).error(function(jqXHR, textStatus, errorThrown) {
+                var resultJson = {isSuccessful: false, message: errorThrown};
+                $("#exe").html(resultJson.message);
+            });
+        });
+
+        wizard.on("reset", function(wizard) {
+            resetFileUploadForm();
+            wizard.setSubtitle("");
+            wizard.el.find("#new-server-fqdn").val("");
+            wizard.el.find("#new-server-name").val("");
+        });
+
+        wizard.el.find(".wizard-success .im-done").click(function() {
+            wizard.reset().close();
+        });
+
+        wizard.el.find(".wizard-success .create-another-server").click(function() {
+            wizard.reset();
+        });
+
+        $(".wizard-group-list").click(function() {
+            alert("Disabled for demo.");
+        });
+
+        $("#open-wizard").click(function() {
+
+            // set sid for uplod file form. Tried to set it in Init, didn't work, value was empty
+            $('#sid', '#upload_form').val($('#sid', '#thisform').val());
+
+            wizard.show();
+            wizard.disableNextButton();
+            return false;
+        });
+
+        $('.wizard-back').bind('click', function() {
+            wizard.enableNextButton();
+        });
+    }
+
+    function resetFileUploadForm() {
+        $('#uploadWidgetCover').text('No file chosen');
+        $('#uploadMessage').text('');
+        $('#uploadProgressText').text('0%');
+        $('#uploadProgressBar').find('.bar').css('width', '0');
+    }
+
+    function execute() {
+        if (getImportSource() == "database") {
+            return wizardFromDB.excuteFromDB();
+        } else {
+
+            var callExecuteKtr = function() {
+                return $.ajax({
+                    url: my_pligg_base + "/DataImportWizard/execute_ktr.php?sid=" + $('#sid').val(),
+                    type: 'get',
+                    dataType: 'json'
+                });
+            };
+
+            return $.when(wizardFromFile.excuteFromFile())
+                    .then(callExecuteKtr, callExecuteKtr);
+        }
+    }
+
+    // Step 2
+    function displayOptionsStepCardOnLoad(card) {
+        if (getImportSource() == "database") {
+            $("#displayOptoinsStepCardFromFile").hide();
+            $("#displayOptoinsStepCardFromDB").show();
+
+            $("#displayOptoinsStepCardFromDB").append(importWizard.loadingGif);
+            wizardFromDB.LoadDatabaseTables($("#displayOptoinsStepCardFromDB"), $("#dbServerName").val(), $("#dbServerUserName").val(), $("#dbServerPassword").val(), $("#dbServerDatabase").val(), $('#dbServerPort').val(), $('#selectDBServer').val());
+        }
+        else {
+            $("#displayOptoinsStepCardFromFile").show();
+            $("#displayOptoinsStepCardFromDB").hide();
+
+            wizard.disableNextButton();
+            wizardFromFile.showExcelFile();
+            $('#sheetParent').sheet({editable: false});
+            $('#sheetParent').height($('#sheetExcel').height() * 0.6);
+            $('#sheetParent').width($('#sheetExcel').width() * 0.9);
+            wizard.enableNextButton();
+
+        }
+    }
+
+    function getImportSource() {
+        if ($("input[name='place']:checked").val() == "database") {
+            return 'database';
+        } else {
+            return 'file';
+        }
+    }
+
+    function isDbSourceSelected(inputContainer) {
+        return true;
+    }
+
+    function isFileSourceSelected(inputContainer) {
+        $(inputContainer).parsley('destroy');
+        $(inputContainer).parsley({
+            validators: {
+                excelcol: function(val, attrVal) {
+                    var isValid = Boolean(val);
+                    var Acode = 'A'.charCodeAt(0);
+                    var Zcode = 'Z'.charCodeAt(0)
+
+                    for (var i = 0; i < val.length; i++) {
+                        var charCode = val.charCodeAt(i);
+                        isValid = isValid && Acode <= charCode && Zcode >= charCode;
+                    }
+
+                    return isValid;
+                }
+            }
+            , messages: {
+                excelcol: "This value should be a valid excel column"
+            }
+        });
+        var isValid = $(inputContainer).parsley('validate');
+        return isValid;
+    }
+
+    /********************/
+
+    return importWizard;
+})();

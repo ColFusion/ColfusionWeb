@@ -1,0 +1,220 @@
+body{
+    background-color: #B3D5F6;
+    background-repeat: repeat-x;
+    background-size: 100% auto;
+    color: #707070;
+    font-family: Tahoma,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    margin: 0;
+}
+#raws{
+    width: 60px;
+}
+#cols{
+    width: 60px;
+}
+#sheets{
+    width: 60px;
+}
+#norm td{
+    width: 300px;
+}
+#type{
+    width: 130px;
+    margin-left: 10px;
+}
+#display td{
+    width: 100px;
+    txt-align: center;
+}
+.wizard-modal p {
+    margin: 0 0 10px;
+    padding: 0;
+}
+
+.floatLeft { width: 10%; float: left; }
+.floatRight {width: 10%; float: right; position: relative;}
+.container { overflow: hidden; }
+
+#wizard-ns-detail-servers, .wizard-additional-servers {
+    font-size:12px;
+    margin-top:10px;
+    margin-left:15px;
+}
+#wizard-ns-detail-servers > li, .wizard-additional-servers li {
+    line-height:20px;
+    list-style-type:none;
+}
+#wizard-ns-detail-servers > li > img {
+    padding-right:5px;
+}
+
+.wizard-modal .chzn-container .chzn-results {
+    max-height:150px;
+}
+.wizard-addl-subsection {
+    margin-bottom:40px;
+}
+.footer{
+    height: 4em;
+}
+#star{
+    color: red;
+}
+
+.head{
+    padding:5px;
+    /*top:0px;*/
+    background:#ddd;
+    width:600px;
+
+}
+.thw{
+    width:300px;
+}
+#help1, #help2, #help3, #help4{
+    color: green;
+}
+
+div[id^=suggested], div[id^=inDiv], div[id^=sugmoreDiv]{
+    border:1px solid;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+
+}
+div[id^=suggested], div[id^=inDiv]{
+    width: 90%;
+}
+div[id^=suggested]{text-align: center; }
+div[id^=sugmoreDiv]{
+    width: 80%;
+}
+#addsug{
+
+}
+#h1, #h2, #h3, #h4{
+    border: 1px solid;
+    width: 80%;
+}
+
+#wizard{
+    z-index: 100;
+    position: relative;
+}
+#inDiv{
+    z-index: 10000;
+    position: relative;
+}
+
+#uploadBtn{
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+#uploadWidgetCover{
+    z-index: 3;
+    background-color: white;
+    height: 22px;
+    padding-left: 10px;
+    min-width: 150px;
+    display: inline-block;
+    margin-left: -173px;
+}
+
+#uploadProgressBar{
+    width: 200px;
+    float: right;
+    margin: 0 470px 0 0;
+    border-radius: 0;
+    height: 13px;
+}
+
+#uploadProgressBar .bar{
+    width: 10%;
+    background-color: grey;
+    background-image: none;
+}
+
+#uploadProgressText {
+    float: right;
+    margin: -34px 425px 0 0;
+}
+
+#uploadMessage{
+    margin-top: -10px;
+    font-size: 14px;
+    margin-bottom: 15px;
+}
+
+.nav{
+    margin-bottom: 10px;
+}
+
+.nav a{
+    text-decoration: none;
+}
+
+#sheetExcel{
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+#second{
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 320px;
+    overflow: auto;
+    margin-bottom: 0;
+}
+
+.previewTable{
+    color: black;
+    font-weight: normal;
+    white-space: nowrap;
+}
+
+.previewTable td, .previewTable th{
+    border: solid 1px #cccccc;
+    padding: 3px 5px 3px 5px;
+}
+
+.columnRow, .rowColumn {
+    text-align: center;
+    background-color: #dddddd;
+    font-weight: bold;
+}
+
+.previewNavBtn {
+    font-size: 16px;
+}
+
+.previewNavBtn:hover {
+    cursor: pointer;
+}
+
+loadingProgressContainer{
+    width: 100%;
+}
+
+#previewProgressBar, .loadingTextWrapper {
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+#previewProgressBar{
+    -webkit-border-radius: 0;
+    height: 13px;
+}
+
+#previewProgressBar .bar{
+    background-color: grey;
+    background-image: linear-gradient(to bottom,#aaaaaa,#aaaaaa);
+}
+
+#schemaMatchinTable {
+    margin-top: 10px;
+}

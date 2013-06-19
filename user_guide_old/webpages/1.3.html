@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Configure Excel file input</title>
+</head>
+
+<body>
+<p><strong>Configure Excel file input</strong></p>
+<strong>Notice:</strong> your data source <strong>must</strong> be Internet accessible in order for us to map it to our target schema. <br />
+		By mapping your source to our site, you are pledging to keep your data available and are hereby <br />
+		donating it to the public domain. <br />
+<p>In this tutorial, we are using <a href="http://colfusion.exp.sis.pitt.edu/colfusion/downloads/census.xls">census.xls</a> file as an example.</p>
+<ol>
+  <li>Double-click on the <strong>Excel file</strong> input step.</li>
+  <li>The configuration window belonging to this kind of step will appear. Here you'll indicate the location, format and content of the input file.</li>
+  <li><strong>Only if needed,</strong> replace the default name with one that is more representative of this step's function. In this case, type in&nbsp;<strong>Step name</strong> field <strong>the name of your excel file</strong>.</li>
+  <li>In the<strong>&nbsp;File ordirectory</strong>&nbsp;field, type the name and location of the input file. Press <strong>&ldquo;Add&rdquo;</strong>, location of selected filename will be displayed in <strong>Selected files </strong>field.<br /><strong>Note:</strong>Your file should have be online. If your file is locally based, click <a href="http://colfusion.exp.sis.pitt.edu/colfusion/upload_file.php">here</a> to upload your file first.</a></li>
+
+<p><img src="./picture/c3.png" /></p>
+  <li>Go to <strong>Sheet</strong> page, and when no sheet specified. An <strong>&ldquo;!&rdquo;</strong> can be seen before <strong>Sheet</strong>. Click&nbsp;<strong>Get sheetnames</strong>&nbsp;to add <strong>all sheets</strong> from your excel file to the grid <strong>if they have the same schema</strong>. Otherwise, add <strong>one sheet</strong> once and create separate transformations for different sheets.Specify the<strong> Start row </strong>of related table in the sheet within your excel file. 
+		<br /><strong>Note:</strong> Spoon counts rows from zero, while excel starts counting from one. In this example, the transformation will start from row 10, which corresponds to row 11 in our test file.</li>
+<p><img src="./picture/c4.png" /></p>
+  <li>Go to <strong>Content</strong> page, and make sure to change <strong>Spread sheet Type</strong> to match the type of excel file you are using (i.e. xls vs xlsx)</li>
+  <p><img src="./picture/c4.2.png" /></p>
+  <li>Go to <strong>Field</strong> page.  An <strong>&ldquo;!&rdquo;</strong> can be seen before <strong>Field</strong> because no sheet has been specified yet. Click&nbsp;<strong>Get fields from the start row</strong> to add the fields sheet to the grid.</li>
+  <li>Also, change <strong>Type</strong> to <strong>String</strong> for all fields, except for dates.  Change any date to match it's respective input date format.<br />
+      No need to change Length and Precision.</li>
+<p><img src="./picture/c5.png" /></p>
+  <li>Click&nbsp;<strong>OK</strong>&nbsp;to finish defining the step <strong>Excel file</strong> input.</li>
+</ol>
+<p style="text-align: center;"><a href="./1.2.html"><img src="./picture/prev.jpg" alt="CVSDude Becomes Codesion - prev page" width="50" height="50" /></a>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<a href="./Welcome.html"><img src="./picture/home.jpg" alt="CVSDude Becomes Codesion - homepage" width="50" height="50" /></a>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<a href="./1.4.html"><img src="./picture/next.jpg" alt="CVSDude Becomes Codesion - next page" width="50" height="50" /></a></p>
+</body>
+</html>

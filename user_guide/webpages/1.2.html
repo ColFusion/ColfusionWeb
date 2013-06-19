@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Construct the skeleton of the Transformation using Steps and Hops</title>
+</head>
+
+<body>
+<p><strong>Construct the skeleton of the Transformation using Steps and Hops</strong></p>
+<center><p><strong>Note:</strong> this step is for creating your own wrapper instead of using our templates.</p>
+<p>If you are using our templates, please skip this step.</p></center>
+<p>A&nbsp;<em>Step</em>&nbsp;is the minimal unit inside a Transformation. A wide variety of steps are available, grouped into categories like Input and Output, among others. Each step is designed to accomplish a specific function, such as reading a parameter or normalizing a dataset.</p>
+<p>A&nbsp;<em>Hop</em>&nbsp;is a graphical representation of data flowing between two steps, with an origin and a destination. The data that flows through that hop constitutes the&nbsp;<em>Output Data</em>&nbsp;of the origin step, and the&nbsp;<em>Input Data</em>&nbsp;of the destination step. A hop has only one origin and one destination, but more than one hop could leave a step. When that happens, the Output Data can be copied or distributed to every destination. Likewise, more than one hop can reach a step. In those instances, the step has to have the ability to merge the Input from the different steps in order to create the Output</p>
+<p>Here's how to start the Transformation:<br />
+  To the left of the workspace is the&nbsp;<strong>Steps Palette</strong>. Select the<strong>&nbsp;Input</strong>&nbsp;category.<br />
+  Drag the <strong>Excel</strong> file onto the workspace on the right.<br />
+  Select the&nbsp;<strong>Transform</strong>&nbsp;category.<br />
+  Drag the<strong> Row Normaliser</strong>&nbsp;icon to the workspace. <br />
+  Drag the<strong> Add Constants</strong>&nbsp;icon to the workspace.<br />
+  Now you will link the <strong>Excel</strong> file input with the<strong> Row Normaliser</strong> by creating a Hop:</p>
+<ol>
+  <li>Select the first Step.</li>
+  <li>Hold the<strong>&nbsp;Shift</strong>&nbsp;key and drag the icon onto the second step.</li>
+  <li>Link the<strong> Row Normaliser</strong> step with the <strong>Add Constants</strong> via this same process.</li>
+  <li>Link the <strong>Add Constants</strong> step with the <strong>Get Variables</strong> step.</li>
+  <li>Link the <strong>Get Variables</strong> step with the <strong>Target Schema</strong> step.</li>
+  <p><img src="./picture/c2.png" align="middle"/></p>
+</ol>
+<p style="text-align: center;"><a href="./1.1.html"><img src="./picture/prev.jpg" alt="CVSDude Becomes Codesion - prev page" width="50" height="50" /></a>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<a href="./Welcome.html"><img src="./picture/home.jpg" alt="CVSDude Becomes Codesion - homepage" width="50" height="50" /></a>&nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;<a href="./1.3.html"><img src="./picture/next.jpg" alt="CVSDude Becomes Codesion - next page" width="50" height="50" /></a></p>
+</body>
+</html>

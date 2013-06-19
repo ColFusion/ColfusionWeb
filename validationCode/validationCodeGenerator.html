@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Validation Code Generator</title>
+        <link rel="stylesheet" href="../css/bootstrap.min.css" />
+        <link rel="stylesheet" href="../css/font-awesome.css">
+        <style type="text/css">
+            body {
+                padding: 10px 0 0 20px;
+            }
+
+            input[type="text"], input[type="password"]{
+                height: 18px;
+            }
+
+            #addEmailBtn:hover {
+                cursor: pointer;
+            }
+        </style>
+
+        <script src="../javascripts/jquery-1.9.1.js"></script>
+        <script>
+            $(function() {
+            $('#addEmailBtn').click(function() {
+            $('<input name="emails[]" type="text" /><br />').insertBefore($('#geneVCForm').find('#submitBtn'));
+            });
+            });
+        </script>
+    </head>
+    <body>
+        <form id="geneVCForm" action="generateValidationCode.php" method="post">
+              Password:
+              <input name="password" type="password" placeholder="Password is E..." />
+            <br />
+            <br />
+            Emails: &nbsp;&nbsp;&nbsp; <i id="addEmailBtn" class="icon-plus" title="Add more email address."></i>
+            <br />
+            <input name="emails[]" type="text" /><br />
+            <input name="emails[]" type="text" /><br />
+            <input name="emails[]" type="text" /><br />
+            <input name="emails[]" type="text" /><br />
+            <input name="emails[]" type="text" /><br />
+            <input id="submitBtn" type="submit" value="submit" />
+        </form>
+    </body>
+</html>
+
