@@ -1,6 +1,6 @@
 <?php
 
-include_once($_SERVER['DOCUMENT_ROOT'] . "Colfusion/DataImportWizard/UtilsForWizard.php");
+ include_once(realpath(dirname(__FILE__)) . "/../../DataImportWizard/UtilsForWizard.php");
 
 //TODO: make exception class for  this class and instead of doing echo and die, throw appropriate exceptions.
 //TODO: close connections in test connection method.

@@ -1,6 +1,7 @@
 <?php
 
-include_once('../config.php');
+//include_once('../config.php');
+include_once(realpath(dirname(__FILE__)) . "/../config.php");
 include_once('SimpleQuery.php');
 include_once('ExternalDBHandlers/ExternalDBs.php');
 
