@@ -45,15 +45,7 @@ if($current_user->authenticated != TRUE)
 	if ($vars['anonymous_story'] != true)
 		force_authentication();
 }
-/*
- if ($vars['anonymous_story'] == true)
- {
-$anonymous_userid = $db->get_row("SELECT user_id from " . table_users . " where user_login = 'anonymous' ");
-$anonymous_user_id = $anonymous_userid->user_id;
-//echo "val".$anonymous_user_id;
-}
-*/
-// module system hook
+
 $vars = '';
 check_actions('submit_post_authentication', $vars);
 
@@ -72,19 +64,15 @@ if($phase == 0 && Submit_Show_URL_Input == false) {
 switch ($phase) {
 	case 0:
 		// Link to this page, before starting submit process.
-		echo 'submit0 start.';
 		do_submit0();
 		break;
 	case 1:
-		echo 'submit1 start.';
 		do_submit1();
 		break;
 	case 2:
-		echo 'submit2 start.';
 		do_submit2();
 		break;
 	case 3:
-		echo 'submit3 start.';
 		do_submit3();
 		break;
 }
