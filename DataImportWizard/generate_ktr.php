@@ -154,6 +154,7 @@ function display_csv() {
 
 function loadExcelPreview() {
     global $sid, $dataSource_filePath;
+    
     $previewRowsPerPage = $_POST['previewRowsPerPage'];
     $previewPage = $_POST['previewPage'];
 

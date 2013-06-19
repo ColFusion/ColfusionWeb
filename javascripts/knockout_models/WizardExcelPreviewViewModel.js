@@ -91,11 +91,12 @@ function WizardExcelPreviewViewModel(sid) {
 
     self.loadWorksheets = function() {
         $.ajax({
-            url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=3&sid=" + sid,
+            url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=3&sid=" + self.sid,
             type: 'post',
             dataType: 'json',
             success: function(data) {
                 self.worksheets(data);
+				self.numOfWorksheetsOptions([]);
                 for (var i = 0; i < data.length; i++) {
                     self.numOfWorksheetsOptions.push(i + 1);
                 }
@@ -128,7 +129,7 @@ function WizardExcelPreviewViewModel(sid) {
 
     var getEstimatedLoadingSeconds = function() {
         return $.ajax({
-            url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=9&sid=" + sid,
+            url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=9&sid=" + self.sid,
             type: 'post',
             dataType: 'html'
         });
@@ -148,7 +149,7 @@ function WizardExcelPreviewViewModel(sid) {
 
     var getPreviewFromServer = function(rowsPerPage, page) {
         $.ajax({
-            url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=8&sid=" + sid,
+            url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=8&sid=" + self.sid,
             type: 'post',
             dataType: 'json',
             data: {
@@ -157,7 +158,10 @@ function WizardExcelPreviewViewModel(sid) {
             },
             success: function(data) {
                 self.isPreviewLoadingComplete(true);
-                WizardExcelPreviewAjaxCallbacks.loadPreviewCallback(data, self.previewTables);
+                self.previewTables([]);
+                for (var key in data) {
+                    self.previewTables.push(new WizardExcelPreviewProperties.WorksheetPreviewTable(key, data[key]));
+                }
             },
             error: function() {
                 alert("Some errors occur at server, please refresh page and try again.");
@@ -167,7 +171,7 @@ function WizardExcelPreviewViewModel(sid) {
 
     self.loadPreview = function(rowsPerPage, page) {
         self.isPreviewLoadingComplete(false);
-        getEstimatedLoadingSeconds().done(function(estimatedSeconds) {         
+        getEstimatedLoadingSeconds().done(function(estimatedSeconds) {
             startLoadingTimeStamp = new Date().getTime();
             estimatedLoadingTimestamp = estimatedSeconds * 1000;
             self.estimatedTimestamp(estimatedLoadingTimestamp);
@@ -196,15 +200,9 @@ function WizardExcelPreviewViewModel(sid) {
         return hasMoreData;
     };
 
-    self.loadWorksheets();
-    self.loadPreview(self.previewRowsPerPage(), self.previewPage());
+    self.initFilePreview = function(sid) {
+        self.sid = sid;
+        self.loadWorksheets();
+        self.loadPreview(self.previewRowsPerPage(), self.previewPage());
+    };
 }
-
-var WizardExcelPreviewAjaxCallbacks = {
-    loadPreviewCallback: function(data, previewTablesObservableArray) {
-        previewTablesObservableArray([]);
-        for (var key in data) {
-            previewTablesObservableArray.push(new WizardExcelPreviewProperties.WorksheetPreviewTable(key, data[key]));
-        }     
-    }
-};

@@ -29,7 +29,7 @@ abstract class FileManager {
         $path_parts = pathinfo($filename);
         $ext = $path_parts['extension'];
               
-        $icon_dir = '/fileManagers/icons/';
+        $icon_dir = 'icons/';
         switch($ext){
             case 'doc':          
             case 'docx':              
@@ -120,7 +120,7 @@ class SourceDesAttachmentManager extends FileManager {
         $listItemModel = new FileListItemModel();
         $listItemModel->name = $title;
         $listItemModel->size = $_FILE['size'];
-        $listItemModel->thumbnail_url = '/Colfusion' . $this->getIconUrl($filename);
+        $listItemModel->thumbnail_url = $this->getIconUrl($filename);
         $listItemModel->delete_url = "deleteSourceAttachment.php?fileId=" . $fileId;
         $listItemModel->url = "downloadSourceAttachment.php?fileId=" . $fileId;
         $listItemModel->description = $description;

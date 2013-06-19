@@ -81,6 +81,8 @@ function upload_0() {
 
             // match the raw_data_file to sid
             $upload_dir = mnmpath . "upload_raw_data/$sid/";
+
+            deleteDirWithFiles($upload_dir);
             mkdir($upload_dir);
             $upload_path = $upload_dir . $raw_file_name;
 
@@ -177,6 +179,24 @@ function getSid() {
     }
 
     return $sid;
+}
+
+function deleteDirWithFiles($dirPath) {
+    if (file_exists($dirPath)) {
+        $it = new RecursiveDirectoryIterator($dirPath);
+        $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($files as $file) {
+            if ($file->getFilename() == '.' || $file->getFilename() == '..') {
+                continue;
+            }
+            if ($file->isDir()) {
+                rmdir($file->getRealPath());
+            } else {
+                unlink($file->getRealPath());
+            }
+        }
+        rmdir($dirPath);
+    }
 }
 
 ?>

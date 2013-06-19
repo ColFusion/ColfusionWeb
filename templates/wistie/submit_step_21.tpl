@@ -490,6 +490,6 @@
         <button type="button" class="close" data-dismiss="lightbox" aria-hidden="true">&times;</button>
     </div>
     <div class='lightbox-content'>
-        <iframe width="1200" height="700" src="{$my_pligg_base}/fileManagers/sourceAttachmentUploadPage.php?sid={$sid}"></iframe>
+        <iframe width="1000" height="500" src="{$my_pligg_base}/fileManagers/sourceAttachmentUploadPage.php?sid={$sid}"></iframe>
     </div>
 </div>

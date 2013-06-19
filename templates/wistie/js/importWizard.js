@@ -313,7 +313,7 @@ var importWizard = (function() {
             var hostname = card.el.find("#new-server-fqdn").val();
         });
 
-        wizard.cards["displayOptionsStepCard"].on("loaded", displayOptionsStepCardOnLoad);
+        wizard.cards["displayOptionsStepCard"].on("selected", displayOptionsStepCardOnLoad);
 
         wizard.cards["schemaMatchinStepCard"].on("selected", function(card) {
             wizard.disableNextButton();

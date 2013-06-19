@@ -126,7 +126,6 @@ function do_submit1() {
 				
 		}
 
-
 		$fname = $_FILES["wrapper"]["name"];
 		$sname = explode('.', $fname);
 		$linkres->title = $sname[0];
@@ -184,25 +183,9 @@ function do_submit1() {
 			$locationOfPan = realpath(dirname(__FILE__)).'/kettle-data-integration/pan.sh';
 			$command = 'sh ' . $locationOfPan.' -file="'.realpath(dirname(__FILE__)).'/'.$target_path.'" ' . '-param:Sid=' . $newSid .' -param:Eid='. $logID ;
 		}
-		
-		//$locationOfPan = 'C:\\inetpub\\colfusion\\kettle-data-integration\\Pan_WHDV.bat';
-		//$locationOfPan = '/var/www/colfusion/kettle-data-integration/pan.sh';
-		//$command = 'cmd.exe /C ' . $locationOfPan.' /file:"C:\\inetpub\\colfusion\\'.$target_path.'" ' . '"-param:Sid=' . $newSid . '"'.' "-param:Eid='. $logID . '"';
-		//$command = 'sh ' . $locationOfPan.' -file="/var/www/colfusion/'.$target_path.'" ' . '-param:Sid=' . $newSid .' -param:Eid='. $logID ;
-		//$command = 'sh ' . $locationOfPan;
-
-		//print($command."<br><br>");
-
+			
 		$ret = exec($command,$outA,$returnVar);
-
-		//print($ret);  showing successful.
-		//print_r('ret:['.$ret.']<br><br>');
-		//print_r($outA);
-
-		//echo $outA;
-		//print_r('retvar:'.$returnVar.'<br><br>');
-
-		//if(strpos($ret,'error')!=false)
+	
 		if(strpos($ret,'ended successfully')===false)
 		{
 			$num = 0;
@@ -244,34 +227,16 @@ function do_submit1() {
 					array_push($errorb,"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;".$outA[$o]);
 				}
 			}
-				
-			//array_push('Dataset cannot be immigrated at this time.<br />',$error);
-
+		
 			$main_smarty->assign('mysql_error', implode("<br />",$errora));
 			$main_smarty->assign('mysql_errordetail', implode("<br />",$errorb));
 			$main_smarty->assign('submit_error', 'wrongktr');
 			$main_smarty->assign('tpl_center', $the_template . '/submit_errors');
 			$main_smarty->display($the_template . '/pligg.tpl');
 			return;
-			//rollback();
-			//print($ret);
-				
-
-				
-				
+			
 			die;
-		} else {
-			/*//if ok update source info
-			 $sql="UPDATE SourceInfo SET LastUpdated='".date('Y-m-d')."' where Sid='".$sid."'";
-			//print($sql);
-			$rs = mysql_query($sql);
-			if (!$rs){
-			print (mysql_error());
-			//rollback();
-			mysql_close($con);
-			die;
-			}*/
-
+		} else {			
 			//TODO parse msg to get num inserted
 			$lastLine = $outA[count($outA)-1];
 			preg_match("/d+\s{1}[0-9]+\s{1}l+/",$lastLine,$matches);
@@ -332,22 +297,6 @@ function do_submit1() {
 			$main_smarty->assign('submit_lastspacer', 0);
 			$main_smarty->assign('submit_cat_array', $array);
 		}
-
-		// this is the end
-
-
-		/*	    if ($_POST['category'])
-		 {
-		$cats = explode(',',$_POST['category']);
-		foreach ($cats as $cat)
-			if ($cat_id = $db->get_var("SELECT category_id FROM ".table_categories." WHERE category_name='".$db->escape(trim($cat))."'"))
-			{
-		$linkres->category = $cat_id;
-		break;
-		}
-		}
-		$trackback=$linkres->trackback;
-		}*/
 
 	}
 
@@ -412,26 +361,7 @@ function do_submit2() {
 	$thecat = get_cached_category_data('category_id', $linkres->category);
 	$main_smarty->assign('request_category_name', $thecat->category_name);
 
-
-
-
-	/*	if(!isset($_POST['summarytext'])){
-		$linkres->link_summary = utf8_substr(sanitize($_POST['bodytext'], 4, $Story_Content_Tags_To_Allow), 0, StorySummary_ContentTruncate - 1);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	} else {
-	$linkres->link_summary = sanitize($_POST['summarytext'], 4, $Story_Content_Tags_To_Allow);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	if(utf8_strlen($linkres->link_summary) > StorySummary_ContentTruncate){
-	loghack('SubmitAStory-SummaryGreaterThanLimit', 'username: ' . sanitize($_POST["username"], 3).'|email: '.sanitize($_POST["email"], 3), true);
-	$linkres->link_summary = utf8_substr($linkres->link_summary, 0, StorySummary_ContentTruncate - 1);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	}
-	}*/
-
-
 	tags_insert_string($_SESSION['newSid'], $dblang, $linkres->tags);
-
-	//$main_smarty->assign('the_story', $linkres->print_summary('full', true));
 
 	$main_smarty->assign('tags', $linkres->tags);
 	if (!empty($linkres->tags)) {
@@ -452,14 +382,10 @@ function do_submit2() {
 	$Sid=$_SESSION['newSid'];
 	header("Location:/colfusion/story.php?title=$Sid");
 		
-
-
-
 	$vars = '';
 	check_actions('do_submit2', $vars);
 	$_SESSION['step'] = 2;
 	$main_smarty->display($the_template . '/pligg.tpl');
-
 }
 
 // submit step 3
@@ -624,7 +550,6 @@ function allowToAuthorCat($cat) {
 				return true;
 		}
 	}
-	/////
 	return false;
 }
 ?>

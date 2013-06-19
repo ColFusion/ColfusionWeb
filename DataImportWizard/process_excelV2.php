@@ -40,16 +40,23 @@ class Process_excel {
 
     public static function getSheetName($filePath) {
         $reader = Process_excel::createExcelReader($filePath);
-        $sheetAllName = $reader->listWorksheetNames($filePath);
+        $infos = $reader->listWorksheetInfo($filePath);
+        foreach ($infos as $info) {
+            if ($info['totalRows'] > 0) {
+                $sheetAllName[] = $info['worksheetName'];
+            }
+        }
         return $sheetAllName;
     }
 
     public static function getSheetNameIndex($filePath, $sheetName) {
-        $sheetAllName = Process_excel::getSheetName($filePath);
+        $reader = Process_excel::createExcelReader($filePath);
+        $infos = $reader->listWorksheetInfo($filePath);
 
-        for ($i = 0; $i < count($sheetAllName); $i++) {
-            if ($sheetAllName[$i] == $sheetName)
+        for ($i = 0; $i < count($infos); $i++) {
+            if ($infos[$i]['worksheetName'] == $sheetName) {
                 return $i;
+            }
         }
     }
 

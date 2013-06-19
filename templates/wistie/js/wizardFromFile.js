@@ -26,14 +26,16 @@ var wizardFromFile = (function() {
             url: 'DataImportWizard/acceptFileFromWizard.php',
             add: function(e, data) {
                 $('#upload_form').find('#uploadWidgetCover').text(data.files[0].name);
+                $('#upload_form').find('#uploadProgressBar').hide().find('.bar').css({'width': '0'});
+                $('#uploadProgressText').hide();
                 $('#uploadPanel').show().find('#uploadBtn').show().click(function() {
-                    $('#uploadProgressBar').show();
+                    $('#uploadProgressBar').add($('#uploadProgressText')).show();
                     data.submit();
                 });
             },
             done: function(e, data) {
                 $('#uploadPanel').fadeOut();
-                
+
                 var messageDom = $('#uploadMessage');
                 if (data.result.isSuccessful) {
                     $(messageDom).css('color', 'green');
@@ -45,13 +47,18 @@ var wizardFromFile = (function() {
             },
             progressall: function(e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
-                if(progress == 100){
+                if (progress == 100) {
                     $('#uploadMessage').css('color', '').text('Processing Files...');
                 }
                 $('#uploadProgressText').text(progress + '%');
                 $('#uploadProgressBar').find('.bar').css('width', progress + '%');
             }
         });
+        
+        wizardExcelPreviewViewModel = new WizardExcelPreviewViewModel($('#sid').val());
+        var secondNode = document.getElementById('second');
+        ko.cleanNode(secondNode);
+        ko.applyBindings(wizardExcelPreviewViewModel, secondNode);
     };
 
     wizardFromFile.submitUploadForm = function()
@@ -246,8 +253,7 @@ var wizardFromFile = (function() {
         xmlhttp.open("GET", my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0&sid=" + $('#sid').val(), false);
         xmlhttp.send(null);
 
-        wizardExcelPreviewViewModel = new WizardExcelPreviewViewModel($('#sid').val());
-        ko.applyBindings(wizardExcelPreviewViewModel, document.getElementById('second'));
+        wizardExcelPreviewViewModel.initFilePreview($('#sid').val());
     };
 
     wizardFromFile.excuteFromFile = function() {
