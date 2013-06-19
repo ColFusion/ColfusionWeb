@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<!-- http://www.jankoatwarpspeed.com/post/2009/09/28/webform-wizard-jquery.aspx -->
+<head>
+    <title>Colfusion</title>
+    <style type="text/css">
+        body { font-family:Lucida Sans, Arial, Helvetica, Sans-Serif; font-size:13px; margin:20px;}
+        #main { width:640px; margin: 0px auto; border:solid 1px #b2b3b5; -moz-border-radius:10px; padding:20px; background-color:#f6f6f6;}
+        #header { text-align:center; border-bottom:solid 1px #b2b3b5; margin: 0 0 20px 0; }
+        fieldset { border:none; width:320px;}
+        legend { font-size:18px; margin:0px; padding:10px 0px; color:#545461; font-weight:bold;}
+        label { display:block; margin:15px 0 5px;}
+        input[type=text], input[type=password] { width:300px; padding:5px; border:solid 1px #000;}
+        .prev, .next { background-color:#545461; padding:5px 10px; color:#fff; text-decoration:none;}
+        .prev:hover, .next:hover { background-color:#000; text-decoration:none;}
+        .prev { float:left;}
+        .next { float:right;}
+        #steps { list-style:none; width:100%; overflow:hidden; margin:0px; padding:0px;}
+        #steps li {font-size:24px; float:left; padding:10px; color:#b0b1b3;}
+        #steps li span {font-size:11px; display:block;}
+        #steps li.current { color:#000;}
+        #makeWizard { background-color:#b0232a; color:#fff; padding:5px 10px; text-decoration:none; font-size:18px;}
+        #makeWizard:hover { background-color:#000;}
+    </style>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+    <script type="text/javascript" src="formToWizard.js"></script>
+    <script type="text/javascript">
+	$(function() {
+	$("#file").hide()
+	$("#file1").hide()
+	$("#file2").hide()
+	});
+        $(document).ready(function(){
+            $("#SignupForm").formToWizard({ submitButton: 'SaveAccount' })
+        });
+		$(document).ready(function(){
+		$("#computer").click(function(){
+            $("#file").show()
+			$("#file1").show()
+			$("#file2").show()
+        });
+		});
+		
+		$(document).ready(function(){
+		$("#internet").click(function(){
+            $("#file").hide()
+			$("#file1").hide()
+			$("#file2").hide()
+        });
+		});
+		
+		$(document).ready(function(){
+		$("#search").click(function(){
+            $("#file").hide()
+			$("#file1").hide()
+			$("#file2").hide()
+        });
+		});
+
+		//$("#SaveAccount").click(function(){ 
+		//	$(this).dialog("close"); 
+		//});
+		$(document).ready(function(){
+		$("#SaveAccount").click(function(){ 
+			$("#dialog").dialog("close");
+			});
+			});
+
+</script>
+<script>
+function msg(){
+	document.write("Done!!");
+	}
+</script>
+</head>
+<body>
+
+<div id="dialog" title="Basic dialog">
+    <div id="main">
+		
+        <form id="SignupForm" action="start.php" method="post">
+		<!--- Step 1 -->
+        <fieldset>
+            <legend>Import your Table</legend>
+				<input type="radio" name="place" id="computer">From this computer<br/>
+					<!--<form action="upload_file.php" id="upload" method="post" enctype="multipart/form-data">-->
+						<label for="file" id="file">Filename:</label>
+						<input type="file" name="file" id="file1"><br/>
+						<input type="button" id="file2" name="submit" value="Submit"><br/><br/>
+					
+				<input type="radio" name="place" id="internet">Internet accessable resource <br/><br/>
+				<input type="radio" name="place" id="search">Search public data sets <br/>
+        </fieldset>
+		<!--- Step 2 -->
+        <fieldset>
+            <legend>Table information</legend>
+            <label for="Columns">The table header starts in row </label>
+            <select id="col">
+				<option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+			</select>
+        </fieldset>
+		<!--- Step 3 -->
+        <fieldset>
+            <legend>Raw Normalizer</legend>
+            
+        </fieldset>
+		<!--- Step 4 -->
+        <fieldset>
+            <legend>Add constant</legend>
+            <label >Fields:</label>
+            <table border="1">
+				<tr>
+					<th>#</th>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Format</th>
+					<th>Length</th>
+					<th>Precision</th>
+					<th>Currency</th>
+					<th>Decimal</th>
+					<th>Group</th>
+					<th>value</th>
+				</tr>
+					
+				<tr>
+					<td> 1</td>
+				</tr>
+					
+				<tr>
+					<td> 2</td>
+				</tr>
+				<tr>
+					<td> 3</td>
+				</tr>
+				<tr>
+					<td> 4</td>
+				</tr>
+			</table>
+           
+        </fieldset>
+		
+		
+        <p>
+            <input id="SaveAccount" type="submit" value="Save and Submit" onClick="msg();" />
+        </p>
+        </form>
+    </div>
+	</div>
+</body>
+</html>
