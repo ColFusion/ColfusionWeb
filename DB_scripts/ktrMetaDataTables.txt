@@ -1,0 +1,19 @@
+CREATE TABLE colfusion_dname_meta_data(
+meta_id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+cid int NOT NULL, 
+type VARCHAR(50) NOT NULL,
+value VARCHAR(100) NOT NULL,
+sid int NOT NULL
+
+)
+
+
+
+
+
+CREATE TABLE colfusion_dnameinfo (
+cid int NOT NULL AUTO_INCREMENT PRIMARY KEY,
+sid int NOT NULL,
+dname_chosen VARCHAR(100) NOT NULL,
+dname_value_type VARCHAR(20) NULL
+)

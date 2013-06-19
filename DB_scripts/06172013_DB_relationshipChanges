@@ -1,0 +1,11 @@
+ALTER TABLE `colfusion_relationships_columns` DROP FOREIGN KEY `fk_new_table_4` , DROP FOREIGN KEY `fk_new_table_3` , DROP FOREIGN KEY `fk_new_table_2` ;
+ALTER TABLE `colfusion_relationships_columns` DROP COLUMN `trans_id` , CHANGE COLUMN `cl_from` `cl_from` VARCHAR(255) NOT NULL  , CHANGE COLUMN `cl_to` `cl_to` VARCHAR(255) NOT NULL  
+, DROP INDEX `fk_new_table_4_idx` 
+, DROP INDEX `fk_new_table_3_idx` ;
+
+drop table `colfusion_relationships_transformations`;
+
+
+
+
+

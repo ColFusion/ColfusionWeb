@@ -1,0 +1,3 @@
+ALTER TABLE  `colfusion_temporary` CHANGE  `Value`  `Value` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+ALTER TABLE  `colfusion_temporary` CHANGE  `Location`  `Location` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;
+ALTER TABLE  `colfusion_temporary` CHANGE  `AggrType`  `AggrType` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL;

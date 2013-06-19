@@ -1,0 +1,1 @@
+ALTER TABLE colfusion_sourceinfo ADD raw_data_path varchar(100) null;
