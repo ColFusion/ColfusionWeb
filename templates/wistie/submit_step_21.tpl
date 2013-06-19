@@ -275,7 +275,8 @@
 <div id="submit">
     <div id="submit_step_1_content">
         {checkActionsTpl location="tpl_pligg_submit_step2_start"}
-        <form action="{$URL_submit}" data-validate="parsley" action="submit1.php" method="post" name="thisform" id="thisform" enctype="multipart/form-data">
+        <form data-validate="parsley" action="submit1.php" method="post" name="thisform" id="thisform" enctype="multipart/form-data">
+
             <div class="submit_step_1_left">
                 <h4 class="stepHeader">Step 1: Describe Your Data</h4>
                 {if $Submit_Show_URL_Input eq 1}
