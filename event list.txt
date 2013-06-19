@@ -1,0 +1,2 @@
+1. bootstrap-lightbox
+    hidden (from lightbox DOM) - when lightbox is closed.
