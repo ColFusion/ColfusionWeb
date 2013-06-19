@@ -1,0 +1,24 @@
+.advanced,td,tr,table {
+	font-family: Tahoma, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+	color: #707070;
+}
+.stories {
+	border: 1px dashed grey; margin: 0px; padding: 10px;
+	width: 100%; 
+}
+.stories h2 {
+	border: none; margin: 0px; padding: 0px;
+	font-size: 14px; font-weight: bold; color: black;
+}
+.stories a {
+	border: none; margin: 0px; padding: 0px;
+	font-size: 14px; font-weight: bold; color: #4A9BEA;
+}
+.stories a:hover {
+	cursor: pointer;
+}
+.stories p {
+	border: none; margin: 0px; padding: 0px;
+	font-size: 12px;
+}

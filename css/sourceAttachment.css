@@ -1,0 +1,43 @@
+.fileList{
+    list-style-type: none;
+}
+
+#attachmentList tr {
+    height: 20px;
+}
+
+.fileList a{
+    text-decoration: none;
+}
+
+.fileList a:hover{
+    cursor: pointer;
+}
+
+.fileListItem {
+    font-size: 14px;
+}
+
+.fileListItem a{
+    color: #0088cc;
+}
+
+.fileListItem img{
+    height: 15px;
+    width: 15px;
+    margin-right: 5px;
+}
+
+.attachmentDescription {
+    padding-left: 10px;
+    display: inline-block;
+    word-break: break-word;
+}
+
+.deleteFileBtnWrapper {
+    padding-left: 10px;
+}
+
+.deleteFileBtn:hover {
+    cursor:pointer;
+}

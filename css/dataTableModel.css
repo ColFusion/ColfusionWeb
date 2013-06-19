@@ -1,0 +1,108 @@
+table.tftable {
+    font-size:12px;
+    color:#333333;
+    border-width: 1px;
+    border-color: #729ea5;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    line-height: 13px;
+    white-space: nowrap;
+    min-width: 100%;
+}
+
+table.tftable th {
+    font-size:12px;
+    background-color:#acc8cc;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #729ea5;
+    text-align:left;
+}
+
+table.tftable tr {
+    background-color:#EEF3F4;
+}
+
+table.tftable .datatr:hover{
+    background-color: white;
+}
+
+table.tftable td {
+    font-size:12px;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #729ea5;
+}
+
+#previewTableList {
+    float: left;
+    width: 160px;
+    margin-left: -20px;
+    list-style-type: none;
+    margin-right: 5px;
+}
+
+.tableListItem {
+    min-height: 20px;
+    margin: 0 !important;
+}
+
+.tableListItem:hover{
+    cursor: pointer;
+    background-color: #dbdbdb;
+}
+
+.tableText {
+    margin: 3px 0 4px 0;
+    display: inline-block;
+    word-wrap: break-word;
+    width: 135px;
+}
+
+#dataPreviewTableWrapper {
+    overflow-x: auto;
+}
+
+#previewTableNavigations {
+    float: right;
+    padding-top: 10px;
+    font-size: 20px;
+    padding: 10px 0 10px 0;
+}
+
+#previewTableNavigations i{
+    padding-left: 3px;
+}
+
+#previewTableNavigations i:hover{
+    cursor: pointer;
+}
+
+.custom-combobox {
+    position: relative;
+    display: inline-block;
+}
+.custom-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+    /* support: IE7 */
+    *height: 1.7em;
+    *top: 0.1em;
+}
+.custom-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+}   
+
+.chosenTableBullet{
+    width: 18px;
+    height: 14px;
+    display: inline-block;
+    float: left;
+    padding-top: 4px;
+}
