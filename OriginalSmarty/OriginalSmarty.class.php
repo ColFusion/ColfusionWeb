@@ -3,10 +3,6 @@ require_once('Smarty.class.php');
 
 class OriginalSmarty extends Smarty {
     function __construct() {
-       // $path = $_SERVER["DOCUMENT_ROOT"];
-      //  if($path{strlen($path)-1} != '/') $path .= '/';
-      //  $path = $path.'Colfusion';
-
         parent::__construct();
         $this->caching = false;
         
