@@ -1,6 +1,6 @@
 <?php
 
-require_once('FileManagers.php');
+require_once(realpath(dirname(__FILE__)) . '/FileManagers.php');
 $fileId = $_GET['fileId'];
 $fileInfo = SourceDesAttachmentManager::getInstance()->downloadFile($fileId);
 

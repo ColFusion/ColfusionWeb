@@ -1,6 +1,6 @@
 <?php	
-include_once('FileManagers.php');
-include_once('../libs/login.php');
+include_once(realpath(dirname(__FILE__)) . '/FileManagers.php');
+include_once(realpath(dirname(__FILE__)) . '/../libs/login.php');
 global $current_user;
 if(!$current_user->authenticated) die('Please login to use this function.');
 

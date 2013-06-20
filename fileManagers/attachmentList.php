@@ -1,6 +1,6 @@
 <?php
-include_once('FileManagers.php');
-require_once('../OriginalSmarty/OriginalSmarty.class.php');
+include_once(realpath(dirname(__FILE__)) . '/FileManagers.php');
+require_once(realpath(dirname(__FILE__)) . '/../OriginalSmarty/OriginalSmarty.class.php');
 
 $sid = $_POST['sid'];
 

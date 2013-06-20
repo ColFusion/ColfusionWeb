@@ -1,10 +1,10 @@
 <?php
 
-require_once('FileUploadPageModel.php');
-require_once('FileListItemModel.php');
-include_once('../DAL/QueryEngine.php');
+require_once(realpath(dirname(__FILE__)) . '/FileUploadPageModel.php');
+require_once(realpath(dirname(__FILE__)) . '/FileListItemModel.php');
+include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
-include_once('../config.php');
+include_once(realpath(dirname(__FILE__)) . '/../config.php');
 
 abstract class FileManager {
 
