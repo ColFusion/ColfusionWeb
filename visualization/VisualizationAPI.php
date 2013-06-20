@@ -1,8 +1,8 @@
 <?php
 
 set_time_limit(0);
-include('../config.php');
-include('../DAL/QueryEngine.php');
+include(realpath(dirname(__FILE__)) . '/../config.php');
+include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
 $action = $_GET["action"];
 

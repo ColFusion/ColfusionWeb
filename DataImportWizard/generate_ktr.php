@@ -352,11 +352,11 @@ function add_normalizer() {
 
     if (isset($_POST["dataMatchingUserInputs"])) {
 
-        foreach ($_POST["dataMatchingUserInputs"] as &$value) {
+        foreach ($dataMatchingUserInputs as &$value) {
             $value["originalDname"] = UtilsForWizard::stripWordUntilFirstDot($value["originalDname"]);
         }
 
-        $ktrManager->createTemplate($fileUrls, $sheetNamesRowsColumns, $baseHeader, $_POST["dataMatchingUserInputs"]);
+        $ktrManager->createTemplate($fileUrls, $sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs);
         unset($_SESSION["ktrArguments"]["$sid"]);
 
         UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $_POST["schemaMatchingUserInputs"]);
