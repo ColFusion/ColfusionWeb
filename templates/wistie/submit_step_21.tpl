@@ -35,6 +35,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.2.1.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/dataTableModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>
 

@@ -1,4 +1,4 @@
-<?php /* Smarty version Smarty-3.1.13, created on 2013-06-10 14:04:11
+<?php /* Smarty version Smarty-3.1.13, created on 2013-06-20 15:58:13
          compiled from "C:\wamp\www\Colfusion\OriginalSmarty\templates\attachmentList.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2555551864f000b6e25-52867561%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -7,7 +7,7 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     '6461e525e448c244815d0d8ae19355e68bf292e9' => 
     array (
       0 => 'C:\\wamp\\www\\Colfusion\\OriginalSmarty\\templates\\attachmentList.tpl',
-      1 => 1370872935,
+      1 => 1371732976,
       2 => 'file',
     ),
   ),
@@ -32,7 +32,7 @@ $_smarty_tpl->tpl_vars['attachmentInfo']->_loop = true;
 ?> 
     <li class="fileListItem">
         <span class="fileIcon"><img src="<?php echo $_smarty_tpl->tpl_vars['appRootPath']->value;?>
-<?php echo $_smarty_tpl->tpl_vars['attachmentInfo']->value->icon_url;?>
+/<?php echo $_smarty_tpl->tpl_vars['attachmentInfo']->value->icon_url;?>
 "/></span>
         <span class="fileInfo"><a href="<?php echo $_smarty_tpl->tpl_vars['appRootPath']->value;?>
 /fileManagers/downloadSourceAttachment.php?fileId=<?php echo $_smarty_tpl->tpl_vars['attachmentInfo']->value->FileId;?>

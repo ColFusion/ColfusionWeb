@@ -34,7 +34,7 @@ function DataPreviewViewModel(sid) {
     self.currentTable = ko.observable();
     self.isLoading = ko.observable(false);
     self.isNoData = ko.observable(false);
-    //TODO: refactor, put it in separate model maybe or keep here
+
     self.isRelationshipDataLoading = ko.observable(false);
     self.isNoRelationshipData = ko.observable(false);
     self.mineRelationshipsTable = ko.observable();
