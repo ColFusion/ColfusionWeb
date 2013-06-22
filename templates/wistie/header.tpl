@@ -94,7 +94,7 @@
         {/if}
     -->
 
-	    <li ><a href="{$my_base_url}{$my_pligg_base}/user_guide.php" target="_blank">How to contribute</a></li>
+	   <!-- <li ><a href="{$my_base_url}{$my_pligg_base}/user_guide.php" target="_blank">How to contribute</a></li> -->
 	    <li ><a href="{$my_base_url}{$my_pligg_base}/phpBB3" target="_blank">Forum</a></li>
 	    <li ><a href="{$my_base_url}{$my_pligg_base}/wiki" target="_blank">Help</a></li>
         <!--<li><a href="{$my_base_url}{$my_pligg_base}/visualization/dashboard.php" >Visualization</a></li>-->
