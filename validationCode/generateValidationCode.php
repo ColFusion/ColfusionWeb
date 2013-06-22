@@ -5,7 +5,9 @@ include_once('Mail.php');
 include_once '../DAL/ValidationCodeGateway.php';
 
 $password = $_POST['password'];
+$names = $_POST['names'];
 $emails = $_POST['emails'];
+$msg = $_POST['msg'];
 $gateway = new ValidationCodeGateway();
 
 if ($password != 'Evgeny')
@@ -13,14 +15,29 @@ if ($password != 'Evgeny')
 
 echo "Validation codes are sent to following addresses: <br/>";
 
+$i = -1;
+
 foreach ($emails as $email) {
+
+    $i++;
+
     if (empty($email)) {
         continue;
     }
 
     $validationCode = generateValidationCode(15);
     $gateway->insertValidationCode($email, $validationCode);
-    sendValidationCode($email, $validationCode);
+
+
+    $vars = array("@@name@@", "@@email@@", "@@validationCode@@");
+    $vals   = array($names[$i], $email, $validationCode);
+
+    $newMsg = str_replace($vars, $vals, $msg);
+
+//    var_dump($vars);
+ //   var_dump($vals);
+
+    sendValidationCode($email, $validationCode, $newMsg);
 
     echo "$email <br/>";
 }
@@ -34,14 +51,17 @@ function generateValidationCode($length) {
     return $randomString;
 }
 
-function sendValidationCode($email, $validationCode) {
+function sendValidationCode($email, $validationCode, $msg) {
     $recipients = $email;
 
     $headers['From'] = 'SaltSystemService@gmail.com';
     $headers['To'] = $email;
     $headers['Subject'] = 'Colfusion Invitation';
 
-    $body = "Dear user, 
+    $body = $msg;
+
+/*
+    "Dear user, 
 Welcome to Colfusion
 
 Before you login, please register with following email and validation code:
@@ -53,6 +73,7 @@ Please contact us if you have any problems.
 
 Best Regards,
 Colfusion System Service";
+*/
 
     $smtpinfo["host"] = "smtp.gmail.com";
     $smtpinfo["port"] = "25";
@@ -60,6 +81,8 @@ Colfusion System Service";
     $smtpinfo["username"] = "SaltSystemService@gmail.com";
     $smtpinfo["password"] = "robertcl0310";
 
+
+//echo $body;
 
     // Create the mail object using the Mail::factory method
     $mail_object = & Mail::factory("smtp", $smtpinfo);
