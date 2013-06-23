@@ -1,23 +1,74 @@
 var RelationshipModel = {
-    Relationship: function(rid) {
+    Relationship: function(relJson) {
+        var self = this;
+        self.rid = relJson.rid;
+        self.name = ko.observable(relJson.name);
+        self.description = ko.observable(relJson.description);
+        self.creator = ko.observable(relJson.creator);
+        self.createdTime = ko.observable(relJson.createdTime);
+
+        self.fromDataset = ko.observable(createDatasetModel(relJson.fromDataset));
+        self.toDataset = ko.observable(relJson.toDataset);
+        self.fromTableName = ko.observable(relJson.fromTableName);
+        self.toTableName = ko.observable(relJson.toTableName);
+
+        self.links = ko.observableArray(relJson.links);
+
+        self.avgConfidence = ko.observable(relJson.avgConfidence);
+        self.yourComment = ko.observable();
+        self.comments = ko.observableArray();
+
+        function createDatasetModel(dsJson) {
+            var dataset = new RelationshipModel.DataSet(dsJson.sid);
+            dataset.name(dsJson.title);
+            dataset.content(dsJson.content);
+            dataset.userId(dsJson.userId);
+            dataset.userName(dsJson.userName);
+            dataset.createdTime(dsJson.entryDate);
+            dataset.lastUpdated(dsJson.lastUpdated);
+            dataset.sourceType(dsJson.sourceType);
+            return dataset;
+        }
+
+        function createCommentModel(commentJson) {
+            return new RelationshipModel.Comment(
+                    commentJson.rid,
+                    commentJson.confidence,
+                    commentJson.comment,
+                    commentJson.userId,
+                    commentJson.userName,
+                    commentJson.commentTime);
+        }
+
+        self.getComments = function() {
+            $.ajax({
+                url: 'datasetController/relationshipComments.php',
+                data: {relId: self.rid},
+                type: 'POST',
+                dataType: 'json',
+                success: function(data) {
+                    self.yourComment(createCommentModel(data.yourComment));
+                    for (var i = 0; i < data.comments.length; i++) {
+                        self.comments([]);
+                        self.comments.push(createCommentModel(data.comments[i]));
+                    }                  
+                },
+                error: function(jqXHR, statusCode, errMessage) {
+                    alert(errMessage);
+                }
+            });
+        };
+
+        self.getComments();
+    },
+    Comment: function(rid, confidence, comment, userId, userName, commentTime) {
         var self = this;
         self.rid = rid;
-        self.name = ko.observable();
-        self.description = ko.observable();
-        self.creator = ko.observable();
-        self.createdTime = ko.observable();
-
-        self.fromDataset = ko.observable();
-        self.toDataset = ko.observable();
-        self.fromTableName = ko.observable();
-        self.toTableName = ko.observable();
-
-        self.links = ko.observableArray();
-
-        self.avgConfidence = ko.observable();
-        self.comments = ko.observable();
-        
-        
+        self.confidence = ko.observable(confidence);
+        self.comment = ko.observable(comment);
+        self.userId = ko.observable(userId);
+        self.userName = ko.observable(userName);
+        self.commentTime = ko.observable(commentTime);
     },
     DataSet: function(sid) {
         var self = this;
@@ -27,6 +78,15 @@ var RelationshipModel = {
         self.chosenTableName = ko.observable();
         self.currentTable = ko.observable();
         self.isLoadingTableInfo = ko.observable(false);
+
+        /* Used by relationship info. */
+        self.content = ko.observable('');
+        self.userId = ko.observable();
+        self.userName = ko.observable();
+        self.createdTime = ko.observable();
+        self.lastUpdated = ko.observable();
+        self.sourceType = ko.observable();
+        /* ********* */
 
         self.loadTableInfo = function() {
             if (!self.sid()

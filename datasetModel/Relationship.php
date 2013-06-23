@@ -18,6 +18,7 @@ class Relationship{
     public $links;
     
     public $avgConfidence;
+    public $yourComment;
     public $comments;
 }
 

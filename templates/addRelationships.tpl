@@ -2,7 +2,7 @@
     <div id="newRelWrapper">
         <form id="newRelWrapperForm">
             <i 
-                data-bind="click: function(data, event) {relationshipViewModel.isContainerShowned(!relationshipViewModel.isContainerShowned());}" 
+                data-bind="click: function(data, event) {newRelationshipViewModel.isContainerShowned(!newRelationshipViewModel.isContainerShowned());}" 
                 id="newRelationshipBtn" 
                 class="icon-plus" 
                 title="Add New Relationship">

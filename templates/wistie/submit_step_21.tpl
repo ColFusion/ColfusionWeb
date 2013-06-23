@@ -35,9 +35,11 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.2.1.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/dataTableModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/importWizard.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/wizardFromFile.js"></script>
@@ -184,9 +186,9 @@
         $.sheet.preLoad('jquery.sheet/');
         var sid;
         $(document).ready(function() {
-            
+
             sid = $('#sid').val();
-            
+
             $.ajax({
                 type: 'POST',
                 url: "DataImportWizard/wizardMarkup.php",
@@ -198,7 +200,7 @@
                 dataType: 'html',
                 async: false
             });
-           
+
             $.ajax({
                 type: 'POST',
                 url: "DataImportWizard/dataPreviewMarkup.php",
@@ -218,8 +220,9 @@
                     $("#step3Container").append(data);
 
                     dataPreviewViewModel = new DataPreviewViewModel(sid);
+                    relationshipViewModel = new RelationshipViewModel(sid);
                     ko.applyBindings(dataPreviewViewModel, document.getElementById("dataPreviewContainer"));
-                    ko.applyBindings(dataPreviewViewModel, document.getElementById("mineRelationshipsContainer"));
+                    ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
                 },
                 dataType: 'html',
                 async: false
