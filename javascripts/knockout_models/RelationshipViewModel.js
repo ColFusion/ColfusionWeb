@@ -47,6 +47,7 @@ function RelationshipViewModel(sid) {
         } else {
             $('#mineRelRecSpan_' + rel_id).text("Less");
             if (!self.relationshipInfos[rel_id]) {
+                $('#relInfoLoadingIcon_' + rel_id).show();
                 loadRelationshipInfo(rel_id);
             }
         }
@@ -61,6 +62,7 @@ function RelationshipViewModel(sid) {
             success: function(data) {
                 self.relationshipInfos[data.rid] = ko.observable(new RelationshipModel.Relationship(data));
                 self.isRelationshipInfoLoaded[data.rid](true);
+                $('#relInfoLoadingIcon_' + relId).hide();
             },
             error: function(jqXHR, statusCode, errMessage) {
                 alert(errMessage);

@@ -7,18 +7,23 @@ var RelationshipModel = {
         self.creator = ko.observable(relJson.creator);
         self.createdTime = ko.observable(relJson.createdTime);
 
-        self.fromDataset = ko.observable(createDatasetModel(relJson.fromDataset));
-        self.toDataset = ko.observable(relJson.toDataset);
-        self.fromTableName = ko.observable(relJson.fromTableName);
-        self.toTableName = ko.observable(relJson.toTableName);
+        self.fromDataset = ko.observable(createDatasetModel(relJson.fromDataset, relJson.fromTableName));
+        self.toDataset = ko.observable(createDatasetModel(relJson.toDataset, relJson.toTableName));
 
         self.links = ko.observableArray(relJson.links);
 
         self.avgConfidence = ko.observable(relJson.avgConfidence);
-        self.yourComment = ko.observable();
-        self.comments = ko.observableArray();
 
-        function createDatasetModel(dsJson) {
+        self.comments = ko.observableArray();
+        self.isCommentLoaded = {};
+        self.isCommentLoading = ko.observable(false);
+        self.isCommentHided = ko.observable(true);
+
+        self.yourComment = ko.observable();
+        self.isYourCommentEditing = ko.observable(false);
+        self.editingComment = ko.observable();
+
+        function createDatasetModel(dsJson, tableName) {
             var dataset = new RelationshipModel.DataSet(dsJson.sid);
             dataset.name(dsJson.title);
             dataset.content(dsJson.content);
@@ -27,48 +32,149 @@ var RelationshipModel = {
             dataset.createdTime(dsJson.entryDate);
             dataset.lastUpdated(dsJson.lastUpdated);
             dataset.sourceType(dsJson.sourceType);
+            dataset.currentTable(tableName);
             return dataset;
         }
 
-        function createCommentModel(commentJson) {
+        function createCommentModel(commentJson, isControlPanelShown) {
             return new RelationshipModel.Comment(
                     commentJson.rid,
                     commentJson.confidence,
                     commentJson.comment,
                     commentJson.userId,
                     commentJson.userName,
-                    commentJson.commentTime);
+                    commentJson.userEmail,
+                    commentJson.commentTime,
+                    isControlPanelShown);
         }
 
-        self.getComments = function() {
+        function createEmptyCommentModel() {
+            return createCommentModel(
+                    {
+                        rid: self.rid,
+                        confidence: 0,
+                        comment: '',
+                        userId: 0,
+                        userName: '',
+                        commentTime: new Date()
+                    }, true);
+        }
+
+        function cloneCommentModel(commentModel) {
+            var commentJson = ko.mapping.toJS(commentModel);
+            return createCommentModel(commentJson, commentJson.isControlPanelShown);
+        }
+
+        self.showComments = function() {
+            self.isCommentHided(false);
+
+            if (!self.isCommentLoaded[self.rid]) {
+                self.isCommentLoading(true);
+
+                $.ajax({
+                    url: 'datasetController/relationshipComments.php',
+                    data: {relId: self.rid},
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(data) {
+                        if (data.yourComment) {
+                            self.yourComment(createCommentModel(data.yourComment, true));
+                        } else {
+                            self.yourComment(null);
+                        }
+                        for (var i = 0; i < data.comments.length; i++) {
+                            self.comments([]);
+                            self.comments.push(createCommentModel(data.comments[i], false));
+                        }
+                        self.isCommentLoaded[self.rid] = true;
+                        self.isCommentLoading(false);
+                    },
+                    error: function(jqXHR, statusCode, errMessage) {
+                        alert(errMessage);
+                    }
+                });
+            }
+        };
+
+        self.hideComments = function() {
+            self.isCommentHided(true);
+        };
+
+        self.editComment = function() {
+            self.isYourCommentEditing(true);
+            if (self.yourComment()) {
+                self.editingComment(cloneCommentModel(self.yourComment()));
+            } else {
+                self.editingComment(createEmptyCommentModel());
+            }
+        };
+
+        self.cancelEditingComment = function() {
+            self.isYourCommentEditing(false);
+        };
+
+        self.saveComment = function() {
+            var action = self.yourComment() ? 'updateComment' : 'addComment';
+            self.yourComment(cloneCommentModel(self.editingComment()));
             $.ajax({
-                url: 'datasetController/relationshipComments.php',
-                data: {relId: self.rid},
+                url: 'datasetController/commentUpdater.php',
+                data: {
+                    relId: self.rid,
+                    action: action,
+                    comment: self.yourComment().comment(),
+                    confidence: self.yourComment().confidence()
+                },
+                type: 'POST',
+                dataType: 'json',
+            }).pipe(function(data) {
+                return $.ajax({
+                    url: 'datasetController/getYourComment.php',
+                    data: {relId: self.rid},
+                    type: 'POST',
+                    dataType: 'json'
+                });
+            }).done(function(data) {
+                self.yourComment(createCommentModel(data, true));
+                self.isYourCommentEditing(false);
+            }).fail(function(jqXHR, statusCode, errMessage) {
+                alert(errMessage);
+            });
+        };
+
+        self.removeComment = function() {
+
+            if (!confirm('Do you want to remove your comment?')) {
+                return;
+            }
+
+            $.ajax({
+                url: 'datasetController/commentUpdater.php',
+                data: {
+                    relId: self.rid,
+                    action: 'removeComment'
+                },
                 type: 'POST',
                 dataType: 'json',
                 success: function(data) {
-                    self.yourComment(createCommentModel(data.yourComment));
-                    for (var i = 0; i < data.comments.length; i++) {
-                        self.comments([]);
-                        self.comments.push(createCommentModel(data.comments[i]));
-                    }                  
+                    self.yourComment(null);
                 },
                 error: function(jqXHR, statusCode, errMessage) {
                     alert(errMessage);
                 }
             });
         };
-
-        self.getComments();
     },
-    Comment: function(rid, confidence, comment, userId, userName, commentTime) {
+    Comment: function(rid, confidence, comment, userId, userName, userEmail, commentTime, isControlPanelShown) {
         var self = this;
         self.rid = rid;
-        self.confidence = ko.observable(confidence);
+        self.confidence = ko.observable(Number(confidence).toFixed(1));
         self.comment = ko.observable(comment);
         self.userId = ko.observable(userId);
         self.userName = ko.observable(userName);
+        self.userEmail = ko.observable(userEmail);
         self.commentTime = ko.observable(commentTime);
+
+        self.isControlPanelShown = ko.observable(isControlPanelShown);
     },
     DataSet: function(sid) {
         var self = this;

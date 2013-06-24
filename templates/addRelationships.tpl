@@ -153,8 +153,8 @@
                         <div id="confidenceSlider" data-bind="slider: confidenceValue, sliderOptions: {min: -1, max: 1, step: 0.1}"></div>
                         <table class="confidenceDesTable">
                             <tr>
-                                <td>0</td>
-                                <td style="text-align: center">0.5</td>
+                                <td>-1</td>
+                                <td style="text-align: center">0</td>
                                 <td style="text-align: right">1</td>
                             </tr>
                         </table>

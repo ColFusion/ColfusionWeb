@@ -24,17 +24,17 @@ if ($result !== false) {
 echo json_encode($resultJson);
 
 function addComment() {
-    global $relId, $userId, $confidence, $comment;
+    global $relId, $userId, $confidence, $comment, $dao;
     return $dao->addComment($relId, $userId, $confidence, $comment);
 }
 
 function updateComment() {
-    global $relId, $userId, $confidence, $comment;
+    global $relId, $userId, $confidence, $comment, $dao;
     return $dao->updateComment($relId, $userId, $confidence, $comment);
 }
 
 function removeComment() {
-    global $relId, $userId;
+    global $relId, $userId, $dao;
     return $dao->removeComment($relId, $userId);
 }
 

@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/smoothness/jquery-ui-1.10.3.custom.min.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/font-awesome.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/dataTableModel.css" />
+<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/addRelationship.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/relationship.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/sourceAttachment.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/typeahead.js-bootstrap.css" />

@@ -7,6 +7,7 @@ class Comment{
     public $comment;
     public $confidence;
     public $commentTime;
+    public $userEmail;
 }
 
 ?>

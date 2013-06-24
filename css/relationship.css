@@ -1,188 +1,207 @@
-#newRelationshipBtn{
-    font-size: 20px;
-}
-
-#newRelationshipBtn:hover{
-    cursor: pointer;
-}
-
-#newRelContainer {
+.relationshipInfo{
     background-color: white;
-    padding: 15px;
-    padding-top: 4px;
-    overflow: auto;
-    border: solid 1px #cfcfcf;
 }
 
-#relDescriptionContainer {
-    padding: 20px 0 20px 0;
+.relProfile td, .linkProfileTable td{
+    background-color: white;
+    border-width: 0;
+    border-color: white;
+    font-size: 14px !important;
+    padding: 5px;
 }
 
-#newRelDesTable {
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.desTitle {
-    width:100px;
-}
-
-
-.dataSetTitle {
+.relProfile .profileHeader{
+    width: 15%;
+    vertical-align: top;
     font-weight: bold;
-    margin-left: 11px;
 }
 
-.dataSetTable {
-    width: 100%;
-    height: 150px;
-    background-color: #eeeeee;
+.linkProfileTable .linkProfileHeader{
+    width: 15%;
 }
 
-#fromDataSet, #toDataSet {
-    padding: 10px;
+.relProfile .profileContent, .linkProfileTable .linkProfileContent{
+    width: 75%;
 }
 
-.sidInput {
-    width: 220px !important;
-}
-
-.btn.add-on {
-    height: 30px !important;
-}
-
-.dataSetDesTable select {
-    width: 248px;
-}
-
-.dataSetDesTitle{
-    width: 70px; 
-}
-
-#dataSetMatchContainer {
-    min-height: 220px;
-    overflow: visible;
-}
-
-.tableInfoTableWrapper{
-    min-height: 50px;
-}
-
-.tableInfoTable {
-    font-size: 12px;
-    text-align: left;
-}
-
-.tableInfoTable th{
-    background-color: #eeeeee;
-}
-
-.tableInfoTable td{
-    border: solid 1px;
-    border-width: 0 0 1px 0;
-}
-
-/* Typeahead style for relationship page */
-
-.dataSetWrapper .tt-dropdown-menu {
-    width: 330px;
-}
-
-.tt-hint {
-    width: 220px !important;
-}
-
-.dataSetWrapper  .twitter-typeahead {
-    margin-top: 10px;
-}
-
-#relationshipTransformationContainer .dataColumnSuggestion{
-    width: 350px;
-}
-
-.byText{
-    color: grey;
-    margin-right: 8px;
-}
-
-.dataColumnSuggestion-Name {
-    float: left;
-    font-weight: bold;
-    font-size: 16px;
-}
-
-.dataColumnSuggestion-dataSetName {
-    float: right;
-    font-size: 12px;
-    font-style: italic;
-}
-
-.dataColumnSuggestion-Description {
-    color: grey !important;
-    font-size: 14px;
-    word-wrap: break-word;
-}
-
-#relationshipTransformationContainer .dataColumnSuggestion-Description {
-    color: grey;
-}
-
-#relationshipTransformationContainer .byText{
-    display: none;
-}
-
-/* Typeahead style end */
-
-#confidenceContainer {
-    min-height: 110px;
+.linkProfileContainer{
     overflow: auto;
-}
-
-#confidenceSliderContainer {
-    width: 48%;
-    float: left;
-    padding-left: 10px;
     margin-top: 20px;
 }
 
-#confidenceText {
-    height: 25px;
+.linkProfileContainer .linkProfile {
+    width: 50%;
+}
+
+.linkProfileContainer .fromProfile{
+    float: left;
+}
+
+.linkProfileContainer .toProfile{
+    float: left;
+}
+
+.links {
+    padding: 0px 8px 18px 5px;
+    border-width: 0;
+}
+
+.links, .link{
+    overflow: auto;
+}
+
+.links .link{
+    margin-top: 8px;
+}
+
+.links .link .linkPart{
+    min-height: 35px;
+    overflow: auto;
+    display: table;
+}
+
+.links .link .fromPart{
+    width: 50.4%;
+    float: left;
+    background-color: #EFF3FB;
+    -webkit-border-top-left-radius: 10px;
+    -webkit-border-bottom-left-radius: 10px;
+    -moz-border-radius-topleft: 10px;
+    -moz-border-radius-bottomleft: 10px;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.links .link .toPart{
+    width: 49.6%;
+    float:right;
+    background-color: #FFEEBB;
+    -webkit-border-top-right-radius: 10px;
+    -webkit-border-bottom-right-radius: 10px;
+    -moz-border-radius-topright: 10px;
+    -moz-border-radius-bottomright: 10px;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.links .link .linkPartText{
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 8px;
+}
+
+.seeCommentsContainer {
+    height: 26px;
+    background-color: #edeff4;
+    margin-bottom: -9px;
+}
+
+.seeCommentsContainer a{
+    display: inline-block;
+    margin-left: auto;
+    margin-right: auto;
+    color: #CC6600;
+    margin: 5px 0 0 380px;
+}
+
+.seeCommentsContainer a:hover{
+    color: #E0A366;
+    cursor: pointer;
+}
+
+.comment {
+    min-height: 80px;
+    overflow: auto;
+    font-size: 14px;
+    border-bottom: solid 1px #dbdbdb;
+    padding-top: 5px;
+    padding-bottom: 15px;
+}
+
+.confidenceContainer{
+    float: left;
+    width: 8%;
+    overflow: auto;
+    height: 50px;
+    margin-top: 8px;
+    background-color: #dddddd;
+}
+
+.confidenceText {
+    display: block;
+    text-align: center;
+    font-weight: bolder;
+    margin-top: 10px;
+    font-size: 18px;
+    color: #CC6600;
+}
+
+.confidenceStaticText {
+    font-size: 9px;
+    margin-top: 8px;
+    display: block;
+    text-align: center;
+}
+
+.commentBody{
+    float: right;
+    width: 90.3%;
+    overflow: auto;
+}
+
+.commentHeader {
+    height: 48px;
+    padding-top: 12px;
+}
+
+.commentContent {
+    line-height: 130%;
+}
+
+.userName, .userEmail, .commentTime {
     display: inline-block;
 }
 
-.confidenceDesTable {
-    font-size: 12px;
+.userName{
+    font-weight: bold;
+}
+
+.commentControlPanel {
+    display: inline-block;
+}
+
+.commentControlPanel i{
+    margin-left: 4px;
+}
+
+.commentControlPanel i:hover{
+    cursor: pointer;
+}
+
+.commentTime{
+    float: right;
+    margin-right: 10px;
     color: grey;
 }
 
-#confidenceSlider {
-    width: 95%;
-    margin-top: 3px;
-    margin-bottom: 3px;
-    margin-left: auto;
-    margin-right: auto;
+.yourCommentEditor {
+    border-bottom: solid 1px #dbdbdb;
+    padding-bottom: 10px;
+}
+
+.yourComment {
+    background-color: #FFEEBB;
 }
 
 .confidenceDesTable td {
-    width: 145px;
+    font-weight: bold;
+    color: black;
+    border: none;
+    background-color: white;
 }
 
-#confidenceComment {
-    float: right;
-    width: 49%;
-    margin-top: 20px;
-}
-
-.icon-remove-sign:hover{
-    color: red;
-    cursor: pointer;
-}
-
-.addLinkColumnBtn{
-    font-size: 20px;
-}
-
-.addLinkColumnBtn:hover{
-    cursor: pointer;
+.addCommentContainer{
+    height: 50px;
+    border-bottom: solid 1px #dbdbdb;
+    font-size: 14px;
 }

@@ -54,7 +54,7 @@ class RelationshipDAO {
     }
 
     public function getComments($relId) {
-        $sql = "SELECT confidence, comment, `when`, user_login, URV.user_id, rel_id 
+        $sql = "SELECT confidence, comment, `when`, user_login, user_email, URV.user_id, rel_id 
             FROM  `colfusion_user_relationship_verdict` URV INNER JOIN  `colfusion_users` U ON URV.user_id = U.user_id 
             WHERE URV.rel_id = '" . mysql_real_escape_string($relId) . "'";
 
@@ -71,7 +71,7 @@ class RelationshipDAO {
         $relId = mysql_real_escape_string($relId);
         $userId = mysql_real_escape_string($userId);
 
-        $sql = "SELECT confidence, comment, `when`, user_login, URV.user_id, rel_id 
+        $sql = "SELECT confidence, comment, `when`, user_email, user_login, URV.user_id, rel_id 
             FROM  `colfusion_user_relationship_verdict` URV INNER JOIN  `colfusion_users` U ON URV.user_id = U.user_id 
             WHERE URV.rel_id = '$relId' and URV.user_id = '$userId'";
 
@@ -101,6 +101,7 @@ class RelationshipDAO {
     }
 
     public function updateComment($relId, $userId, $confidence, $comment) {
+       
         $relId = mysql_real_escape_string($relId);
         $userId = mysql_real_escape_string($userId);
         $confidence = mysql_real_escape_string($confidence);
@@ -118,6 +119,7 @@ class RelationshipDAO {
         $comment->rid = $dbCommentRow->rel_id;
         $comment->userId = $dbCommentRow->user_id;
         $comment->userName = $dbCommentRow->user_login;
+        $comment->userEmail = $dbCommentRow->user_email;
         $comment->comment = $dbCommentRow->comment;
         $comment->commentTime = $dbCommentRow->when;
         $comment->confidence = $dbCommentRow->confidence;

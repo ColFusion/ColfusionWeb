@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/bootstrap-lightbox.min.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/sourceAttachment.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/dataTableModel.css" />
+<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/addRelationship.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/relationship.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/typeahead.js-bootstrap.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/parsley.css" />
