@@ -38,7 +38,7 @@ $wgStylePath = "$wgScriptPath/skins";
 ## or else you'll overwrite your logo when you upgrade!
 $wgLogo             = "$wgStylePath/common/images/wiki.png";
 
-## UPO means: this is also a user preference option
+## UPO means: this is also a user  preference option
 
 $wgEnableEmail = true;
 $wgEnableUserEmail = true; # UPO
