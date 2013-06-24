@@ -230,7 +230,7 @@ class QueryEngine {
 
 
         $query = <<< EOQ
-SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
+                SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
 		rc.cl_from as cidFrom, rc.cl_to as cidTo, 
 		relFrom.dname_chosen as newDnameFrom, relTo.dname_chosen as newDnameTo,
 		relFrom.dname_original_name as originalDnameFrom, relTo.dname_original_name as originalDnameTo,

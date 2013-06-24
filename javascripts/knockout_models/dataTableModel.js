@@ -34,10 +34,6 @@ function DataPreviewViewModel(sid) {
     self.currentTable = ko.observable();
     self.isLoading = ko.observable(false);
     self.isNoData = ko.observable(false);
-    //TODO: refactor, put it in separate model maybe or keep here
-    self.isRelationshipDataLoading = ko.observable(false);
-    self.isNoRelationshipData = ko.observable(false);
-    self.mineRelationshipsTable = ko.observable();
 
     self.setTableList = function(tableList) {
         self.tableList($.map(tableList, function(tableName) {
@@ -75,42 +71,7 @@ function DataPreviewViewModel(sid) {
             self.isLoading(false);
         });
     };
-
-    self.mineRelationships = function(perPage, pageNo) {
-        //$('#relationshipMiningInProgress').show();
-        self.isRelationshipDataLoading(true);
-        self.isNoRelationshipData(false);
-
-        dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function(data) {
-            //  $('#relationshipMiningInProgress').hide();
-
-            if (!data.Control || !data.Control.cols || data.Control.cols.length === 0) {
-                // Show 'no data' text;
-                self.isRelationshipDataLoading(false);
-                self.isNoRelationshipData(true);
-                return;
-            }
-
-            self.isNoRelationshipData(false);
-            // Controls.
-            var perPage = data.Control.perPage;
-            var totalPage = data.Control.totalPage;
-            var currentPage = data.Control.pageNo;
-
-            var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
-            self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table('mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
-            self.isRelationshipDataLoading(false);
-        });
-    };
-
-    self.showMoreClicked = function(index) {
-        $('#mineRelRec' + index).toggle();
-        if ($('#mineRelRec' + index).css("display") === "none")
-            $('#mineRelRecSpan' + index).text("More...");
-        else
-            $('#mineRelRecSpan' + index).text("Less");
-    };
-
+   
     self.chooseTable = function(tableListItem) {
         // Unchoose all list items.
         $(self.tableList()).each(function(index, tableListItem) {

@@ -2,7 +2,7 @@
     <div id="newRelWrapper">
         <form id="newRelWrapperForm">
             <i 
-                data-bind="click: function(data, event) {relationshipViewModel.isContainerShowned(!relationshipViewModel.isContainerShowned());}" 
+                data-bind="click: function(data, event) {newRelationshipViewModel.isContainerShowned(!newRelationshipViewModel.isContainerShowned());}" 
                 id="newRelationshipBtn" 
                 class="icon-plus" 
                 title="Add New Relationship">
@@ -150,7 +150,7 @@
                                 <td style="text-align: right">Confident</td>
                             </tr>
                         </table>
-                        <div id="confidenceSlider" data-bind="slider: confidenceValue, sliderOptions: {min: 0, max: 1, step: 0.1}"></div>
+                        <div id="confidenceSlider" data-bind="slider: confidenceValue, sliderOptions: {min: -1, max: 1, step: 0.1}"></div>
                         <table class="confidenceDesTable">
                             <tr>
                                 <td>0</td>
@@ -175,10 +175,10 @@
         </form>
     </div>   
     <script type="text/javascript">
-        var relationshipViewModel = new RelationshipViewModel();
+        var newRelationshipViewModel = new NewRelationshipViewModel();
 
         $(function() {
-            ko.applyBindings(relationshipViewModel, document.getElementById("newRelWrapper"));
+            ko.applyBindings(newRelationshipViewModel, document.getElementById("newRelWrapper"));
         });
 
         // If sid is assigned, load from date set after page is loaded.
@@ -186,8 +186,8 @@
             var fromDataSetSidInput = $('#fromDataSetWrapper').find('.dataSetDesTable').find('.sidInput');
             var fromDataSetSidSearchBtn = $('#fromDataSetWrapper').find('.dataSetDesTable').find('button');
             $(fromDataSetSidInput).add(fromDataSetSidSearchBtn).prop('disabled', 'disabled').trigger('change');
-            relationshipViewModel.fromDataSet().sid(sid);
-            relationshipViewModel.fromDataSet().loadTableList();
+            newRelationshipViewModel.fromDataSet().sid(sid);
+            newRelationshipViewModel.fromDataSet().loadTableList();
         }
     </script>
 {/literal}

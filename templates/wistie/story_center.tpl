@@ -17,10 +17,13 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/parsley.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/purl.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.2.1.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/dataSourceUtil.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/dataTableModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/hogan.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
@@ -50,28 +53,26 @@
 
         $(document).ready(function() {
 
-        fileManager.loadSourceAttachments(sid, $('#attachmentList'));
+            fileManager.loadSourceAttachments(sid, $('#attachmentList'));
 
-        $.ajax({
-        type: 'POST',
-        url: "DataImportWizard/dataPreviewMarkup.php",
-        data: {},
-        success: function(data) {
-        $("#dataPreviewContainer").append(data);
-        ko.applyBindings(dataPreviewViewModel, document.getElementById("dataPreviewContainer"));
-        },
-        dataType: 'html'
-        });
+            $.ajax({
+                type: 'POST',
+                url: "DataImportWizard/dataPreviewMarkup.php",
+                data: {},
+                success: function(data) {
+                $("#dataPreviewContainer").append(data);
+                    ko.applyBindings(dataPreviewViewModel, document.getElementById("dataPreviewContainer"));
+                },
+                dataType: 'html'
+            });
 
-        dataPreviewViewModel = new DataPreviewViewModel(sid);
-        ko.applyBindings(dataPreviewViewModel, document.getElementById("mineRelationshipsContainer"));
+             dataPreviewViewModel = new DataPreviewViewModel(sid);
+             relationshipViewModel = new RelationshipViewModel(sid);
+             ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
 
-        // Load table list.
-        dataPreviewViewModel.getTablesList();
-
-        //TODO: good candidate for ko
-        dataPreviewViewModel.mineRelationships(10, 1);
-        });
+             dataPreviewViewModel.getTablesList();
+             relationshipViewModel.mineRelationships(10, 1);
+         });
 
         window.onload = function showData()
         {
@@ -88,7 +89,7 @@
         else {
         document.getElementById('upload_result').innerHTML = "nothing";
         }
-        }
+        };
 
 
         function savefile()
@@ -155,29 +156,13 @@
 {include file='relationships.tpl'}
 {include file='addRelationships.tpl'}
 {literal}
-<script type="text/javascript">
-    $(function(){
+    <script type="text/javascript">
+        $(function(){
         $('.searchDatasetBtn').prop('disabled', true);
         loadInitialFromDataSet();        
-    });
-</script>
+        });
+    </script>
 {/literal}
-
-<!--
-<center><div style="padding-left:10px;"><table>
-            <tr><td><input id="btn_all" class="button_max" type="submit" value="Show All Data" onclick="show_all_data()" />
-                    <input id="btn_hide" class="button_max" type="submit" value="Show Less Data" onclick="show_less_data()" /></td>
-                <td><form id="submitForm" action="" method="post"><input type="hidden" name="refresh" value="1"/><input id="btn_all" class="button_max" type="submit" value="Refresh" onclick="refresh_data()" />
-                        <input type="button" value="Visualization" onclick="go_visualization();"></form></td>
-            </tr></table></div></center>
-
-<center>
-    <form action= "" method="post" id="saveform">
-        Save data as: <select name="filetype"><option value="1">XLS file for Excel</option><option value="2">TXT file for Notepad</option><option value="3">SQL file for Database</option></select>
-        <input name="save_as" class="button_max" type="submit" value="Go" onClick="savefile()"/></form>
-</center>
-</br></br>
--->
 
 <center><input type="button" value="Back" onclick="goBack()"></center>
 <input type="hidden" id="sid" value="{$sid}"/>
