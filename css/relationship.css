@@ -93,7 +93,6 @@
 .seeCommentsContainer {
     height: 26px;
     background-color: #edeff4;
-    margin-bottom: -9px;
 }
 
 .seeCommentsContainer a{
@@ -110,7 +109,7 @@
 }
 
 .comment {
-    min-height: 80px;
+    min-height: 60px;
     overflow: auto;
     font-size: 14px;
     border-bottom: solid 1px #dbdbdb;
@@ -150,7 +149,7 @@
 }
 
 .commentHeader {
-    height: 48px;
+    height: 30px;
     padding-top: 12px;
 }
 
@@ -164,6 +163,10 @@
 
 .userName{
     font-weight: bold;
+}
+
+.userName a {
+    color: black;
 }
 
 .commentControlPanel {

@@ -83,10 +83,10 @@
                                             </div>
                                         </div>
                                         <div class="seeCommentsContainer">
-                                            <a data-bind="click: showComments, visible: isCommentHided()" class="seeCommentText">See Comments</a>
-                                            <a data-bind="click: hideComments, visible: !isCommentHided()" class="hideCommentText">Hide Comments</a>
+                                            <a data-bind="click: showComments, visible: isCommentHided()" class="seeCommentText">See Feedbacks</a>
+                                            <a data-bind="click: hideComments, visible: !isCommentHided()" class="hideCommentText">Hide Feedbacks</a>
                                         </div>
-                                        <div data-bind="visible: !isCommentHided() && isCommentLoading()" style="text-align: center; padding-top: 15px;">
+                                        <div data-bind="visible: !isCommentHided() && isCommentLoading()" style="text-align: center; padding-top: 7px;">
                                             <img src="images/ajax-loader.gif"/>
                                         </div>
                                         <div data-bind="visible: !isCommentHided() && !isCommentLoading()" class="commentContainer">
@@ -98,9 +98,9 @@
                                                         <input data-bind="value: confidence" type="hidden" id="confidenceValueInput"/>
                                                         <table class="confidenceDesTable">
                                                             <tr>
-                                                                <td>Not Sure</td>
-                                                                <td style="text-align: center">Strongly Belief</td>
-                                                                <td style="text-align: right">Confident</td>
+                                                                <td>Wrong</td>
+                                                                <td style="text-align: center">Not Sure</td>
+                                                                <td style="text-align: right">Correct</td>
                                                             </tr>
                                                         </table>
                                                         <div id="confidenceSlider" data-bind="slider: confidence, sliderOptions: {min: -1, max: 1, step: 0.1}"></div>
@@ -123,7 +123,7 @@
                                                 </div>
                                             </div>
                                             <div data-bind="visible: !yourComment() && !isYourCommentEditing()" class="addCommentContainer">
-                                                <div style="text-align: center; padding-top: 18px;">You have no comment of this relationship. <a data-bind="click: editComment">Click here to add your comment.</a></div>
+                                                <div style="text-align: center; padding-top: 18px;">You have no feedback of this relationship. <a data-bind="click: editComment">Click here to add your feedback.</a></div>
                                             </div>
                                             <div data-bind="if: yourComment()">
                                                 <div data-bind="template: { name: 'comment-template', data: yourComment }, visible: !isYourCommentEditing()" class="comment yourComment">                                             
@@ -143,7 +143,7 @@
                                                 </div>
                                                 <div class="commentBody">
                                                 <div class="commentHeader">                   
-                                                <div data-bind="text: userName" class="userName"></div>
+                                                <div class="userName"><a data-bind="text: userName, attr: { href: '{/literal}{$my_pligg_base}{literal}/user.php?login=' + userName()}"></a></div>
                                                 <div data-bind="text: '&lt;' + userEmail() + '&gt;'" class="userEmail"></div>
                                                 <div data-bind="visible: isControlPanelShown()" class="commentControlPanel">
                                                 <i data-bind="click: $parent.editComment" class="icon-edit"></i>

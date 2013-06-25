@@ -43,14 +43,55 @@ class RelationshipDAO {
 
         $linksSql = "select cl_from, cl_to from `colfusion_relationships_columns` where rel_id = '" . mysql_real_escape_string($relId) . "'";
         $linkInfos = $this->ezSql->get_results($linksSql);
+
+        foreach ($linkInfos as $linkInfo) {
+            $rawLinkParts[] = $linkInfo->cl_from;
+            $rawLinkParts[] = $linkInfo->cl_to;
+        }
+        $usedColumnNames = $this->getUsedColumnNames($rawLinkParts);
+
         foreach ($linkInfos as $linkInfo) {
             $link = new Link();
-            $link->fromPart = $linkInfo->cl_from;
-            $link->toPart = $linkInfo->cl_to;
+            $link->fromPart = $this->decodeLinkPart($linkInfo->cl_from, $usedColumnNames);
+            $link->toPart = $this->decodeLinkPart($linkInfo->cl_to, $usedColumnNames);
             $relationship->links[] = $link;
         }
 
         return $relationship;
+    }
+
+    // Decode cid(xxx) in link parts and return an array of used column names.
+    private function getUsedColumnNames(array $linkParts) {
+        foreach ($linkParts as $linkPart) {
+            preg_match_all('/cid\([0-9]+\)/', $linkPart, $matches);
+            foreach ($matches[0] as $match) {
+                $encodedCols[$match] = $match;
+            }
+        }
+        $encodedCols = array_keys($encodedCols);
+
+        $sql = "select cid, dname_chosen from `colfusion_dnameinfo` where 1=2";
+        foreach ($encodedCols as $encodedCol) {
+            $cid = substr($encodedCol, 4, strlen($encodedCol) - 5);
+            $sql .= " OR cid=$cid";
+        }
+
+        $colNameRows = $this->ezSql->get_results($sql);
+        foreach ($colNameRows as $colNameRow) {
+            $colNames[$colNameRow->cid] = $colNameRow->dname_chosen;
+        }
+
+        return $colNames;
+    }
+
+    private function decodeLinkPart($linkPart, $usedColumnNames) {
+        preg_match_all('/cid\([0-9]+\)/', $linkPart, $matches);
+        foreach ($matches[0] as $match) {
+            $cid = substr($match, 4, strlen($match) - 5);
+            $linkPart = str_replace("cid($cid)", "$usedColumnNames[$cid]", $linkPart);
+        }
+
+        return $linkPart;
     }
 
     public function getComments($relId) {
@@ -101,7 +142,7 @@ class RelationshipDAO {
     }
 
     public function updateComment($relId, $userId, $confidence, $comment) {
-       
+
         $relId = mysql_real_escape_string($relId);
         $userId = mysql_real_escape_string($userId);
         $confidence = mysql_real_escape_string($confidence);
@@ -130,15 +171,14 @@ class RelationshipDAO {
 
 function testRelDAO() {
     $datasetFinder = new DatasetFinder();
-    var_dump($datasetFinder->findDatasetInfoBySid(1495));
-    var_dump($datasetFinder->findDatasetInfoBySid(1487));
+    //var_dump($datasetFinder->findDatasetInfoBySid(1495));
+    //var_dump($datasetFinder->findDatasetInfoBySid(1487));
 
     $relDAO = new RelationshipDAO();
     var_dump($relDAO->getRelationship(752));
-    var_dump($relDAO->getComments(1454));
-    var_dump($relDAO->getComment(1462, 20));
-    
-    var_dump($relDAO->updateComment(1462, 20, 0.7, 'Test update'));
+    //var_dump($relDAO->getComments(1454));
+    //var_dump($relDAO->getComment(1462, 20));
+    //var_dump($relDAO->updateComment(1462, 20, 0.7, 'Test update'));
 }
 
 ?>
