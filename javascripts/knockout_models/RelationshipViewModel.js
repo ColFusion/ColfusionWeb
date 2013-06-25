@@ -32,6 +32,8 @@ function RelationshipViewModel(sid) {
             var currentPage = data.Control.pageNo;
 
             var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
+            console.log(transformedData);
+            console.log(data);
             for(var i=0 ; i<data.data.length ; i++){
                 self.isRelationshipInfoLoaded[data.data[i].rel_id] = ko.observable(false);
             }

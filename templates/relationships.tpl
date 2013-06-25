@@ -21,11 +21,11 @@
                         <tr>
                             <td>
                                 <div style="display: inline;"><a data-bind='attr: { href: "story.php?title=" + sidFrom }, text: titleFrom' > </a></div>.
-                                <div style="display: inline;"><span data-bind='text: newDnameFrom'/></div>
+                                <div style="display: inline;"><span data-bind='text: tableNameFrom'/></div>
                             </td>
                             <td>
                                 <div style="display: inline;"><a data-bind='attr: { href: "story.php?title=" + sidTo }, text: titleTo' > </a></div>.
-                                <div style="display: inline;"><span data-bind='text: newDnameTo'/></div>
+                                <div style="display: inline;"><span data-bind='text: tableNameTo'/></div>
                             </td>
                             <td>
                                 <div style="display: inline;"><span data-bind='text: creatorLogin'/></div>
