@@ -18,10 +18,12 @@ var RelationshipModel = {
         self.isCommentLoaded = {};
         self.isCommentLoading = ko.observable(false);
         self.isCommentHided = ko.observable(true);
+        self.isCommentLoadingError = ko.observable(false);
 
         self.yourComment = ko.observable();
         self.isYourCommentEditing = ko.observable(false);
         self.editingComment = ko.observable();
+        self.isSavingYourComment = ko.observable(false);
 
         function createDatasetModel(dsJson, tableName) {
             var dataset = new RelationshipModel.DataSet(dsJson.sid);
@@ -67,6 +69,7 @@ var RelationshipModel = {
 
         self.showComments = function() {
             self.isCommentHided(false);
+            self.isCommentLoadingError(false);
 
             if (!self.isCommentLoaded[self.rid]) {
                 self.isCommentLoading(true);
@@ -90,7 +93,9 @@ var RelationshipModel = {
                         self.isCommentLoading(false);
                     },
                     error: function(jqXHR, statusCode, errMessage) {
-                        alert(errMessage);
+                        self.isCommentLoading(false);
+                        self.isCommentLoadingError(true);
+                        self.isCommentLoaded[self.rid] = false;
                     }
                 });
             }
@@ -116,6 +121,7 @@ var RelationshipModel = {
         self.saveComment = function() {
             var action = self.yourComment() ? 'updateComment' : 'addComment';
             self.yourComment(cloneCommentModel(self.editingComment()));
+            self.isSavingYourComment(true);
             $.ajax({
                 url: 'datasetController/commentUpdater.php',
                 data: {
@@ -137,7 +143,10 @@ var RelationshipModel = {
                 self.yourComment(createCommentModel(data, true));
                 self.isYourCommentEditing(false);
             }).fail(function(jqXHR, statusCode, errMessage) {
-                alert(errMessage);
+                self.isCommentLoadingError(true);
+                self.isCommentLoaded[self.rid] = false;
+            }).always(function() {
+                self.isSavingYourComment(false);
             });
         };
 

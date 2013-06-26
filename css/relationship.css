@@ -41,6 +41,10 @@
     float: left;
 }
 
+.linkProfileContent a {
+    color: black;
+}
+
 .links {
     padding: 0px 8px 18px 5px;
     border-width: 0;
@@ -140,6 +144,11 @@
     margin-top: 8px;
     display: block;
     text-align: center;
+}
+
+.commentErrorMsg {
+    margin-top: 5px;
+    margin-bottom: 0 !important;
 }
 
 .commentBody{

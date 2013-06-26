@@ -1,3 +1,13 @@
+ko.bindingHandlers.bootstrapTooltip = {
+    init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        $(element).tooltip({title: $(element).text()});
+        $(element).text(valueAccessor());
+    },
+    update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        $(element).text(valueAccessor());
+    }
+};
+
 function RelationshipViewModel(sid) {
     var self = this;
 

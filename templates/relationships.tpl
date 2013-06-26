@@ -14,7 +14,7 @@
                             <th>From</th>
                             <th>To</th>
                             <th>Creator</th>
-                            <th>Stat</th>
+                            <th>Statistics</th>
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: rawData">                            
@@ -31,10 +31,8 @@
                                 <div style="display: inline;"><span data-bind='text: creatorLogin'/></div>
                             </td>
                             <td>
-                                <div style="display: inline;"><span data-bind='text: numberOfVerdicts'/></div>,
-                                <div style="display: inline;"><span data-bind='text: numberOfApproved'/></div>,
-                                <div style="display: inline;"><span data-bind='text: numberOfReject'/></div>,
-                                <div style="display: inline;"><span data-bind='text: avgConfidence'/></div>
+                                <div style="display: inline;"><span data-bind='bootstrapTooltip: numberOfVerdicts'/>Number of Feedbacks</div>, 
+                                <div style="display: inline;"><span data-bind='bootstrapTooltip: parseFloat(Math.round(avgConfidence * 100) / 100).toFixed(2)'/>Average Confidence</div>
                             </td>
                             <td><span data-bind="click: $root.showMoreClicked.bind($data, rel_id), attr: { id:  'mineRelRecSpan_' + rel_id }" style="cursor: pointer;">More...</span></td>
                         </tr>
@@ -63,7 +61,9 @@
                                                 </tr>
                                                 <tr>
                                                 <td class="linkProfileHeader">Dataset:</td>
-                                                <td class="linkProfileContent" data-bind='text: name'></td>
+                                                <td class="linkProfileContent">
+                                                <a data-bind="text: name, attr: {href: '{/literal}{$my_pligg_base}{literal}/story.php?title=' + sid()}"></a>
+                                                </td>
                                                 </tr>
                                                 <tr>
                                                 <td class="linkProfileHeader">Table:</td>
@@ -89,7 +89,10 @@
                                         <div data-bind="visible: !isCommentHided() && isCommentLoading()" style="text-align: center; padding-top: 7px;">
                                             <img src="images/ajax-loader.gif"/>
                                         </div>
-                                        <div data-bind="visible: !isCommentHided() && !isCommentLoading()" class="commentContainer">
+                                        <div data-bind="visible: isCommentLoadingError()" class="alert alert-error commentErrorMsg">
+                                            Some errors occur when loading feedbacks, please try again.
+                                        </div>
+                                        <div data-bind="visible: !isCommentHided() && !isCommentLoading() && !isCommentLoadingError()" class="commentContainer">
                                             <div data-bind="with: editingComment" class="yourCommentEditor">
                                                 <div data-bind="visible: $parent.isYourCommentEditing()" id="confidenceContainer">
                                                     <div id="confidenceSliderContainer">
@@ -116,6 +119,7 @@
                                                         <div style="margin-bottom: 10px">Confidence comment:</div>
                                                         <textarea data-bind="value: comment" data-required="true" style=" width: 95%; height: 80px;resize: none;"></textarea>
                                                         <div style="float: right; margin-right: 6px;">
+                                                            <span data-bind="visible: $parent.isSavingYourComment()" style="margin-right: 10px;"><img src="images/ajax-loader.gif"/></span>
                                                             <button data-bind="click: $parent.saveComment" class="btn btn-primary">Save</button>
                                                             <button data-bind="click: $parent.cancelEditingComment" class="btn">Cancel</button>
                                                         </div>
