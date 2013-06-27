@@ -345,7 +345,7 @@ var importWizard = (function() {
                     dataPreviewViewModel.getTablesList();
 
                     //TODO: good candidate for ko
-                    dataPreviewViewModel.mineRelationships(10, 1);
+                    relationshipViewModel.mineRelationships(10, 1);
 
                     wizard.hideButtons();
                     wizard._submitting = false;

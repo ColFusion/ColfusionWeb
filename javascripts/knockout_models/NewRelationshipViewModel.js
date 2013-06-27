@@ -113,7 +113,6 @@ ko.bindingHandlers.multipleTypeahead = {
         var dropdownListSource = $.map(rawDataColumns, function(rawObj, index) {
             return rawObj.dname_chosen;
         });
-        console.log(dropdownListSource);
 
         function split(val) {
             return val.split(/\s+/);
@@ -218,12 +217,7 @@ function NewRelationshipViewModel() {
         self.isAddingFailed(false);
         var fromDateColumns = getSentFromData();
         var toDateColumns = getSentToData();
-        console.log(self.name());
-        console.log(self.description());
-        console.log(fromDateColumns);
-        console.log(toDateColumns);
-        console.log(self.confidenceValue());
-        console.log(self.confidenceComment());
+     
         $.ajax({
             type: 'POST',
             url: "visualization/VisualizationAPI.php?action=AddRelationship",
