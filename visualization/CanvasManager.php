@@ -7,61 +7,6 @@
 	include('../'.mnminclude.'user.php');
 	include('../'.mnminclude.'smartyvariables.php');
 	include('Canvas.php');
-	/****************
-	  force login
-	****************/
-	global $current_user;
-	if($current_user->authenticated != TRUE) {
-		echo "not log in";
-		echo $_SERVER['REQUEST_URI'];
-		header("Location: " . $my_base_url . $my_pligg_base . "/login.php?return=" . $_SERVER['REQUEST_URI']);
-	}
-	/***********************	
-	  get dataset title No
-	***********************/
-	$titleNum = $_GET['title'];
-	$where = $_GET['where'];
-	
-	
-	$userid = $current_user->user_id;
-	$sqlVis = "SELECT * FROM colfusion_visualization WHERE userid = '" . $userid . "' ";
-	if($titleNum) {
-		$sqlVis .= " AND titleno = '" . $titleNum . "' ";
-	}
-	else {
-		$titleNum = 0;
-	}
-	$rstVis = $db->get_results($sqlVis);
-	$visGadgets = array();
-	foreach($rstVis as $row)
-	{	
-		$visGadgets[] = $row;
-	}
-
-	/*****************
-	  get column names
-	******************/
-	//$res = $db->query("call doJoin('" . $titleNum . "')");
-
-	$columns = array("OBJECTID", "FID_precip", "YEAR", "MONTH", "COUNTRY", "LATITUDE", "LONGITUDE", "PRECIPITAT", "STATE", "disease", "totalNumber");
-	
-	/***********************	
-	  get sql style and excel style table columns
-	***********************/	
-	//sql style table columns
-	$sql_columns = array();
-	$column_types = array();
-
-	//excel style table columns
-	$excel_columns = array();
-
-	//columns for charts like pie, combo
-	$chart_columns = array();
-
-	//date columns
-	$date_columns = array();
-	
-	$chart_columns[] = "Location";
 	
 ?>
 
@@ -123,17 +68,15 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<div class="brand" id="brand">Col*Fusion Canvas Manager</div>
+					<div class="brand" id="brand">Col*Fusion Visualization</div>
 					<div class="nav-collapse collapse">
 						<ul class="nav">
-							<li class="dropdown" id="file-dropdown" style="display: none">
+							<li class="dropdown" id="file-dropdown">
 								<a href="#visualization" class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><a onclick="openCanvasManager()">Canvas Manger</a></li>
 									<li><a href="#newCanvas" data-toggle="modal">New</a></li>
 									<li><a href="#open" data-toggle="modal">Open</a></li>
 									<li><a href="#share" data-toggle="modal">Share</a></li>
-									
 								</ul>
 							</li>
 							<li class="dropdown" id="chart-dropdown">
@@ -162,8 +105,6 @@
 						</ul>
 						<!--<button class="btn" name="save" id="save">Save</button>-->
 						<button class="btn" name="testSave" id="testSave" onclick="saveCanvas()">Save</button>
-						<!--<button class="btn" name="testSave" id="testDelete" onclick="testDelete()">TestDelete</button>-->
-						<!--<button class="btn" name="testShare" id="testShare" onclick="testShare()">TestShare</button>-->
 						<input type="hidden" id="titleNo" value="<?php echo $titleNum ?>"/>
 						<input type="hidden" id="where" value="<?php echo $where ?>"/>
 						<input type="hidden" id="userid" value="<?php echo $current_user->user_id;?>">
@@ -174,50 +115,6 @@
 			</div>
 		</div>
 
-		<div id="file_manager" >
-		
-		<div class="alert alert-info">
-			<strong>How To Use Search:</strong>
-			Use the initial letters of CANVAS NAME , OWNER'S NAME or OWNER'S NAME + CANVAS NAME of THAT OWNER to filter.   
-		</div>
-				
-				<div id="filter_section">
-			
-				<div id = "charts_section" class = 'round' style="display:none">
-					<div id = "display_charts">			
-					</div>
-					<div id = "openbutton_section">
-						<button id="openButton" class="btn btn-info" type="button" > OpenCanvas </button>
-					</div>	
-				</div>
-			
-					<div id="authorization_filter" class='round'>
-						<ul class="nav nav-list">
-							<li class="nav-header">Authorization Filter:</li>
-							<li onclick = "autFilter(1)"><a href="#">Readable</a></li>
-							<li onclick = "autFilter(2)"><a href="#">Modifiable</a></li>
-							<li onclick = "autFilter(3)"><a href="#">User Owned</a></li>
-						</ul>
-					</div>
-					<div id="date_filter" class='round' >
-						<p class = "nav-header">Data Filter:</p>
-						<p class = "nav-header">Start From:</p>
-						<input type="text" id="dateBeginningPicker" onclick = "pickDate()" style="width:auto">
-						<p class = "nav-header">End with:</p>
-						<input type="text" id="dateEndingPicker" onclick = "pickDate()" style="width:auto">
-						
-					</div>
-					
-				</div>
-				<div id ="button_section" class='round'>
-					<label class="nav-header" style="float:left">Search Canvas By Canvas Name Or By Owner: </label>
-					<input type="text" style="width:auto" onkeyup="showHint(this.value)" onfocus="showHint(this.value)" name="searchText">
-					<button id = "deleteButton" class="btn btn-info" type="button" > DELETE </button>
-					
-				</div>
-				<div id="display_section" class='round'>
-				</div>
-		</div>
 		<!--New Canvas -->
 		<div id="newCanvas" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="motionAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
@@ -225,10 +122,7 @@
 				<h3 id="motionAddModalLabel">Create a new canvas</h3>
 			</div>
 			<div class="modal-body">
-				<table>
-					<tr><td>Name : </td><td><input type="text" class="span2" id="createCanvasName"></td></tr>
-					<tr><td>Comment: </td><td><textarea rows="4" style="width: 400px"></textarea></td></tr>
-				</table>
+				Name : <input type="text" class="span2" id="createCanvasName">
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -671,7 +565,7 @@
 					<div class="tab-pane active" id="Canvas">
 						<div class="seachArea"> 
 						     <label class = "tabContentTitle" style = "float:left">Search Canvas By Name:   </label>
-						     <input type="text"  name="searchText" onfocus = "showHintOpenCanvas(this.value)" onkeyup = "showHint(this.value)" style = "width:auto"></input>
+						     <input type="text"  name="searchText" onfocus = "showHint(this.value)" onkeyup = "showHint(this.value)" style = "width:auto"></input>
 						</div>
 						
 						<div id="pickArea"> 
@@ -769,7 +663,7 @@
 		</div>
 
 
-		<!-- Canvas Information -->
+		<!-- Chart Results -->
 		<div class="container">
                     <input type="hidden" id="vid" value=""/>
                     <input type="hidden" id="canvasName" value=""/>
@@ -780,17 +674,7 @@
                     <input type="hidden" id="note" value=""/>
                     <div class="chart-area">
                         
-                </div>
-		    
-		<!-- Success Alert -->
-		<div class="alert alert-success" id="success-alert" style="display: none">
-			
-		</div>
-		
-		<!-- Error Alert-->
-	        <div class="alert alert-error" id="error-alert" style="display: none">
-			
-		</div>
+                    </div>
 
 		</div> <!-- /container -->
 	</body>

@@ -1,6 +1,12 @@
 var xmlHttp;
-function showHint(str){
+var d = new Date();
+var vYear = d.getFullYear();
+var vMon = d.getMonth() + 1;
+var vDay = d.getDate();
 
+function showHint(str){
+	
+	$("#authorization_filter li").removeClass('active');
 	xmlHttp=new XMLHttpRequest();
 	var url="contentResponse.php";
 		url=url+"?content="+str;
@@ -8,14 +14,21 @@ function showHint(str){
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send(null);
 }
-
-function stateChanged(){
+function showHintOpenCanvas(str) {
+	$("#authorization_filter li").removeClass('active');
+	xmlHttp=new XMLHttpRequest();
+	var url="contentResponse.php";
+		url=url+"?content="+str;
+	xmlHttp.onreadystatechange=stateChangedOpenChart;
+	xmlHttp.open("GET",url,true);
+	xmlHttp.send(null);
+}
+function stateChangedOpenChart(){
 	if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
 	 { 
 	 document.getElementById("pickArea").innerHTML=xmlHttp.responseText;
 	 }
 }
-
 $(document).ready(function(){
 	if ($('#vid').val()==null||$('#vid').val()=='') {
 		$('#testSave').hide();
@@ -24,8 +37,91 @@ $(document).ready(function(){
 		$('#view-dropdown').hide();
 	}
 });
+function stateChanged(){
+	if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
+	 { 
+	 document.getElementById("display_section").innerHTML=xmlHttp.responseText;
+	 }
+	
+	$("td.tableadjust").mouseover(function(){
+		$(this).parent().children("td").css({"background-color":"#0088CC","color":"white"});
+	}).mouseout(function(){
+		$(this).parent().children("td").css({"background-color":"#F5F5F5","color":"#0088CC"});
+	}).click(function(){
+		var vid = $(this).parent().attr('id').split("**")[0];
+		var vname = $(this).parent().attr('name');
+		openCharts(vid,vname);
+	});
+	
+	returnNormal();
+
+}
+
+
+function autFilter(id){
+	$("#result_table tbody tr").hide();
+	$(".authorizationLevel"+id).show();
+	
+}
+
+function pickDate(){
+	
+	var str = vMon+"/"+vDay+"/"+vYear;
+	
+	$(this).dialog({
+		 open: function() {
+             $('#myDate').datepicker({title:'Test Dialog'}).blur();
+         },
+         close: function() {
+             $('#myDate').datepicker('destroy');
+         }
+	});
+	
+}
+
+function overCanvasEffect(id){
+	$("#"+id).css({"background-color":"#0088CC","color":"white"});
+}
+
+function outCanvasEffect(id){
+	$("#"+id).css({"background-color":"#F5F5F5","color":"#0088CC"});
+}
 
 $(function() {
+	
+	$("#deleteButton").click(
+			function(){
+					$("[name='deleteItem']").each(function(){
+						 if($(this).is(":checked"))
+						   {
+							$itemId = $(this).parent().parent().attr("id");
+							$itemId = $itemId.split("**")[0];
+						    $(this).removeAttr("checked");
+						   }
+					})
+					
+					$.ajax({
+					  type: "GET",
+					  url: "control.php?action='delete'&vid="+$itemId,
+					  async:true,
+					})
+					
+				}
+					
+			)
+	
+
+	$("li").click(
+		function(){
+			if (!$(this).hasClass("active")){
+				$("ul li[class='active']").removeClass("active");
+				$(this).addClass("active");
+			}	
+			
+		}
+	)
+	
+	
 	
 	$(".gadget" )
 		.draggable({ handle: ".gadget-header" })

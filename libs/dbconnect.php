@@ -1,6 +1,6 @@
 <?php
-define("EZSQL_DB_USER", 'dataverse');
-define("EZSQL_DB_PASSWORD", 'dataverse');
+define("EZSQL_DB_USER", 'root');
+define("EZSQL_DB_PASSWORD", 'pp47745862');
 define("EZSQL_DB_NAME", 'colfusion');
 define("EZSQL_DB_HOST", 'localhost');
 if (!function_exists('gettext')) {
