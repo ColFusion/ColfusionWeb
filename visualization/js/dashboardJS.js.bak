@@ -4,41 +4,6 @@ var vYear = d.getFullYear();
 var vMon = d.getMonth() + 1;
 var vDay = d.getDate();
 
-function saveConfig(){
-	var aut = $("#shareAuthorization").val();
-	
-}
-
-function everyUser(){
-	
-}
-
-function showChart(type){
-
-	$("#openchart").modal("hide");
-	
-	switch (type){
-	case 'pie':
-		drawPies("");
-		break;
-	case 'motion':
-		drawMotions("");
-		break;
-	case 'map':
-		drawMaps("");
-		break;
-	case 'table':
-		drawTables("");
-		break;
-	case 'combo':
-		drawCombos("");
-		break;
-	case 'column':
-		drawColumns("");
-		break;
-	}
-}
-
 function showHint(str){
 	
 	$("#authorization_filter li").removeClass('active');
@@ -49,7 +14,29 @@ function showHint(str){
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send(null);
 }
-
+function showHintOpenCanvas(str) {
+	$("#authorization_filter li").removeClass('active');
+	xmlHttp=new XMLHttpRequest();
+	var url="contentResponse.php";
+		url=url+"?content="+str;
+	xmlHttp.onreadystatechange=stateChangedOpenChart;
+	xmlHttp.open("GET",url,true);
+	xmlHttp.send(null);
+}
+function stateChangedOpenChart(){
+	if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
+	 { 
+	 document.getElementById("pickArea").innerHTML=xmlHttp.responseText;
+	 }
+}
+$(document).ready(function(){
+	if ($('#vid').val()==null||$('#vid').val()=='') {
+		$('#testSave').hide();
+		//$('#file-dropdown').hide();
+		$('#chart-dropdown').hide();
+		$('#view-dropdown').hide();
+	}
+});
 function stateChanged(){
 	if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
 	 { 
@@ -70,13 +57,7 @@ function stateChanged(){
 
 }
 
-$(document).ready(function(){
-	if($('#vid').val()==null||$("#vid").val()==''){
-		$("#testSave").hide();
-		$("#chart-dropdown").hide();
-		$("#view-dropdown").hide();
-	}
-})
+
 function autFilter(id){
 	$("#result_table tbody tr").hide();
 	$(".authorizationLevel"+id).show();

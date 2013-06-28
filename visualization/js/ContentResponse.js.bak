@@ -4,7 +4,6 @@ prePage = 0;
 nextPage = 0;
 totalPage = 0;
 var tabledata;
-
 function openCharts(vid,vname){
 	$("#filter_section").children("div").hide();
 	$("#charts_section").show();
@@ -23,7 +22,7 @@ function openCharts(vid,vname){
 				    for(var i in _data['charts']){
 				    	var temp = _data['charts'][i];
 				    	result = temp;
-				    		$("#charts_section ul").append('<li><a onclick = "setType('+temp['type']+')" href="#openchart" data-toggle="modal">'+temp['name']+'</a></li>');
+				    		$("#charts_section ul").append('<li><a href="#openchart" data-toggle="modal">'+temp['name']+'</a></li>');
 				    }
 				    $("#charts_section li").last().append('</ul>');
 				}
@@ -47,14 +46,11 @@ function returnNormal(){
 	$("#date_filter").show();
 	$(".alert-info").html("<strong>How To Use Search:</strong>Use the initial letters of CANVAS NAME , OWNER'S NAME or OWNER'S NAME + CANVAS NAME of THAT OWNER to filter.   ");
 }
-
 function openCanvas(vid){
 	
 	var s = confirm("Save The Current Canvas????");
 	$("#open").modal('hide');
 	clearScreen();
-	$("#file_manager").hide();
-	
 	$.ajax(
 		{
 			url:"control.php",
@@ -256,6 +252,7 @@ function drawTables(){
 
 }
 function clearScreen(){
+	$("#file_manager").hide();
 	$(".gadget").remove();
 }
 function addPieChart() {

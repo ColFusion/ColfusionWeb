@@ -49,9 +49,7 @@ echo '
 $id=0;
 foreach ($result as $row){
 	$id++;
-	
-	$insertIcon = ($row->privilege == 0)?'&nbsp&nbsp&nbsp<a href = "#shareWith" data-toggle="modal"><i class="icon-share"></i></a>':'';
-	echo '<tr name = "'.$row->name.'" style="color:#0088CC" id = "'.$row->vid.'**'.$row->mdate.'" class = "turnBlue authorizationLevel'.$row->privilege.'"><td  class="tableadjust gridEffect" >'.$row->name.'</td><td class="tableadjust gridEffect">'.$row->user_login.'</td><td class="tableadjust gridEffect">'.$privilege[$row->privilege].$insertIcon.'</td><td class="tableadjust">'.$row->mdate.'</td><td><input name="deleteItem" type="checkbox"></td></tr>';
+	echo '<tr name = "'.$row->name.'" style="color:#0088CC" id = "'.$row->vid.'**'.$row->mdate.'" class = "turnBlue authorizationLevel'.$row->privilege.'"><td  class="tableadjust gridEffect" >'.$row->name.'</td><td class="tableadjust gridEffect">'.$row->user_login.'</td><td class="tableadjust gridEffect">'.$privilege[$row->privilege].'</td><td class="tableadjust">'.$row->mdate.'</td><td><input name="deleteItem" type="checkbox"></td></tr>';
 }
 echo '</tbody></table>';
 mysql_close($con);

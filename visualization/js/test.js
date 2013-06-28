@@ -41,6 +41,7 @@ function saveTest() {
         })
 }
 function createNewCanvas() {
+	$("#file_manager").hide();
     var _name = $("#createCanvasName").val();
     $.ajax({
         type: 'POST',
