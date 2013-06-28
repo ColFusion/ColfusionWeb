@@ -108,6 +108,7 @@ function outCanvasEffect(id){
 
 $(function() {
 	
+	var vids=new Array();
 	$("#deleteButton").click(
 			function(){
 					$("[name='deleteItem']").each(function(){
@@ -116,13 +117,20 @@ $(function() {
 							$itemId = $(this).parent().parent().attr("id");
 							$itemId = $itemId.split("**")[0];
 						    $(this).removeAttr("checked");
+						    vids.push($itemId);
 						   }
 					})
 					
 					$.ajax({
-					  type: "GET",
-					  url: "control.php?action='delete'&vid="+$itemId,
+					  type: "POST",
+					  url: "control.php",
+					  data:{
+						  action:'deleteCanvas',
+						  vids:vids  
+					  },
 					  async:true,
+					}).done(function(){
+						showHint("");
 					})
 					
 				}

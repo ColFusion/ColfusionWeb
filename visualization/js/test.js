@@ -64,7 +64,8 @@ function createNewCanvas() {
             $('#cdate').val(JSONResponse['cdate']);
             $('#note').val(JSONResponse['note']);
             $('#testSave').show();
-	    $('#chart-dropdown').show();
+            $('#file-dropdown').show();
+            $('#chart-dropdown').show();
             $('#view-dropdown').show();
             $('#brand').text(JSONResponse['name']);
         }
