@@ -249,7 +249,7 @@ function addPieChart() {
             type: 'pie',
             width: 400,
             height: 300,
-            depth: maxDepth++,
+            depth: ++maxDepth,
             top: 50,
             left: 0,
             note: 'dfdff',

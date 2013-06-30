@@ -90,62 +90,34 @@ function loadTableData(type, vid){
 }
 
 function drawTable(){
-	var datainfo = {'tableColumns':tableColumns, 'perPage':perPage, 'currentPage':currentPage, 'titleNo':titleNo, 'where':where};
-	$.ajax({
-		type: 'POST',
-		url: "control.php",
-		data:{
-            action: 'addChart',
-            name: 'bdfdfd',
-            vid: $('#vid').val(),
-            type: 'table',
-            width: 1200,
-            height: 600,
-            depth: maxDepth++,
-            top: 50,
-            left: 0,
-            note: 'dfdff',
-            datainfo: datainfo
-			},
-		success: function(JSON_Response){
-			
-			JSON_Response = JSON_Response["queryResult"];
-			result = JSON_Response;
-			// alert(JSON_Response["Control"]["perPage"]);
-			// alert(JSON_Response["Control"]["totalPage"]);
-			// alert(JSON_Response["Control"]["pageNo"]);
-			// alert(JSON_Response["Control"]["cols"]);
-			totalPage = JSON_Response["Control"]["totalPage"];
-			var JSONResponse = JSON_Response["data"];
-			data = new google.visualization.DataTable();
-			//data.addColumn('string', 'rownum');
-			for(i=0; i<tableColumns.length; i++){
-				data.addColumn('string', tableColumns[i]);
-			}
-			for(i=0 ; JSONResponse[i]!=null ; i++){
-				data.addRow();
-				data.setCell(i, 0, String(JSONResponse[i]["rownum"]));
-				for(k=0; k<tableColumns.length; k++) {
-					//data.setCell(i, k+1, String(JSONResponse[i][tableColumns[k]]));
-					data.setCell(i, k, String(JSONResponse[i][tableColumns[k]]));
-				}
-			}
-			tabledata = data;
-			$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);	
-			gadgetProcess(gadgetID,'tablechart','table','note','datainfo');
-			generateTable(gadgetID);
-			initPageSelect();
-			
-		},
-		dataType: 'json',
-		async:false
-	});
-
+	createNewTable();
+	JSON_Response = result;
+	var queryResult = JSON_Response["queryResult"];
+	totalPage = queryResult["Control"]["totalPage"];
+	var color = queryResult["Control"]["color"];
+	var resulData = queryResult["data"];
+	data = new google.visualization.DataTable();
+	var tableColumns = queryResult['column'];
+	for(i=0; i<tableColumns.length; i++){
+		data.addColumn('string', tableColumns[i]);
+	}
+	for(i=0 ; resulData[i]!=null ; i++){
+		data.addRow();
+		data.setCell(i, 0, String(resulData[i]["rownum"]));
+		for(k=0; k<tableColumns.length; k++) {
+			data.setCell(i, k, String(resulData[i][tableColumns[k]]));
+		}
+	}
+	tabledata = data;
+	$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);	
+	gadgetProcess(gadgetID,'tablechart','table','note','datainfo');
+	generateTable(gadgetID,color);
+	initPageSelect();
 	$("div[name='tableDivs']").resize(function() {
 		tempid = $(this).attr("id");
 		$("#tableResult" + tempid).height($("#" + tempid).height() - 100);
         generateTable(tempid);
-    });			
+	});			
 	
 }
 
@@ -203,20 +175,20 @@ function changePage(page,vid){
 	drawTable();
 }
 
-function generateTable(a){
+function generateTable(a,_color){
     //alert("generate" + a);
     var googleTable = {
         'headerRow': 'header-row',
         'tableRow': 'table-row',
-        'oddTableRow': 'odd-table-row-' + color,
-        'selectedTableRow': 'selected-table-row-' + color,
+        'oddTableRow': 'odd-table-row-' + _color,
+        'selectedTableRow': 'selected-table-row-' + _color,
         'hoverTableRow': 'hover-table-row',
-        'headerCell': 'header-cell-' + color,
-        'tableCell': 'table-cell-' + color,
+        'headerCell': 'header-cell-' + _color,
+        'tableCell': 'table-cell-' + _color,
         'rowNumberCell': 'row-number-cell'};
-    var options = {'showRowNumber': false, 'allowHtml': true, 'cssClassNames': googleTable};
-    var table = new google.visualization.Table(document.getElementById('tableResult' + a));
-    table.draw(tabledata, options);
+	var options = {'showRowNumber': false, 'allowHtml': true, 'cssClassNames': googleTable};
+	var table = new google.visualization.Table(document.getElementById('tableResult' + a));
+	table.draw(tabledata, options);
 	
 	/*
 	$("div[name='tableDivs']").resize(function() {
@@ -235,7 +207,7 @@ function createNewTable(){
 	gadget += "<div class='gadget-header'>Table" + gadgetID;
 	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>";
 	gadget += "<div class='gadget-edit edit-table'><a href='#editTable' data-toggle='modal'><i class='icon-edit'></i></a></div> </div>";
-    gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";
+	gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='tableControl" + gadgetID + "' style='width:100%; '>";
 	gadget += "<select id='pages" + gadgetID + "' style='width: 100px; margin-top: 10px;'></select> ";
@@ -250,7 +222,7 @@ function createNewTable(){
 		.resizable();
 	
 	$(".gadget-close").click(function() {	
-		$(this).parent().parent().hide();
+		$(this).parent().parent().remove();
 	})
 	
 	activatePageSelect(gadgetID);
@@ -266,6 +238,7 @@ function createNewTable(){
 	
 	var dropdown = "<li class='view' id='view" + gadgetID + "'><a href='#' data-toggle='modal'>'table' "+gadgetID+"</a></li>";
 	$("#chartview").append(dropdown);
+	return gadgetID;
 	
 }
 
@@ -288,4 +261,53 @@ function activatePageSelect(ID){
 		$("#pages"+gadgetID).val(newPageNO)
 		changePage(newPageNO, gadgetID);	
 	})
+}
+function addTableChart() {
+        var gadgetID = vid;
+	var titleNo = $("#titleNo").val();
+	var where = $("#where").val();
+	var settings = "";
+	var perPage = "";
+        var color = "";
+        var currentPage = "";
+	perPage = $('input:radio[name="page"]:checked').val(); // number of turples per page
+	color = $('input:radio[name="color"]:checked').val(); // color of the new table		
+	currentPage = $('input:hidden[name="currentPage"]').val();
+		//display = $('input:radio[name="display"]:checked').val();
+	tableColumns = new Array();
+	$.each($("input[name='tableColumns']:checked"), function(){
+		tableColumns.push($(this).val()); // columns to show
+		settings += "," + $(this).val();
+	});		
+        settings = settings.substring(1) + ";";	
+        settings += perPage + ";";
+        settings += color + ";";
+	
+	
+	var datainfo = {'tableColumns':tableColumns, 'perPage':perPage, 'currentPage':currentPage, 'titleNo':titleNo, 'where':where};
+	$.ajax({
+		type: 'POST',
+		url: "control.php",
+		data:{
+		action: 'addChart',
+		name: 'bdfdfd',
+		vid: $('#vid').val(),
+		type: 'table',
+		width: 1200,
+		height: 600,
+		depth: ++maxDepth,
+		top: 50,
+		left: 0,
+		note: 'dfdff',
+		datainfo: datainfo},	
+		success: function(JSON_Response){
+		    //$('#setting' + gadgetID).val(settings);
+		    JSONResponse = jQuery.parseJSON(JSON_Response);
+		    var cid = JSONResponse['cid'];
+		    var queryResult = JSONResponse['queryResult'];
+		    result = JSONResponse;
+		    drawTable();
+		    $('#addTable').modal('hide');
+		    }
+		})	
 }

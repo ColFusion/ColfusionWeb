@@ -112,27 +112,27 @@ $(function() {
 	var vids=new Array();
 	$("#deleteButton").click(
 			function(){
-					$("[name='deleteItem']").each(function(){
-						 if($(this).is(":checked"))
-						   {
-							$itemId = $(this).parent().parent().attr("id");
-							$itemId = $itemId.split("**")[0];
-						    $(this).removeAttr("checked");
-						    vids.push($itemId);
-						   }
-					})
-					
-					$.ajax({
-					  type: "POST",
-					  url: "control.php",
-					  data:{
-						  action:'deleteCanvas',
-						  vids:vids  
-					  },
-					  async:true,
-					}).done(function(){
-						showHint("");
-					})
+				$("[name='deleteItem']").each(function(){
+					 if($(this).is(":checked"))
+					   {
+						$itemId = $(this).parent().parent().attr("id");
+						$itemId = $itemId.split("**")[0];
+					    $(this).removeAttr("checked");
+					    vids.push($itemId);
+					   }
+				})
+				
+				$.ajax({
+				  type: "POST",
+				  url: "control.php",
+				  data:{
+					  action:'deleteCanvas',
+					  vids:vids  
+				  },
+				  async:true,
+				}).done(function(){
+					showHint("");
+				})
 					
 				}
 					
