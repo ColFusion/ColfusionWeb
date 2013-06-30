@@ -165,7 +165,6 @@ function createNewPie(){
 		    editGadgetID = $(this).parent().parent().attr('id');
 		    var oldSettings = $('#setting'+editGadgetID).val(); 
 		    var n = oldSettings.split(";");
-	    
 		    var oldColumn = n[1];// column
 		    $("input:radio[name='pieColumnEdit']").each(function(j){
 			    if($(this).val() == oldColumn) {

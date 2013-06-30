@@ -54,8 +54,7 @@ function addChart(){
     $canvas = unserialize($_SESSION['Canvases'][$_REQUEST['vid']]);
     $chart = $canvas->addChart($_REQUEST['name'], $_REQUEST['type'], $_REQUEST['left'], $_REQUEST['top'], $_REQUEST['depth'], $_REQUEST['height'], $_REQUEST['width'], $_REQUEST['datainfo'], $_REQUEST['note']);
     $rst = array();
-    $rst['cid'] = $chart->cid;
-    $rst['queryResult'] = $chart->queryResult;
+    $rst = $chart->printToArray();
     echo json_encode($rst);
 }
 

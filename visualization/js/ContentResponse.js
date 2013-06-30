@@ -4,6 +4,7 @@ prePage = 0;
 nextPage = 0;
 totalPage = 0;
 var tabledata;
+var maxDepth;
 
 function openCharts(vid,vname){
 	$("#filter_section").children("div").hide();
@@ -60,7 +61,7 @@ function openCanvas(vid){
 			url:"control.php",
 			data:{vid:vid,s:s,action:'openCanvas'},
 			success:function(data){
-				
+				maxDepth = -1;
 			
 			  /*  google.setOnLoadCallback(drawPie);*/
 				
@@ -104,6 +105,7 @@ function openCanvas(vid){
 				$('#cdate').val(_data['cdate']);
 				$('#note').val(_data['note']);
 				$('#brand').text(_data['name']);
+				
 			}	 
 		});
 	}
@@ -189,13 +191,18 @@ function drawPies(){
 }
 
 function gadgetProcess(gadgetID,name,type,note,datainfo){
-	
 	$("#"+gadgetID).css({"position":"absolute","top":result["top"]+"px","left":result["left"]+"px","z-index":result["depth"]});
 	$("#"+gadgetID).append("<input type='hidden' class='chartName' name = 'chartName 'value = '"+name+"'>");
 	$("#"+gadgetID).append("<input type='hidden' class='chartNote'name = 'chartNote 'value = '"+note+"'>");
 	$("#"+gadgetID).append("<input type='hidden' class='type' name = 'type 'value = '"+type+"'>");
 	$("#"+gadgetID).append("<input type='hidden' class='datainfo' name = 'datainfo 'value = '"+datainfo+"'>");
 	$("#"+gadgetID).append("<input type='hidden' class='chartID' name = 'chartID 'value = '"+result['cid']+"'>");
+	$("#"+gadgetID).click(function (){
+		$("#"+gadgetID).css({"z-index":++maxDepth})			
+	})
+	if (parseInt(result['depth'])>maxDepth) {
+		maxDepth = parseInt(result['depth']);
+	}
 }
 
 function drawColumns(){
@@ -271,7 +278,7 @@ function addPieChart() {
             type: 'pie',
             width: 400,
             height: 300,
-            depth: 2,
+            depth: maxDepth++,
             top: 50,
             left: 0,
             note: 'dfdff',
@@ -280,7 +287,7 @@ function addPieChart() {
         success:function(JSON_Response){
             JSONResponse = jQuery.parseJSON(JSON_Response);
 	    var cid = JSONResponse['cid'];
-	    var queryResult = jQuery.parseJSON(JSONResponse['queryResult']);
+	    var queryResult = JSONResponse['queryResult'];
 	    result = JSONResponse;
 	    drawPies();
 	    $('#addPie').modal('hide');

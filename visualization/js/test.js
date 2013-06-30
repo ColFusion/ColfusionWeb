@@ -55,6 +55,7 @@ function createNewCanvas() {
         success:function(JSON_Response){
             clearScreen();
             var JSONResponse = jQuery.parseJSON(JSON_Response);
+            maxDepth = -1;
             $('#newCanvas').modal('hide');
             $('#vid').val(JSONResponse['vid']);
             $('#canvasName').val(JSONResponse['name']);

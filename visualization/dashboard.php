@@ -270,7 +270,7 @@
 		</div>
 		
 		
-		 	<!-- Add Table Modal -->
+		<!-- Chart Display Modal-->
 		<div id="openchart" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
@@ -297,7 +297,7 @@
 		</div>
 		
 		
-	    	<!-- Add Table Modal -->
+	    	<!-- Open Canvas Modal -->
 		<div id="open" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>

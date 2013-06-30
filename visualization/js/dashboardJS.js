@@ -138,15 +138,7 @@ $(function() {
 			)
 	
 
-	$("li").click(
-		function(){
-			if (!$(this).hasClass("active")){
-				$("ul li[class='active']").removeClass("active");
-				$(this).addClass("active");
-			}	
-			
-		}
-	)
+
 	
 	
 	
