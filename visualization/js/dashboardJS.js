@@ -4,6 +4,7 @@ var vYear = d.getFullYear();
 var vMon = d.getMonth() + 1;
 var vDay = d.getDate();
 
+
 function saveConfig(){
 	var aut = $("#shareAuthorization").val();
 	
@@ -28,10 +29,10 @@ function showChart(type){
 		drawMaps("");
 		break;
 	case 'table':
-		drawTables("");
+		drawTable(2,vid);
 		break;
 	case 'combo':
-		drawCombos("");
+		drawCombos();
 		break;
 	case 'column':
 		drawColumns("");
@@ -139,7 +140,6 @@ $(function() {
 	
 
 
-	
 	
 	
 	$(".gadget" )

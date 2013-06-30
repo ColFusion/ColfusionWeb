@@ -16,6 +16,9 @@ class ChartFactory {
         if($obj->type == "column"){
             return new ColumnChart($_cid, $obj->name, $obj->canvas, $obj->type, $obj->left, $obj->top, $obj->depth, $obj->height, $obj->width, $obj->datainfo, $obj->note);
         }
+        if($_type == "table"){
+        	return new TableChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
     }
     //To new a exist chart with parameters; 
     static function openChart($_cid ,$_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
@@ -26,6 +29,9 @@ class ChartFactory {
         }
         if($_type == "column"){
             return new ColumnChart($_cid ,$_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
+        if($_type == "table"){
+        	return new TableChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
         }
     }
     //To create a temp chart, with a temp Id 
@@ -43,6 +49,9 @@ class ChartFactory {
         }
         if($_type == "column"){
             return new ColumnChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
+        if($_type == "table"){
+        	return new TableChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
         }
     }
 }

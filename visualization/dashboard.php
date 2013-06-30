@@ -43,7 +43,7 @@
 	******************/
 	//$res = $db->query("call doJoin('" . $titleNum . "')");
 
-	$columns = array("OBJECTID", "FID_precip", "YEAR", "MONTH", "COUNTRY", "LATITUDE", "LONGITUDE", "PRECIPITAT", "STATE", "disease", "totalNumber");
+	$columns = array("ID","la","long","dvalue");
 	
 	/***********************	
 	  get sql style and excel style table columns
@@ -140,12 +140,12 @@
 							<li class="dropdown" id="chart-dropdown">
 								<a href="#visualization" class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<!--<li><a href="#addTable" data-toggle="modal">Add Table</a></li>-->
+									<li><a href="#addTable" data-toggle="modal">Add Table</a></li>
 									<li><a href="#addPie" data-toggle="modal">Add Pie Chart</a></li>
-									<!--<li><a href="#addMotion" data-toggle="modal">Add Motion Chart</a></li>
+									<li><a href="#addMotion" data-toggle="modal">Add Motion Chart</a></li>
 									<li><a href="#addColumn" data-toggle="modal">Add Column Chart</a></li>
 									<li><a href="#addCombo" data-toggle="modal">Add Combo Chart</a></li>
-									<li><a href="#addMap" data-toggle="modal">Add Map</a></li>-->
+									<li><a href="#addMap" data-toggle="modal">Add Map</a></li>
 								</ul>
 							</li>			
 							<li class="dropdown" id="view-dropdown">
@@ -351,7 +351,7 @@
 						<div class="columnSelection">
 							<?php foreach($columns as $name) { ?>
 							<label class="checkbox">
-								<input type="checkbox" name="tableColumns" value="<?=$name?>" checked /> <?php echo $name; ?>
+								<input value= <?php echo $name?> type="checkbox" name="tableColumns" checked /> <?php echo $name; ?>
 							</label>
 							<?php } ?>
 						</div>
@@ -592,7 +592,7 @@
 			<div class="modal-body">
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#pcolumn" data-toggle="tab">Columns</a></li>		  
-					<li><a href="#ptype" data-toggle="tab">Aggregation</a></li>
+					<li><a href="#ptype" data-toggle="tab">Aggregation Type</a></li>
 				</ul>
 				<div class="tab-content">
 					<div class="tab-pane active" id="pcolumn">

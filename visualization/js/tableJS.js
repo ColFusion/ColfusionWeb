@@ -90,11 +90,27 @@ function loadTableData(type, vid){
 }
 
 function drawTable(){
+	var datainfo = {'tableColumns':tableColumns, 'perPage':perPage, 'currentPage':currentPage, 'titleNo':titleNo, 'where':where};
 	$.ajax({
 		type: 'POST',
-		url: "getTable.php",
-		data: {'tableColumns':tableColumns, 'perPage':perPage, 'currentPage':currentPage, 'titleNo':titleNo, 'where':where},
+		url: "control.php",
+		data:{
+            action: 'addChart',
+            name: 'bdfdfd',
+            vid: $('#vid').val(),
+            type: 'table',
+            width: 1200,
+            height: 600,
+            depth: maxDepth++,
+            top: 50,
+            left: 0,
+            note: 'dfdff',
+            datainfo: datainfo
+			},
 		success: function(JSON_Response){
+			
+			JSON_Response = JSON_Response["queryResult"];
+			result = JSON_Response;
 			// alert(JSON_Response["Control"]["perPage"]);
 			// alert(JSON_Response["Control"]["totalPage"]);
 			// alert(JSON_Response["Control"]["pageNo"]);
@@ -115,7 +131,8 @@ function drawTable(){
 				}
 			}
 			tabledata = data;
-			$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);				
+			$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);	
+			gadgetProcess(gadgetID,'tablechart','table','note','datainfo');
 			generateTable(gadgetID);
 			initPageSelect();
 			

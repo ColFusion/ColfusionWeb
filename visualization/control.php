@@ -8,7 +8,8 @@ include_once('../'.mnminclude.'smartyvariables.php');
 require_once("Chart.php");
 require_once("Canvas.php");
 require_once("charts/ColumnChart.php");
-require_once("charts/ColumnChart.php");
+require_once("charts/PieChart.php");
+require_once("charts/TableChart.php");
 global $current_user;
 
 if($current_user->authenticated != TRUE) {

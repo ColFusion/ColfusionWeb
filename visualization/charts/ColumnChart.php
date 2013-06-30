@@ -10,7 +10,7 @@ class ColumnChart extends Chart{
          * Here implement the query code;
          */
         
-        return '[{"Category":" 2.0","AggValue":"1"},{"Category":" 3.0","AggValue":"1"},{"Category":" 4.0","AggValue":"1"}]';
-        //echo json_encode($rows);
+        return '{"cat":"aaa","agg":"bbb","content":[["Year", "Sales"],["2004",15],["2005",12],["2006",16],["2007",18]]}';
+      
     }
 }

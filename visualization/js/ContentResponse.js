@@ -5,8 +5,10 @@ nextPage = 0;
 totalPage = 0;
 var tabledata;
 var maxDepth;
+var Canid;
 
 function openCharts(vid,vname){
+	Canid = vid;
 	$("#filter_section").children("div").hide();
 	$("#charts_section").show();
 	$("#openbutton_section").html('<button id="openButton" class="btn btn-info" type="button" onclick="openCanvas('+vid+')"> OpenCanvas </button>')
@@ -33,7 +35,7 @@ function openCharts(vid,vname){
 			 $("#charts_section li").click(
 						function(){
 							if (!$(this).hasClass("active")){
-								$("ul li[class='active']").removeClass("active");
+								$("#charts_section ul li[class='active']").removeClass("active");
 								$(this).addClass("active");
 							}	
 							
@@ -55,6 +57,7 @@ function openCanvas(vid){
 	$("#open").modal('hide');
 	clearScreen();
 	$("#file_manager").hide();
+	vid = vid;
 	
 	$.ajax(
 		{
@@ -82,7 +85,7 @@ function openCanvas(vid){
 						drawMaps();
 						break;
 					case 'table':
-						drawTables();
+						drawTable(2,vid);
 						break;
 					case 'combo':
 						drawCombos();
@@ -208,27 +211,13 @@ function gadgetProcess(gadgetID,name,type,note,datainfo){
 function drawColumns(){
 	createNewColumn();
 	
-	
 	var res = result['queryResult'];
 	
 	google.load("visualization", "1", {packages:["corechart"]});
-    var data = new google.visualization.DataTable();
+    var data = new google.visualization.arrayToDataTable(res['content']);
 
-    data.addColumn('string', res['string']);
-	data.addColumn('number', res['number']);
-
-     
-	var q = res['content'];
-	for(i=0 ;q[i]!=null ; i++){
-		
-		data.addRow();
-		data.setCell(i, 0, String(q[i]["Category"]));
-		data.setCell(i,1,parseFloat(String(q[i]["AggValue"])));
-		
-	}
-	
     var options = {
-    	      'title':'Column Chart for ' + res['string'] + ' based on ' + res['number']
+    	      'title':'Column Chart for ' + res['cat'] + ' based on ' + res['agg']
     	};
 
     $("#columnResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
@@ -240,28 +229,10 @@ function drawColumns(){
 
 
 function drawTables(){
-			
-			totalPage = result["totalPage"];
-			var Columns = result["tableColumns"];
-			data = new google.visualization.DataTable();
-			
-			for(i=0; i<Columns.length; i++){
-				data.addColumn('string',Columns[i]);
-			}
-			for(i=0 ; result["data"][i]!=null ;i++){
-				data.addRow();
-				data.setCell(i, 0, String(result["data"][i][0]));
-				for(k=1; k<result["data"][i].length; k++) {
-					data.setCell(i, k, String(result[i][k]));
-				}
-			}
-
-			tabledata = data;
-			$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);				
-			generateTable(gadgetID);
-			initPageSelect();
-
+		
 }
+
+
 function clearScreen(){
 	$(".gadget").remove();
 }
@@ -293,4 +264,8 @@ function addPieChart() {
 	    $('#addPie').modal('hide');
         }
     })
+}
+
+function drawCombos(){
+	drawCombo(2,vid);
 }
