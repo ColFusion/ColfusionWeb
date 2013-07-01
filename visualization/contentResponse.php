@@ -10,6 +10,7 @@ $privilege = array(
 	'User-Owned','Readable','Modifiable'
 );
 $user_id = $current_user->user_id;
+
    
 
 global $db;

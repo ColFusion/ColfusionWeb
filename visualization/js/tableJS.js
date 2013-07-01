@@ -262,6 +262,7 @@ function activatePageSelect(ID){
 		changePage(newPageNO, gadgetID);	
 	})
 }
+
 function addTableChart() {
         var gadgetID = vid;
 	var titleNo = $("#titleNo").val();

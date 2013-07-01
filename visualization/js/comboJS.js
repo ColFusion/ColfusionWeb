@@ -9,7 +9,7 @@ function loadCombos() {
     for(comboNum=0 ; comboNum<combos.length ; comboNum++){
         theCombo = combos[comboNum];
 		gadgetIDs.push(theCombo.id);
-        drawCombo(2,gadgetIDs[comboNum]);
+        drawComboo(2,gadgetIDs[comboNum]);
     }
 }
 
@@ -20,7 +20,7 @@ type
 3: edit existing combo chart
 *****************/
 
-function drawCombo(type,vid){
+function drawComboo(type,vid){
 	gadgetID = vid;
     titleNo = $('#titleNo').val();
     where = $("#where").val();	
@@ -57,19 +57,35 @@ function drawCombo(type,vid){
 	    $('#setting' + gadgetID).val(settings);
     }
 
+   var  datainfo = {'comboColumnCat':comboColumnCat,'comboColumnAgg':comboColumnAgg,'titleNo':titleNo,'where':where};
+    	
+    	
 	$.ajax({
 		type: 'POST',
-		url: "getCombo.php",
-		data: {'comboColumnCat':comboColumnCat,'comboColumnAgg':comboColumnAgg,'titleNo':titleNo,'where':where},
+		url: "control.php",
+		data: {action: 'addChart',
+              name: 'bdfdfd',
+              vid: $('#vid').val(),
+              type: 'combo',
+              width: 1200,
+              height: 600,
+              depth: maxDepth++,
+              top: 50,
+              left: 0,
+              note: 'dfdff',
+              datainfo: datainfo},
 		success: function(JSON_Response){
 
-		var JSONResponse = JSON_Response;
+		
+		
+		var JSONResponse = JSON_Response['queryResult'];
+		
 			//document.getElementById('comboResult').innerHTML = JSON.stringify(JSONResponse);
 			data = new google.visualization.DataTable();
 			data.addColumn('string','Type');
 			for(i=0; JSONResponse[i]!=null ; i++)
 			{
-				data.addColumn('number',String(JSONResponse[i].Category));
+				data.addColumn('number',String(JSONResponse[i]['Category']));
 			}
 			//data.addColumn('number', 'AVG');
 			//data.addColumn('number', 'MAX');
@@ -85,9 +101,9 @@ function drawCombo(type,vid){
 			var colIndex = 1;
 			for(i=0 ; JSONResponse[i]!=null ; i++){
 				//data.addRow();
-				data.setCell(0,colIndex,parseFloat(String(JSONResponse[i].AVG)));
-				data.setCell(1,colIndex,parseFloat(String(JSONResponse[i].MAX)));
-				data.setCell(2,colIndex,parseFloat(String(JSONResponse[i].MIN)));
+				data.setCell(0,colIndex,parseFloat(String(JSONResponse[i]['AVG'])));
+				data.setCell(1,colIndex,parseFloat(String(JSONResponse[i]['MAX'])));
+				data.setCell(2,colIndex,parseFloat(String(JSONResponse[i]['MIN'])));
 				//data.setCell(i,1,parseFloat(String(JSONResponse[i].AVG)));
 				//data.setCell(i,2,parseFloat(String(JSONResponse[i].MAX)));
 				//data.setCell(i,3,parseFloat(String(JSONResponse[i].MIN)));

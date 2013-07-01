@@ -1,6 +1,6 @@
 <?php
 require_once('Chart.php');
-class ColumnChart extends Chart{
+class ComboChart extends Chart{
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
         $this->query();
@@ -9,8 +9,6 @@ class ColumnChart extends Chart{
         /*
          * Here implement the query code;
          */
-        
-        return '{"vAxis":"aaa","hAxis":"bbb",seriesNumber:"3","content":[{"Category":" 2.0","AggValue":"1"},{"Category":" 3.0","AggValue":"1"},{"Category":" 4.0","AggValue":"1"}]}';
-        //echo json_encode($rows);
+        return '[{"Category":"aaa","AVG":"13","MAX":"18","MIN":"12"},{"Category":"bbb","AVG":"14","MAX":"16","MIN":"11"},{"Category":"ccc","AVG":"10","MAX":"14","MIN":"6"},{"Category":"ddd","AVG":"43","MAX":"45","MIN":"14"}]';
     }
 }

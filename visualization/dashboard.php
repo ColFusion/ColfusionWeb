@@ -770,13 +770,13 @@
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
 						<select id="comboColumnCat">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
 						<select id="comboColumnAgg">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value="<?php echo $col_name?>"><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 					</div>
@@ -793,7 +793,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button class="btn btn-primary" id="addComboSave" onclick="drawCombo(1,0)">Save changes</button>
+				<button class="btn btn-primary" id="addComboSave" onclick="drawComboo(1,0)">Save changes</button>
 			</div>
 		</div>
 
@@ -853,5 +853,6 @@
 		</div>
 
 		</div> <!-- /container -->
+		
 	</body>
 </html>

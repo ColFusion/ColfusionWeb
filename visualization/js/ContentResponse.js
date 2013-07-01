@@ -85,7 +85,8 @@ function openCanvas(vid){
 						drawMaps();
 						break;
 					case 'table':
-						 drawTable(2,vid);
+   				        drawTable(2,vid);
+
 						break;
 					case 'combo':
 						drawCombos();
@@ -112,52 +113,6 @@ function openCanvas(vid){
 			}	 
 		});
 	}
-/*function openCanvas(vid){
-	
-	var s = confirm("Save The Current Canvas????");
-	
-	clearScreen();
-	
-	$.ajax(
-		{
-			url:"control.php",
-			data:{vid:vid,s:s,action:'openCanvas'},
-			success:function(data){
-				
-			
-			  // google.setOnLoadCallback(drawPie);
-				
-			    var _data = jQuery.parseJSON(data);
-				
-				for (var i in _data['charts']){
-					
-					result =  _data['charts'][i];
-					
-					switch (result['type']){
-					case 'pie':
-						drawPies();
-						break;
-					case 'motion':
-						drawMotions();
-						break;
-					case 'map':
-						drawMaps();
-						break;
-					case 'table':
-						drawTables(2,vid);
-						break;
-					case 'combo':
-						drawCombos();
-						break;
-					case 'column':
-						drawColumns();
-						break;
-					}
-				}
-			}	 
-		});
-	}
-*/
 
 function drawPies(){
 	createNewPie();
@@ -228,11 +183,6 @@ function drawColumns(){
 }
 
 
-function drawTables(){
-		
-}
-
-
 function clearScreen(){
 	$(".gadget").remove();
 }
@@ -264,8 +214,4 @@ function addPieChart() {
 	    $('#addPie').modal('hide');
         }
     })
-}
-
-function drawCombos(){
-	drawCombo(2,vid);
 }
