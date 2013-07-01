@@ -85,7 +85,7 @@ function openCanvas(vid){
 						drawMaps();
 						break;
 					case 'table':
-						drawTable(2,vid);
+						 drawTable(2,vid);
 						break;
 					case 'combo':
 						drawCombos();
