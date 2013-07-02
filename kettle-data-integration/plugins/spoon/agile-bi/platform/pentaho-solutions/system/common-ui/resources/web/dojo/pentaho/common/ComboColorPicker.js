@@ -60,7 +60,7 @@ dojo.declare(
             dojo.addClass(this.topframe, 'hidden');            
         },
 
-        templatePath: new dojo.moduleUrl('pentaho.common', 'ComboColorPicker.html'),
+        templatePath: dojo.moduleUrl('pentaho.common', 'ComboColorPicker.html'),
         
         usedColors: [],
         
@@ -141,7 +141,7 @@ dojo.declare(
        postCreate: function() {
             this.inherited(arguments);
             this.colorPicker.animatePoint = false;
-            Messages.addBundle('pentaho.common','messages');
+            pentaho.common.Messages.addUrlBundle('pentaho.common',CONTEXT_PATH+'i18n?plugin=common-ui&name=resources/web/dojo/pentaho/common/nls/messages');
             dojo.connect(this.palette, "onChange", this, '_colorChange' );    
             dojo.connect(this.colorPicker, "onChange", this, '_colorChange' );
             dojo.connect(this.closeBtn, "onclick", this, 'closeRequest' );

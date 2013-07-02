@@ -1,4 +1,4 @@
-<div id="standardDialog" style="width:500px;">
+<div id="standardDialog" style="width:600px;">
 	<div id="standardDialogHeader" class="Caption">
 		<div id="dialogTitleBar">
 		<table width=100%>
@@ -13,9 +13,9 @@
 	<div id="dialogMessageBar" class="hidden"></div>				
 
 	<div class="dialog-content" style="padding-bottom: 8px">
-		<div id="mainTabContainer" dojoType="TabContainer" style="width: 100%; height: 290px" selectedTab="tab1" >
-			<div id="tab1" dojoType="ContentPane" label="General" >
-				<table style="width:470px;"><tbody>
+		<div id="mainTabContainer" dojoType="analyzer.TabPanel" style="width: 100%; height: 310px" selectedTab="tab1" class="pentaho-tabBar">
+			<div id="tab1" dojoType="dijit.layout.ContentPane" title="General" class="pentaho-tabPanel">
+				<table style="width:550px;"><tbody>
 					<tr><td>&nbsp;</td></tr>
 					<tr><td class="labelTitle">@{dlgChartPropsBackgroundTitle}:</td></tr>
 					<tr><td class="tabbedLabel">
@@ -35,7 +35,7 @@
 	                <tr><td class="labelTitle">@{dlgChartPropsLabelsTitle}:</td></tr>
 	                <tr><td class="tabbedLabel">
 	                	<div class="inlineInput">
-	                	<select id="CP_labelFontFamily" size="1">
+	                	<select id="CP_labelFontFamily" size="1" style="width: 168px">
 		                    <option value='Default'>Default</option>
 		                    @{contentGenerator.fontOptions}
 		                </select>
@@ -70,36 +70,64 @@
 												<div id="CP_labelColorPalette" class="colorPalette hidden" style="margin-left: -90px"><div id="CP_labelColorPaletteWidget"></div></div></div>
 		                </td></tr>
 	                <tr><td>&nbsp;</td></tr>
-	                <tr><td class="labelTitle">@{dlgChartPropsAxisTitle}:</td></tr>
-	                <tr>
-	                	<td class="tabbedLabel">
-	                		<div class="inlineInput"><input type="checkbox" id="CP_autoRange" class="inputChk">&nbsp;&nbsp;@{dlgChartPropsAxisAutoRange}</input></div>
-	                		<div class="inlineInput" style="margin-left: 20px;">@{dlgChartPropsAxisStart}: <input type="text" id="CP_valueAxisLowerLimit" class="inputTxt" style="width:80px;" /></div>
-							<div class="inlineInput">@{dlgChartPropsAxisStop}: <input type="text" id="CP_valueAxisUpperLimit" class="inputTxt" style="width:80px;" /></div>
-						</td></tr>
-					<tr><td>&nbsp;</td></tr>
-					<tr>						
-	                	<td class="tabbedLabel">
-		                	<div style="overflow:auto">@{dlgChartPropsAxisUnits}:  
-		                	<select id="CP_displayUnits" size="1">
-			                    <option value="UNITS_0">@{dlgChartOption_UNITS_0}</option>
-			                    <option value="UNITS_2">@{dlgChartOption_UNITS_2}</option>
-			                    <option value="UNITS_3">@{dlgChartOption_UNITS_3}</option>
-			                    <option value="UNITS_4">@{dlgChartOption_UNITS_4}</option>
-			                    <option value="UNITS_5">@{dlgChartOption_UNITS_5}</option>
-			                    <option value="UNITS_6">@{dlgChartOption_UNITS_6}</option>
-			                </select>
-			                </div></td></tr>	
-	                <tr>
-	                	
-					<tr><td>&nbsp;</td></tr>
 				</tbody></table>
 			
 			
 			</div>
-			<div id="tab2" dojoType="ContentPane" label="@{dlgChartPropsLegendTitle}" >
+			<div id="tab2" dojoType="dijit.layout.ContentPane" title="@{dlgChartPropsAxisTitleBar}" class="pentaho-tabPanel">
+                
+                <table style="width:550px;"><tbody>
+                    <tr><td colspan="2">&nbsp;</td></tr>
+                    <tr><td class="labelTitle">@{dlgChartPropsAxisTitle}:</td></tr>
+                    <tr>
+                        <td class="tabbedLabel">
+                            <div class="inlineInput"><input type="checkbox" id="CP_autoRange" class="inputChk">&nbsp;&nbsp;@{dlgChartPropsAxisAutoRange}</input></div>
+                            <div class="inlineInput" style="margin-left: 20px;">@{dlgChartPropsAxisStart}: <input type="text" id="CP_valueAxisLowerLimit" class="inputTxt" style="width:80px;" /></div>
+                            <div class="inlineInput">@{dlgChartPropsAxisStop}: <input type="text" id="CP_valueAxisUpperLimit" class="inputTxt" style="width:80px;" /></div>
+                        </td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr>                        
+                        <td class="tabbedLabel">
+                            <div style="overflow:auto">@{dlgChartPropsAxisUnits}:  
+                            <select id="CP_displayUnits" size="1">
+                                <option value="UNITS_0">@{dlgChartOption_UNITS_0}</option>
+                                <option value="UNITS_2">@{dlgChartOption_UNITS_2}</option>
+                                <option value="UNITS_3">@{dlgChartOption_UNITS_3}</option>
+                                <option value="UNITS_4">@{dlgChartOption_UNITS_4}</option>
+                                <option value="UNITS_5">@{dlgChartOption_UNITS_5}</option>
+                                <option value="UNITS_6">@{dlgChartOption_UNITS_6}</option>
+                            </select>
+                            </div></td></tr>    
+                    <tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td class="labelTitle">@{dlgChartPropsSecondaryAxisTitle}:</td></tr>
+                    <tr>
+                        <td class="tabbedLabel">
+                            <div class="inlineInput"><input type="checkbox" id="CP_autoRangeSecondary" class="inputChk">&nbsp;&nbsp;@{dlgChartPropsAxisAutoRange}</input></div>
+                            <div class="inlineInput" style="margin-left: 20px;">@{dlgChartPropsAxisStart}: <input type="text" id="CP_valueAxisLowerLimitSecondary" class="inputTxt" style="width:80px;" /></div>
+                            <div class="inlineInput">@{dlgChartPropsAxisStop}: <input type="text" id="CP_valueAxisUpperLimitSecondary" class="inputTxt" style="width:80px;" /></div>
+                        </td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr>                        
+                        <td class="tabbedLabel">
+                            <div style="overflow:auto">@{dlgChartPropsAxisUnits}:  
+                            <select id="CP_displayUnitsSecondary" size="1">
+                                <option value="UNITS_0">@{dlgChartOption_UNITS_0}</option>
+                                <option value="UNITS_2">@{dlgChartOption_UNITS_2}</option>
+                                <option value="UNITS_3">@{dlgChartOption_UNITS_3}</option>
+                                <option value="UNITS_4">@{dlgChartOption_UNITS_4}</option>
+                                <option value="UNITS_5">@{dlgChartOption_UNITS_5}</option>
+                                <option value="UNITS_6">@{dlgChartOption_UNITS_6}</option>
+                            </select>
+                            </div></td></tr>    
+                    <tr>
+                    <tr><td>&nbsp;</td></tr>                  
+                </tbody></table>
+            
+            </div>
+			<div id="tab3" dojoType="dijit.layout.ContentPane" title="@{dlgChartPropsLegendTitle}" class="pentaho-tabPanel">
 				
-				<table style="width:470px;"><tbody>
+				<table style="width:550px;"><tbody>
 					<tr><td colspan="2">&nbsp;</td></tr>
 					<tr>
 						<td class="tabbedLabel" style="width: 200px" colspan="2"><input type="checkbox" id="CP_showLegend" checked="false" class="inputChk"> @{dlgChartPropsShowLegend}
@@ -161,35 +189,10 @@
 				</tbody></table>
 			
 			</div>
-			<div id="tab3" dojoType="ContentPane" label="@{dlgChartPropsOtherTitle}" >
+			<div id="tab4" dojoType="dijit.layout.ContentPane" title="@{dlgChartPropsOtherTitle}" class="pentaho-tabPanel">
 				
-				<table style="width:470px;"><tbody>
+				<table style="width:550px;"><tbody>
 					<tr><td colspan="2">&nbsp;</td></tr>
-					<tr><td class="labelTitle" colspan="2">@{dlgChartPropsLineTitle}:</td></tr>
-	                <tr><td class="tabbedLabel">
-	                	<div style="overflow:auto">@{dlgChartPropsLineBullet}:  
-	                	<select id="CP_lineShape" size="1">
-		                    <option value="NONE">@{dlgChartPropsBulletNone}</option>
-		                    <option value="CIRCLE">@{dlgChartPropsBulletCircle}</option>
-		                    <option value="SQUARE">@{dlgChartPropsBulletSquare}</option>
-		                    <option value="DIAMOND">@{dlgChartPropsBulletDiamond}</option>
-		                    <option value="TRIANGE">@{dlgChartPropsBulletTriangle}</option>
-		                </select>
-		                </div></td>
-						<td class="tabbedLabel">
-	                	<div style="overflow:auto">@{dlgChartPropsLineWidth}: 
-	                	<select id="CP_lineWidth" size="1">
-		                    <option value="1">1px</option>
-		                    <option value="2">2px</option>
-		                    <option value="3">3px</option>
-		                    <option value="4">4px</option>
-		                    <option value="5">5px</option>
-		                    <option value="6">6px</option>
-		                    <option value="7">7px</option>
-		                    <option value="8">8px</option>
-		                </select>
-		                </div></td></tr>
-					<tr><td colspan="2">&nbsp;</td></tr>		                
 					<tr><td class="labelTitle" colspan="2">@{dlgChartPropsMultiChartTitle}:</td></tr>
 	                <tr><td class="tabbedLabel" colspan="2">		                
 		                <div style="overflow:auto">@{dlgChartPropsMaxChartsPerRow}: 
@@ -206,10 +209,7 @@
 	                <tr><td class="tabbedLabel" colspan="2">
 	                	<div style="overflow:auto">@{dlgChartPropsDomainMaxValues}: 
 	                	<select id="CP_maxValues" size="1">
-		                    <option value="100">100</option>
-		                    <option value="150">150</option>
-		                    <option value="200">200</option>
-		                    <option value="250">250</option>
+	                	<!--  Populated dynamically from viz definition -->
 		                </select>
 		                </div></td></tr>
 					<tr><td colspan="2">&nbsp;</td></tr>	                

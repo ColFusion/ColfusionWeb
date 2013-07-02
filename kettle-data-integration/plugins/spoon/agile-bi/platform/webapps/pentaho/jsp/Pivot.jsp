@@ -1485,8 +1485,8 @@
         <img src="./jpivot/navi/warning.png"/>
       </td>
       <td>
-        JPivot is no longer being maintained.<br/>
-        It is provided as a convenience in this release but may be removed in a future release.
+        JPivot has been replaced by Pentaho Analyzer.<br/>
+        It is provided as a convenience but will no longer be enhanced or offically supported by Pentaho.
       </td>
     </tr>
   </table>

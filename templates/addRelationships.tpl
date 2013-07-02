@@ -106,12 +106,16 @@
                                     <button type="button" data-bind="click: addLink" class="btn" >
                                         Add row
                                     </button>
+                                    <!--
                                     <button type="button" data-bind="click: checkDataMatching" class="btn" >
                                         Check data matching
                                     </button>
+                                    -->
+                                    <!--
                                     <button type="button" data-bind="click: testDataEncoding" class="btn" >
                                         Test Data Encoding
                                     </button>
+                                    -->
                                     <span data-bind="visible: isPerformingDataMatchingCheck">
                                         <img  src="images/ajax-loader.gif"/>
                                         <span>Performing data matching in selected columns...</span>

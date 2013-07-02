@@ -354,7 +354,7 @@ UIUtil.getScrollCoords = function( coords )
 		for ( var ii=0; ii<tmpAr.length; ++ii )
 		{
 			var param = tmpAr[ ii ].split( "=" );
-			params[ param[0] ] = decodeURI( param[1] );
+			params[ param[0] ] = decodeURIComponent( param[1] );
 		}
 	}
 	

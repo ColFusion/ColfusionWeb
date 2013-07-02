@@ -108,10 +108,6 @@
 	text-decoration: underline !important;
 }
 
-#standardDialog .miniButton {
-    padding: 0;
-}
-
 #standardDialog IMG.alertMsgIcon {
 	vertical-align: top;
 	float: left;
@@ -130,7 +126,7 @@
 	cursor: pointer;
 }
 
-#standardDialog input.text, #standardDialog select, #standardDialog textarea {
+#standardDialog input.text, #standardDialog textarea {
 	border: 1px solid #999999;
 	padding: 2px 0px;
 }
@@ -160,6 +156,8 @@
 #standardDialog .label {
 	font-weight: bold;
 	padding-left: 8px;
+	padding-bottom: 10px;
+	padding-top: 10px;
 }
 
 #standardDialog .labelTitle {
@@ -348,10 +346,10 @@
 	overflow: auto;
 }
 
-#standardDialog .reportDefition {
+#standardDialog .reportXMLTextArea {
 	font-family: monospace;
-	width: 494px;
-	height: 200px;
+	width: 573px;
+	height: 175px;
 	margin-top: 5px;
 	padding: 2px;
 	border: 1px solid #c8c8c8;
@@ -425,7 +423,8 @@
 	position:absolute; 
 	background-color: white;
 	cursor: pointer;
-	margin-top: 17px;
+	margin-top: -50px;
+  margin-left: -125px;
 }
 
 #standardDialog .colorPalette TABLE {
@@ -503,4 +502,54 @@ label{
   background-color: white;
   padding-left: 5px;
   padding-right: 5px;
+}
+
+/* CSS for page setup dialog */
+
+#standardDialog fieldset {
+  padding: 2px;
+}
+
+#standardDialog legend {
+  font-size: 1.1em;
+}
+
+.pageSetupDialogPortrait {
+  cursor: pointer;
+  float: left;
+  padding-right: 8px;
+  width: 76px;
+  height: 88px;
+  background-image: url(../images/dialog/portrait_off.png);
+  background-repeat: no-repeat;
+}
+
+.pageSetupDialogPortrait:hover {
+  background-image: url(../images/dialog/portrait_on.png);
+}
+
+.pageSetupDialogPortraitSelected {
+  background-image: url(../images/dialog/portrait_on.png);
+}
+
+.pageSetupDialogLandscape {
+  float: left;
+  width: 76px;
+  height: 88px;
+  cursor: pointer;
+  background-image: url(../images/dialog/landscape_off.png);
+  background-repeat: no-repeat;
+}
+
+.pageSetupDialogLandscape:hover {
+  background-image: url(../images/dialog/landscape_on.png);
+}
+
+.pageSetupDialogLandscapeSelected {
+  background-image: url(../images/dialog/landscape_on.png);
+}
+
+.pageSetupDialogOrientationLabel {
+  position: relative;
+  top: 66px;
 }

@@ -43,12 +43,14 @@
          <p>By default, <b>Grand Totals</b> <em>don't </em>display when you view a report in table format (grid of rows and columns). Also, Totals never display when you view a report in chart format.</p>
          <p>To show or hide <b>Grand Totals</b>, do the following:</p>
 		 <ol>
-		 <li>Click the <b>More Actions</b> button and select <b>Report Options...</b> from the menu to open the <strong>Report Options</strong> dialog box.</li>
+		 <li>Click the <b>More actions and options</b> button and select <b>Report Options...</b> from the menu to open the <strong>Report Options</strong> dialog box.</li>
 		 <li>Select or deselect the appropriate checkboxes in the <strong>Totals</strong> section.</li>
 		 <li>Click the <strong>OK</strong> button to save your specifications.</li>
 		 </ol>
          <p>To hide Grand Totals while viewing a report in table report, click the Grand Total cell on the report, and select <b>Hide Grand Total</b> from the menu. Note that this method does not allow you to show Grand Totals again, once it is hidden.</p>
-         <h2 class="line"><a name="displaying_totals_as_averages_max"></a>Displaying Totals as Averages, Max, Min, etc</h2>
+        
+		
+		<h2 class="line"><a name="displaying_totals_as_averages_max"></a>Displaying Totals as Averages, Max, Min, etc</h2>
          <p>Grand totals and subtotals summarize detail row or column values.  You can choose to summarize the data in the following ways:</p>
          <ul>
             <li>Aggregate - Default. Displayed as Total in table report.  Summarizes based on the aggregator of the underlying measure.</li>
@@ -58,9 +60,11 @@
             <li>Min</li>
          </ul>
          <p>To display these, click the number field (such as &quot;Sales Revenue&quot;) in the report and select <b>Show Average, Max, Min, etc </b> from the menu.</p>
-         <h2 class="line"><a name="3"></a>More about Averages</h2>
-         <p>In most cases, it looks like Pentaho totals are simply summing the individual values that are visible in the report. However, it smarter than so and this is especially beneficial for fields that lends themselves to averages, such as ratios. This is best illustrated in an example.</p>
-         <p>Assume we want to view the Win Rate of a sales team for the entire country, as well as for each region. The user brings the field "Win Rate", "Region" and a couple of other fields into the report, and Pentaho automatically shows the correct Win Rate across the regions (1.3%). We don't have to, and <i>shouldn't</i>, use the <b>Average</b> option for Grand Totals in this case.</p>
+        
+		
+		<h2 class="line"><a name="3"></a>More about Averages</h2>
+         <p>In most cases, it looks like Pentaho totals are simply summing the individual values that are visible in the report. However, it is smarter than that and this is especially beneficial for fields that lend themselves to averages, such as ratios. This is best illustrated in an example.</p>
+         <p>Assume we want to view the Win Rate of a sales team for the entire country, as well as for each region. The user brings the field "Win Rate", "Region" and a couple of other fields into the report, and Analyzer  automatically shows the correct Win Rate across the regions (1.3%). We don't have to, and <i>shouldn't</i>, use the <b>Average</b> option for Grand Totals in this case.</p>
          <div class="img">
             <img src="../../images/content/working_with_calculations/img_01.jpg" width="318" height="126" alt="image 1" border="0">         </div>
          <p>The average option is appropriate for the first two number fields, and the user may use the Averages option for these two fields.</p>
@@ -69,7 +73,9 @@
          <p>If the user would still go ahead and choose to display "Win rate" as an average she would see 23.3% which is not a meaningful number.</p>
          <div class="img">
             <img src="../../images/content/working_with_calculations/img_03.jpg"  width="337" height="142" alt="image 3">         </div>
-         <h2 class="line"><a name="non_visual_totals"></a>Displaying Totals that Also Include Filtered Out Values</h2>
+       
+	   
+	   <h2 class="line"><a name="non_visual_totals"></a>Displaying Totals that Also Include Filtered Out Values</h2>
          <p>By default, Totals sum only the values that are visible on the report. If values are filtered out they will not be part of the total. This is illustrated below.</p>
          <div class="img">
             <img src="../../images/content/working_with_calculations/img_04.jpg"  width="215" height="145" alt="image 4" border="0">         </div>
@@ -82,7 +88,9 @@
          <p>Note that the new total still restricts data to 2006 Q4. Any filters applied to fields placed on the opposite axis would still apply, as would filters that apply on fields to the left of the total.</p>
          <p>To display a total that also includes values that are filtered out, click the Grand Total cell on the report, and select Display Total that Includes Filtered Out Values from the menu.</p>
          <p>Alternatively, click More Actions and select Report Options from the menu. Then check the Also Display Totals that Include Filtered Out Values checkbox.</p>
-         <h2 class="line"><a name="displaying_percent_rank_etc"></a>Displaying % of, Rank, Running Sum, etc</h2>
+       
+	   
+	   <h2 class="line"><a name="displaying_percent_rank_etc"></a>Displaying % of, Rank, Running Sum, etc</h2>
          <p>To display % or, Rank, Running Sum, etc, click a field on the report and select % of, Rank, Running Sum, etc from the menu. Then, select the appropriate option.</p>
          <p>This will create a new field in your report that behaves similar to any other fields. The differences are:</p>
          <ul>
@@ -90,7 +98,9 @@
              <li>You may not create another field (% or, Rank, Running Sum, etc) based on this field</li>
          </ul>
          <p>See below for further help on each option.</p>
-         <h2 class="line"><a name="PCTOF"></a>% of</h2>
+       
+	   
+	   <h2 class="line"><a name="PCTOF"></a>% of</h2>
          <p>When displaying values as percentages (%) you have four options:</p>
          <ul>
             <li>Grand Total Column is 100%</li>
@@ -112,7 +122,9 @@
          <p>This option is only available when you have multiple text fields on the report</p>
          <div class="img">
             <img src="../../images/content/working_with_calculations/img_10.png"  width="199" height="229" alt="image 10" border="0">         </div>
-         <h2 class="line"><a name="RANK"></a>Rank</h2>
+       
+	   
+	   <h2 class="line"><a name="RANK"></a>Rank</h2>
          <p>When ranking values (such as Product Lines) by a number field (such as Sales Revenue), you have three options</p>
          <ul>
             <b>
@@ -133,7 +145,9 @@
          <div class="img">
             <img src="../../images/content/working_with_calculations/img_13.png"  width="261" height="230" alt="image 13" border="0">         </div>
          <p>Note that you are always ranking by the innermost row/column ('Product Line'). You may not rank by 'Region'.</p> 
-         <h2 class="line"><a name="RSUM"></a>Running Sum</h2>
+       
+	   
+	   <h2 class="line"><a name="RSUM"></a>Running Sum</h2>
          <p>The most common use of Running Sum, (a.k.a. Cumulative Sum) is to show how a number grows over time. For example, what was total sales revenue for this year, up and through January, February, March, etc.</p>
          <p>When creating a Running Sum field you have three options:</p>
          <ul>
@@ -152,7 +166,9 @@
          <p>This option is only available when you have multiple text fields on the report
          <div class="img">
             <img src="../../images/content/working_with_calculations/img_16.jpg"  width="251" height="179" alt="image 16" border="0">         </div>
-         <h2 class="line"><a name="PCTRSUM"></a>% of Running Sum</h2>
+       
+	   
+	   <h2 class="line"><a name="PCTRSUM"></a>% of Running Sum</h2>
          <p>The % of Running Sum option combines the % of and the Running Sum functionality. You have three options:</p>
          <ul>
             <li>Sum across all Rows</li>
@@ -170,31 +186,34 @@
          <p>This option is only available when you have multiple text fields on the report</p>
          <div class="img">
             <img src="../../images/content/working_with_calculations/img_19.jpg"  width="286" height="191" alt="image 19" border="0">         </div>
-         <h2 class="line"><a name="10"></a>Sorting</h2>
+       
+	   
+	   <h2 class="line"><a name="10"></a>Sorting</h2>
          <p>By default, your report is sorted in alphanumeric order by text fields (such as &apos;Product Line&apos;).</p>
          <p>To re-sort a row or column click the field on the report and select a <b>Sort</b> options from the menu.</p>
          <p>The image below illustrates which fields can be re-sorted based on their placement on the report.</p>
          <div class="img"><img src="../../images/content/working_with_calculations/img_20.jpg"  width="682" height="513" alt="image 20" border="0"></div>
-		 <h2 class="line"><a name="creating_new_numbers"></a>Creating New Numbers</h2>
-         <p>Pentaho allows you to create three types of new numbers directly within a report:</p>
+	
+	<h2 class="line"><a name="creating_new_numbers"></a>Creating New Measures</h2>
+         <p>Pentaho allows you to create three types of new measures directly within a report:</p>
 		 <ul>
 			<li> % of, Rank, Running Sum, etc. (Described above)</li>
-			<li> Calculated Numbers</li>
-			<li> Trend Numbers</li>
+			<li> Calculated Measures</li>
+			<li> Trend Measures</li>
 		 </ul>
-         <p><strong>Creating Calculated Numbers</strong></p>
+         <p><strong>Creating Calculated Measures</strong></p>
 		 <ol>
-			<li> Right click on the column header for a number in your report and select User Defined Number &rarr Calculated Number&hellip;
+			<li> Right click on the column header for a measure in your report and select User Defined Measure &rarr Calculated Measure&hellip;
 			<div class="img"><img src="../../images/content/working_with_calculations/calculated_number_menu.gif"  border="0"></div>
 			</li>
-			<li> In the New Calculated Number dialog box, give your new number a name. </li>
-			<li> Determine the format and number or decimal places and then select from your metric list to create a new number using the operators that are available.
+			<li> In the New Calculated Measure dialog box, give your new measure a name. </li>
+			<li> Determine the format and measure or decimal places and then select from your metric list to create a new measure using the operators that are available.
 				<div class="img"><img src="../../images/content/working_with_calculations/creating_calculated_numbers.gif"  border="0"></div>
 			</li>
 		 </ol>
-		 <p><strong>Tips on Creating Calculated Numbers</strong></p>
+		 <p><strong>Tips on Creating Calculated Measures</strong></p>
 		 <ul>
-		 	<li>Calculated numbers are based on any valid MDX expression that evaluates to a calculated member</li>
+		 	<li>Calculated measures are based on any valid MDX expression that evaluates to a calculated member</li>
 		 	<li>Advanced expressions will reference other dimensions via the dimension's MDX name.  To find the MDX name, right click on any field and select "Tell me about..."</li>
 		 	<li>You can pin measures to specific members of a dimension.
 		 		<ul><li>Ex. <b>([Measures].[Unit Sales], [Product].[Food], [Gender].[M])</b></li></ul>  

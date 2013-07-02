@@ -44,7 +44,7 @@ EventTarget.prototype = {
 //= require "oop.js"
 
 /* define the pentaho namespace if it is not already defined. */
-var pentaho = pentaho || {};
+pentaho = typeof pentaho == "undefined" ? {} : pentaho;
 
 /*
 pentaho.app concept is taken from Nicholas Zakas, Scalable JavaScript Architecture
@@ -108,12 +108,16 @@ pentaho.app.prototype.getModuleData = function() {
 		//if (typeof arguments[0] == 'object') {
 		//}
 		for (mod in this.moduleData) {
-			data[data.length] = this.moduleData[mod].instance;
+			if (this.moduleData.hasOwnProperty(mod)) {
+				data[data.length] = this.moduleData[mod].instance;
+      }
 		}
 		return data;
 	} else {
 		for (mod in this.moduleData) {
-			data[data.length] = this.moduleData[mod].instance;
+			if (this.moduleData.hasOwnProperty(mod)) {
+			  data[data.length] = this.moduleData[mod].instance;
+      }
 		}
 		return data;		
 	}

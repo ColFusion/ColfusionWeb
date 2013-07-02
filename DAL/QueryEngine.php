@@ -191,7 +191,7 @@ class QueryEngine {
             return $res[0];
         else
         //TODO: throw error here
-            die('Source not found GetExternalDBCredentialsBySid');
+            die('Data source not found.');
     }
 
     function GetSourceType($sid) {

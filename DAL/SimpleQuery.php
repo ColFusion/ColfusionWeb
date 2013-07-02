@@ -13,33 +13,35 @@ class SimpleQuery {
 
         return $newSid;
     }
-    
-    public function setSourceTypeBySid($sid, $soureType){
-    	global $db;
-    	
-    	$sql = "UPDATE " . table_prefix . "sourceinfo set source_type = '$soureType' where sid=$sid;";
-    	$db->query($sql);
+
+    public function setSourceTypeBySid($sid, $soureType) {
+        global $db;
+
+        $sql = "UPDATE " . table_prefix . "sourceinfo set source_type = '$soureType' where sid=$sid;";
+        $db->query($sql);
     }
 
     // Get info of all attachments of a source.
     // Return an array of objects with properties mapped to table's columns.
-    public function getSourceAttachmentsInfo($sid){
+    public function getSourceAttachmentsInfo($sid) {
         global $db;
-        $sid = $db->escape($sid);                          
+        $sid = $db->escape($sid);
         $sql = "SELECT * FROM colfusion_des_attachments WHERE Sid='$sid';";
-        $results = $db->get_results($sql);    
+        $results = $db->get_results($sql);
         return $results;
     }
-    
+
     // Get source attachment info.
     // Return an object with properties mapped to table's columns.
     public function getSourceAttachmentInfo($fileId) {
         global $db;
-        $fileId = $db->escape($fileId);                          
+        $fileId = $db->escape($fileId);
         $sql = "SELECT * FROM colfusion_des_attachments WHERE FileId='$fileId';";
         $results = $db->get_results($sql);
-        if($results == null) return null;
-        else return $results[0];
+        if ($results == null)
+            return null;
+        else
+            return $results[0];
     }
 
     // Store attachment info.
@@ -81,89 +83,82 @@ class SimpleQuery {
 
     // Store info about external source db.
     public function addSourceDBInfo($sid, $server, $port, $user, $password, $database, $driver) {
-    	global $db;
-    
-    	$sid = $db->escape($sid);
-    	$server = $db->escape($server);
-    	$port = $db->escape($port);
-    	$user = $db->escape($user);
-    	$password = $db->escape($password);
-    	$database = $db->escape($database);
-    	$driver = $db->escape($driver);
-    	    	
-    
-    	$sql = "INSERT INTO %ssourceinfo_DB (sid, server_address, port, user_name, password, source_database, driver) VALUES (%d, '%s', %d, '%s', '%s', '%s', '%s')";
-    	
-    	$sql=sprintf($sql, table_prefix, $sid, $server, $port, $user, $password, $database, $driver);
-    	$rs=$db->query($sql);    	
+        global $db;
+
+        $sid = $db->escape($sid);
+        $server = $db->escape($server);
+        $port = $db->escape($port);
+        $user = $db->escape($user);
+        $password = $db->escape($password);
+        $database = $db->escape($database);
+        $driver = $db->escape($driver);
+
+        $sql = "INSERT INTO %ssourceinfo_DB (sid, server_address, port, user_name, password, source_database, driver) VALUES (%d, '%s', %d, '%s', '%s', '%s', '%s')";
+        $sql = sprintf($sql, table_prefix, $sid, $server, $port, $user, $password, $database, $driver);
+        $db->query($sql);
     }
-    
+
     // Store metadata about column.
     public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname) {
-    	global $db;
-    
-    	$sid = $db->escape($sid);
-    	$newDname = $db->escape($newDname);
-    	$type = $db->escape($type);
-    	$unit = $db->escape($unit);
-    	$description = $db->escape($description);
-    	$originaDname = $db->escape($originaDname);
-    	    	
-    	$sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name) VALUES (%d, '%s', '%s', '%s', '%s', '%s')";
-    		    		
-    	$sql=sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname);
-    	$rs=$db->query($sql);
-    	
-    	return mysql_insert_id();
+        global $db;
+
+        $sid = $db->escape($sid);
+        $newDname = $db->escape($newDname);
+        $type = $db->escape($type);
+        $unit = $db->escape($unit);
+        $description = $db->escape($description);
+        $originaDname = $db->escape($originaDname);
+
+        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name) VALUES (%d, '%s', '%s', '%s', '%s', '%s')";
+        $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname);
+        $db->query($sql);
+
+        return mysql_insert_id();
     }
-    
+
     // Store metadata about column.
     public function addConstantColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $value) {
-    	global $db;
-    
-    	$sid = $db->escape($sid);
-    	$newDname = $db->escape($newDname);
-    	$type = $db->escape($type);
-    	$unit = $db->escape($unit);
-    	$description = $db->escape($description);
-    	$originaDname = $db->escape($originaDname);
-    	$value = $db->escape($value);
-    
-    	$sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, isConstant, constant_value) VALUES (%d, '%s', '%s', '%s', '%s', '%s', 1, '%s')";
-    
-    	$sql=sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $value);
-    	$rs=$db->query($sql);
-    	 
-    	return mysql_insert_id();
+        global $db;
+
+        $sid = $db->escape($sid);
+        $newDname = $db->escape($newDname);
+        $type = $db->escape($type);
+        $unit = $db->escape($unit);
+        $description = $db->escape($description);
+        $originaDname = $db->escape($originaDname);
+        $value = $db->escape($value);
+
+        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, isConstant, constant_value) VALUES (%d, '%s', '%s', '%s', '%s', '%s', 1, '%s')";
+        $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $value);
+        $db->query($sql);
+
+        return mysql_insert_id();
     }
-    
+
     // Store "parent" between column and tables
     public function addColumnTableInfo($cid, $tableName) {
-    	global $db;
-    
-    	$cid = $db->escape($cid);
-    	$tableName = $db->escape($tableName);
-    	    
-    	$sql = "INSERT INTO %scolumnTableInfo (cid, tableName) VALUES (%d, '%s')";
-    	
-		$sql=sprintf($sql, table_prefix, $cid, $tableName);
-		$rs=$db->query($sql);
+        global $db;
+
+        $cid = $db->escape($cid);
+        $tableName = $db->escape($tableName);
+
+        $sql = sprintf("INSERT INTO %scolumnTableInfo (cid, tableName) VALUES (%d, '%s')", table_prefix, $cid, $tableName);
+        $db->query($sql);
     }
-    
+
     // Store "parent" between column and tables
     public function addColumnDataMatchingInfo($sid, $cid, $category, $suggestedValue) {
-    	global $db;
-    
-    	$sid = $db->escape($sid);
-    	$cid = $db->escape($cid);
-    	$category = $db->escape($category);
-    	$suggestedValue = $db->escape($suggestedValue);
-    		
-    	$sql = "INSERT INTO %sdname_meta_data (sid, cid, type, value) VALUES (%d, %d, '%s', '%s')";
-		
-		$sql=sprintf($sql, table_prefix, $newSid, $cid, $category, $suggestedValue);
-		$rs=$db->query($sql);
+        global $db;
+
+        $sid = $db->escape($sid);
+        $cid = $db->escape($cid);
+        $category = $db->escape($category);
+        $suggestedValue = $db->escape($suggestedValue);
+
+        $sql = sprintf("INSERT INTO %sdname_meta_data (sid, cid, type, value) VALUES (%d, %d, '%s', '%s')", table_prefix, $sid, $cid, $category, $suggestedValue);
+        $db->query($sql);
     }
+
 }
 
 ?>

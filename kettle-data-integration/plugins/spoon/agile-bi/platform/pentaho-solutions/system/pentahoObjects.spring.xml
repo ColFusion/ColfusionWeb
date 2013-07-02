@@ -56,7 +56,7 @@ PentahoSystem which is initialized after Spring
     org.pentaho.platform.engine.services.connection.datasource.dbcp.NonPooledDatasourceService
     org.pentaho.platform.engine.services.connection.datasource.dbcp.PooledOrJndiDatasourceService  (Default option)
   -->
-  <bean id="IDatasourceService" class="org.pentaho.agilebi.platform.AgileBIDatasourceService" scope="singleton" />
+  <bean id="IDatasourceService" class="org.pentaho.agilebi.platform.InstaviewDatasourceService" scope="singleton" />
   <bean id="IPasswordService" class="org.pentaho.platform.util.Base64PasswordService" scope="singleton" />
 <!-- 
   <bean id="IDatasource" class="org.pentaho.platform.repository.datasource.Datasource" scope="prototype" />
@@ -75,7 +75,7 @@ PentahoSystem which is initialized after Spring
   </bean>
   <bean id="ITempFileDeleter" class="org.pentaho.platform.web.http.session.SessionTempFileDeleter" scope="prototype" />
   <bean id="gwtServiceManager" class="org.pentaho.platform.plugin.services.pluginmgr.servicemgr.GwtRpcServiceManager" scope="singleton"/>
-  <!--  bean id="axisServiceManager" class="org.pentaho.platform.plugin.services.pluginmgr.servicemgr.AxisWebServiceManager" scope="singleton"/ -->
+  <bean id="axisServiceManager" class="org.pentaho.platform.plugin.services.pluginmgr.servicemgr.AxisWebServiceManager" scope="singleton"/>
   
   <bean id="IChartBeansGenerator" class="org.pentaho.platform.plugin.action.chartbeans.DefaultChartBeansGenerator" scope="singleton" />
   
@@ -98,5 +98,7 @@ PentahoSystem which is initialized after Spring
   
   <!-- actual bean defined in applicationContext-pentaho-security-*.spring.xml; aliased here -->
   <alias name="pentahoUserRoleListService" alias="IUserDetailsRoleListService"/>
-  
+
+  <bean id="ICacheExpirationRegistry" class="org.pentaho.platform.plugin.services.cache.CacheExpirationRegistry" scope="singleton" />
+
 </beans>

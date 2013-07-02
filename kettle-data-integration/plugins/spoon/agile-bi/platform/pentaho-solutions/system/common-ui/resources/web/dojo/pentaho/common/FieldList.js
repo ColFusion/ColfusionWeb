@@ -19,7 +19,12 @@ dojo.declare(
   usedCategoryIds: {},
   
   sanitizeIdAndClassNames: function(name) {
-    return dojox.html.entities.encode(name).replace(/ /g,"_");
+    if(name != null){
+      return dojox.html.entities.encode(name).replace(/ /g,"_");
+    }
+    else{
+      return '';
+    }
   },
 
   generateUniqueClassName: function(categoryId) {
@@ -197,20 +202,20 @@ dojo.declare(
     this.dndObj._removeItemClass = this._removeItemClass;
     
     if(!this.categorize) {
-      var fields = this.getSortedFields(datasource, null, this.filters);
+      var fields = this.getFields(datasource, null, this.filters);
       this.addFields( fields, this.containerNode, '' );
       return;
     }
     
     var addedCategories = [];
 
-    var categories = this.getSortedCategories(datasource);
+    var categories = this.getCategories(datasource);
 
     dojo.forEach(categories, function(category, idx) {
       if (dojo.indexOf(addedCategories, category.id) != -1) {
         return;
       }
-      var fields = this.getSortedFields(datasource, category, this.filters);
+      var fields = this.getFields(datasource, category, this.filters);
       if(fields.length == 0) {
         // there are no fields for this category with the current filters
         return;
@@ -265,8 +270,10 @@ dojo.declare(
             "type": ["treenode-leaf-label"],
             "description": field.description
           };
+        if(field.hiddenForUser != "true"){
           items.push(item);
           this.dndObj.setItem("field-" + item.fieldId, { "data": item, "type": "treenode-leaf-label", "fieldId": item.fieldId });
+        }
       }, this);
       if(this.enableDragDrop) {
         this.dndObj.insertNodes(false, items, false, parent);
@@ -378,18 +385,17 @@ dojo.declare(
     }
   },
 
-  getSortedCategories: function(datasource) {
+  getCategories: function(datasource) {
     var categories = [];
     dojo.forEach(datasource.getAllElements(), function(element) {
       if (element.elementType == pentaho.pda.Column.ELEMENT_TYPES.CATEGORY && categories[element] == null) {
         categories.push(element);
       }
     });
-    categories.sort(this._elementComparator);
     return categories;
   },
 
-  getSortedFields: function(datasource, category, filters) {
+  getFields: function(datasource, category, filters) {
     var fields = [];
     var elements = datasource.getAllElements();   
     dojo.forEach(datasource.getAllElements(), function(element) {
@@ -420,7 +426,6 @@ dojo.declare(
         }
       }
     });
-    fields.sort(this._elementComparator); 
     return fields;
   },
 
@@ -459,8 +464,10 @@ dojo.declare(
     }
     // For all active filters add the fieldFiltered class to the field list div for the column that's filtered
     dojo.forEach(filters, function(filter) {
-      var fieldDiv = dojo.byId("field-" + filter.column);
-      dojo.addClass(fieldDiv, "fieldlist-filtered-field");
+      var fieldDiv = dojo.byId("field-" + this.sanitizeIdAndClassNames(filter.column));
+      if(fieldDiv != null){
+        dojo.addClass(fieldDiv, "fieldlist-filtered-field");  
+      }
     }, this);
   },
 
