@@ -479,7 +479,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button class="btn btn-primary" id="addMotionSave" onclick="drawMotion(1,0)">Save changes</button>
+				<button class="btn btn-primary" id="addMotionSave" onclick="addMotionChart(1,0)">Save changes</button>
 			</div>
 		</div>
 		
@@ -547,7 +547,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button class="btn btn-primary" id="addMapSave" onclick="loadMap(1,0)">Save changes</button>
+				<button class="btn btn-primary" id="addMapSave" onclick="addMapChart()">Save changes</button>
 			</div>
 		</div>
 
@@ -708,7 +708,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button class="btn btn-primary" id="addColumnSave" onclick="drawColumns()">Save changes</button>
+				<button class="btn btn-primary" id="addColumnSave" onclick="addColumnChart()">Save changes</button>
 			</div>
 		</div>
 
@@ -794,7 +794,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button class="btn btn-primary" id="addComboSave" onclick="drawComboo(1,0)">Save changes</button>
+				<button class="btn btn-primary" id="addComboSave" onclick="addComboChart()">Save changes</button>
 			</div>
 		</div>
 

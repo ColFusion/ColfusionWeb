@@ -76,6 +76,7 @@ abstract class Chart {
         $rst['height'] =$this->height;
         $rst['width'] =$this->width;
         $rst['queryResult'] =json_decode($this->queryResult);
+        $rst['datainfo'] = json_decode($this->datainfo);
         $rst['note'] =$this->note;
         return $rst;
     }

@@ -79,20 +79,20 @@ function openCanvas(vid){
 						drawPies();
 						break;
 					case 'motion':
-						drawMotions();
+						loadMotionChart(result);
 						break;
 					case 'map':
-						drawMaps();
+						loadMapChart(result);
 						break;
 					case 'table':
    				        drawTable(2,vid);
 
 						break;
 					case 'combo':
-						drawCombos();
+						loadComboChart(result);
 						break;
 					case 'column':
-						drawColumns();
+						loadColumnChart(result);
 						break;
 					}
 				}
@@ -145,21 +145,21 @@ function drawPies(){
 
 	var chart = new google.visualization.PieChart(document.getElementById('pieResult'+gadgetID));
 	chart.draw(data, options);
-	gadgetProcess(gadgetID,'peichart','pie','note','datainfo');
+	gadgetProcess(gadgetID,result['cid'],result['name'],result['top'],result['left'],result['height'],result['width'],result['depth'],result['type'],result['note'],'datainfo');
 }
 
-function gadgetProcess(gadgetID,name,type,note,datainfo){
-	$("#"+gadgetID).css({"position":"absolute","top":result["top"]+"px","left":result["left"]+"px","z-index":result["depth"]});
+function gadgetProcess(gadgetID,cid,name,top,left,height,width,depth,type,note,datainfo){
+	$("#"+gadgetID).css({"position":"absolute","top":top+"px","left":left+"px","z-index":depth});
 	$("#"+gadgetID).append("<input type='hidden' class='chartName' name = 'chartName 'value = '"+name+"'>");
 	$("#"+gadgetID).append("<input type='hidden' class='chartNote'name = 'chartNote 'value = '"+note+"'>");
 	$("#"+gadgetID).append("<input type='hidden' class='type' name = 'type 'value = '"+type+"'>");
 	$("#"+gadgetID).append("<input type='hidden' class='datainfo' name = 'datainfo 'value = '"+datainfo+"'>");
-	$("#"+gadgetID).append("<input type='hidden' class='chartID' name = 'chartID 'value = '"+result['cid']+"'>");
+	$("#"+gadgetID).append("<input type='hidden' class='chartID' name = 'chartID 'value = '"+cid+"'>");
 	$("#"+gadgetID).click(function (){
 		$("#"+gadgetID).css({"z-index":++maxDepth})			
 	})
-	if (parseInt(result['depth'])>maxDepth) {
-		maxDepth = parseInt(result['depth']);
+	if (parseInt(depth)>maxDepth) {
+		maxDepth = parseInt(depth);
 	}
 }
 
@@ -179,10 +179,11 @@ function drawColumns(){
 	
     var chart = new google.visualization.ColumnChart(document.getElementById('columnResult'+gadgetID));
     chart.draw(data, options);
-    gadgetProcess(gadgetID);
+    gadgetProcess(gadgetID,result['cid'],result['name'],result['top'],result['left'],result['height'],result['width'],result['depth'],result['type'],result['note'],'datainfo');
 }
 
 
 function clearScreen(){
 	$(".gadget").remove();
 }
+

@@ -110,7 +110,7 @@ function drawTable(){
 	}
 	tabledata = data;
 	$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);	
-	gadgetProcess(gadgetID,'tablechart','table','note','datainfo');
+	gadgetProcess(gadgetID,result['cid'],result['name'],result['top'],result['left'],result['height'],result['width'],result['depth'],result['type'],result['note'],'datainfo');
 	generateTable(gadgetID,color);
 	initPageSelect();
 	$("div[name='tableDivs']").resize(function() {
@@ -291,7 +291,7 @@ function addTableChart() {
 		url: "control.php",
 		data:{
 		action: 'addChart',
-		name: 'bdfdfd',
+		name: 'TableChart',
 		vid: $('#vid').val(),
 		type: 'table',
 		width: 1200,

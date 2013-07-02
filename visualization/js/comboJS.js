@@ -20,42 +20,34 @@ type
 3: edit existing combo chart
 *****************/
 
-function drawComboo(type,vid){
+/*function drawComboo(type,vid){
 	gadgetID = vid;
-    titleNo = $('#titleNo').val();
-    where = $("#where").val();	
+	titleNo = $('#titleNo').val();
+	where = $("#where").val();	
 	comboColumnCat = "";
 	comboColumnAgg = "";
 	//comboAggType = new Array();
 	settings = "";
 	
-    if(type == 1){
+	if(type == 1){
 		createNewCombo();
 		comboColumnCat = $('#comboColumnCat').val();
 		comboColumnAgg = $('#comboColumnAgg').val();
-		/*
-		$.each($("input[name='comboAggType']:checked"), function(){
-			comboAggType.push($(this).val());
-			settings += "," + $(this).val();
-		});
-		*/
-		//settings = settings.substring(1);
-		//settings = comboColumnCat + ";" + comboColumnAgg + ";" + settings + ";";
 		settings = comboColumnCat + ";" + comboColumnAgg + ";";
 		$('#setting' + gadgetID).val(settings);
-    }
-    else if(type == 2){
+	}
+	else if(type == 2){
 		settings = $('#setting' + gadgetID).val();
 		var n = settings.split(";");
 		comboColumnCat = n[0];
 		comboColumnAgg = n[1];
-    }
-    if(type == 3){
+	}
+	if(type == 3){
 		comboColumnCat = $('#comboColumnCatEdit').val();
 		comboColumnAgg = $('#comboColumnAggEdit').val();
 		settings = comboColumnCat + ";" + comboColumnAgg + ";";
 	    $('#setting' + gadgetID).val(settings);
-    }
+	}
 
    var  datainfo = {'comboColumnCat':comboColumnCat,'comboColumnAgg':comboColumnAgg,'titleNo':titleNo,'where':where};
     	
@@ -135,7 +127,7 @@ function drawComboo(type,vid){
 		$('#editCombo').modal('hide');
 	}
 }
-
+*/
 function generateCombo(a){
 	var options={
 		title: 'Combo Chart for '+ comboColumnCat,
@@ -147,11 +139,45 @@ function generateCombo(a){
 	var chart = new google.visualization.ComboChart(document.getElementById('comboResult'+a));
 	chart.draw(data,options);
 }
+//draw the combo chart in the gadget
+function drawCombo(souceData,gadgetID) {
+	var data = new google.visualization.DataTable();
+	data.addColumn('string','Type');
+	for(i=0; souceData[i]!=null ; i++)
+	{
+		data.addColumn('number',String(souceData[i]['Category']));
+	}
+	
+	for(i=0 ; i<3; i++){
+		data.addRow();
+	}
+	data.setCell(0,0,'AVG');
+	data.setCell(1,0,'MAX');
+	data.setCell(2,0,'MIN');
+	
+	var colIndex = 1;
+	for(i=0 ; souceData[i]!=null ; i++){
+		data.setCell(0,colIndex,parseFloat(String(souceData[i]['AVG'])));
+		data.setCell(1,colIndex,parseFloat(String(souceData[i]['MAX'])));
+		data.setCell(2,colIndex,parseFloat(String(souceData[i]['MIN'])));
+		colIndex++;
+	}
+	var options={
+		title: 'Combo Chart for '+ comboColumnCat,
+		vAxis: {title : comboColumnAgg + " value"},
+		hAxis: {title : "Aggregation Type"},
+		height: $("#comboResult"+gadgetID).height(),
+		seriesType: "bars"
+	};
+	var chart = new google.visualization.ComboChart(document.getElementById('comboResult'+gadgetID));
+	chart.draw(data,options);
 
-function createNewCombo(){
+}
+//create the gadget for combo chart
+function createNewComboGadget(){
 	var d = new Date();
 	var ranNum = 1 + Math.floor(Math.random()*100);
-	gadgetID = d.getTime() + ranNum + "";
+	var gadgetID = d.getTime() + ranNum + "";
 
 	var gadget = "<div name='comboDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:400px; height: 300px' type='combo'>";
 	gadget +=  "<div class='gadget-header'>Combo Chart" + gadgetID;
@@ -160,14 +186,14 @@ function createNewCombo(){
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />"; 	
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='comboResult" + gadgetID + "' style='width:100%;'></div></div></div>";
-    $('.chart-area').append(gadget);
+	$('.chart-area').append(gadget);
 	$( ".gadget" )
 		.draggable({ handle: ".gadget-header" })
 		.resizable();
 	$(".gadget-close").click(function() {   
-        $(this).parent().parent().hide();
-    })
-    $('.edit-combo').click(function(){
+        $(this).parent().parent().remove();
+	})
+	$('.edit-combo').click(function(){
 		editGadgetID = $(this).parent().parent().attr('id');
 		var oldSettings = $('#setting'+editGadgetID).val(); //old settings of gadget
 		oldColumn = oldSettings;
@@ -181,4 +207,50 @@ function createNewCombo(){
 	$('#editComboSave').click(function(){
 		drawCombo(3,editGadgetID);
 	});
+	return gadgetID;
+}
+//create new combo chart
+function addComboChart() {
+	var gadgetID = vid;
+	var titleNo = $('#titleNo').val();
+	var where = $("#where").val();	
+	var comboColumnCat = "";
+	var comboColumnAgg = "";
+	var settings = "";
+	var  datainfo = {'comboColumnCat':comboColumnCat,'comboColumnAgg':comboColumnAgg,'titleNo':titleNo,'where':where};
+	comboColumnCat = $('#comboColumnCat').val();
+	comboColumnAgg = $('#comboColumnAgg').val();
+	settings = comboColumnCat + ";" + comboColumnAgg + ";";
+	var gadgetID = createNewComboGadget();
+	$.ajax({
+		type: 'POST',
+		url: "control.php",
+		data: {action: 'addChart',
+		name: 'ComboChart',
+		vid: $('#vid').val(),
+		type: 'combo',
+		width: 1200,
+		height: 600,
+		depth: ++maxDepth,
+		top: 50,
+		left: 0,
+		note: 'dfdff',
+		datainfo: datainfo},
+		success: function(JSON_Response){
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			drawCombo(queryResult,gadgetID);
+			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
+			$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+			$('#addCombo').modal('hide');
+		}
+		})
+}
+//Load existing chart.
+function loadComboChart(sourceData) {
+	var gadgetID = createNewComboGadget();
+	var queryResult = sourceData['queryResult'];
+	drawCombo(queryResult,gadgetID);
+	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
+	$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 }

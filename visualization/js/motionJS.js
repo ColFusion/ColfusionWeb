@@ -19,7 +19,7 @@ type
 2: reload motion chart from database
 3: edit existing motion
 *****************/
-function drawMotion(type, vid) {
+/*function drawMotion(type, vid) {
 	gadgetID = vid;
 	titleNo = $('#titleNo').val();  
 	where = $("#where").val();
@@ -136,22 +136,39 @@ function drawMotion(type, vid) {
 	else if(type == 3){
 		$('#editMotion').modal('hide');		
 	}
+}*/
+function drawMotion(sourceData,gadgetID) {
+	var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Disease');
+  	data.addColumn('date', 'Date');
+  	data.addColumn('number', 'Number of disease cases');
+  	data.addColumn('number', 'Precipitation');
+  	data.addColumn('string', 'State');
+	for(i=0; sourceData[i]!=null; i++) {
+		data.addRow();
+		data.setCell(i, 0, String(sourceData[i]["disease"]));
+		data.setCell(i, 1, new Date(sourceData[i]["year"], sourceData[i]["month"], 1));
+		data.setCell(i, 2, parseInt(sourceData[i]["numberOfCases"]));
+		data.setCell(i, 3, parseInt(sourceData[i]["precipitation"]));
+		data.setCell(i, 4, sourceData[i]["state"]);
+	}
+	var chart = new google.visualization.MotionChart(document.getElementById('motionResult'+gadgetID));
+	chart.draw(data, {width: "100%", height:"100%"});
 }
-
 function generateMotion(a) {
 	var chart = new google.visualization.MotionChart(document.getElementById('motionResult'+gadgetID));
 	//chart.draw(data, {width: 600, height:300});	
 	chart.draw(motiondata, {width: "100%", height:"100%"});
 }
    
-function createNewMotion() {
+function createNewMotionGadget() {
 	var d = new Date();
 	var ranNum = 1 + Math.floor(Math.random() * 100);
-	gadgetID = d.getTime() + ranNum + "";
+	vargadgetID = d.getTime() + ranNum + "";
 
 	var gadget = "<div name='motionDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:500px; height:320px' type='motion'>";
 	gadget += "<div class='gadget-header'>Motion Chart " + gadgetID;
-    gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>"
+	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>"
 	gadget += "<div class='gadget-edit edit-motion'><a href='#editMotion' data-toggle='modal'><i class='icon-edit'></i></a></div></div>";
 	gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";
 	gadget += "<div class='gadget-content'>";
@@ -163,7 +180,60 @@ function createNewMotion() {
 		.resizable();
 	
 	$(".gadget-close").click(function() {	
-		$(this).parent().parent().hide();
-	})	
+		$(this).parent().parent().remove();
+	})
+	return gadgetID;
 
+}
+function addMotionChart() {
+	var titleNo = $('#titleNo').val();
+	var where = $("#where").val();	
+	var settings = "";
+	var otherColumns = new Array();
+	var gadgetID = createNewMotionGadget();
+	var firstColumn = $('#motionFirstColumn').val();
+	var dateColumn = $('#motionDate').val();
+	var otherColCount = 0;
+	var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
+	$.each($("input[name='motionOtherColumn[]']:checked"), function(){
+		otherColumns.push($(this).val());
+		settings += "," + $(this).val();
+		otherColCount++;
+	});
+	settings = settings.substring(1) + ";";
+	settings = firstColumn + ';' + dateColumn + ';' + settings;
+	$('#setting' + gadgetID).val(settings);
+	var gadgetID = createNewMotionGadget();
+	$.ajax({
+		type: 'POST',
+		url: "control.php",
+		data: {action: 'addChart',
+		name: 'MotionChart',
+		vid: $('#vid').val(),
+		type: 'motion',
+		width: 1200,
+		height: 600,
+		depth: ++maxDepth,
+		top: 50,
+		left: 0,
+		note: 'dfdff',
+		datainfo: datainfo},
+		success: function(JSON_Response){
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
+			$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+			drawMotion(queryResult,gadgetID);
+			$('#addMotion').modal('hide');
+		}
+		})
+}
+//Load existing chart.
+function loadMotionChart(sourceData) {
+	var gadgetID = createNewMotionGadget();
+	var queryResult = sourceData['queryResult'];
+	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
+	$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+	drawMotion(queryResult,gadgetID);
+		
 }
