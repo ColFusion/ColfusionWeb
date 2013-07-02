@@ -109,6 +109,7 @@ function outCanvasEffect(id){
 
 $(function() {
 	
+	
 	var vids=new Array();
 	$("#deleteButton").click(
 			function(){
@@ -139,7 +140,7 @@ $(function() {
 			)
 	
 
-
+			
 	
 	
 	$(".gadget" )

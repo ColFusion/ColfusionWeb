@@ -11,6 +11,8 @@ require_once("charts/ColumnChart.php");
 require_once("charts/PieChart.php");
 require_once("charts/TableChart.php");
 require_once("charts/ComboChart.php");
+require_once("charts/MotionChart.php");
+require_once("charts/MapChart.php");
 global $current_user;
 
 if($current_user->authenticated != TRUE) {

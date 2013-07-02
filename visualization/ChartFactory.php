@@ -22,6 +22,12 @@ class ChartFactory {
         if($_type == "combo"){
         	return new ComboChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
         }
+        if($_type == "map"){
+        	return new MapChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
+        if($_type == "motion"){
+        	return new MotionChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
     }
     //To new a exist chart with parameters; 
     static function openChart($_cid ,$_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
@@ -38,6 +44,12 @@ class ChartFactory {
         }
         if($_type == "combo"){
         	return new ComboChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
+        if($_type == "map"){
+        	return new MapChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
+        if($_type == "motion"){
+        	return new MotionChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
         }
     }
     //To create a temp chart, with a temp Id 
@@ -61,6 +73,12 @@ class ChartFactory {
         }
         if($_type == "combo"){
         	return new ComboChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
+        if($_type == "map"){
+        	return new MapChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
+        }
+        if($_type == "motion"){
+        	return new MotionChart($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
         }
     }
 }

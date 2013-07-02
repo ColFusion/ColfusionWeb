@@ -186,32 +186,3 @@ function drawColumns(){
 function clearScreen(){
 	$(".gadget").remove();
 }
-function addPieChart() {
-    $.ajax({
-        type: 'POST',
-		//url: "getPie.php",
-	url: "control.php",
-		//data: {'pieColumnCat':pieColumnCat, 'pieColumnAgg':pieColumnAgg, 'pieAggType':pieAggType, 'titleNo':titleNo, 'where':where},
-	data:{
-            action: 'addChart',
-            name: 'bdfdfd',
-            vid: $('#vid').val(),
-            type: 'pie',
-            width: 400,
-            height: 300,
-            depth: ++maxDepth,
-            top: 50,
-            left: 0,
-            note: 'dfdff',
-            datainfo: 'I DONNOT KNOW WHAT IS THE QUERY'
-	},
-        success:function(JSON_Response){
-            JSONResponse = jQuery.parseJSON(JSON_Response);
-	    var cid = JSONResponse['cid'];
-	    var queryResult = JSONResponse['queryResult'];
-	    result = JSONResponse;
-	    drawPies();
-	    $('#addPie').modal('hide');
-        }
-    })
-}

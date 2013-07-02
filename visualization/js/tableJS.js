@@ -264,7 +264,7 @@ function activatePageSelect(ID){
 }
 
 function addTableChart() {
-        var gadgetID = vid;
+    var gadgetID = vid;
 	var titleNo = $("#titleNo").val();
 	var where = $("#where").val();
 	var settings = "";

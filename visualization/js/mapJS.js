@@ -63,25 +63,41 @@ function loadMap(type,vid){
 	drawMap();
 }
 
+
 function drawMap(){
+	
+    var  datainfo = {'latitude':latitude,'longitude':longitude,'maptooltip':mapTooltip};
+  	
 	$.ajax({
 		type: 'POST',
-		url: "getMap.php",
-		data: {'latitude':latitude, 'longitude':longitude, 'mapTooltip':mapTooltip, 'titleNo':titleNo, 'where':where},
+		url: "control.php",
+		data: {
+			action: 'addChart',
+			name: 'bdasdfd',
+			vid: $('#vid').val(),
+			type: 'map',
+			width: 400,
+			height: 300,
+			depth: 2,
+			top: 50,
+			left: 0,
+			note: 'dfdff',
+			datainfo: datainfo
+		},
 		success: function(JSON_Response){
-			var JSONResponse = JSON_Response;
+			var JSONResponse = JSON_Response['queryResult'];
 			data = new google.visualization.DataTable();
 			data.addColumn('number', latitude);
 			data.addColumn('number', longitude);
 			data.addColumn('string', 'Tooltip');
 			for(i=0 ; JSONResponse[i]!=null ; i++){
 				data.addRow();
-				data.setCell(i, 0, parseFloat(String(JSONResponse[i]["latitude"])));
-				data.setCell(i, 1, parseFloat(String(JSONResponse[i]["longitude"])));
+				data.setCell(i, 0, parseFloat(String(JSONResponse[i]["la"])));
+				data.setCell(i, 1, parseFloat(String(JSONResponse[i]["long"])));
 				var tips = "";
 				for(k=0; k<mapTooltip.length; k++){
 					tips += mapTooltip[k] + ": " + String(JSONResponse[i][mapTooltip[k]]);
-					tips += "<br>";
+					
 				}
 				data.setCell(i, 2, tips);
 			}

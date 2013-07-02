@@ -88,12 +88,26 @@ function drawMotion(type, vid) {
  //       data.addColumn('number',otherColumns[i]);
 //    }
 
+    var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
+
 	$.ajax({
 		type: 'POST',
-		url: "getMotion.php",
-		data: {'titleNo':titleNo, 'firstColumn':firstColumn, 'dateColumn':dateColumn, 'otherColumns':otherColumns, 'where': where},
+		url: "control.php",
+		data: {
+			action: 'addChart',
+			name: 'bddfasfd',
+			vid: $('#vid').val(),
+			type: 'motion',
+			width: 400,
+			height: 300,
+			depth: 2,
+			top: 50,
+			left: 0,
+			note: 'dfdff',
+			datainfo: datainfo
+		},
 		success: function(JSON_Response){
-			var JSONResponse = JSON_Response;
+			var JSONResponse = JSON_Response['queryResult'];
 			for(i=0; JSONResponse[i]!=null; i++) {
 				data.addRow();
 				data.setCell(i, 0, String(JSONResponse[i]["disease"]));

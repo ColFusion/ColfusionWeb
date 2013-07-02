@@ -154,8 +154,8 @@
 									<?php if(!$visGadgets){ ?>
 									<li id="viewnone"><a data-toggle="modal">None</a></li>
 									<?php }else{ foreach($visGadgets as $vis) { ?>
-									<li class="view" id="view<?=$vis->vid?>">
-										<a href="#" data-toggle="modal"><?=$vis->type?> <?=$vis->vid?></a>
+									<li class="view" id="view<?php echo $vis->vid?>">
+										<a href="#" data-toggle="modal"><?php $vis->type?> <?php $vis->vid?></a>
 									</li>
 									<?php } } ?>
 								</ul>
@@ -242,20 +242,21 @@
 		<div id="shareWith" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-				<h3 id="tableAddModalLabel">Share The Current Canvas : </h3>
+				<h3 id="tableAddModalLabel">Share Current Canvas : </h3>
 			</div>
 			<div class="modal-body">
 						<div class="seachArea1"> 
-						     <label class = "tabContentTitle" style = "float:left">Enter The Person By Name:</label>
-						     <input type="text"  name="searchText" onfocus = "everyUser(this.value)" onkeyup = "everyUser(this.value)" style = "width:auto"></input>
+						     <label class = "tabContentTitle" style = "float:left">Enter The Person By Name Or By Email:</label>
+						     <input type="text"  name="searchText" style = "width:auto"></input>
 						</div>
 						<div class="seachArea2"> 
 						     <label class = "tabContentTitle" style = "float:left">Set The Authorization:</label>
+							 <select id = "autSele">
+							 	<option>Readable</option>
+							 	<option>Modifiable</option>
+							 </select>
 						</div>
 						
-						<div id="displayUser"> 
-						     
-						</div>
 						
 					</div>
 				
@@ -409,7 +410,7 @@
 						<div class="columnSelection">
 							<?php foreach($columns as $name) { ?>
 							<label class="checkbox">
-								<input type="checkbox" name="tableColumnsEdit" value="<?=$name?>" checked /> <?php echo $name; ?>
+								<input type="checkbox" name="tableColumnsEdit" value="<?php echo $name?>" checked /> <?php echo $name; ?>
 							</label>
 							<?php } ?>
 						</div>
@@ -459,19 +460,19 @@
 				<label class="tabContentTitle">Select one column as CATEGORY (string)</label>
 				<select id="motionFirstColumn">
 					<?php foreach($columns as $col_name) { ?>
-					<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+					<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select one column as DATE (year)</label>
 				<select id="motionDate" size=3 multiple>
 					<?php foreach($columns as $date) { ?>
-					<option value="<?=$date?>"><?php echo $date; ?></option>
+					<option value=<?php echo $date?>><?php echo $date; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select at least one from the following columns (number)</label>
 					<?php foreach($columns as $col_name) { ?>
 					<label class="checkbox">
-						<input type="checkbox" name="motionOtherColumn[]" value="<?=$col_name?>"> <?php echo $col_name; ?>
+						<input type="checkbox" name="motionOtherColumn[]" value=<?php echo $col_name?>> <?php echo $col_name; ?>
 					</label>
 					<?php } ?>
 				
@@ -493,19 +494,19 @@
 				<label class="tabContentTitle">Select one column as CATEGORY</label>
 				<select id="motionFirstColumnEdit">
 					<?php foreach($columns as $col_name) { ?>
-					<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+					<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select one column as DATE</label>
 				<select id="motionDateEdit" size=3 multiple>
 					<?php foreach($columns as $date) { ?>
-					<option value="<?=$date?>"><?php echo $date; ?></option>
+					<option value=<?php echo $date?>><?php echo $date; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select at least one from the following columns</label>
 					<?php foreach($columns as $col_name) { ?>
 					<label class="checkbox">
-						<input type="checkbox" name="motionOtherColumnEdit[]" value="<?=$col_name?>"> <?php echo $col_name; ?>
+						<input type="checkbox" name="motionOtherColumnEdit[]" value=<?php echo $col_name?>> <?php echo $col_name; ?>
 					</label>
 					<?php } ?>			
 
@@ -528,19 +529,19 @@
 				<label>Latitude:</label>
 				<select id="latitude">
 					<?php foreach($columns as $name) { ?>
-						<option value="<?=$name?>"><?php echo $name; ?></option>
+						<option value=<?php echo $name?>><?php echo $name; ?></option>
 					<?php } ?>
 				</select><br>
 				<label>Longitude:</label>
 				<select id="longitude">
 					<?php foreach($columns as $name) { ?>
-						<option value="<?=$name?>"><?php echo $name; ?></option>
+						<option value=<?php echo $name?>><?php echo $name; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Tooltip Fields</label>
 				<?php foreach($columns as $name) { ?>
 					<label class="checkbox">
-						<input type="checkbox" name="mapTooltip" value="<?=$name?>" /> <?php echo $name; ?>
+						<input type="checkbox" name="mapTooltip" value=<?php echo $name?> /> <?php echo $name; ?>
 					</label>
 				<?php } ?>
 			</div>
@@ -561,19 +562,19 @@
 				<label>Latitude:</label>
 				<select id="latitudeEdit">
 					<?php foreach($columns as $name) { ?>
-						<option value="<?=$name?>"><?php echo $name; ?></option>
+						<option value=<?php echo $name?>><?php echo $name; ?></option>
 					<?php } ?>
 				</select><br>
 				<label>Longitude:</label>
 				<select id="longitudeEdit">
 					<?php foreach($columns as $name) { ?>
-						<option value="<?=$name?>"><?php echo $name; ?></option>
+						<option value=<?php echo $name?>><?php echo $name; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Tooltip Fields</label>
 				<?php foreach($columns as $name) { ?>
 					<label class="checkbox">
-						<input type="checkbox" name="mapTooltipEdit" value="<?=$name?>" /> <?php echo $name; ?>
+						<input type="checkbox" name="mapTooltipEdit" value=<?php echo $name?> /> <?php echo $name; ?>
 					</label>
 				<?php } ?>
 			</div>
@@ -599,13 +600,13 @@
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
 						<select id="pieColumnCat">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
 						<select id="pieColumnAgg">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>							
 					</div>
@@ -642,13 +643,13 @@
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
 						<select id="pieColumnCatEdit">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
 						<select id="pieColumnAggEdit">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>	
 					</div>
@@ -685,13 +686,13 @@
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
 						<select id="columnCat">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
 						<select id="columnAgg">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 					</div>
@@ -707,7 +708,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button class="btn btn-primary" id="addColumnSave" onclick="drawColumn(1,0)">Save changes</button>
+				<button class="btn btn-primary" id="addColumnSave" onclick="drawColumns()">Save changes</button>
 			</div>
 		</div>
 
@@ -727,13 +728,13 @@
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
 						<select id="columnCatEdit">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
 						<select id="columnAggEdit">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 					</div>
@@ -810,13 +811,13 @@
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
 						<select id="comboColumnCatEdit">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
 						<select id="comboColumnAggEdit">
 						<?php foreach($columns as $col_name) { ?>
-							<option value="<?=$col_name?>"><?php echo $col_name; ?></option>
+							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 					</div>
