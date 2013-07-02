@@ -266,7 +266,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button class="btn btn-primary" id="addTableSave" onclick="loadTableData(1,0);">Save changes</button>
+				<button class="btn btn-primary" id="ShareCanvasBut" onclick="shareCanvases()">Save changes</button>
 			</div>
 		</div>
 		
@@ -293,7 +293,7 @@
 			</div>
 			<div class="modal-footer">
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-				<button class="btn btn-primary" id="addTableSave" onclick="saveConfig()">OK</button>
+				<button class="btn btn-primary" id="OpenChartBut" onclick="saveConfig()">OK</button>
 			</div>
 		</div>
 		

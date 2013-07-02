@@ -5,6 +5,7 @@ var vMon = d.getMonth() + 1;
 var vDay = d.getDate();
 
 
+
 function saveConfig(){
 	var aut = $("#shareAuthorization").val();
 	
