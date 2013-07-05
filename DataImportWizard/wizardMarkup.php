@@ -13,7 +13,37 @@
                 <img src='help.png' width='15' height='15' title='Select a valid file (.xls,.xlsx, .csv)'/>
                 <br/>
                 <br/>
-                <div id='divFromComputer' ></div>
+                <div id='divFromComputer' >
+                    <form class='upload-form' name='upload_form' id='upload_form' action='DataImportWizard/acceptFileFromWizard.php' method='post' enctype='multipart/form-data'> <input type='hidden' name='phase' value='0'> 
+                        <p id='tohide'> 
+                            <label for='upload_file'>
+                                <b>Select file:</b>
+                            </label> 
+                            <input name='upload_file' type='file' size='15' multiple/>
+                            <span id='uploadWidgetCover'>No file chosen</span>
+                            <br/>
+                            <select name="fileType" id="uploadFileType">
+                                <option value="dataFile">CSV, Excel File</option>
+                                <option value="dbDump">Database Dump File</option>
+                            </select>
+                            <select name="dbType" id="dbType" style="display:none;">
+                                <option value="MySQL">MySQL</option>
+                                <option value="MSSQL">MS SQL Server</option>
+                                <option value="PostgreSQL">PostgreSQL</option>
+                                <option value="Oracle">Oracle</option>
+                            </select>
+                        <div id='uploadPanel' style="margin-top: -8px;">
+                            <div class='progress' id='uploadProgressBar' style='display: none;'>
+                                <div class='bar'></div>                             
+                            </div>                      
+                            <input type='button' name='Submit' value='Upload' id='uploadBtn' style='display:none;' class='btn btn-primary' />
+                            <span id='uploadProgressText'></span>
+                        </div>
+                        </p>
+                        <p id='uploadMessage'></p>
+                        <input type='hidden' id='uploadFormSid' name='sid'/>
+                    </form>
+                </div>
 
                 <label style="display: inline;"><input id='internet' type='radio' name='place' value="internet" /> Internet accessable resource </label>
                 <img src='help.png' width='15' height='15' title='Type in a valid url'/>

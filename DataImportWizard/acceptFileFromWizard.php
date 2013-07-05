@@ -37,12 +37,6 @@ switch ($phase) {
     case 0:
         upload_0();
         break;
-    case 1:
-        upload_1();
-        break;
-    case 2:
-        upload_2();
-        break;
     case 3:
         get_Ext();
         break;
@@ -55,12 +49,12 @@ function upload_0() {
 
     // check file type
     $extension = end(explode(".", $_FILES["upload_file"]["name"]));
-    $mimes = array('xls', 'xlsx', 'csv', 'zip');
+    $mimes = array('xls', 'xlsx', 'csv', 'sql', 'zip');
     if (count($_FILES) <= 0) {
         $error = "ERROR: No file was uploaded.";
         $_SESSION['upload_file'] = array('error' => $error);
     } else if (!in_array($extension, $mimes)) {
-        $error = "ERROR: please upload excel, csv, or zip file.";
+        $error = "ERROR: please upload excel, csv, sql, or zip file.";
         $_SESSION['upload_file'] = array('error' => $error);
     } else {
         $_SESSION['extension'] = $extension;
@@ -141,6 +135,8 @@ function upload_0() {
                         $error = "ERROR: No valid file is included.";
                         $_SESSION['upload_file'] = array('error' => $error);
                     }
+                } else if (strtolower($ext) == 'sql') {
+                    
                 }
 
                 $_SESSION['raw_file_name']["$sid"] = $raw_file_name;

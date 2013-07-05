@@ -23,7 +23,11 @@ class FileUtil {
         $ext = pathinfo($filename, PATHINFO_EXTENSION);
         return stripos($ext, 'xlsx') !== false;
     }
-
+    
+    public static function isSQLFile($filename){
+        $ext = pathinfo($filename, PATHINFO_EXTENSION);
+        return stripos($ext, 'sql') !== false;
+    }
 }
 
 ?>

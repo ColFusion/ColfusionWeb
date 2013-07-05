@@ -171,6 +171,7 @@ function WizardExcelPreviewViewModel(sid) {
 
     self.loadPreview = function(rowsPerPage, page) {
         self.isPreviewLoadingComplete(false);
+        self.loadingProgressPercent(0);
         getEstimatedLoadingSeconds().done(function(estimatedSeconds) {
             startLoadingTimeStamp = new Date().getTime();
             estimatedLoadingTimestamp = estimatedSeconds * 1000;

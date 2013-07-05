@@ -12,9 +12,15 @@ var wizardFromFile = (function() {
 
     // Get all actions form friends.
     wizardFromFile.Init = function() {
-        var uploadFileForm = "<form class='upload-form' name='upload_form' id='upload_form' action='DataImportWizard/acceptFileFromWizard.php' method='post' enctype='multipart/form-data'> <input type='hidden' name='phase' value='0'> <p id='tohide'> <label for='upload_file'><b>Select file:</b></label> <input name='upload_file' type='file' size='15' multiple/><span id='uploadWidgetCover'>No file chosen</span><div id='uploadPanel'><div class='progress' id='uploadProgressBar' style='display: none;'><div class='bar'></div></div><input type='button' name='Submit' value='Upload' id='uploadBtn' style='display:none;' class='btn btn-primary' /> <span id='uploadProgressText'></span></div></p><p id='uploadMessage'></p><input type='hidden' id='uploadFormSid' name='sid' value='" + sid + "'/></form>";
-        $('#divFromComputer').append(uploadFileForm);
-
+        $('#uploadFormSid').val(sid);
+        $('#uploadFileType').change(function(){
+            if($(this).val() == 'dbDump'){
+                $('#dbType').show();
+            }else{
+                $('#dbType').hide();
+            }
+        });
+        
         var options = {
             beforeSubmit: showRequest, // pre-submit callback 
             success: showResponse  // post-submit callback 
@@ -24,13 +30,29 @@ var wizardFromFile = (function() {
         $('#upload_form').find('input[name="upload_file"]').fileupload({
             dataType: 'json',
             url: 'DataImportWizard/acceptFileFromWizard.php',
+            acceptFileTypes: '/(\.|\/)(xlsx?|csv|sql)$/i',
+            maxNumberOfFiles: 1,
             add: function(e, data) {
                 $('#upload_form').find('#uploadWidgetCover').text(data.files[0].name);
                 $('#upload_form').find('#uploadProgressBar').hide().find('.bar').css({'width': '0'});
                 $('#uploadProgressText').hide();
-                $('#uploadPanel').show().find('#uploadBtn').show().click(function() {
-                    $('#uploadProgressBar').add($('#uploadProgressText')).show();
-                    data.submit();
+                $('#uploadPanel').show().find('#uploadBtn').show().unbind().click(function() {
+
+                    var fileType = $('#uploadFileType').val();
+                    if (fileType == 'dataFile') {
+                        var acceptedFileTypes = /\.(xlsx?|csv|zip)$/i;
+                        var fileNotAcceptedMsg = '(.csv, .excel, or .zip file)';
+                    } else {
+                        var acceptedFileTypes = /\.(zip|sql)$/i;
+                        var fileNotAcceptedMsg = '(.sql or .zip file)';
+                    }
+
+                    if (acceptedFileTypes.test(data.files[0].name)) {
+                        $('#uploadProgressBar').add($('#uploadProgressText')).show();
+                        data.submit();
+                    } else {
+                        $('#uploadMessage').css('color', 'red').text('Please select a valid file ' + fileNotAcceptedMsg + '.');
+                    }
                 });
             },
             done: function(e, data) {
@@ -54,7 +76,7 @@ var wizardFromFile = (function() {
                 $('#uploadProgressBar').find('.bar').css('width', progress + '%');
             }
         });
-        
+
         wizardExcelPreviewViewModel = new WizardExcelPreviewViewModel($('#sid').val());
         var secondNode = document.getElementById('second');
         ko.cleanNode(secondNode);

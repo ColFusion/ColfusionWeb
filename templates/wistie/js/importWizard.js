@@ -233,7 +233,7 @@ var importWizard = (function() {
         }
 
         return result;
-    }
+    };
 
     importWizard.passInfofromDisplayOptionsStep = function() {
         $('#schemaMatchinStepInProgressWrapper').show();
@@ -244,7 +244,7 @@ var importWizard = (function() {
         else {
             wizardFromFile.passSheetInfoFromDisplayOptionStep();
         }
-    }
+    };
 
     importWizard.showSchemaMatchingStep = function(data) {
         

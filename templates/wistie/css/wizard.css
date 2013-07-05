@@ -108,8 +108,7 @@ div[id^=sugmoreDiv]{
 }
 
 #uploadBtn{
-    margin-top: -10px;
-    margin-bottom: 10px;
+    margin-top: -3px;
 }
 
 #uploadWidgetCover{
@@ -125,7 +124,7 @@ div[id^=sugmoreDiv]{
 #uploadProgressBar{
     width: 200px;
     float: right;
-    margin: 0 470px 0 0;
+    margin: 5px 455px 0 0;
     border-radius: 0;
     height: 13px;
 }
@@ -138,13 +137,12 @@ div[id^=sugmoreDiv]{
 
 #uploadProgressText {
     float: right;
-    margin: -34px 425px 0 0;
+    margin: -27px 413px 0 0;
 }
 
 #uploadMessage{
-    margin-top: -10px;
     font-size: 14px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 .nav{
