@@ -70,7 +70,12 @@ var wizardFromFile = (function() {
             progressall: function(e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
                 if (progress == 100) {
-                    $('#uploadMessage').css('color', '').text('Processing Files...');
+                    if ($('#uploadFileType').val() == 'dataFile') {
+                        var processingText = 'Processing...';
+                    } else {
+                        var processingText = 'Importing dump file...'
+                    }
+                    $('#uploadMessage').css('color', '').text(processingText);
                 }
                 $('#uploadProgressText').text(progress + '%');
                 $('#uploadProgressBar').find('.bar').css('width', progress + '%');

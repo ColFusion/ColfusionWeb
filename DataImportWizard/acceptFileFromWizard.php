@@ -6,6 +6,7 @@ set_time_limit(0);
 include_once('../Smarty.class.php');
 include_once('../Classes/CSVToExcelConverter.php');
 include_once('FileUtil.php');
+include_once(realpath(dirname(__FILE__) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php"));
 $main_smarty = new Smarty;
 
 include('../config.php');
@@ -136,10 +137,17 @@ function upload_0() {
                         $_SESSION['upload_file'] = array('error' => $error);
                     }
                 } else if (strtolower($ext) == 'sql') {
-                    
+                    $dbType = strtolower($_POST['dbType']);
+                   
+                    try {
+                        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($dbType);
+                        $dbHandler->importSqlFile($sid, $upload_path);
+                    } catch (Excpetion $e) {
+                        $_SESSION['upload_file'] = array('error' => $e);
+                    }
                 }
 
-                $_SESSION['raw_file_name']["$sid"] = $raw_file_name;
+                $_SESSION["raw_file_name_$sid"] = $raw_file_name;
                 $loc_msg = "uploaded successfully";
                 $_SESSION['upload_file'] = array('loc' => $loc_msg);
             }
@@ -159,7 +167,7 @@ function upload_0() {
 
 function get_Ext() {
     $sid = getSid();
-    $var = end(explode(".", $_SESSION['raw_file_name']["$sid"]));
+    $var = end(explode(".", $_SESSION["raw_file_name_$sid"]));
     echo $var;
 }
 
@@ -170,7 +178,7 @@ function getSid() {
     else if (isset($_GET["sid"]))
         $sid = $_GET["sid"];
     else {
-        echo json_encode("no sid");
+        echo json_encode(array('isSuccessful' => false, 'message' => "Source not specified"));
         die();
     }
 

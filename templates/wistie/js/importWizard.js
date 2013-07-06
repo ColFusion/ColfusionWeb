@@ -15,6 +15,15 @@ var importWizard = (function() {
     importWizard.Init = function() {
         wizardFromFile.Init();
 
+        $(document).ajaxSend(function(event, jqxhr, settings) {
+            var sid = $('#sid').val();
+            if (settings.data && settings.data.append) {
+                settings.data.append('sid', sid);
+            }else{
+                settings.data += '&sid=' + sid;
+            }
+        });
+
         $("#computer").click(function() {
             $('#divFromComputer').show();
             $('#divFromDatabase').hide();
@@ -247,7 +256,7 @@ var importWizard = (function() {
     };
 
     importWizard.showSchemaMatchingStep = function(data) {
-        
+
         $('#schemaMatchinStepInProgressWrapper').hide();
         document.getElementById("schemaMatchinTable").innerHTML = data;
         importWizard.checkToEnableNextButtonOnSchemaMatchinStep();

@@ -15,7 +15,7 @@
                 <br/>
                 <div id='divFromComputer' >
                     <form class='upload-form' name='upload_form' id='upload_form' action='DataImportWizard/acceptFileFromWizard.php' method='post' enctype='multipart/form-data'> <input type='hidden' name='phase' value='0'> 
-                        <p id='tohide'> 
+                        <p id='tohide' style="margin-bottom: 0;"> 
                             <label for='upload_file'>
                                 <b>Select file:</b>
                             </label> 
@@ -32,16 +32,15 @@
                                 <option value="PostgreSQL">PostgreSQL</option>
                                 <option value="Oracle">Oracle</option>
                             </select>
-                        <div id='uploadPanel' style="margin-top: -8px;">
+                        </p>
+                        <div id='uploadPanel'>
                             <div class='progress' id='uploadProgressBar' style='display: none;'>
                                 <div class='bar'></div>                             
                             </div>                      
                             <input type='button' name='Submit' value='Upload' id='uploadBtn' style='display:none;' class='btn btn-primary' />
                             <span id='uploadProgressText'></span>
                         </div>
-                        </p>
                         <p id='uploadMessage'></p>
-                        <input type='hidden' id='uploadFormSid' name='sid'/>
                     </form>
                 </div>
 
@@ -64,8 +63,8 @@
                             <td>DB server:</td>
                             <td>
                                 <select id ='selectDBServer' onchange="wizardFromDB.setDefaultAdvancedSettingsByServerName($('#dbServerPort'), this.value)">
-                                    <option value='0'>MySQL</option>
-                                    <option value='1'>Microsoft SQL</option>
+                                    <option value='MySQL'>MySQL</option>
+                                    <option value='MSSQL'>Microsoft SQL</option>
                                 </select>							
                             </td>
                             <td><span id='showHideAdvancedOptionsFromDatabase' style='cursor: pointer;' onclick="wizardFromDB.togglePort()">Show Advanced Options</span></td>

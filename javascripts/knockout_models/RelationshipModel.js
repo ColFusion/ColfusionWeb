@@ -67,6 +67,32 @@ var RelationshipModel = {
             return createCommentModel(commentJson, commentJson.isControlPanelShown);
         }
 
+        function updateFeedbackStatistics() {
+            var totalConfidence = 0;
+            var numOfFeedback = 0;
+
+            $.each(self.comments(), function(i, val) {
+                numOfFeedback++;
+                totalConfidence += parseFloat(val.confidence());
+            });
+
+            var yourComment = self.yourComment();
+            if (yourComment) {
+                numOfFeedback++;
+                totalConfidence += parseFloat(yourComment.confidence());
+            }
+
+            console.log('totalConfidence: ' + totalConfidence);
+            console.log('numOfFeedback: ' + numOfFeedback);
+            console.log(totalConfidence / numOfFeedback);
+            var avgConfidence = totalConfidence / numOfFeedback;
+            self.avgConfidence(avgConfidence);
+
+            var relationshipTableDom = $('#mineRelationshipsTableWrapper').find('#relationship_' + self.rid);
+            $(relationshipTableDom).find('.numOfVerdicts').text(numOfFeedback);
+            $(relationshipTableDom).find('.avgConfidence').text((avgConfidence * 100 / 100).toFixed(2));
+        }
+
         self.showComments = function() {
             self.isCommentHided(false);
             self.isCommentLoadingError(false);
@@ -142,6 +168,7 @@ var RelationshipModel = {
             }).done(function(data) {
                 self.yourComment(createCommentModel(data, true));
                 self.isYourCommentEditing(false);
+                updateFeedbackStatistics();
             }).fail(function(jqXHR, statusCode, errMessage) {
                 self.isCommentLoadingError(true);
                 self.isCommentLoaded[self.rid] = false;
@@ -166,6 +193,7 @@ var RelationshipModel = {
                 dataType: 'json',
                 success: function(data) {
                     self.yourComment(null);
+                    updateFeedbackStatistics();
                 },
                 error: function(jqXHR, statusCode, errMessage) {
                     alert(errMessage);

@@ -4,12 +4,23 @@ include_once('../config.php');
 include_once('../DAL/QueryEngine.php');
 include_once('../DAL/ExternalDBHandlers/ExternalDBs.php');
 include_once('UtilsForWizard.php');
+require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandler.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
+
+$sid = $_POST['sid'];
+if (!isset($sid)) {
+    die('Source not specified.');
+}
+
+if (isset($_SESSION["dbHandler_$sid"])) {
+    $dbHandler = unserialize($_SESSION["dbHandler_$sid"]);
+}
 
 $action = $_GET["action"];
-$action();
+$action($sid, $dbHandler);
 exit;
 
-function TestConnection() {
+function TestConnection($sid) {
     // get submitted form information from dashboard.php
     $serverName = $_POST['serverName'];
     $userName = $_POST['userName'];
@@ -18,36 +29,46 @@ function TestConnection() {
     $driver = $_POST['driver'];
     $database = $_POST['database'];
 
-    // TODO: This should not return json. The resul of this call should be transformed to json here and trhen returned.
-    ExternalDBs::TestConnection($serverName, $userName, $password, $port, $driver, $database);
+    $serverName = $serverName ? $serverName : 'a fail host';
+    $json = new stdClass();
+
+    try {
+        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName, $port);
+        $dbHandler->getConnection();
+        $_SESSION["dbHandler_$sid"] = serialize($dbHandler);
+
+        $json->isSuccessful = true;
+        $json->message = "Connected successfully";
+        echo json_encode($json);
+    } catch (Exception $e) {
+        $json->isSuccessful = false;
+        $json->message = $e->getMessage();
+        echo json_encode($json);
+    }
 }
 
-function LoadDatabaseTables() {
-    // get submitted form information from dashboard.php
-    $serverName = $_POST['serverName'];
-    $userName = $_POST['userName'];
-    $password = $_POST['password']; // controls how many tuples shown on each page
-    $database = $_POST['database'];
-    $port = $_POST['port'];
-    $driver = $_POST['driver'];
-
-    echo json_encode(ExternalDBs::LoadDatabaseTables($serverName, $userName, $password, $port, $driver, $database));
+function LoadDatabaseTables($sid, DatabaseHandler $dbHandler) {
+    try {
+        $tables = $dbHandler->loadTables();
+        $json["isSuccessful"] = true;
+        $json["data"] = $tables;
+    } catch (Exception $e) {
+        $json["isSuccessful"] = false;
+    }
+    echo json_encode($json);
 }
 
-function PrintTableForSchemaMatchingStep() {
-    $serverName = $_POST['serverName'];
-    $userName = $_POST['userName'];
-    $password = $_POST['password']; // controls how many tuples shown on each page
-    $database = $_POST['database'];
-    $port = $_POST['port'];
-    $driver = $_POST['driver'];
+function PrintTableForSchemaMatchingStep($sid, DatabaseHandler $dbHandler) {
+
     $selectedTables = $_POST["selectedTables"];
+    try {
+        $tablesColumns = $dbHandler->getColumnsForSelectedTables($selectedTables);
+        $_SESSION["baseHeader_$sid"] = $tablesColumns;
 
-    $tablesColumns = ExternalDBs::GetColumnsForSelectedTables($serverName, $userName, $password, $port, $driver, $database, $selectedTables);
-
-    $_SESSION['baseHeader'] = $tablesColumns;
-
-    echo UtilsForWizard::PrintTableForSchemaMatchingStep($tablesColumns);
+        echo UtilsForWizard::PrintTableForSchemaMatchingStep($tablesColumns);
+    } catch (Exception $e) {
+        echo "<p style='color:red;'>Errors occur when matching schemas.</p>";
+    }
 }
 
 function PrintTableForDataMatchingStep() {
@@ -58,7 +79,7 @@ function PrintTableForDataMatchingStep() {
     $location = $_POST["schemaMatchingUserInputs"]["location"];
     $aggrtype = $_POST["schemaMatchingUserInputs"]["aggrtype"];
 
-    $baseHeader = $_SESSION['baseHeader'];
+    $baseHeader = $_SESSION["baseHeader_$sid"];
 
     if ($spd != "" && $spd != "other") {
         $tableName = UtilsForWizard::getWordUntilFirstDot($spd);

@@ -1,5 +1,5 @@
-<link href="bootstrap.min.css" rel="stylesheet" />
-<link href="bootstrap-wizard.css" rel="stylesheet" />
+<link href="{$my_pligg_base}/css/bootstrap.min.css" rel="stylesheet" />
+<link href="{$my_pligg_base}/css/bootstrap-wizard.css" rel="stylesheet" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/bootstrap-lightbox.min.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/smoothness/jquery-ui-1.10.3.custom.min.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/font-awesome.css" />

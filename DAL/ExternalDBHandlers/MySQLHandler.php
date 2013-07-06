@@ -4,16 +4,29 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 
 class MySQLHandler extends DatabaseHandler {
 
-    public function __construct($user, $password, $database, $host = 'localhost', $port = 3306) {
+    public function __construct($user, $password, $database, $host, $port = 3306) {
         parent::__construct($user, $password, $database, $host, $port);
     }
 
-    protected function GetConnection() {
-        $pdo = new PDO("mysql:host=$this->host;dbname=$this->database", $this->user, $this->password);
+    public function getConnection() {
+        $pdo = new PDO("mysql:host=$this->host;port=$this->port;dbname=$this->database", $this->user, $this->password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     }
 
-    public function LoadTables() {
+    public function importSqlFile($sid, $filePath) {
+        $user = DatabaseHandler::$importSettings["mysql"]['user'];
+        $password = DatabaseHandler::$importSettings["mysql"]['password'];
+        $port = DatabaseHandler::$importSettings["mysql"]['port'];
+
+        $dbh = new PDO("mysql:host=localhost;port=$port", $user, $password);
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        
+        $dbh->exec("CREATE DATABASE IF NOT EXISTS `colfusion_externalDB_$sid`;USE `colfusion_externalDB_$sid`;");
+        $this->execImportQuery($sid, $filePath, $dbh);
+    }
+
+    public function loadTables() {
         $pdo = $this->GetConnection();
 
         $stmt = $pdo->prepare("SHOW TABLES FROM `$this->database`");
@@ -27,7 +40,7 @@ class MySQLHandler extends DatabaseHandler {
         return $tableNames;
     }
 
-    public function GetColumnsForSelectedTables($selectedTables) {
+    public function getColumnsForSelectedTables($selectedTables) {
         $pdo = $this->GetConnection();
 
         foreach ($selectedTables as $selectedTable) {
@@ -41,7 +54,7 @@ class MySQLHandler extends DatabaseHandler {
         return $columns;
     }
 
-    public function GetTableData($table_name, $perPage = 10, $pageNo = 1) {
+    public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
         $pdo = $this->GetConnection();
 
         $sql = "SELECT * FROM $table_name ";
@@ -50,22 +63,23 @@ class MySQLHandler extends DatabaseHandler {
 
         $res = $pdo->query($sql);
         $result = array();
-        foreach($res->fetchAll() as $row){
+        foreach ($res->fetchAll() as $row) {
             $result[] = $row;
         }
-      
+
         return $result;
     }
 
-    public function GetTotalNumberTuplesInTable($table_name) {
+    public function getTotalNumberTuplesInTable($table_name) {
         $pdo = $this->GetConnection();
         $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM `$table_name`");
-        $stmt->execute();      
+        $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_BOTH);
-        $tupleNum = (int)$row[0];
+        $tupleNum = (int) $row[0];
         $stmt->closeCursor();
         return $tupleNum;
-    }  
+    }
+
 }
 
 ?>

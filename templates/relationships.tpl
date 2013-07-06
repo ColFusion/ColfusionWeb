@@ -18,7 +18,7 @@
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: rawData">                            
-                        <tr>
+                        <tr data-bind="attr: { 'id' : 'relationship_' + rel_id}">
                             <td>
                                 <div style="display: inline;"><a data-bind='attr: { href: "story.php?title=" + sidFrom }, text: titleFrom' > </a></div>.
                                 <div style="display: inline;"><span data-bind='text: tableNameFrom'/></div>
@@ -31,8 +31,8 @@
                                 <div style="display: inline;"><span data-bind='text: creatorLogin'/></div>
                             </td>
                             <td>
-                                <div style="display: inline;"><span data-bind='bootstrapTooltip: numberOfVerdicts'/>Number of Feedbacks</div>, 
-                                <div style="display: inline;"><span data-bind='bootstrapTooltip: parseFloat(Math.round(avgConfidence * 100) / 100).toFixed(2)'/>Average Confidence</div>
+                                <div style="display: inline;"><span data-bind='bootstrapTooltip: numberOfVerdicts' class="numOfVerdicts"/>Number of Feedbacks</div>, 
+                                <div style="display: inline;"><span data-bind='bootstrapTooltip: parseFloat(Math.round(avgConfidence * 100) / 100).toFixed(2)' class="avgConfidence"/>Average Confidence</div>
                             </td>
                             <td><span data-bind="click: $root.showMoreClicked.bind($data, rel_id), attr: { id:  'mineRelRecSpan_' + rel_id }" style="cursor: pointer;">More...</span></td>
                         </tr>

@@ -15,17 +15,22 @@ var wizardFromDB = (function() {
 
     // Get all actions form friends.
     wizardFromDB.TestDBConnection = function(container, server, user, password, port, driver, database) {
+        $('#testDBConnectionResultMsg').css('color', '#707070').text('Connecting...');
         $.ajax({
             type: 'POST',
             url: my_pligg_base + "/DataImportWizard/wizardFromDBController.php?action=TestConnection",
-            data: {'serverName': server, 'userName': user, 'password': password, 'port': port, 'driver': driver, 'database': database},
-            success: function(JSON_Response) {
-
-                $('#testDBConnectionResultMsg').text(JSON_Response);
-                if (JSON_Response == "Connected successfully") {
+            data: {'serverName': server,
+                'userName': user,
+                'password': password,
+                'port': port,
+                'driver': driver,
+                'database': database
+            },
+            success: function(data) {
+                $('#testDBConnectionResultMsg').css('color', data.isSuccessful ? 'green' : 'red').text(data.message);
+                if (data.isSuccessful) {
                     wizard.enableNextButton();
                 }
-
             },
             dataType: 'json',
             async: false
@@ -45,21 +50,29 @@ var wizardFromDB = (function() {
         $.ajax({
             type: 'POST',
             url: my_pligg_base + "/DataImportWizard/wizardFromDBController.php?action=LoadDatabaseTables",
-            data: {'serverName': server, 'userName': user, 'password': password, 'database': database, 'port': port, 'driver': driver},
+            data: {'serverName': server,
+                'userName': user,
+                'password': password,
+                'database': database,
+                'port': port,
+                'driver': driver
+            },
             success: function(JSON_Response) {
 
                 container.empty();
 
-                var el = "<p>Tables in selected database:</p><div style='height: 80%; overflow-y: scroll;'>";
+                if (JSON_Response.isSuccessful) {
+                    var el = "<p>Tables in selected database:</p><div style='height: 80%; overflow-y: scroll;'>";
+                    for (var i = 0; i < JSON_Response.data.length; i++) {
+                        el += "<label style='display: inline;'><input type='checkbox' name='table[]' value='" + JSON_Response.data[i] + "'/>" + JSON_Response.data[i] + "</lable><br/>";
 
-                for (var i = 0; i < JSON_Response.data.length; i++) {
-                    el += "<label style='display: inline;'><input type='checkbox' name='table[]' value='" + JSON_Response.data[i] + "'/>" + JSON_Response.data[i] + "</lable><br/>";
-
+                    }
+                    el += "</div>"
+                } else {
+                    var el = "<p style='color:red;'>Errors occur when loading tables.</p>";
                 }
 
-                el += "</div>"
                 container.append(el);
-
             },
             dataType: 'json',
             async: false
@@ -79,7 +92,7 @@ var wizardFromDB = (function() {
                 importWizard.showSchemaMatchingStep(data);
             }
         });
-    }
+    };
 
     wizardFromDB.passSchemaMatchinInfo = function() {
         var dataToSend = {"schemaMatchingUserInputs": importWizard.getSchemaMatchingUserInputs()};

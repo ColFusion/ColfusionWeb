@@ -155,7 +155,6 @@ class KTRManager {
     }
 
     private function addExcelInputFields($baseHeader) {
-        var_dump($baseHeader);
         $steps = $this->ktrXml->step;
 
         foreach ($steps as $step) {

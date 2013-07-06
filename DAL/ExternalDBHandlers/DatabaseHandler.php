@@ -7,6 +7,11 @@ abstract class DatabaseHandler {
     protected $user;
     protected $password;
     protected $database;
+    public static $importSettings = array(
+        "mysql" => array('user' => 'root', 'password' => '', 'port' => 3306),
+        "mssql" => array('user' => 'ExternalConnTester', 'password' => 'gz3000gz3000', 'port' => 1433),
+        "postgresql" => array('user' => 'ImportTester', 'password' => 'importtester', 'port' => 5432)
+    );
 
     public function __construct($user, $password, $database, $host, $port) {
         $this->host = $host;
@@ -16,15 +21,16 @@ abstract class DatabaseHandler {
         $this->password = $password;
     }
 
-    abstract protected function GetConnection();
+    abstract public function getConnection();
 
-    abstract public function LoadTables();
+    abstract public function loadTables();
 
-    abstract public function GetColumnsForSelectedTables($selectedTables);
+    abstract public function getColumnsForSelectedTables($selectedTables);
 
-    abstract public function GetTableData($table_name, $perPage, $pageNo);
+    abstract public function getTableData($table_name, $perPage, $pageNo);
 
-    abstract public function GetTotalNumberTuplesInTable($table_name);
+    abstract public function getTotalNumberTuplesInTable($table_name);
+
 }
 
 ?>

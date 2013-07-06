@@ -128,6 +128,7 @@ function WizardExcelPreviewViewModel(sid) {
     };
 
     var getEstimatedLoadingSeconds = function() {
+        console.log('getEstimatedLoadingSeconds');
         return $.ajax({
             url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=9&sid=" + self.sid,
             type: 'post',

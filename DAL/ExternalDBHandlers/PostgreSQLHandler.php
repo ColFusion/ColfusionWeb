@@ -4,16 +4,17 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 
 class PostgreSQLHandler extends DatabaseHandler {
 
-    public function __construct($user, $password, $database, $host = 'localhost', $port = 5432) {
+    public function __construct($user, $password, $database, $host, $port = 5432) {
         parent::__construct($user, $password, $database, $host, $port);
     }
-
-    protected function GetConnection() {
+       
+    public function getConnection() {
         $pdo = new PDO("pgsql:host=$this->host;dbname=$this->database", $this->user, $this->password);
+        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     }
-
-    public function LoadTables() {
+   
+    public function loadTables() {
         $pdo = $this->GetConnection();
 
         $stmt = $pdo->prepare("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public';");
@@ -26,11 +27,11 @@ class PostgreSQLHandler extends DatabaseHandler {
         return $tableNames;
     }
 
-    public function GetColumnsForSelectedTables($selectedTables) {
+    public function getColumnsForSelectedTables($selectedTables) {
         $pdo = $this->GetConnection();
         $stmt = $pdo->prepare("SELECT column_name FROM information_schema.columns WHERE table_name = ?");
 
-        foreach ($selectedTables as $selectedTable) {           
+        foreach ($selectedTables as $selectedTable) {
             $stmt->execute(array($selectedTable));
             foreach ($stmt->fetchAll() as $row) {
                 $columns[$selectedTable][] = $row[0];
@@ -41,31 +42,32 @@ class PostgreSQLHandler extends DatabaseHandler {
         return $columns;
     }
 
-    public function GetTableData($table_name, $perPage = 10, $pageNo = 1) {
+    public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
         $pdo = $this->GetConnection();
 
         $sql = "SELECT * FROM $table_name ";
         $startPoint = ($pageNo - 1) * $perPage;
         $sql .= " LIMIT " . $startPoint . " OFFSET " . $perPage;
 
-        $res = $pdo->query($sql);  
+        $res = $pdo->query($sql);
         $result = array();
 
-        foreach($res->fetchAll() as $row){
+        foreach ($res->fetchAll() as $row) {
             $result[] = $row;
-        }    
+        }
         return $result;
     }
 
-    public function GetTotalNumberTuplesInTable($table_name) {
+    public function getTotalNumberTuplesInTable($table_name) {
         $pdo = $this->GetConnection();
         $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM `$table_name`");
-        $stmt->execute();      
+        $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_BOTH);
-        $tupleNum = (int)$row[0];
+        $tupleNum = (int) $row[0];
         $stmt->closeCursor();
         return $tupleNum;
-    }  
+    }
+
 }
 
 ?>

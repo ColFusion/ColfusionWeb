@@ -9,7 +9,7 @@
 ini_set('include_path', '.');
 
 define('LOG_FILE','cache/log.php');
-error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
+error_reporting(E_ALL ^ E_NOTICE);
 ini_set('display_errors','Off');
 ini_set('error_log','cache/log.php');
 
