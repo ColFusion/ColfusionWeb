@@ -6,7 +6,7 @@ set_time_limit(0);
 include_once('../Smarty.class.php');
 include_once('../Classes/CSVToExcelConverter.php');
 include_once('FileUtil.php');
-include_once(realpath(dirname(__FILE__) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php"));
+include_once(realpath(dirname(__FILE__) . "/../DAL/DBImporters/DatabaseImporterFactory.php"));
 $main_smarty = new Smarty;
 
 include('../config.php');
@@ -137,11 +137,11 @@ function upload_0() {
                         $_SESSION['upload_file'] = array('error' => $error);
                     }
                 } else if (strtolower($ext) == 'sql') {
-                    $dbType = strtolower($_POST['dbType']);
-                   
+                    $dbType = trim(strtolower($_POST['dbType']));
+                  
                     try {
-                        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($dbType);
-                        $dbHandler->importSqlFile($sid, $upload_path);
+                        $dbHandler = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid);
+                        $dbHandler->importSqlFile($filePath);
                     } catch (Excpetion $e) {
                         $_SESSION['upload_file'] = array('error' => $e);
                     }

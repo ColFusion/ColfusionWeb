@@ -7,12 +7,7 @@ abstract class DatabaseHandler {
     protected $user;
     protected $password;
     protected $database;
-    public static $importSettings = array(
-        "mysql" => array('user' => 'root', 'password' => '', 'port' => 3306),
-        "mssql" => array('user' => 'ExternalConnTester', 'password' => 'gz3000gz3000', 'port' => 1433),
-        "postgresql" => array('user' => 'ImportTester', 'password' => 'importtester', 'port' => 5432)
-    );
-
+    
     public function __construct($user, $password, $database, $host, $port) {
         $this->host = $host;
         $this->port = $port;

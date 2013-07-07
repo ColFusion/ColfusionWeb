@@ -14,7 +14,7 @@ var wizardFromDB = (function() {
     /* Functions */
 
     // Get all actions form friends.
-    wizardFromDB.TestDBConnection = function(container, server, user, password, port, driver, database) {
+    wizardFromDB.TestDBConnection = function(container, server, user, password, port, driver, database, isImport) {
         $('#testDBConnectionResultMsg').css('color', '#707070').text('Connecting...');
         $.ajax({
             type: 'POST',
@@ -24,7 +24,8 @@ var wizardFromDB = (function() {
                 'password': password,
                 'port': port,
                 'driver': driver,
-                'database': database
+                'database': database,
+                'isImport': isImport
             },
             success: function(data) {
                 $('#testDBConnectionResultMsg').css('color', data.isSuccessful ? 'green' : 'red').text(data.message);

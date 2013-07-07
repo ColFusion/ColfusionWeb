@@ -13,14 +13,14 @@ var wizardFromFile = (function() {
     // Get all actions form friends.
     wizardFromFile.Init = function() {
         $('#uploadFormSid').val(sid);
-        $('#uploadFileType').change(function(){
-            if($(this).val() == 'dbDump'){
+        $('#uploadFileType').change(function() {
+            if ($(this).val() == 'dbDump') {
                 $('#dbType').show();
-            }else{
+            } else {
                 $('#dbType').hide();
             }
         });
-        
+
         var options = {
             beforeSubmit: showRequest, // pre-submit callback 
             success: showResponse  // post-submit callback 
@@ -57,11 +57,32 @@ var wizardFromFile = (function() {
             },
             done: function(e, data) {
                 $('#uploadPanel').fadeOut();
+                $('#isImport').val(false);
 
                 var messageDom = $('#uploadMessage');
                 if (data.result.isSuccessful) {
                     $(messageDom).css('color', 'green');
-                    wizard.enableNextButton();
+
+                    if ($('#uploadFileType').val() == 'dbDump') {
+                        
+                        // Jump to "From database" and fill inputs to tell user the database is built from dump file.
+                        var dbType = $('#dbType').val();
+                        $('#selectDBServer option[value="' + dbType + '"]').prop('selected', true);
+                        $('#selectDBServer').val('Colfusion Server');
+                        $('#dbServerDatabase').val('Dump File');
+                        $('#selectDBServer')
+                                .add('#dbServerName')
+                                .add('#dbServerUserName')
+                                .add('#dbServerPassword')
+                                .add('#dbServerDatabase').prop('disabled', true);
+                        $('#isImport').val(true);
+                        $('input[name="place"][id="database"]').prop('checked', true);
+                        $('#divFromComputer').hide();
+                        $('#divFromDatabase').show();
+                        
+                    } else {
+                        wizard.enableNextButton();
+                    }
                 } else {
                     $(messageDom).css('color', 'red');
                 }

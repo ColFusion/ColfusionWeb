@@ -16,9 +16,9 @@ abstract class DatabaseImporter {
         $this->password = $password;
     }
 
-    abstract public function importSqlFile($sid, $filePath);
+    abstract public function importSqlFile($filePath);
 
-    protected function execImportQuery($sid, $filePath, $pdo) {
+    protected function execImportQuery($filePath, $pdo) {
 
         $sql_query = @fread(@fopen($filePath, 'r'), @filesize($filePath));
         $sql_query = $this->remove_comments($sql_query);
@@ -160,7 +160,10 @@ abstract class DatabaseImporter {
         }
         return $output;
     }
-
+    
+    public function getDatabase(){
+        return $this->database;
+    }
 }
 
 ?>

@@ -87,8 +87,11 @@
                         </tr>
                         <tr>
                             <td>Database:</td>
-                            <td><input type='text' id='dbServerDatabase'/></td>		
-                            <td><input type='button' value='Test Connection' id='buttonTestDBConnection' class='btn btn-primary' onClick="wizardFromDB.TestDBConnection('divFromDatabase', $('#dbServerName').val(), $('#dbServerUserName').val(), $('#dbServerPassword').val(), $('#dbServerPort').val(), $('#selectDBServer').val(), $('#dbServerDatabase').val())"/></td>
+                            <td>
+                                <input type='text' id='dbServerDatabase'/>
+                                <input type="hidden" id="isImport" value="false"/>
+                            </td>		
+                            <td><input type='button' value='Test Connection' id='buttonTestDBConnection' class='btn btn-primary' onClick="wizardFromDB.TestDBConnection('divFromDatabase', $('#dbServerName').val(), $('#dbServerUserName').val(), $('#dbServerPassword').val(), $('#dbServerPort').val(), $('#selectDBServer').val(), $('#dbServerDatabase').val(), $('#isImport').val())"/></td>
                             <td><span id='testDBConnectionResultMsg'/></td>								
                         </tr>
                     </table>					

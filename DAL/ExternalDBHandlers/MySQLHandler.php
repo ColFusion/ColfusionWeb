@@ -13,19 +13,7 @@ class MySQLHandler extends DatabaseHandler {
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     }
-
-    public function importSqlFile($sid, $filePath) {
-        $user = DatabaseHandler::$importSettings["mysql"]['user'];
-        $password = DatabaseHandler::$importSettings["mysql"]['password'];
-        $port = DatabaseHandler::$importSettings["mysql"]['port'];
-
-        $dbh = new PDO("mysql:host=localhost;port=$port", $user, $password);
-        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        
-        $dbh->exec("CREATE DATABASE IF NOT EXISTS `colfusion_externalDB_$sid`;USE `colfusion_externalDB_$sid`;");
-        $this->execImportQuery($sid, $filePath, $dbh);
-    }
-
+   
     public function loadTables() {
         $pdo = $this->GetConnection();
 
