@@ -6,6 +6,7 @@ include_once('../DAL/ExternalDBHandlers/ExternalDBs.php');
 include_once('UtilsForWizard.php');
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandler.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporterFactory.php");
 
 $sid = $_POST['sid'];
 if (!isset($sid)) {
@@ -21,19 +22,35 @@ $action($sid, $dbHandler);
 exit;
 
 function TestConnection($sid) {
-    // get submitted form information from dashboard.php
-    $serverName = $_POST['serverName'];
-    $userName = $_POST['userName'];
-    $password = $_POST['password']; // controls how many tuples shown on each page
-    $port = $_POST['port'];
-    $driver = $_POST['driver'];
-    $database = $_POST['database'];
+
+    $isImport = $_POST['isImport'];
+    $driver = strtolower($_POST['driver']);
+
+    if ($isImport == 'true') {
+        $importSettings = DatabaseImporterFactory::$importSettings[$driver];
+
+        $serverName = 'localhost';
+        $database = "colfusion_external_$sid";
+        $userName = $importSettings['user'];
+        $password = $importSettings['password']; // controls how many tuples shown on each page
+        $port = $importSettings['port'];
+    } else {
+        $userName = $_POST['userName'];
+        $password = $_POST['password']; // controls how many tuples shown on each page
+        $port = $_POST['port'];
+        $serverName = $_POST['serverName'];
+        $database = $_POST['database'];
+    }
 
     $serverName = $serverName ? $serverName : 'a fail host';
     $json = new stdClass();
 
     try {
-        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName, $port);
+        if ($port) {
+            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName, $port);
+        } else {
+            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName);
+        }
         $dbHandler->getConnection();
         $_SESSION["dbHandler_$sid"] = serialize($dbHandler);
 

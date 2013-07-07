@@ -136,11 +136,12 @@ var wizardFromDB = (function() {
     }
 
     wizardFromDB.setDefaultAdvancedSettingsByServerName = function(container, selectedValue) {
-        switch (selectedValue) {
-            case "0":
+        switch (selectedValue.toLowerCase()) {
+            case "mysql":
                 container.val(3306);
                 break;
-            case "1":
+            case "mssql":
+            case "sql server":
                 container.val(1433);
                 break;
         }

@@ -64,7 +64,7 @@ var wizardFromFile = (function() {
                     $(messageDom).css('color', 'green');
 
                     if ($('#uploadFileType').val() == 'dbDump') {
-                        
+
                         // Jump to "From database" and fill inputs to tell user the database is built from dump file.
                         var dbType = $('#dbType').val();
                         $('#selectDBServer option[value="' + dbType + '"]').prop('selected', true);
@@ -72,6 +72,7 @@ var wizardFromFile = (function() {
                         $('#dbServerDatabase').val('Dump File');
                         $('#selectDBServer')
                                 .add('#dbServerName')
+                                .add('#dbServerPort')
                                 .add('#dbServerUserName')
                                 .add('#dbServerPassword')
                                 .add('#dbServerDatabase').prop('disabled', true);
@@ -79,7 +80,7 @@ var wizardFromFile = (function() {
                         $('input[name="place"][id="database"]').prop('checked', true);
                         $('#divFromComputer').hide();
                         $('#divFromDatabase').show();
-                        
+
                     } else {
                         wizard.enableNextButton();
                     }

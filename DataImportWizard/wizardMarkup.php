@@ -68,14 +68,14 @@
                                 </select>							
                             </td>
                             <td><span id='showHideAdvancedOptionsFromDatabase' style='cursor: pointer;' onclick="wizardFromDB.togglePort()">Show Advanced Options</span></td>
-                        </tr>
-                        <tr id="fromDBPortRow" style="display: none;">
-                            <td>Port:</td>
-                            <td><input type='text' id='dbServerPort' value="3306"/></td>
-                        </tr>
+                        </tr>                        
                         <tr>
                             <td>Server address:</td>
                             <td><input type='text' id='dbServerName'/></td>
+                        </tr>
+                        <tr>
+                            <td>Port:</td>
+                            <td><input type='text' id='dbServerPort'/></td>
                         </tr>
                         <tr>
                             <td>User name:</td>

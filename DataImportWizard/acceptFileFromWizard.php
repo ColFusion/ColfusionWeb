@@ -138,10 +138,9 @@ function upload_0() {
                     }
                 } else if (strtolower($ext) == 'sql') {
                     $dbType = trim(strtolower($_POST['dbType']));
-                  
                     try {
                         $dbHandler = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid);
-                        $dbHandler->importSqlFile($filePath);
+                        $dbHandler->importSqlFile($upload_path);
                     } catch (Excpetion $e) {
                         $_SESSION['upload_file'] = array('error' => $e);
                     }
