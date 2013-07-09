@@ -9,13 +9,13 @@ class MSSQLHandler extends DatabaseHandler {
     }
 
     public function getConnection() {
-        $pdo = new PDO("sqlsrv:host=$this->host;dbname=$this->database", $this->user, $this->password);
+        $pdo = new PDO("sqlsrv:Server=$this->host;Database=$this->database", $this->user, $this->password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-        $con->exec('SET QUOTED_IDENTIFIER ON');
-        $con->exec('SET ANSI_WARNINGS ON');
-        $con->exec('SET ANSI_PADDING ON');
-        $con->exec('SET ANSI_NULLS ON');
-        $con->exec('SET CONCAT_NULL_YIELDS_NULL ON');
+        $pdo->exec('SET QUOTED_IDENTIFIER ON');
+        $pdo->exec('SET ANSI_WARNINGS ON');
+        $pdo->exec('SET ANSI_PADDING ON');
+        $pdo->exec('SET ANSI_NULLS ON');
+        $pdo->exec('SET CONCAT_NULL_YIELDS_NULL ON');
         return $pdo;
     }
 
@@ -82,7 +82,7 @@ EOQ;
 
     public function getTotalNumberTuplesInTable($table_name) {
         $pdo = $this->GetConnection();
-        $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM `$table_name`");
+        $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM [$table_name]");
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_BOTH);
         $tupleNum = (int) $row[0];

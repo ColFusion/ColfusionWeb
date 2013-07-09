@@ -251,7 +251,7 @@ where
 		and rel.rel_id = statOnVerdicts.rel_id
 		and rel.sid1 = siFrom.Sid
 		and rel.sid2 = siTo.Sid		
-		and (rel.sid1 = 752 or rel.sid2 = 752)
+		and (rel.sid1 = $sid or rel.sid2 = $sid)
 EOQ;
 
 
