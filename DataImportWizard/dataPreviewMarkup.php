@@ -12,11 +12,11 @@
         <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
         <div data-bind="with: currentTable">
             <div id="dataPreviewTableWrapper" data-bind="makeHorizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
-                <table id="tfhover" class="tftable" border="1">
+                <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
                     <tr data-bind="foreach: headers">
                         <th data-bind="text: name"></th>
                     </tr>
-                    <tbody data-bind="foreach: rows">
+                    <tbody class="dataPreviewTBody" data-bind="foreach: rows">
                         <tr class="datatr" data-bind="foreach: cells">
                             <td data-bind="text: $data"></td>                    
                         </tr>

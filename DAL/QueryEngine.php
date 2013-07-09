@@ -191,7 +191,7 @@ class QueryEngine {
             return $res[0];
         else
         //TODO: throw error here
-            die('Source not found GetExternalDBCredentialsBySid');
+            die('Data source not found.');
     }
 
     function GetSourceType($sid) {
@@ -230,42 +230,28 @@ class QueryEngine {
 
 
         $query = <<< EOQ
-SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
-		rc.cl_from as cidFrom, rc.cl_to as cidTo, 
-		relFrom.dname_chosen as newDnameFrom, relTo.dname_chosen as newDnameTo,
-		relFrom.dname_original_name as originalDnameFrom, relTo.dname_original_name as originalDnameTo,
-		siFrom.sid as sidFrom, siTo.sid as sidTo,
-		siFrom.Title as titleFrom, siTo.Title as titleTo,
-		ctiFrom.tableName as tableNameFrom, ctiTo.tableName as tableNameTo,
-		statOnVerdicts.numberOfVerdicts, statOnVerdicts.numberOfApproved, statOnVerdicts.numberOfReject,
-		statOnVerdicts.numberOfNotSure, statOnVerdicts.avgConfidence
+                SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
+	   siFrom.sid as sidFrom, siTo.sid as sidTo,
+	   siFrom.Title as titleFrom, siTo.Title as titleTo,
+	   rel.tableName1 as tableNameFrom, rel.tableName2 as tableNameTo,
+	   statOnVerdicts.numberOfVerdicts, statOnVerdicts.numberOfApproved, statOnVerdicts.numberOfReject,
+	   statOnVerdicts.numberOfNotSure, statOnVerdicts.avgConfidence
 
-FROM colfusion_relationships as rel, colfusion_relationships_columns as rc,
-
-	colfusion_dnameinfo as relFrom, colfusion_dnameinfo relTo, 
-
-	colfusion_users as u,
-
-	colfusion_columnTableInfo as ctiFrom, colfusion_columnTableInfo as ctiTo, 
-		
-	colfusion_sourceinfo as siFrom, colfusion_sourceinfo as siTo,
-
+FROM 
+	colfusion_relationships as rel, 
+	colfusion_relationships_columns as rc,
+	colfusion_users as u,		
+	colfusion_sourceinfo as siFrom, 
+	colfusion_sourceinfo as siTo,
 	statOnVerdicts
+	
 where 
-		rel.rel_id = rc.rel_id 
-		and rc.cl_from = relFrom.cid and rc.cl_to = relTo.cid      
-
+		rel.rel_id = rc.rel_id     
 		and rel.creator = u.user_id
-
 		and rel.rel_id = statOnVerdicts.rel_id
-
-		and relFrom.cid = ctiFrom.cid
-		and relTo.cid = ctiTo.cid
-
-		and relFrom.sid = siFrom.Sid
-		and relTo.sid = siTo.Sid
-		
-		and (rel.sid1 = $sid or rel.sid2 = $sid)
+		and rel.sid1 = siFrom.Sid
+		and rel.sid2 = siTo.Sid		
+		and (rel.sid1 = 752 or rel.sid2 = 752)
 EOQ;
 
 
@@ -285,13 +271,13 @@ EOQ;
         $rel_id = mysql_insert_id();
 
         $countTotal = count($from["columns"]);
-     
+
         for ($i = 0; $i < $countTotal; $i++) {
             $sql = "INSERT INTO %srelationships_columns (rel_id, cl_from, cl_to) VALUES (%d, '%s', '%s')";
-            
+
             $fromCol = mysql_real_escape_string($from["columns"][$i]);
             $toCol = mysql_real_escape_string($to["columns"][$i]);
-            
+
             $sql = sprintf($sql, table_prefix, $rel_id, $fromCol, $toCol);
             $rs = $db->query($sql);
         }

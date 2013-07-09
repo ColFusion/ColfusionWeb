@@ -1,42 +1,86 @@
 <?php
 
-require_once '../config.php';
+require_once realpath(dirname(__FILE__)) . '/../config.php';
+include_once (realpath(dirname(__FILE__)) . '/../datasetModel/Dataset.php');
 
 class DatasetFinder {
 
-    private $allDatasetInfo_sql = "select link_id, link_summary, link_title, user_login from colfusion_links links inner join colfusion_users users on links.link_author = users.user_id ";
+    private $allDatasetInfo_sql = "select 
+        sid, title, entryDate, lastUpdated, userId, user_login 
+        from colfusion_sourceinfo sinfo 
+        inner join colfusion_users users on sinfo.UserId = users.user_id ";
+    private $ezSql;
 
-    // private $allDatasetInfo_sql = "select sinfo.sid, sinfo.title, users.user_login, links.link_summary from colfusion_sourceinfo sinfo inner join colfusion_users users on sinfo.UserId = users.user_id inner join colfusion_links links on sinfo.Sid = links.link_id ";
+    public function __construct() {
+        global $db;
+        $this->ezSql = $db;
+    }
 
     public function findDatasetInfoBySidOrName($searchTerm) {
-        global $db;
-        $dsInfo_sid = $this->findDatasetInfoBySid($searchTerm);
-        if ($dsInfo_sid != null) {
-            $datasetsInfo["$dsInfo_sid->link_id"] = $dsInfo_sid;
+        $dataset_sid = $this->findDatasetInfoBySid($searchTerm);
+        if ($dataset_sid != null) {
+            $datasetsInfo["$dataset_sid->sid"] = $dataset_sid;
         }
 
-        $dsInfo_name = $this->findDatasetInfoByName($searchTerm);
-        foreach ($dsInfo_name as $dsInfo) {
-            $datasetsInfo["$dsInfo->link_id"] = $dsInfo;
+        $dataset_name = $this->findDatasetInfoByName($searchTerm);
+        foreach ($dataset_name as $dataset) {
+            $datasetsInfo["$dataset->sid"] = $dataset;
         }
 
         return array_values($datasetsInfo);
     }
 
     public function findDatasetInfoBySid($sid) {
-        global $db;
         $sid = mysql_real_escape_string($sid);
-        $sql = $this->allDatasetInfo_sql . "where link_id = '$sid'";
-        $dsInfo = $db->get_row($sql);
-        return $dsInfo;
+        $sql = $this->allDatasetInfo_sql . "where sid = '$sid'";
+        $dsInfo = $this->ezSql->get_row($sql);
+        return $this->mapDbColumnsToDataset($dsInfo);
     }
 
     public function findDatasetInfoByName($dsName) {
-        global $db;
         $dsName = mysql_real_escape_string($dsName);
-        $sql = $this->allDatasetInfo_sql . "where link_title like '%$dsName%'";
-        $dsInfo = $db->get_results($sql);
+        $sql = $this->allDatasetInfo_sql . "where title like '%$dsName%'";
+        $dsInfos = $this->ezSql->get_results($sql);
+        foreach ($dsInfos as $dsInfo) {
+            $datasets[] = $this->mapDbColumnsToDataset($dsInfo);
+        }
+        return $datasets;
+    }
+
+    private function mapDatasetToDbColumns($dataset) {
+        if ($dataset == null) {
+            return null;
+        }
+
+        $dsInfo = new stdClass();
+
+        $dsInfo->link_id = $dataset->sid;
+        $dsInfo->link_title = $dataset->title;
+        $dsInfo->link_summary = $dataset->content;
+        $dsInfo->user_id = $dataset->userId;
+        $dsInfo->user_login = $dataset->userName;
+        $dsInfo->link_date = $dataset->entryDate;
+        $dsInfo->link_modified = $dataset->lastUpdated;
+
         return $dsInfo;
+    }
+
+    private function mapDbColumnsToDataset($dsInfo) {
+        if ($dsInfo == null) {
+            return null;
+        }
+
+        $dataset = new Dataset();
+
+        $dataset->sid = $dsInfo->sid;
+        $dataset->title = $dsInfo->title;
+        // $dataset->content = $dsInfo->content;
+        $dataset->userId = $dsInfo->userId;
+        $dataset->userName = $dsInfo->user_login;
+        $dataset->entryDate = $dsInfo->entryDate;
+        $dataset->lastUpdated = $dsInfo->lastUpdated;
+
+        return $dataset;
     }
 
 }
