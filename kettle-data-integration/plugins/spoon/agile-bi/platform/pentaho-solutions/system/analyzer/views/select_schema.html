@@ -10,41 +10,46 @@
   <link rel="stylesheet" type="text/css" media="all" href="styles/report/selectArea.css"/>
   <link rel="stylesheet" href="../data-access/resources/gwt/datasourceEditorDialog.css">
   <link rel="stylesheet" href="../data-access/resources/gwt/Widgets.css">
+  <link rel="stylesheet" type="text/css" media="only screen and (max-device-width: 1024px)" href="styles/ipad.css" />
+
+  <script language="javascript" type="text/javascript" src="../common-ui/resources/web/dojo/djConfig.js"></script>
+  <script type="text/javascript">
+
+    // Collect an array of Visualization plugin AMD modules to load, plugins add to this array through webcontext.js
+    var analyzerVizPlugins = [];
+
+    djConfig["modulePaths"] = {
+      "pentaho.common": "../../../../common-ui/resources/web/dojo/pentaho/common"
+    };
+    djConfig["baseUrl"] = "scripts/dojo/dojo/";
+    var cv = {};
+  </script>
+
   <script language="javascript" type="text/javascript" src="webcontext.js?context=analyzer"></script>
+  <script type="text/javascript" src="scripts/dojo/dojo/dojo-analyzer.js"></script>
+  <script type="text/javascript">
+
+    pen.require(["analyzer/analyzer-selectSchema"], function(){});
+  </script>
+
 </head>
 
 <body>
+
 <script type="text/javascript">
-  // Check to see if we're running in PUC, if not add the standard background.
-  if (!window.parent || !window.parent.mantle_initialized) {
-    document.getElementsByTagName("body")[0].className += " pentaho-page-background";
-  }
-</script>
-
-<script type="text/javascript" src="scripts/dojo/dojo.js"></script>
-<script type="text/javascript" src="scripts/cv/common.js"></script>
-<script type="text/javascript">
-
-  if (typeof cv != "undefined") {
-    dojo.hostenv.setModulePrefix('clearview.widget', '../widget');
-    cv.contextPath = "";
-  }
-
+  cv.contextPath = "";
+  var console_enabled = false;
+  try{
+    console_enabled = window.parent && window.parent.mantle_initialized;
+  } catch(ignored){/*XSS*/}
   if (!window.parent || !window.parent.openDatasourceEditorIFrameProxy) {
     document.write("<script language='javascript' src='../data-access/resources/gwt/DatasourceEditor.nocache.js'></" + "script>");
   }
-
-
-
 </script>
-
-
-
 
 <div style="height:75px; clear:both"></div>
 
 <div class="selectAreaWizard pentaho-dialog" style="position: relative;">
-
   <div style="cursor:default;" class="Caption">@{selectSchemaTitle}</div>
   <div class="dialog-content" style="padding-bottom: 8px">
     <div class="analysisArea clearfix">
@@ -72,8 +77,8 @@
         </tr>
       </table>
     </div>
-    <input id="inputAutoRefresh" type="checkbox" checked
-           style="vertical-align: middle;margin-left: 21px; margin-right: 5px;"><label for="inputAutoRefresh">@{selectSchemaAutoRefresh}</label>
+    <input id="inputAutoRefresh" type="checkbox" @{selectSchemaBean.autoRefresh}
+    style="vertical-align: middle;margin-left: 21px; margin-right: 5px;"><label for="inputAutoRefresh">@{selectSchemaAutoRefresh}</label>
   </div>
 
   <div class="controls clearfix">
@@ -83,7 +88,6 @@
     </div>
   </div>
 </div>
-
 
 <script type="text/javascript">
 var catalogs = @{selectSchemaBean.catalogs};
@@ -118,10 +122,17 @@ dojo.addOnLoad(function() {
   datasources.sort(sortDatasources);
   buildList();
   // Show the cancel button in PUC which on click will close the current tab
-  if (window.parent && window.parent.closeTab) {
-    cv.util.show(dojo.byId('btnCancel'));
-    dojo.event.connect(dojo.byId("btnCancel"), "onclick", function() {
+  if (console_enabled && window.parent.closeTab) {
+    dojo.removeClass(dojo.byId('btnCancel'), "hidden");
+    dojo.connect(dojo.byId("btnCancel"), "onclick", function() {
       window.parent.closeTab();
+    });
+  }
+  //Show the cancel button in Mobile which on click will close the current tab
+  if (window.parent && window.parent.PentahoMobile) {
+    dojo.removeClass(dojo.byId('btnCancel'), "hidden");
+    dojo.connect(dojo.byId("btnCancel"), "onclick", function() {
+      window.parent.PentahoMobile.OpenPanel.closeActive();
     });
   }
 
@@ -133,23 +144,26 @@ dojo.addOnLoad(function() {
  * with the location of the inner scope.
  */
 function openLocation(loc) {
+  if(console_enabled){
+    window.parent.executeCommand("CollapseBrowserCommand")
+  }
   window.location.href = loc;
 }
 
 function initDataAccess(hasDataAccess) {
   if (hasDataAccess) {
-    dojo.html.removeClass(dojo.byId("addDS"), "pentaho-imagebutton-disabled");
-    dojo.event.connect(dojo.byId("addDS"), "onclick", "onAddDS");
+    dojo.removeClass(dojo.byId("addDS"), "pentaho-imagebutton-disabled");
+    dojo.connect(dojo.byId("addDS"), "onclick", "onAddDS");
   }
 }
 
 // This is the callback function that PUC will call when creating a new datasource.
 function openDatasourceEditorCallback(bool, transport) {
-  openLocation(window.location.href.substring(0, window.location.href.indexOf("selectSchema")) + "editor?command=new&catalog=" + (transport.schemaName ? transport.schemaName : transport.categoryId) + "&cube=" + (transport.schemaName ? transport.schemaName : transport.categoryId));
+  openLocation(window.location.href.substring(0, window.location.href.indexOf("selectSchema")) + "editor?command=new&showFieldList=true&showFieldLayout=true&catalog=" + (transport.schemaName ? transport.schemaName : transport.categoryId) + "&cube=" + (transport.schemaName ? transport.schemaName : transport.categoryId));
 }
 
 function onAddDS() {
-  var funct = (window.parent && window.parent.pho.openDatasourceEditor) ? window.parent.pho.openDatasourceEditor : pho.openDatasourceEditor;
+  var funct = (console_enabled && window.parent.pho && window.parent.pho.openDatasourceEditor) ? window.parent.pho.openDatasourceEditor : pho.openDatasourceEditor;
 
   funct(new function() {
     this.onError = function(err) {
@@ -177,35 +191,37 @@ function buildList() {
     datasourceOptions[listIdx] = opt;
   }
   datasourceSelect.selectedIndex = 0;
-  dojo.event.connect(dojo.byId("datasources"), "onclick", "cubeSelected");
-  dojo.event.connect(dojo.byId("datasources"), "ondblclick", "createReport");
-  dojo.event.connect(dojo.byId("btnNext"), "onclick", "createReport");
+  dojo.connect(dojo.byId("datasources"), "onclick", "cubeSelected");
+  dojo.connect(dojo.byId("datasources"), "ondblclick", "createReport");
+  dojo.connect(dojo.byId("btnNext"), "onclick", "createReport");
 }
-  
+
 function createReport() {
-    var catalog = datasources[datasourceSelect.value].catalog;
-    var cube = datasources[datasourceSelect.value].cube_id;
-    var input = dojo.byId("inputAutoRefresh");
-    openLocation("editor?command=new&catalog=" + catalog + "&cube=" + cube + "&autoRefresh=" + input.checked);
+  var catalog = datasources[datasourceSelect.value].catalog;
+  var cube = datasources[datasourceSelect.value].cube_id;
+  var input = dojo.byId("inputAutoRefresh");
+  openLocation("editor?command=new&showFieldList=true&showFieldLayout=true&catalog=" + catalog + "&cube=" + cube + "&autoRefresh=" + input.checked);
 }
 
 function cubeSelected() {
 
-  dojo.html.addClass(dojo.byId("editDS"), "pentaho-imagebutton-disabled");
-  dojo.event.disconnect(dojo.byId("editDS"), "onclick", "onEditDs");
+  dojo.addClass(dojo.byId("editDS"), "pentaho-imagebutton-disabled");
+  if(window.editHandle)
+    dojo.disconnect(editHandle);
 
-  dojo.html.addClass(dojo.byId("deleteDS"), "pentaho-imagebutton-disabled");
-  dojo.event.disconnect(dojo.byId("deleteDS"), "onclick", "onDeleteDs");
+  dojo.addClass(dojo.byId("deleteDS"), "pentaho-imagebutton-disabled");
+  if(window.deleteHandle)
+    dojo.disconnect(deleteHandle);
 
   ajaxLoad("ajax/lookupXmiId", {catalog:datasources[datasourceSelect.value].catalog,cube:datasources[datasourceSelect.value].cube}, false, function(data) {
     if (data) {
       window.catalogId = data;
 
-      dojo.html.removeClass(dojo.byId("editDS"), "pentaho-imagebutton-disabled");
-      dojo.event.connect(dojo.byId("editDS"), "onclick", "onEditDs");
+      dojo.removeClass(dojo.byId("editDS"), "pentaho-imagebutton-disabled");
+      editHandle = dojo.connect(dojo.byId("editDS"), "onclick", "onEditDs");
 
-      dojo.html.removeClass(dojo.byId("deleteDS"), "pentaho-imagebutton-disabled");
-      dojo.event.connect(dojo.byId("deleteDS"), "onclick", "onDeleteDs");
+      dojo.removeClass(dojo.byId("deleteDS"), "pentaho-imagebutton-disabled");
+      deleteHandle = dojo.connect(dojo.byId("deleteDS"), "onclick", "onDeleteDs");
 
     }
   });
@@ -216,29 +232,29 @@ function ajaxLoad(cmd, param, sync, /*optional*/callback) {
   var _data = null;
   param.stok = cv.securityToken;
 
-  dojo.io.bind({
+  dojo.xhrPost({
     url: cv.contextPath + cmd,
     content: param,
-    handle: function(type, data, evt) {
-      if (sync && type == "load") {
+    load: function(data) {
+      if (sync) {
         _data = data;
-      } else if (!sync && type == "load") {
-        callback(data)
+      } else {
+        callback(data);
       }
     },
     method: "POST",
     mimetype: "text/plain",
     sync: sync, // blocking UI or not
-    encoding: "utf8"
+    headers: {"Content-Encoding": "utf8"}
   });
   if (sync)
     return _data;
 }
 
 function onEditDs() {
-  var openFunct = window.parent && window.parent.pho && window.parent.pho.openEditDatasourceEditor
-          ? window.parent.pho.openEditDatasourceEditor
-          : window.pho.openEditDatasourceEditor;
+  var openFunct = console_enabled && window.parent.pho && window.parent.pho.openEditDatasourceEditor
+      ? window.parent.pho.openEditDatasourceEditor
+      : window.pho.openEditDatasourceEditor;
 
   var callback = new function() {
     this.onOk = function(json, mqlStr) {
@@ -269,9 +285,9 @@ function onEditDs() {
 }
 
 function onDeleteDs() {
-  var funct = window.parent && window.parent.pho && window.parent.pho.deleteModel
-          ? window.parent.pho.deleteModel
-          : window.pho.deleteModel;
+  var funct = console_enabled && window.parent.pho && window.parent.pho.deleteModel
+      ? window.parent.pho.deleteModel
+      : window.pho.deleteModel;
 
   var callback = new function() {
     this.onOk = function(json, mqlStr) {
@@ -297,12 +313,12 @@ function onDeleteDs() {
 
 }
 
-if (window.parent && window.parent.dataAccessAvailable) {
-  dojo.html.removeClass(dojo.byId("addDS"), "pentaho-imagebutton-disabled");
-  dojo.event.connect(dojo.byId("addDS"), "onclick", "onAddDS");
+if (console_enabled && window.parent.dataAccessAvailable) {
+  dojo.removeClass(dojo.byId("addDS"), "pentaho-imagebutton-disabled");
+  dojo.connect(dojo.byId("addDS"), "onclick", "onAddDS");
 }
 
 </script>
 
 </body>
-</html>
+</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       

@@ -1,6 +1,7 @@
 dojo.provide('pentaho.common.Dialog');
 dojo.require('dijit._Widget');
 dojo.require('dijit._Templated');
+dojo.require('dijit.Dialog');
 dojo.require('pentaho.common.button');
 dojo.require('pentaho.common.SmallImageButton');
 dojo.require('pentaho.common.Messages');
@@ -11,7 +12,7 @@ dojo.declare(
         popup : null,
         title: "",
         widgetsInTemplate: true,
-        getLocaleString: Messages.getString,
+        getLocaleString: pentaho.common.Messages.getString,
         callbacks: [],
         shown: false,
         buttonsCreated: false,
@@ -88,9 +89,18 @@ dojo.declare(
                 }
           },
           
-          
-          
-           postCreate: function() {
+          setButtonEnabled: function(/*int*/ buttonIndex, /*boolean*/ enabled) {
+            var btn = dojo.byId("button" + buttonIndex);
+            if(typeof(btn) != 'undefined' && btn != null) {
+                if(typeof(btn.set) != 'undefined') {
+                  btn.set('disabled', !enabled);
+                } else {
+                  btn.disabled = !enabled;
+                }
+            }
+          },
+
+          postCreate: function() {
             if(this.templatePath || this.templateString != '<div></div>') {
                 this.popup.attr("content", this.domNode);
             }
@@ -187,7 +197,7 @@ dojo.declare(
                this.shown = true;
             },
             hide: function(){
-               this.popup.hide();
+               return this.popup.hide();
             },
             destroy: function(){
                this.popup.destroy();

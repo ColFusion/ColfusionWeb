@@ -2,18 +2,17 @@
 <themes root-folder="resources/themes">
   <onyx display-name="Onyx" system="true">
     <file>globalOnyx.css</file>
-    <file>../jquery.js</file>
-    <file>../themeUtils.js</file>
   </onyx>
   <slate display-name="Slate" system="true" hidden="true">
     <file>globalSlate.css</file>
-    <file>../jquery.js</file>
-    <file>../themeUtils.js</file>
   </slate>
+  <native display-name="Native" system="true" hidden="true">
+    <file>globalNative.css</file>
+  </native>
   <sample1 system="true" hidden="true">
     <file>style1.css</file>
   </sample1>
-  <replaceable system="true" hidden="false"> <!-- change this to true to enable the replaceable theme -->
+  <replaceable system="true" hidden="true"> <!-- change this to false to enable the replaceable theme -->
     <file>replaceable.css</file>
   </replaceable>
 </themes>

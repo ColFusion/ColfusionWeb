@@ -4429,7 +4429,7 @@ Xmla.Rowset.MDMEMBER_TYPE_REGULAR = 1;
 *   A possible value for the <code>MEMBER_TYPE</code> column of the 
 *   <code>MDSCHEMA_MEMBERS</code> rowset (see: <code><a href="Xmla.html#method_discoverMDMembers">discoverMDMembers()</a></code>),
 *   indicating an all member.
-*	@property MDMEMBER_TYPE_ALL
+*	@property MDMEMBER_TYPE_ALL
 *   @static
 *   @final
 *   @type int

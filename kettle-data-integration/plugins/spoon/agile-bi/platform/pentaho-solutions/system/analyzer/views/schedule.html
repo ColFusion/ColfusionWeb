@@ -1,40 +1,28 @@
 <html>
 <title>Schedule Report</title>
 <head>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-	<script language="javascript" type="text/javascript" src="webcontext.js"></script>
-    <script type="text/javascript">
-        //<![CDATA[
-        //override theme
-        var phoConfig = {
-          theme_resources : { core: ["mainStyles.css", "jquery.jscrollpane.js","jquery.mousewheel.js", "mwheelIntent.js"]}
-        };
-        //]]>
-	</script>
-    <script language="javascript" src="/pentaho-style/style/ThemeResources.js"></script>
+  <link rel="stylesheet" type="text/css" media="all"   href="styles/common.css" />
+  <link rel="stylesheet" type="text/css" media="all"   href="styles/content.css" />
+  <link rel="stylesheet" type="text/css" media="all" href="styles/report/selectArea.css" />
+  <link rel="stylesheet" type="text/css" href="../common-ui/resources/web/dojo/dijit/themes/claro/claro.css"/>
+  <link rel="stylesheet" type="text/css" href="styles/dojoThemeOverrides.css"/>
+  <script language="javascript" type="text/javascript" src="webcontext.js?context=analyzer"></script>
+
+  <script type="text/javascript">
+
+    djConfig["modulePaths"] = {
+      "pentaho.common": "../../../../common-ui/resources/web/dojo/pentaho/common"
+    };
+    djConfig["baseUrl"] = "scripts/dojo/dojo/";
+    var cv = {};
+  </script>
+  <script type="text/javascript" src="scripts/dojo/dojo/dojo-analyzer.js"></script>
+  <script type="text/javascript">
+    djConfig.isDebug = true;
+  </script>
 </head>
   
-<body>
-	<script type="text/javascript">      
-      // Check to see if we're running in PUC, if not add the standard background.
-      if(!window.parent || !window.parent.mantle_initialized){
-        document.getElementsByTagName("body")[0].className += " pentaho-page-background";
-      }
-    </script>
-    
-<script type="text/javascript" src="scripts/dojo/dojo.js"></script>
-<script type="text/javascript" src="scripts/cv/common.js"></script>
-<script type="text/javascript">
-    <!--
-    if (typeof cv != "undefined") {
-        dojo.hostenv.setModulePrefix('clearview.widget','../widget');
-        cv.contextPath = "";
-    }
-    -->
-</script>
-<link rel="stylesheet" type="text/css" media="all"   href="styles/common.css" /> 
-<link rel="stylesheet" type="text/css" media="all"   href="styles/content.css" /> 
-<link rel="stylesheet" type="text/css" media="all" href="styles/report/selectArea.css" />   
+<body>    
 
 <form id="schedule-form">
 
@@ -48,7 +36,7 @@
     
 	<div class="selectAreaWizard pentaho-dialog" style="position: relative;">
 
-		<div style="cursor:default;" class="Caption">@{scheduleTitle}</div>
+		<div id="dialogTitle" style="cursor:default;" class="Caption">@{scheduleTitle}</div>
 		<div class="dialog-content" style="padding-bottom: 8px">
 			<div class="analysisArea clearfix">
 				@{scheduleDesc}  	
@@ -58,8 +46,8 @@
 	            <table cellspacing="10">
 	                <tr><td><strong>@{scheduleSubscription}:</strong></td></tr>
 	                <tr><td><input type="text" size="70" name="subscription-name"></input></td></tr>
-	                <tr><td><strong>@{scheduleEmailTo}:</strong></td></tr>
-	                <tr><td><input ${emailDisabled} type="text" size="70" name="destination"></input></td></tr>
+	                <tr ${emailSMTPNotSet}><td><strong>@{scheduleEmailTo}:</strong></td></tr>
+	                <tr ${emailSMTPNotSet}><td><input type="text" size="70" name="destination"></input></td></tr>
 	                <tr><td><strong>@{scheduleReportType}:</strong></td></tr>
 	                <tr><td><select name="report-format-type"><option value="PDF">PDF</option><option value="EXCEL">Excel</option><option value="CSV">CSV</option></select></td></tr>
 	                <tr><td><strong>@{schedulePublicSchedule}</strong></td></tr>
@@ -78,7 +66,7 @@
 	
 <script type="text/javascript">
     
-    dojo.event.connect(dojo.byId("btnNext"), "onclick", function() {
+    dojo.connect(dojo.byId("btnNext"), "onclick", function() {
     	document.getElementById("schedule-form").submit();
     });
 

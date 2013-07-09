@@ -123,15 +123,13 @@ div.active {
 .btnPressed {
  border: 1px solid #848484;
  background: #ccc;
- height: 16px;
  padding: 1px !important;
 }
 
 .btnActive {
-	 border: 1px solid #a2a2a2;
+	border: 1px solid #a2a2a2;
  	background: #ccc;
 	padding: 1px !important;
-	height: 16px;
 }
 
 #main_toolbar .reportBtn, .additional  .reportBtn{
@@ -148,10 +146,6 @@ div.active {
 
 #reportBtns A:hover {
 	text-decoration: underline;
-}
-
-#reportBtns{
-  height: 22px;
 }
 
 /* End Report Buttons Bar */
@@ -548,7 +542,7 @@ div.active {
 /* Dojo widget styles */
 
 /* Dojo popup menus */
-body .dojoPopupMenu2 {
+body .dojodijit.Menu {
 	border: 1px solid #ccc;
 	background:white !important;
 }
@@ -675,4 +669,17 @@ body .dojoMenuSeparator2Bottom {
 }
 .fieldListItem-selected{
 	background-color: #dbdbdb !important;
+}
+
+/* theme-specific menu item styling */
+.pentaho-menu-outer {
+  border: 1px solid #CCC;
+}
+.pentaho-menu .dijitMenuItemHover {
+  background-color: #dbdbdb;
+}
+.pentaho-menu .dijitMenuSeparatorTop {
+  height: auto;
+  margin-top: 1px;
+  border-bottom: 1px solid #CCC;
 }

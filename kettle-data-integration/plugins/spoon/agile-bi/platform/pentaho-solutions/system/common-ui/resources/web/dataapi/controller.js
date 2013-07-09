@@ -1,7 +1,7 @@
 //= require "oop.js"
 //= require "app.js"
 
-var pentaho = pentaho || {};
+pentaho = typeof pentaho == "undefined" ? {} : pentaho;
 
 pentaho.pda = pentaho.pda || {};
 
@@ -13,7 +13,7 @@ pentaho.pda.SOURCE_TYPE_CDA = 'cda';
 
 pentaho.pda.modelaccess = {};
 
-Messages.addBundle('dataapi','messages');
+pentaho.common.Messages.addUrlBundle('dataapi',CONTEXT_PATH+'i18n?plugin=common-ui&name=resources/web/dataapi/nls/messages');
 
 /*
           @class pentaho.pda.app
@@ -27,10 +27,12 @@ pentaho.pda.app = function(){
 inheritPrototype(pentaho.pda.app, pentaho.app); //borrow the parent's methods
 
 pentaho.pda.app.prototype.discoverSources = function(callback, options) {
-
-	//should only be here if we don'thave sources already
-	var md = this.moduleData, src={}, handler, that=this, sources = [];
-	for (src in md) {
+	//should only be here if we don't have sources already
+	var md = this.moduleData, handler, that=this, sources = [];
+	for (var src in md) {
+		if (!this.moduleData.hasOwnProperty(src)) {
+			continue;
+		}
 		var h = md[src].instance;
 		if (h instanceof pentaho.pda.Handler) {
 			h.getSources( //{property:'name', value:'Customers'},
@@ -375,14 +377,28 @@ pentaho.pda.model.prototype.populateListFromResults = function( valuesList, resu
                 hasValues = true;
             }
         }
-        for( var idx=0; idx<results.resultset.length; idx++ ) {
-            var option;
-            if( hasValues ) {
-                option = new Option( results.resultset[idx][textColumnNumber], results.resultset[idx][valueColumnNumber] );
-            } else {
-                option = new Option( results.resultset[idx][textColumnNumber] );
+        if( results.resultset ) {
+            // CDA format
+            for( var idx=0; idx<results.resultset.length; idx++ ) {
+                var option;
+                if( hasValues ) {
+                    option = new Option( results.resultset[idx][textColumnNumber], results.resultset[idx][valueColumnNumber] );
+                } else {
+                    option = new Option( results.resultset[idx][textColumnNumber] );
+                }
+                valuesList.options[valuesList.options.length] = option;
             }
-            valuesList.options[valuesList.options.length] = option;
+        } 
+        else if( results.jsonTable ) { // DataTable format
+            for( var idx=0; idx<results.getNumberOfRows(); idx++ ) {
+                var option;
+                if( hasValues ) {
+                    option = new Option( results.getFormattedValue(idx,textColumnNumber ), results.getFormattedValue(idx,valueColumnNumber ) );
+                } else {
+                    option = new Option( results.getFormattedValue(idx,textColumnNumber ) );
+                }
+                valuesList.options[valuesList.options.length] = option;
+            }
         }
     }
         
@@ -495,6 +511,19 @@ pentaho.pda.Column.AGG_TYPES.STDDEV = 'STDDEV';
 pentaho.pda.Column.AGG_TYPES.CALC = 'CALC';
 pentaho.pda.Column.AGG_TYPES.UNKNOWN = 'UNKNOWN';
 
+pentaho.pda.Column.AGG_TYPES_STRINGS = {}
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.SUM] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.SUM);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.AVERAGE] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.AVERAGE);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.MIN] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.MIN);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.MAX] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.MAX);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.COUNT] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.COUNT);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.COUNT_DISTINCT] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.COUNT_DISTINCT);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.NONE] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.NONE);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.VAR] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.VAR);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.STDDEV] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.STDDEV);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.CALC] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.CALC);
+pentaho.pda.Column.AGG_TYPES_STRINGS[pentaho.pda.Column.AGG_TYPES.UNKNOWN] = pentaho.common.Messages.getString(pentaho.pda.Column.AGG_TYPES.UNKNOWN);
+
 pentaho.pda.Column.AGG_TYPE_MAP = new Object();
 pentaho.pda.Column.AGG_TYPE_MAP[pentaho.pda.Column.AGG_TYPES.NONE] = 'none';
 pentaho.pda.Column.AGG_TYPE_MAP[pentaho.pda.Column.AGG_TYPES.SUM] = 'sum';
@@ -523,36 +552,36 @@ pentaho.pda.Column.JAVA_SQL_TYPE_TO_TYPE[ pentaho.pda.Column.JAVA_SQL_TYPES.BOOL
 
 pentaho.pda.Column.COMPARATOR = new Object();
 pentaho.pda.Column.COMPARATOR.STRING = [ 
-	[Messages.getString( "EXACTLY_MATCHES" ), pentaho.pda.Column.CONDITION_TYPES.EQUAL],
-	[Messages.getString( "CONTAINS" ), pentaho.pda.Column.CONDITION_TYPES.CONTAINS],
-	[Messages.getString( "ENDS_WITH" ), pentaho.pda.Column.CONDITION_TYPES.ENDSWITH],
-	[Messages.getString( "BEGINS_WITH" ), pentaho.pda.Column.CONDITION_TYPES.BEGINSWITH],
-  [Messages.getString( "DOES_NOT_CONTAIN" ), pentaho.pda.Column.CONDITION_TYPES.NOT_CONTAINS],
-  [Messages.getString( "IS_NULL" ), pentaho.pda.Column.CONDITION_TYPES.IS_NULL],
-  [Messages.getString( "IS_NOT_NULL" ), pentaho.pda.Column.CONDITION_TYPES.NOT_NULL]];
+	[pentaho.common.Messages.getString( "EXACTLY_MATCHES" ), pentaho.pda.Column.CONDITION_TYPES.EQUAL],
+	[pentaho.common.Messages.getString( "CONTAINS" ), pentaho.pda.Column.CONDITION_TYPES.CONTAINS],
+	[pentaho.common.Messages.getString( "ENDS_WITH" ), pentaho.pda.Column.CONDITION_TYPES.ENDSWITH],
+	[pentaho.common.Messages.getString( "BEGINS_WITH" ), pentaho.pda.Column.CONDITION_TYPES.BEGINSWITH],
+  [pentaho.common.Messages.getString( "DOES_NOT_CONTAIN" ), pentaho.pda.Column.CONDITION_TYPES.NOT_CONTAINS],
+  [pentaho.common.Messages.getString( "IS_NULL" ), pentaho.pda.Column.CONDITION_TYPES.IS_NULL],
+  [pentaho.common.Messages.getString( "IS_NOT_NULL" ), pentaho.pda.Column.CONDITION_TYPES.NOT_NULL]];
 pentaho.pda.Column.COMPARATOR.NUMERIC = [
-  [Messages.getString( "EQUALS" ), pentaho.pda.Column.CONDITION_TYPES.EQUAL],
+  [pentaho.common.Messages.getString( "EQUALS" ), pentaho.pda.Column.CONDITION_TYPES.EQUAL],
 //  ["<>", ],
-  [Messages.getString( "MORE_THAN_OR_EQUAL" ), pentaho.pda.Column.CONDITION_TYPES.MORE_THAN_OR_EQUAL],
-  [Messages.getString( "LESS_THAN_OR_EQUAL" ), pentaho.pda.Column.CONDITION_TYPES.LESS_THAN_OR_EQUAL],
-  [Messages.getString( "MORE_THAN" ), pentaho.pda.Column.CONDITION_TYPES.MORE_THAN],
-  [Messages.getString( "LESS_THAN" ), pentaho.pda.Column.CONDITION_TYPES.LESS_THAN],
-  [Messages.getString( "IS_NULL" ), pentaho.pda.Column.CONDITION_TYPES.IS_NULL],
-  [Messages.getString( "IS_NOT_NULL" ), pentaho.pda.Column.CONDITION_TYPES.NOT_NULL]];
+  [pentaho.common.Messages.getString( "MORE_THAN_OR_EQUAL" ), pentaho.pda.Column.CONDITION_TYPES.MORE_THAN_OR_EQUAL],
+  [pentaho.common.Messages.getString( "LESS_THAN_OR_EQUAL" ), pentaho.pda.Column.CONDITION_TYPES.LESS_THAN_OR_EQUAL],
+  [pentaho.common.Messages.getString( "MORE_THAN" ), pentaho.pda.Column.CONDITION_TYPES.MORE_THAN],
+  [pentaho.common.Messages.getString( "LESS_THAN" ), pentaho.pda.Column.CONDITION_TYPES.LESS_THAN],
+  [pentaho.common.Messages.getString( "IS_NULL" ), pentaho.pda.Column.CONDITION_TYPES.IS_NULL],
+  [pentaho.common.Messages.getString( "IS_NOT_NULL" ), pentaho.pda.Column.CONDITION_TYPES.NOT_NULL]];
 pentaho.pda.Column.COMPARATOR.BOOLEAN = [
   ["=", pentaho.pda.Column.CONDITION_TYPES.EQUAL],
 //  ["<>", ],
-  [Messages.getString( "IS_NULL" ), pentaho.pda.Column.CONDITION_TYPES.IS_NULL],
-  [Messages.getString( "IS_NOT_NULL" ), pentaho.pda.Column.CONDITION_TYPES.NOT_NULL]];
+  [pentaho.common.Messages.getString( "IS_NULL" ), pentaho.pda.Column.CONDITION_TYPES.IS_NULL],
+  [pentaho.common.Messages.getString( "IS_NOT_NULL" ), pentaho.pda.Column.CONDITION_TYPES.NOT_NULL]];
 pentaho.pda.Column.COMPARATOR.DATE = [ 
-	[Messages.getString( "ON" ), pentaho.pda.Column.CONDITION_TYPES.EQUAL],
-//	[Messages.getString( "NOT_ON" ),
-	[Messages.getString( "ON_OR_AFTER" ), pentaho.pda.Column.CONDITION_TYPES.MORE_THAN_OR_EQUAL],
-	[Messages.getString( "ON_OR_BEFORE" ), pentaho.pda.Column.CONDITION_TYPES.LESS_THAN_OR_EQUAL],
-	[Messages.getString( "AFTER" ), pentaho.pda.Column.CONDITION_TYPES.MORE_THAN],
-  [Messages.getString( "BEFORE" ), pentaho.pda.Column.CONDITION_TYPES.LESS_THAN],
-  [Messages.getString( "IS_NULL" ), pentaho.pda.Column.CONDITION_TYPES.IS_NULL],
-  [Messages.getString( "IS_NOT_NULL" ), pentaho.pda.Column.CONDITION_TYPES.NOT_NULL]];
+	[pentaho.common.Messages.getString( "ON" ), pentaho.pda.Column.CONDITION_TYPES.EQUAL],
+//	[pentaho.common.Messages.getString( "NOT_ON" ),
+	[pentaho.common.Messages.getString( "ON_OR_AFTER" ), pentaho.pda.Column.CONDITION_TYPES.MORE_THAN_OR_EQUAL],
+	[pentaho.common.Messages.getString( "ON_OR_BEFORE" ), pentaho.pda.Column.CONDITION_TYPES.LESS_THAN_OR_EQUAL],
+	[pentaho.common.Messages.getString( "AFTER" ), pentaho.pda.Column.CONDITION_TYPES.MORE_THAN],
+  [pentaho.common.Messages.getString( "BEFORE" ), pentaho.pda.Column.CONDITION_TYPES.LESS_THAN],
+  [pentaho.common.Messages.getString( "IS_NULL" ), pentaho.pda.Column.CONDITION_TYPES.IS_NULL],
+  [pentaho.common.Messages.getString( "IS_NOT_NULL" ), pentaho.pda.Column.CONDITION_TYPES.NOT_NULL]];
 
 //Comparators with no right-hand parameters (is null, etc).
 pentaho.pda.Column.SINGLE_COMPARATORS = {};

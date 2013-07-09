@@ -88,15 +88,15 @@ th.nodataright {	font-family: verdana, arial , helvetica, sans-serif;
          <p>Examples of <strong>Fields</strong> include "Sales Revenue," "Profit Margin," "Product Name," "Region Name," and "Fiscal Year." Fields are what define the content of your report. 
          <p>The following types of fields are available:</p>
         <ul> 
-               <li><b>Text Fields (Names, Types, Categories, etc.):</b> <em>Product Name</em> is an example of a <strong>Text</strong> field. <em>Snow sports</em> and <em>Cycling</em> are examples of possible values for the <em>Product Name</em> field.</li>
+               <li><b>Level</b> Fields (Names, Types, Categories, etc.): Level fields are most often text-based. <i>Product Name</i> is an example of a <b>Level field</b>. <i>Snow sports</i> and <i>Cycling</i> are examples of possible values for the <i>Product Name</i> field – those individual values are often referred to as <b>members</b> of that <b>level</b>.</li>
                <li><b>Time Period Fields:</b> <strong>Fiscal Year</strong> and <strong>Order Month</strong> are examples of <strong>Time Period</strong> fields. Possible values for those fields could be <strong>2004</strong> and <strong>Jan-2006</strong>, respectively.</li>
-               <li><b>Number Fields</b>: These types of fields are designed for summing, dividing, creating averages, etc. <strong>Sales Revenue</strong> and <strong>Profit Margin</strong> are examples of <strong>Number</strong> fields.</li>
+               <li><b>Measure Fields</b>: Measure fields are numeric and most often represent business metrics. These types of fields are designed for summing, dividing, creating averages, etc. <strong>Sales Revenue</strong> and <strong>Profit Margin</strong> are examples of <strong>Measure</strong> fields.</li>
         </ul>
         
          <p>Fields are color-coded by type in both the report and the <strong>Available Fields</strong> pane. The colors are assigned as follows:</p>
         <ul> 
-               <li><strong>Text Fields and Time Period Fields:</strong> <font style="color:orange">Orange</font></li>
-               <li><strong>Number Fields:</strong> <font style="color:blue">Blue</font></li>
+               <li><strong>Level Fields and Time Period Fields:</strong> <font style="color:orange">Orange</font></li>
+               <li><strong>Measure Fields:</strong> <font style="color:blue">Blue</font></li>
         </ul>
       <p>You can create a report without any knowledge of field types, but knowing how field types work can sometimes help you understand how different charts display data and how filters work together.</p>
       <h2 class="line"><a name="viewing_the_definition_of_a_field"></a>Viewing the Definition of a Field</h2>
@@ -116,21 +116,26 @@ th.nodataright {	font-family: verdana, arial , helvetica, sans-serif;
          <p>To see the list of fields that are available to you when you build your report, click the <b>Show Fields</b> button to display the <b>Available Fields</b> pane. You may organize the list in three ways:</p>
          <ul>
            <li>By <strong>Category</strong> (default). This grouping can be changed by an administrator. See <a href="../Administrator_User/managing_fields_and_analysis_areas.html">Managing Fields and Analysis Areas</a>. </li>
-           <li>By <strong>Type</strong>. Lets you see the list where all number fields (blue) come first, followed by text fields (orange). </li>
+           <li>By <strong>Type</strong>. Lets you see the list where all measure fields (blue) come first, followed by level fields (orange). </li>
            <li><strong>A-&gt;Z</strong>. No grouping.</li>
-         </ul>
-          
+		   <li>By <strong>Schema</strong>. This displays the grouping as defined by the administrator in the cube’s underlying schema.</li>
+         </ul>          
          <p>To change the organization, simply click the <strong>View button</strong> next at the top of the pane.</p>
+		 
+		 
          <h2 class="line"><a name="finding_a_field" id="#finding_a_field"></a>Finding a Field </h2>
-         <p>To find a field, first the <b>Show Fields</b> button to display the <b>Available Fields</b> pane.</p>
+         <p>To find a field, first click the <strong>Add more fields onto the report</strong> button on the toolbar to display the <strong>Available Fields</strong> pane if it is not already displayed.</p>
            <p>Then, type in the first characters of the field name in the <strong>Find box</strong>.</p>
-         <h2 class="line"><a name="adding_a_field" id="#adding_a_field"></a>Adding a Field</h2>
+         
+		 
+		 <h2 class="line"><a name="adding_a_field" id="#adding_a_field"></a>Adding a Field</h2>
          <p>Complete the following steps to add a field to the report.</p>
          <ol>
-           <li>Click the <b>Show Fields</b> button to display the <b>Available Fields</b> pane.</li>
+           <li>Click the <b>Add more fields onto the report</b> button to display the <b>Available Fields</b> pane if it is not already displayed.</li>
            <li>Choose from one of the following methods to add a field to the report:
              <ul>
                  <li>Select a field, and drag it into the <strong>Report</strong> pane. A visual indicator (black line) lets you place the field where you want it.</li>
+				 <li>Select a field and drag it into the <strong>Layout Panel</strong>.</li>
                <li>Right-click a field, and select <strong>Add to Report</strong>.</li>
                <li>Double-click a field.</li>
              </ul>
@@ -138,13 +143,15 @@ th.nodataright {	font-family: verdana, arial , helvetica, sans-serif;
          </ol>
          <p><strong>Note:</strong> If a field that is already in the report is part of a hierarchy, you can access related fields by clicking the field in the report and selecting <strong>Also Show</strong> from the menu. See <a href="#about_field_hierarchies">About Field Hierarchies</a>.</p>
          <p>
-        <h2 class="line"><a name="arranging_fields"></a>Re-Arranging Fields</h2>
+        
+		
+		<h2 class="line"><a name="arranging_fields"></a>Re-Arranging Fields</h2>
                   <p>Sometimes you need to re-arrange the fields that are already in your report. In a table report, the easiest method is to simply drag the field to a new location. In chart mode, you open the <strong>Field Layout</strong> area.</p>
-                  <p>Method 1: For table reports, simply drag the field header to the new location. Note that number fields (blue) will always be placed on the right side.</p>
+                  <p>Method 1: For table reports, simply drag the field header to the new location. Note that measure fields (blue) will always be placed on the right side.</p>
         <p>Method 2: To re-arrange fields using the <strong>Field Layout </strong>pane, do the following:</p>
         <ol>
             <li>Click the <b>Show Field Layout</b> button to display the <strong>Field Layout</strong> pane.</li> 
-            <li>Select and drag field symbols within and between the three different zones.You can only move a field within zones of the same color (<font style="color:blue"><strong>blue</strong> for numbers </font> and <font style="color:orange"><strong>yellow</strong> for text</font>) as the field.</li>
+            <li>Select and drag field symbols within and between the three different zones.You can only move a field within zones of the same color (<font style="color:blue"><strong>blue</strong> for measures </font> and <font style="color:orange"><strong>yellow</strong> for levels</font>) as the field.</li>
         </ol>
          <h2 class="line"><a name="renaming_a_field"></a>Renaming a Field</h2>
          <p>To rename a field within a report, do the following: </p>
@@ -164,14 +171,14 @@ th.nodataright {	font-family: verdana, arial , helvetica, sans-serif;
            <li>Method 2: Click on then name of the field you want to remove, and select <b>Remove from Report</b> from the menu.</li>
          </ul>
          <h2 class="line"><a name="about_field_hierarchies"></a>About Field Hierarchies</h2>
-         <p>Some text fields (time periods, names, types, categories, etc.) belong to field hierarchies. Here are two examples of field hierarchies:</p>
+         <p>Some level fields (time periods, names, types, categories, etc.) belong to field hierarchies. Here are two examples of field hierarchies:</p>
 		 <ul><li>Product Line -> Product Name</li>
 		 <li>Year -> Quarter -> Month -> Week -> Day</li></ul>
 		 <p>The field hierarchies have the purpose of making it easier and faster to drill down into detailed data on a report and as a user, you can work with reports without realizing that some fields are grouped into hierarchies.</p>
          <p>The field hierarchies help you in two primary ways. First, it provides a quick and easy way to drill into more details on a report:</p>
          <ul>
-            <li>Clicking on a text field (e.g. "Fiscal Quarter ") on the report and select Also Show from the menu. If the field is part of a hierarchy, all these fields will be available for selection.</li>
-            <li>Clicking on a text field value (e.g. "2007") on the report. The menu contains the option <b>Keep Only 2007 and Show its Quarters</b></li>
+            <li>Clicking on a level field (e.g. "Fiscal Quarter ") on the report and select Also Show from the menu. If the field is part of a hierarchy, all these fields will be available for selection.</li>
+            <li>Clicking on a level field value (e.g. "2007") on the report. The menu contains the option <b>Keep Only 2007 and Show its Quarters</b></li>
          </ul>
          <p>Second, when creating a filter, field hierarchies narrow down the list of available values. For example, if you have a filter Product Line="Snow Sports", then the list of possible choices when you filter Product Names are limited to the products that are part of the Snow Sports product line.</p>
          <p>In addition, field hierarchies sometimes control how fields are placed onto the report. For example, fields from the same field hierarchy need to be placed on the same axis (row/column) and the report will automatically enforce this rule as you move and arrange your fields.</p>
@@ -179,13 +186,13 @@ th.nodataright {	font-family: verdana, arial , helvetica, sans-serif;
          <p>You can add fields that have an arbitrary number of values, but large reports will be truncated.</p>
          <p>Truncated<strong> table reports</strong> differ from full reports in the following three ways:</p>
          <ul>
-           <li>The <strong>Report Status Bar</strong> will display the number of rows/columns shown versus the number of rows/columns in the full report. Cells will be cut until the number of cells is less than or equal to 2000. Rows are cut first (down to a minimum of 10 rows), followed by columns. This technique ensures that you still get a good sample of the row values despite the truncation.</li>
+           <li>The <strong>Report Status Bar</strong> will display the number of rows/columns shown versus the number of rows/columns in the full report. Cells will be cut until the number of cells is less than or equal to 2000 (this limit can be increased by the administrator). Rows are cut first (down to a minimum of 10 rows), followed by columns. This technique ensures that you still get a good sample of the row values despite the truncation.</li>
          </ul>
          <ul>
            <li><strong>Subtotals</strong> and <strong>Grand Totals</strong> are not displayed unless all participating data is displayed.</li>
            <li>A message at the end of the report will inform you of the truncation. Note that the data in the cells does not change because of the truncation.</li>
          </ul>
-         <p>For <strong>charts</strong>, a maximum of 100 values can be displayed on any axis.</p>
+         <p>For <strong>charts</strong>, there is a maximum value of plot points that can be displayed on any axis. That limit is different depending on the type of chart and based on the amount of data that can reasonable fit on a screen. The limit can be changed in <strong>Chart Options</strong>.</p>
          
         <h2 class="line"><a name="when_the_report_returns_no_data"></a>When Your Report Does Not Display Any Data</h2>
  

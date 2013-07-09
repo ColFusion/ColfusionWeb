@@ -8,6 +8,6 @@
     
     <cache>false</cache>
 <plugin-id>common_ui_Release</plugin-id>
-<plugin-version>1.0.1-GA</plugin-version>
-<plugin-build>28</plugin-build>
+<plugin-version>4.8.0-GA</plugin-version>
+<plugin-build>176</plugin-build>
 </settings>

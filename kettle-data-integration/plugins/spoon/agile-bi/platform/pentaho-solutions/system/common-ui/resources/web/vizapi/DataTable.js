@@ -8,7 +8,7 @@ author: James Dixon
 
 */
 
-var pentaho = pentaho || {};
+pentaho = typeof pentaho == "undefined" ? {} : pentaho;
 
 /****************************************************
     pentaho.DataTable
@@ -111,6 +111,34 @@ pentaho.DataTable.convertCdaToDataTable = function( cdaTable ) {
 }
 
 /*
+    Add Java classnames in select places so that this data table can be
+    deserialized from JSON into Java objects
+*/
+pentaho.DataTable.prototype.makePostable = function() {
+    this.jsonTable["class"] = "org.pentaho.dataservice.DataTable";
+    for( var idx=0; idx<this.getNumberOfColumns(); idx++ ) {
+        this.jsonTable.cols[idx]["class"] = "org.pentaho.dataservice.Column";
+    } 
+    for( var idx=0; idx<this.getNumberOfRows(); idx++ ) {
+        var cells = this.jsonTable.rows[idx].c;
+        if( cells ) {
+            for( cellNo=0; cellNo<cells.length; cellNo++ ) {
+                if( cells[cellNo] ) {
+                    cells[cellNo]["class"] = "org.pentaho.dataservice.Cell";
+                }
+            }
+        }
+    }
+}
+
+/*
+    Returns the underlying JSON table
+*/
+pentaho.DataTable.prototype.getJsonTable = function() {
+    return this.jsonTable;
+}
+ 
+/*
     getNumberOfColumns
     returns     The number of columns in the table
 */
@@ -160,7 +188,10 @@ pentaho.DataTable.prototype.getColumnLabel = function(columnIdx) {
     returns     The value of the specified cell
 */
 pentaho.DataTable.prototype.getValue = function(rowIdx,columnIdx) {
-    if( this.jsonTable.rows[rowIdx].c[columnIdx].v ) {
+    if(!this.jsonTable.rows[rowIdx].c[columnIdx]){
+        return null;
+    }
+    if( this.jsonTable.rows[rowIdx].c[columnIdx].v !== undefined ) {
         // we have a value field so return it
         return this.jsonTable.rows[rowIdx].c[columnIdx].v;
     } else {
@@ -169,17 +200,31 @@ pentaho.DataTable.prototype.getValue = function(rowIdx,columnIdx) {
 }
 
 /*
+    Returns the cell object
+*/
+pentaho.DataTable.prototype._getCell = function(rowIdx,columnIdx) {
+    if(!this.jsonTable.rows[rowIdx].c[columnIdx]){
+        return null;
+    }
+    return this.jsonTable.rows[rowIdx].c[columnIdx];
+}
+
+
+/*
     getFormattedValue
     columnIdx   The column number (zero based)
     rowIdx      The row number (zero based)
     returns     The formatted value of the specified cell
 */
 pentaho.DataTable.prototype.getFormattedValue = function(rowIdx,columnIdx) {
-    if( this.jsonTable.rows[rowIdx].c[columnIdx].f ) {
+    if( !this.jsonTable.rows[rowIdx].c[columnIdx] ) {
+        return null;
+    }
+    else if( this.jsonTable.rows[rowIdx].c[columnIdx].f !== undefined ) {
         // we have a formatted value so return it
         return this.jsonTable.rows[rowIdx].c[columnIdx].f;
     } 
-    else if( this.jsonTable.rows[rowIdx].c[columnIdx].v ) {
+    else if( this.jsonTable.rows[rowIdx].c[columnIdx].v !== undefined ) {
         // we have a value field so return it
         return this.jsonTable.rows[rowIdx].c[columnIdx].v;
     } 
@@ -240,8 +285,9 @@ pentaho.DataTable.prototype.getColumnRange = function(columnIdx) {
 pentaho.DataTable.prototype.getDistinctValues = function(columnIdx) {
     var values = [];
     var valueMap = {};
+    var isNumber = this.getColumnType(columnIdx) == 'number';
     for( var rowNo=0; rowNo<this.getNumberOfRows(); rowNo++ ) {
-        var value = this.getValue( rowNo, columnIdx );
+        var value = isNumber ? this.getValue( rowNo, columnIdx ) : this.getFormattedValue( rowNo, columnIdx );
         if( !valueMap[value] ) {
             valueMap[value] = true;
             values.push(value);
@@ -574,6 +620,12 @@ pentaho.DataView.prototype.getValue = function(rowNo, colNo) {
     return this.dataTable.getValue(rowIdx, colIdx);
 }
 
+pentaho.DataView.prototype._getCell = function(rowNo, colNo) {
+    var rowIdx = this.rows == null ? rowNo : this.rows[rowNo];
+    var colIdx = this.columns == null ? colNo : this.columns[colNo];
+    return this.dataTable._getCell(rowIdx, colIdx);
+}
+
 /*
     getFormattedValue
     columnIdx   The column number (zero based)
@@ -628,10 +680,8 @@ pentaho.DataView.prototype.toDataTable = function() {
     for( var rowIdx=0; rowIdx<this.getNumberOfRows(); rowIdx++ ) {
         cells = [];
         for( var colIdx=0; colIdx<this.getNumberOfColumns(); colIdx++ ) {
-            cells.push({
-                v: this.getValue(rowIdx, colIdx),
-                f: this.getFormattedValue(rowIdx, colIdx)
-            });
+            var cell = this._getCell(rowIdx, colIdx);
+            cells.push(cell);
         }
         row = {
             c: cells
