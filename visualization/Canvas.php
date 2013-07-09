@@ -11,6 +11,9 @@ class Canvas{
     //public $version;
     public $charts = array();
     public $statusCode;
+    private $pri = array(
+    		'User-Owned'=>0,'Readable'=>1,'Modifiable'=>2
+    );
     
     function __construct($_vid, $_name, $_owner, $_note, $_mdate, $_cdate, $_privilege, $_authorization, $_charts){
         $this->vid = $_vid;
@@ -170,25 +173,37 @@ class Canvas{
         
     }
     function shareCanvas($shareTo,$authorization){
-        if($this->authorization!=0){
-            return null;
-        }else{
-            require_once('../config.php');
-            global $db;
-            $sql = "select * from cofulsion_shares where vid =".$this->vid." user_id = ".$shareTo;
+    	require_once('../config.php');
+    	global $db;
+
+    	
+    	if (strstr($shareTo,"@")!=false){
+    		$userSql = "select user_id from colfusion_users where user_email = '".$shareTo."'";
+    	}
+    	
+    	else {
+    		$userSql = "select user_id from colfusion_users where user_login = '".$shareTo."'";		
+    	}
+    
+    	
+    	$userRes = $db->get_results($userSql);
+
+    	foreach($userRes as $userRow){
+			    		
+    		$shareTo= $userRow->user_id;
+    		
+            $sql = "select * from colfusion_shares where vid =".$this->vid." AND user_id = ".$shareTo;
+            
             $rst = $db->get_row($sql);
             if($rst == null){
-                $sql = 'insert into colfusion_shares(vid, user_id,) values('.$this->vid.','.$shareTo.','.$authorization.')';
+                $sql = "insert into colfusion_shares(vid, user_id,privilege) values(".$this->vid.",".$shareTo.",".$this->pri[$authorization].")";
                 $db->query($sql);
             }else{
-                if($rst->privilege == 0){
-                    return 'You cannot share ownnership';
-                }else{
-                    $sql = 'update colfusion_shares where vid ='.$this->vid.' user_id = '.$shareTo.' set privilege = '.$authorization;
+                    $sql = 'update colfusion_shares set privilege = '.$this->pri[$authorization].' where vid ='.$this->vid.' AND user_id = '.$shareTo;
                     $db->query($sql);
-                }
             }
-        }
+           
+    	}
     }
 
 }

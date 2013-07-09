@@ -9,7 +9,7 @@ function loadMotions() {
     for(motionNum=0 ; motionNum<motions.length ; motionNum++){
         theMotion = motions[motionNum];
         gadgetIDs.push(theMotion.id);
-        drawMotion(2,gadgetIDs[motionNum]);
+        drawMotion(2,'motionResult'+gadgetIDs[motionNum]);
     }
 }
 
@@ -152,7 +152,7 @@ function drawMotion(sourceData,gadgetID) {
 		data.setCell(i, 3, parseInt(sourceData[i]["precipitation"]));
 		data.setCell(i, 4, sourceData[i]["state"]);
 	}
-	var chart = new google.visualization.MotionChart(document.getElementById('motionResult'+gadgetID));
+	var chart = new google.visualization.MotionChart(document.getElementById(gadgetID));
 	chart.draw(data, {width: "100%", height:"100%"});
 }
 function generateMotion(a) {
@@ -164,7 +164,7 @@ function generateMotion(a) {
 function createNewMotionGadget() {
 	var d = new Date();
 	var ranNum = 1 + Math.floor(Math.random() * 100);
-	vargadgetID = d.getTime() + ranNum + "";
+	var gadgetID = d.getTime() + ranNum + "";
 
 	var gadget = "<div name='motionDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:500px; height:320px' type='motion'>";
 	gadget += "<div class='gadget-header'>Motion Chart " + gadgetID;
@@ -190,7 +190,6 @@ function addMotionChart() {
 	var where = $("#where").val();	
 	var settings = "";
 	var otherColumns = new Array();
-	var gadgetID = createNewMotionGadget();
 	var firstColumn = $('#motionFirstColumn').val();
 	var dateColumn = $('#motionDate').val();
 	var otherColCount = 0;
@@ -223,7 +222,7 @@ function addMotionChart() {
 			var queryResult = JSON_Response['queryResult'];
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
-			drawMotion(queryResult,gadgetID);
+			drawMotion(queryResult,'motionResult'+gadgetID);
 			$('#addMotion').modal('hide');
 		}
 		})
@@ -234,6 +233,6 @@ function loadMotionChart(sourceData) {
 	var queryResult = sourceData['queryResult'];
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
 	$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
-	drawMotion(queryResult,gadgetID);
+	drawMotion(queryResult,'motionResult'+gadgetID);
 		
 }

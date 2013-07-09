@@ -180,6 +180,7 @@ function closeCanvas(){
 }
 function openCanvasManager() {
     $('#file-dropdown').hide();
+    showHint("");
     $('#brand').text('Col*Fusion Canvas Manager');
     closeCanvas();
     $('#file_manager').show();

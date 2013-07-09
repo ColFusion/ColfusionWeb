@@ -9,7 +9,7 @@ function loadCombos() {
     for(comboNum=0 ; comboNum<combos.length ; comboNum++){
         theCombo = combos[comboNum];
 		gadgetIDs.push(theCombo.id);
-        drawComboo(2,gadgetIDs[comboNum]);
+        drawCombo(2,"comboResult"+gadgetIDs[comboNum]);
     }
 }
 
@@ -139,8 +139,10 @@ function generateCombo(a){
 	var chart = new google.visualization.ComboChart(document.getElementById('comboResult'+a));
 	chart.draw(data,options);
 }
+
 //draw the combo chart in the gadget
 function drawCombo(souceData,gadgetID) {
+
 	var data = new google.visualization.DataTable();
 	data.addColumn('string','Type');
 	for(i=0; souceData[i]!=null ; i++)
@@ -166,13 +168,15 @@ function drawCombo(souceData,gadgetID) {
 		title: 'Combo Chart for '+ comboColumnCat,
 		vAxis: {title : comboColumnAgg + " value"},
 		hAxis: {title : "Aggregation Type"},
-		height: $("#comboResult"+gadgetID).height(),
 		seriesType: "bars"
 	};
-	var chart = new google.visualization.ComboChart(document.getElementById('comboResult'+gadgetID));
+	
+	
+	var chart = new google.visualization.ComboChart(document.getElementById(gadgetID));
+	
 	chart.draw(data,options);
-
 }
+
 //create the gadget for combo chart
 function createNewComboGadget(){
 	var d = new Date();
@@ -205,7 +209,7 @@ function createNewComboGadget(){
 	});
 
 	$('#editComboSave').click(function(){
-		drawCombo(3,editGadgetID);
+		drawCombo(3,"comboResult"+editGadgetID);
 	});
 	return gadgetID;
 }
@@ -239,7 +243,7 @@ function addComboChart() {
 		success: function(JSON_Response){
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			var queryResult = JSON_Response['queryResult'];
-			drawCombo(queryResult,gadgetID);
+			drawCombo(queryResult,"comboResult"+gadgetID);
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 			$('#addCombo').modal('hide');
@@ -250,7 +254,7 @@ function addComboChart() {
 function loadComboChart(sourceData) {
 	var gadgetID = createNewComboGadget();
 	var queryResult = sourceData['queryResult'];
-	drawCombo(queryResult,gadgetID);
+	drawCombo(queryResult,"comboResult"+gadgetID);
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
 	$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 }

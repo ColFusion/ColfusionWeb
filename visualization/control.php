@@ -20,6 +20,7 @@ if($current_user->authenticated != TRUE) {
         echo $_SERVER['REQUEST_URI'];
         header("Location: " . $my_base_url . $my_pligg_base . "/login.php?return=" . $_SERVER['REQUEST_URI']);
 }
+
 $action = $_REQUEST['action'];
 if (in_array($action, array('openCanvas','saveCanvas','createNewCanvas', 'addChart','deleteCanvas','shareCanvas'))){
     //header('Content-type: text/plain');
@@ -198,12 +199,15 @@ function deleteCanvas(){
     $rst['status'] = 'success';
     echo json_encode($rst);
 }
+
 function shareCanvas(){
+	
     $rst = array();
     $vid = $_REQUEST['vid'];
-    if($_SESSION['Canvases'][$vid] !=null){
+    if($_SESSION['Canvases'][$vid]!=null){
         $canvas = unserialize($_SESSION['Canvases'][$_REQUEST['vid']]);
         $rst = $canvas->shareCanvas($_REQUEST['shareTo'],$_REQUEST['authorization']);
+
     }else{
         $canvas = Canvas::openCanvas($_REQUEST['vid']);
         if($canvas==null){$rst['status'] = 'fail';$rst['result'] = 'No permit or no file exist.'; return;}

@@ -1,12 +1,22 @@
 <<<<<<< .mine
 <<<<<<< .mine
+<?php /* Smarty version Smarty-3.1.13, created on 2013-06-05 14:29:00
+=======
+=======
+<<<<<<< .mine
+<<<<<<< .mine
 <?php /* Smarty version Smarty-3.1.13, created on 2013-06-21 18:58:59
 =======
+>>>>>>> .r784
 <?php /* Smarty version Smarty-3.1.13, created on 2013-06-20 15:58:13
+<<<<<<< .mine
+>>>>>>> .r780
+=======
 =======
 <?php /* Smarty version Smarty-3.1.13, created on 2013-06-10 14:04:11
 >>>>>>> .r782
 >>>>>>> .r780
+>>>>>>> .r784
          compiled from "C:\wamp\www\Colfusion\OriginalSmarty\templates\attachmentList.tpl" */ ?>
 <?php /*%%SmartyHeaderCode:2555551864f000b6e25-52867561%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
@@ -17,13 +27,23 @@ $_valid = $_smarty_tpl->decodeProperties(array (
       0 => 'C:\\wamp\\www\\Colfusion\\OriginalSmarty\\templates\\attachmentList.tpl',
 <<<<<<< .mine
 <<<<<<< .mine
+      1 => 1370370009,
+=======
+=======
+<<<<<<< .mine
+<<<<<<< .mine
       1 => 1371743068,
 =======
+>>>>>>> .r784
       1 => 1371732976,
+<<<<<<< .mine
+>>>>>>> .r780
+=======
 =======
       1 => 1370872935,
 >>>>>>> .r782
 >>>>>>> .r780
+>>>>>>> .r784
       2 => 'file',
     ),
   ),

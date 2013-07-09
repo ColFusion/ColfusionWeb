@@ -139,8 +139,11 @@ function drawMap(souceData,gadgetID){
 		enableScrollWheel: true,
 		useMapTypeControl: true
 	};
-	var map = new google.visualization.Map(document.getElementById('mapResult' + gadgetID));
+	var map = new google.visualization.Map(document.getElementById(gadgetID));
+
 	map.draw(data, options);
+	$("#"+gadgetID).height($("#"+gadgetID).parent().height()-20);
+	
 }
 function generateMap(a){
     var options = {
@@ -225,7 +228,7 @@ function addMapChart() {
 			var queryResult = JSON_Response['queryResult'];
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#mapResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height()-20);
-			drawMap(queryResult,gadgetID);
+			drawMap(queryResult,'mapResult'+gadgetID);
 			$('#addMap').modal('hide');
 		}
 		})
@@ -236,5 +239,5 @@ function loadMapChart(sourceData) {
 	var queryResult = sourceData['queryResult'];
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
 	$("#mapResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height()-20);
-	drawMap(queryResult,gadgetID);
+	drawMap(queryResult,'mapResult'+gadgetID);
 }

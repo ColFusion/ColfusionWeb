@@ -12,8 +12,8 @@ function openCharts(vid,vname){
 	$("#filter_section").children("div").hide();
 	$("#charts_section").show();
 	$("#openbutton_section").html('<button id="openButton" class="btn btn-info" type="button" onclick="openCanvas('+vid+')"> OpenCanvas </button>')
-	$(".alert-info").html("<strong>How To Add Charts To Your Own Canvas:</strong> Drag the charts to the canvas on the left (Click the text input box to go back to filter state). ");
 
+	
 	$.ajax(
 			{
 				url:"control.php",
@@ -26,7 +26,8 @@ function openCharts(vid,vname){
 				    for(var i in _data['charts']){
 				    	var temp = _data['charts'][i];
 				    	result = temp;
-				    		$("#charts_section ul").append('<li><a onclick = "setType('+temp['type']+')" href="#openchart" data-toggle="modal">'+temp['name']+'</a></li>');
+				    	var chartj = $.toJSON(temp);
+				    		$("#charts_section ul").append("<li><a onclick = 'setChart("+chartj+")' href='#openchart' data-toggle='modal'>"+temp['name']+"</a></li>");
 				    }
 				    $("#charts_section li").last().append('</ul>');
 				}
@@ -48,7 +49,6 @@ function returnNormal(){
 	$("#charts_section").hide();
 	$("#authorization_filter").show();
 	$("#date_filter").show();
-	$(".alert-info").html("<strong>How To Use Search:</strong>Use the initial letters of CANVAS NAME , OWNER'S NAME or OWNER'S NAME + CANVAS NAME of THAT OWNER to filter.   ");
 }
 
 function openCanvas(vid){
@@ -114,8 +114,10 @@ function openCanvas(vid){
 		});
 	}
 
-function drawPies(){
-	createNewPie();
+function drawPies(displayDiv){
+	if (displayDiv==null)
+		createNewPie();
+	
 	var res;
 	if (typeof(result['queryResult']) == 'string') {
 		res = jQuery.parseJSON(result['queryResult']);
@@ -141,9 +143,15 @@ function drawPies(){
     	      'title':'Pie Chart for ' + res['string'] + ' based on ' + res['number']
     	};
 
-	$("#pieResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
-
-	var chart = new google.visualization.PieChart(document.getElementById('pieResult'+gadgetID));
+	
+	if (displayDiv==null){
+		$("#pieResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+		var chart = new google.visualization.PieChart(document.getElementById('pieResult'+gadgetID));
+	}
+	else{
+		var chart = new google.visualization.PieChart(document.getElementById(displayDiv));
+	}
+	
 	chart.draw(data, options);
 	gadgetProcess(gadgetID,result['cid'],result['name'],result['top'],result['left'],result['height'],result['width'],result['depth'],result['type'],result['note'],'datainfo');
 }
@@ -163,8 +171,9 @@ function gadgetProcess(gadgetID,cid,name,top,left,height,width,depth,type,note,d
 	}
 }
 
-function drawColumns(){
-	createNewColumn();
+function drawColumns(displayDiv){
+	if (displayDiv==null)
+		createNewColumn();
 	
 	var res = result['queryResult'];
 	
@@ -174,10 +183,16 @@ function drawColumns(){
     var options = {
     	      'title':'Column Chart for ' + res['cat'] + ' based on ' + res['agg']
     	};
-
-    $("#columnResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
-	
-    var chart = new google.visualization.ColumnChart(document.getElementById('columnResult'+gadgetID));
+    
+    if (displayDiv==null){
+	    $("#columnResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+		
+	    var chart = new google.visualization.ColumnChart(document.getElementById('columnResult'+gadgetID));
+    }
+    else {
+    	var chart = new google.visualization.ColumnChart(document.getElementById(displayDiv));
+    }
+    
     chart.draw(data, options);
     gadgetProcess(gadgetID,result['cid'],result['name'],result['top'],result['left'],result['height'],result['width'],result['depth'],result['type'],result['note'],'datainfo');
 }

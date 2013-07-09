@@ -9,6 +9,7 @@
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/bootstrap-lightbox.min.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/sourceAttachment.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/dataTableModel.css" />
+<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/addRelationship.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/relationship.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/typeahead.js-bootstrap.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/parsley.css" />
@@ -35,8 +36,11 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.2.1.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/dataTableModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/importWizard.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/wizardFromFile.js"></script>
@@ -181,11 +185,18 @@
         })(jQuery);
 
         $.sheet.preLoad('jquery.sheet/');
+        
         var sid;
+        var dataPreviewViewModel;
+        var relationshipViewModel;
+        
         $(document).ready(function() {
-            
+
             sid = $('#sid').val();
-            
+            dataPreviewViewModel = new DataPreviewViewModel(sid);
+            relationshipViewModel = new RelationshipViewModel(sid);
+            ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
+      
             $.ajax({
                 type: 'POST',
                 url: "DataImportWizard/wizardMarkup.php",
@@ -197,33 +208,19 @@
                 dataType: 'html',
                 async: false
             });
-           
+
             $.ajax({
                 type: 'POST',
                 url: "DataImportWizard/dataPreviewMarkup.php",
                 data: {},
                 success: function(data) {
                     $("#dataPreviewContainer").append(data);
+                     ko.applyBindings(dataPreviewViewModel, document.getElementById("dataPreviewContainer"));
                 },
                 dataType: 'html',
                 async: false
             });
-
-            $.ajax({
-                type: 'POST',
-                url: "DataImportWizard/mineRelMarkup.php",
-                data: {},
-                success: function(data) {
-                    $("#step3Container").append(data);
-
-                    dataPreviewViewModel = new DataPreviewViewModel(sid);
-                    ko.applyBindings(dataPreviewViewModel, document.getElementById("dataPreviewContainer"));
-                    ko.applyBindings(dataPreviewViewModel, document.getElementById("mineRelationshipsContainer"));
-                },
-                dataType: 'html',
-                async: false
-            });
-
+        
             // Open attachment upload page.
             $('#uploadAttachmentLink').click(function() {
                 $('#uploadAttachmentLightBox').lightbox({resizeToFit: false});
@@ -240,28 +237,7 @@
             });
 
             // Load attachment list.
-            fileManager.loadSourceAttachments(sid, $("#attachmentList"));
-
-
-            $('#testBackEnd').click(function() {
-                var dataToSend = {};
-
-                var fromCol = [594];
-                var toCol = [616];
-                var from = {"sid": 751, "columns": fromCol};
-                var to = {"sid": 753, "columns": toCol};
-
-
-                $.ajax({
-                    type: 'POST',
-                    url: "visualization/VisualizationAPI.php?action=AddRelationship",
-                    data: {"name": "testRel", "description": "testDescription", "from": from, "to": to, "confidence": 0.9, "comment": "blablabla"},
-                    success: function(data) {
-                        alert(data);
-                    },
-                    dataType: 'json'
-                });
-            });
+            fileManager.loadSourceAttachments(sid, $("#attachmentList"));          
         });
 
     </script>
@@ -355,77 +331,6 @@
             </tr>
         </table>
 
-        <!-- 5/2/2013 Reorder Submit page.
-        <label>{#PLIGG_Visual_Submit2_Title#}: </label>{#PLIGG_Visual_Submit2_TitleInstruct#}<br/>
-        <input type="text" id="title" class="text" name="title" value="{if $submit_title}{$submit_title}{else}{$submit_url_title}{/if}" size="54" maxlength="{$maxTitleLength}" />
-
-        <label>{#PLIGG_Visual_Submit2_Category#}: </label>{#PLIGG_Visual_Submit2_CatInstruct#}<br/>
-        <select id="category" {if $Multiple_Categories}name="category[]" multiple size=10{else}name="category"{/if} onchange="if ($('#category option:selected').val()>0) $('#lp-category').text($('#category option:selected').text()); else $('#lp-category').text('');">
-                <option value="">{#PLIGG_Visual_Submit2_CatInstructSelect#}</option>
-        {section name=thecat loop=$submit_cat_array}
-           <option value = "{$submit_cat_array[thecat].auto_id}" {if $submit_cat_array[thecat].auto_id == $submit_category  || in_array($cat_array[thecat].auto_id,$submit_additional_cats)}selected{/if}>
-        {if $submit_cat_array[thecat].spacercount lt $submit_lastspacer}{$submit_cat_array[thecat].spacerdiff|repeat_count:''}{/if}
-    {if $submit_cat_array[thecat].spacercount gt $submit_lastspacer}{/if}
-    {$submit_cat_array[thecat].spacercount|repeat_count:'&nbsp;&nbsp;&nbsp;'}
-    {$submit_cat_array[thecat].name}
-    &nbsp;&nbsp;&nbsp;
-    {assign var=submit_lastspacer value=$submit_cat_array[thecat].spacercount}
-</option>
-{/section}
-</select>
-
-{if $enable_group && $output neq ''}
-        <label>{#PLIGG_Visual_Group_Submit_story#}: </label><br/>
-    {$output}
-{/if}
-
-{checkActionsTpl location="tpl_header_admin_main_comment_subscription"}
-
-{*{checkActionsTpl location="tpl_timestamp_stories"}*}
-
-{if $enable_tags}
-        <label>{#PLIGG_Visual_Submit2_Tags#}: </label>
-        <strong>{#PLIGG_Visual_Submit2_Tags_Inst1#}</strong><br />{#PLIGG_Visual_Submit2_Tags_Example#} <em>{#PLIGG_Visual_Submit2_Tags_Inst2#}</em><br/>
-        <input type="text" id="tags" class="wickEnabled" name="tags" value="{$tags_words}" size="54" maxlength="{$maxTagsLength}" /><br /><br />
-        <script type="text/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/tag_data.js"></script> 
-        <script type="text/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/wick.js"></script> 
-{/if}
-
-{checkActionsTpl location="tpl_pligg__step2_middle"}
-
-<label>{#PLIGG_Visual_Submit2_Description#}: </label>{#PLIGG_Visual_Submit2_DescInstruct#}
-{if $Story_Content_Tags_To_Allow eq ""}
-        <br/><strong>{#PLIGG_Visual_Submit2_No_HTMLTagsAllowed#} </strong>{#PLIGG_Visual_Submit2_HTMLTagsAllowed#}
-{else}
-        <br/>{#PLIGG_Visual_Submit2_HTMLTagsAllowed#}: {$Story_Content_Tags_To_Allow}
-{/if}
-<br/><textarea name="bodytext" class="bodytext" rows="10" cols="41" id="bodytext" maxlength="{$maxStoryLength}" WRAP="SOFT" onkeypress="counter(this)" onkeydown="counter(this)" onkeyup="counter(this); if(!this.form.summarycheckbox || !this.form.summarytext) return; if(this.form.summarycheckbox.checked == false) {ldelim}this.form.summarytext.value = this.form.bodytext.value.substring(0, {$StorySummary_ContentTruncate});{rdelim}textCounter(this.form.summarytext,this.form.remLen, {$StorySummary_ContentTruncate});">{if $submit_url_description}{$submit_url_description}{/if}{$submit_content}</textarea><br />
-{* <input size="2" value='{$storylen}' name="text_num disabled" /> {#PLIGG_Visual_Total_Chars#} *}
-{if $Spell_Checker eq 1}<input type="button" name="spelling" value="{#PLIGG_Visual_Check_Spelling#}" class="submit" onclick="openSpellChecker('bodytext');"/>{/if}
-
-<br />
-<br />
-
-<div id="sumtrack">
-{if $SubmitSummary_Allow_Edit eq 1}
-<label>{#PLIGG_Visual_Submit2_Summary#}: </label>{#PLIGG_Visual_Submit2_SummaryInstruct#}{#PLIGG_Visual_Submit2_SummaryLimit#}{$StorySummary_ContentTruncate}{#PLIGG_Visual_Submit2_SummaryLimitCharacters#}
-        <input type="checkbox" name="summarycheckbox" id="summarycheckbox" onclick="SetState(this, this.form.summarytext)"> {#PLIGG_Visual_Submit2_SummaryCheckBox#}
-    {if $Story_Content_Tags_To_Allow eq ""}
-            <br /><strong>{#PLIGG_Visual_Submit2_No_HTMLTagsAllowed#} </strong>{#PLIGG_Visual_Submit2_HTMLTagsAllowed#}
-    {else}
-            <br />{#PLIGG_Visual_Submit2_HTMLTagsAllowed#}: {$Story_Content_Tags_To_Allow}
-    {/if}
-    <br/><textarea disabled="true" name="summarytext" class="summarytext" rows="5" cols="60" maxlength="{$maxSummaryLength}" id="summarytext" WRAP="SOFT" onkeydown="textCounter(this.form.summarytext,this.form.remLen, {$StorySummary_ContentTruncate});">{$submit_summary}</textarea><br />
-    <input readonly type="text" name="remLen" size="3" maxlength="3" value="400">{#PLIGG_Visual_Submit2_SummaryCharactersLeft#}
-{if $Spell_Checker eq 1}<input type="button" name="spelling" value="{#PLIGG_Visual_Check_Spelling#}" class="submit" onclick="openSpellChecker('summarytext');"/>{/if}
-<br /><br />
-{/if}
-
-
-</div>
-</div>
--->
-
 <h4 class="stepHeader">Step 2: Upload Your Data</h4>
 <span id='open-wizard' class='btn btn-primary'>Import data</span>
 <div class="submit_right_sidebar" id="dockcontent">
@@ -459,7 +364,8 @@
 
 <h4 class="stepHeader">Step 3: Connect To The Puzzle (Optional)</h4>
 <div id="step3Wrapper">
-    <div id="step3Container">       
+    <div id="step3Container">    
+        {include file='relationships.tpl'}
     </div>
 </div>
 
