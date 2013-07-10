@@ -18,13 +18,12 @@ abstract class DatabaseImporter {
 
     abstract public function importSqlFile($filePath);
 
-    protected function execImportQuery($filePath, $pdo) {
-
+    protected function execImportQuery($filePath, $pdo, $sqlDelimiter = "/;/") {
         $sql_query = @fread(@fopen($filePath, 'r'), @filesize($filePath));
         $sql_query = $this->remove_comments($sql_query);
         $sql_query = $this->remove_remarks($sql_query);
-        $sql_query = $this->split_sql_file($sql_query, ';');
-
+        $sql_query = $this->split_sql_file($sql_query, $sqlDelimiter);
+        
         foreach ($sql_query as $sql) {
             $sql = trim($sql);
             if (!empty($sql)) {
@@ -41,7 +40,7 @@ abstract class DatabaseImporter {
         $linecount = count($lines);
 
         for ($i = 0; $i < $linecount; $i++) {
-            if (!preg_match("/(^\\\-\\\-)/", preg_quote($lines[$i]))) {
+            if (!preg_match("/(^\\\-\\\-)/", preg_quote($lines[$i]) && !preg_match("/\/\*.*\*\//", $lines[$i]))) {
                 $output .= $lines[$i] . "\n";
             }
         }
@@ -83,7 +82,7 @@ abstract class DatabaseImporter {
 //
     private function split_sql_file($sql, $delimiter) {
 // Split up our string into "possible" SQL statements.
-        $tokens = explode($delimiter, $sql);
+        $tokens = preg_split($delimiter, $sql);
 
 // try to save mem.
         $sql = "";

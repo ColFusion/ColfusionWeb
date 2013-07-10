@@ -121,8 +121,6 @@ class QueryEngine {
     }
 
     public function GetTableDataBySidAndName($sid, $table_name, $perPage, $pageNo) {
-        global $db;
-
         if ($this->GetSourceType($sid) == "database") {
             return $this->GetTableDataBySidAndNameFromExternalDB($sid, $table_name, $perPage, $pageNo);
         } else {
@@ -132,8 +130,6 @@ class QueryEngine {
 
     function GetTableDataBySidAndNameFromExternalDB($sid, $table_name, $perPage, $pageNo) {
         $externalDBCredentials = $this->GetExternalDBCredentialsBySid($sid);
-
-        //TODO: implement
         return ExternalDBs::GetTableDataBySidAndName($table_name, $perPage, $pageNo, $externalDBCredentials);
     }
 

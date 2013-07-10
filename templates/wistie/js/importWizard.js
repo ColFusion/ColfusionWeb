@@ -15,12 +15,15 @@ var importWizard = (function() {
     importWizard.Init = function() {
         wizardFromFile.Init();
 
+
         $(document).ajaxSend(function(event, jqxhr, settings) {
             var sid = $('#sid').val();
             if (settings.data && settings.data.append) {
                 settings.data.append('sid', sid);
-            }else{
+            } else if (settings.data) {
                 settings.data += '&sid=' + sid;
+            } else {
+                settings.data = 'sid=' + sid;
             }
         });
 

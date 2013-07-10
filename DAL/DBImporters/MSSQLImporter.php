@@ -9,11 +9,12 @@ class MSSQLImporter extends DatabaseImporter {
     }
 
     public function importSqlFile($filePath) {
-        $dbh = new PDO("sqlsrv:Server=$this->host;", $this->user, $this->password);
+        $dbh = new PDO("sqlsrv:Server=$this->host;Database=master", $this->user, $this->password);
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                         
-        $dbh->exec("CREATE DATABASE [$this->database];USE [$this->database];");
-        $this->execImportQuery($filePath, $dbh);
+
+        // $dbh->exec("CREATE DATABASE [$this->database];");       
+        $dbh->exec("USE [$this->database]");
+        $this->execImportQuery($filePath, $dbh, "/\bGO\b/i");
     }
 
 }
