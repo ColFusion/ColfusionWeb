@@ -17,6 +17,8 @@ include(mnminclude . 'user.php');
 include_once(mnminclude . 'utils.php');
 include(mnminclude . 'smartyvariables.php');
 
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+ini_set('display_errors', 1);
 
 //to check anonymous mode activated
 global $current_user;
@@ -45,7 +47,8 @@ switch ($phase) {
 
 function upload_0() {
     global $db, $current_user;
-
+    $sid = getSid();
+    
     $author = $current_user->user_id;
 
     // check file type
@@ -53,18 +56,17 @@ function upload_0() {
     $mimes = array('xls', 'xlsx', 'csv', 'sql', 'zip');
     if (count($_FILES) <= 0) {
         $error = "ERROR: No file was uploaded.";
-        $_SESSION['upload_file'] = array('error' => $error);
+        $_SESSION["upload_file_$sid"]['error'] = $error;
     } else if (!in_array($extension, $mimes)) {
         $error = "ERROR: please upload excel, csv, sql, or zip file.";
-        $_SESSION['upload_file'] = array('error' => $error);
+        $_SESSION["upload_file_$sid"]['error'] = $error;
     } else {
         $_SESSION['extension'] = $extension;
-        $sid = getSid();
-
+ 
         //save upload file	     
         if ($_FILES['upload_file']['error'] > 0) {
             $error = "ERROR: " . get_file_err($_FILES['upload_file']['error']) . "</br>";
-            $_SESSION['upload_file'] = array('error' => $error);
+            $_SESSION["upload_file_$sid"]['error'] = $error;
         } else {
             // the file name that should be uploaded		
             $file_tmp = $_FILES['upload_file']['tmp_name'];
@@ -84,7 +86,7 @@ function upload_0() {
             // check upload status
             if (!(move_uploaded_file($file_tmp, $upload_path))) {
                 $error = "ERROR: failed to save file.";
-                $_SESSION['upload_file'] = array('error' => $error);
+                $_SESSION["upload_file_$sid"]['error'] = $error;
             } else {
 
                 // If a csv file is provided, create a excel file and write the csv value to it.
@@ -106,7 +108,7 @@ function upload_0() {
                         $zip->close();
                     } else {
                         $error = "ERROR: failed to unzip file.";
-                        $_SESSION['upload_file'] = array('error' => $error);
+                        $_SESSION["upload_file_$sid"]['error'] = $error;
                     }
 
                     // Convert all csv files into xlsx files.
@@ -134,33 +136,36 @@ function upload_0() {
 
                     if (!isset($raw_file_name)) {
                         $error = "ERROR: No valid file is included.";
-                        $_SESSION['upload_file'] = array('error' => $error);
+                        $_SESSION["upload_file_$sid"]['error'] = $error;
                     }
                 } else if (strtolower($ext) == 'sql') {
                     $dbType = trim(strtolower($_POST['dbType']));
                     try {
-                        $dbHandler = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid);
-                        $dbHandler->importSqlFile($upload_path);
-                    } catch (Excpetion $e) {
-                        $_SESSION['upload_file'] = array('error' => $e);
+                        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid);
+                        $dbImporter->importSqlFile($upload_path);
+                    } catch (Exception $e) {
+                        $_SESSION["upload_file_$sid"]['error'] = $e->getMessage();
                     }
                 }
 
                 $_SESSION["raw_file_name_$sid"] = $raw_file_name;
                 $loc_msg = "uploaded successfully";
-                $_SESSION['upload_file'] = array('loc' => $loc_msg);
+                $_SESSION["upload_file_$sid"]['loc'] = $loc_msg;
             }
         }
     }
 
     $json_response = array();
-    if (isset($_SESSION['upload_file']['error'])) {
+    if (isset($_SESSION["upload_file_$sid"]['error'])) {
         $json_response['isSuccessful'] = false;
-        $json_response['message'] = $_SESSION['upload_file']['error'];
+        $json_response['message'] = $_SESSION["upload_file_$sid"]['error'];
     } else {
         $json_response['isSuccessful'] = true;
-        $json_response['message'] = $_SESSION['upload_file']['loc'];
+        $json_response['message'] = $_SESSION["upload_file_$sid"]['loc'];
     }
+    
+    unset($_SESSION["upload_file_$sid"]['error']);
+    unset($_SESSION["upload_file_$sid"]['loc']);
     echo json_encode($json_response);
 }
 
@@ -171,7 +176,7 @@ function get_Ext() {
 }
 
 function getSid() {
-    // determine which step of the submit process we are on
+// determine which step of the submit process we are on
     if (isset($_POST["sid"]))
         $sid = $_POST["sid"];
     else if (isset($_GET["sid"]))
@@ -201,5 +206,4 @@ function deleteDirWithFiles($dirPath) {
         rmdir($dirPath);
     }
 }
-
 ?>

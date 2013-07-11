@@ -8,6 +8,7 @@ var wizardFromDB = (function() {
     wizardFromDB.database = "";
     wizardFromDB.port = "";
     wizardFromDB.driver = "";
+    wizardFromDB.isImport = false;
 
     /*************/
 
@@ -16,7 +17,7 @@ var wizardFromDB = (function() {
     // Get all actions form friends.
     wizardFromDB.TestDBConnection = function(container, server, user, password, port, driver, database, isImport) {
         $('#testDBConnectionResultMsg').css('color', '#707070').text('Connecting...');
-        $.ajax({
+        return $.ajax({
             type: 'POST',
             url: my_pligg_base + "/DataImportWizard/wizardFromDBController.php?action=TestConnection",
             data: {'serverName': server,
@@ -39,14 +40,14 @@ var wizardFromDB = (function() {
     };
 
     // Get all actions form friends.
-    wizardFromDB.LoadDatabaseTables = function(container, server, user, password, database, port, driver) {
+    wizardFromDB.LoadDatabaseTables = function(container, server, user, password, database, port, driver, isImport) {
         wizardFromDB.server = server;
         wizardFromDB.user = user;
         wizardFromDB.password = password;
         wizardFromDB.database = database;
         wizardFromDB.port = port;
         wizardFromDB.driver = driver;
-
+        wizardFromDB.isImport = isImport;
 
         $.ajax({
             type: 'POST',
@@ -56,7 +57,8 @@ var wizardFromDB = (function() {
                 'password': password,
                 'database': database,
                 'port': port,
-                'driver': driver
+                'driver': driver,
+                'isImport': isImport
             },
             success: function(JSON_Response) {
 
@@ -82,8 +84,16 @@ var wizardFromDB = (function() {
 
     wizardFromDB.passSelectedTablesFromDisplayOptionStep = function() {
 
-        var dataToSend = {'selectedTables[]': getSelectedTables(), 'serverName': wizardFromDB.server, "userName": wizardFromDB.user, "password": wizardFromDB.password,
-            "database": wizardFromDB.database, 'port': wizardFromDB.port, 'driver': wizardFromDB.driver};
+        var dataToSend = {
+            'selectedTables[]': getSelectedTables(),
+            'serverName': wizardFromDB.server,
+            "userName": wizardFromDB.user,
+            "password": wizardFromDB.password,
+            "database": wizardFromDB.database,
+            'port': wizardFromDB.port,
+            'driver': wizardFromDB.driver,
+            'isImport': wizardFromDB.isImport
+        };
 
         // alert(JSON.stringify(dataToSend));
         $.ajax({type: 'POST',
@@ -116,7 +126,8 @@ var wizardFromDB = (function() {
             'port': wizardFromDB.port, 'driver': wizardFromDB.driver,
             'selectedTables[]': getSelectedTables(),
             'schemaMatchingUserInputs': importWizard.getSchemaMatchingUserInputs(),
-            'dataMatchingUserInputs': importWizard.getDataMatchingUserInputs()
+            'dataMatchingUserInputs': importWizard.getDataMatchingUserInputs(),
+            'isImport': wizardFromDB.isImport
         };
 
         return $.ajax({type: 'POST',

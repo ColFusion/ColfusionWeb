@@ -80,26 +80,9 @@ class QueryEngine {
             }
         }
 
-        return $result;
-        //   } else {
-        //       return $this->GetFileNameBySid($sid);
-        //   }
+        return $result;     
     }
 
-    // Get tables and their columns' info of a sid.
-    // Return data type should be:
-    /*
-     * [
-     *      tableName =>
-     *      [
-     *         {
-     *            cid:
-     *            dname_chosen:
-     *            other fields mapped to DB...
-     *          }
-     *      ]
-     * ]
-     */
     public function GetTablesInfo($sid) {
         global $db;
 

@@ -417,6 +417,20 @@ var importWizard = (function() {
         $('#uploadMessage').text('');
         $('#uploadProgressText').text('0%');
         $('#uploadProgressBar').find('.bar').css('width', '0');
+        $('input[name="place"]').removeAttr('checked');
+        $('#divFromComputer').add('#divFromInternet').add('#divFromDatabase').hide();
+        $('#selectDBServer')
+                .add('#dbServerName')
+                .add('#dbServerPort')
+                .add('#dbServerUserName')
+                .add('#dbServerPassword')
+                .add('#dbServerDatabase')
+                .add('#uploadFileType')
+                .add('#dbType').prop('disabled', false);
+        $('input[name="place"]').prop('disabled', false);
+        var uploadForm = $('#upload_form');       
+        $(uploadForm).remove().prependTo('#divFromComputer');
+        wizardFromFile.initFileUploadForm(uploadForm);
     }
 
     function execute() {
@@ -444,7 +458,7 @@ var importWizard = (function() {
             $("#displayOptoinsStepCardFromDB").show();
 
             $("#displayOptoinsStepCardFromDB").append(importWizard.loadingGif);
-            wizardFromDB.LoadDatabaseTables($("#displayOptoinsStepCardFromDB"), $("#dbServerName").val(), $("#dbServerUserName").val(), $("#dbServerPassword").val(), $("#dbServerDatabase").val(), $('#dbServerPort').val(), $('#selectDBServer').val());
+            wizardFromDB.LoadDatabaseTables($("#displayOptoinsStepCardFromDB"), $("#dbServerName").val(), $("#dbServerUserName").val(), $("#dbServerPassword").val(), $("#dbServerDatabase").val(), $('#dbServerPort').val(), $('#selectDBServer').val(), $('#isImport').val());
         }
         else {
             $("#displayOptoinsStepCardFromFile").show();
@@ -461,7 +475,7 @@ var importWizard = (function() {
     }
 
     function getImportSource() {
-        if ($("input[name='place']:checked").val() == "database") {
+        if ($("input[name='place']:checked").val() == "database" || $('#uploadFileType').val() == 'dbDump') {
             return 'database';
         } else {
             return 'file';

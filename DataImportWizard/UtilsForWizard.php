@@ -65,9 +65,7 @@ class UtilsForWizard {
 	}
 	
 	public static function PrintTableForDataMatchingStep($data) {
-		$result = "";
-
-	
+		$result = "";	
 		
 		foreach ($data as $oneTableName => $oneTableColumns) {
 			if (count($data) > 1) 

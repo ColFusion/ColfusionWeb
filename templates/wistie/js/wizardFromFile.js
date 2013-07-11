@@ -27,7 +27,16 @@ var wizardFromFile = (function() {
         };
 
         // bind form using 'ajaxForm' 
-        $('#upload_form').find('input[name="upload_file"]').fileupload({
+        wizardFromFile.initFileUploadForm($('#upload_form'));
+
+        wizardExcelPreviewViewModel = new WizardExcelPreviewViewModel($('#sid').val());
+        var secondNode = document.getElementById('second');
+        ko.cleanNode(secondNode);
+        ko.applyBindings(wizardExcelPreviewViewModel, secondNode);
+    };
+
+    wizardFromFile.initFileUploadForm = function(form) {
+        $(form).find('input[name="upload_file"]').fileupload({
             dataType: 'json',
             url: 'DataImportWizard/acceptFileFromWizard.php',
             acceptFileTypes: '/(\.|\/)(xlsx?|csv|sql)$/i',
@@ -56,38 +65,25 @@ var wizardFromFile = (function() {
                 });
             },
             done: function(e, data) {
+                var resultJson = data.result;
                 $('#uploadPanel').fadeOut();
                 $('#isImport').val(false);
-
                 var messageDom = $('#uploadMessage');
-                if (data.result.isSuccessful) {
+
+                if (resultJson.isSuccessful) {
                     $(messageDom).css('color', 'green');
+                    $('#uploadFileType').add('#dbType').prop('disabled', true);
+                    $('input[name="place"]').prop('disabled', true);
 
                     if ($('#uploadFileType').val() == 'dbDump') {
-
-                        // Jump to "From database" and fill inputs to tell user the database is built from dump file.
-                        var dbType = $('#dbType').val();
-                        $('#selectDBServer option[value="' + dbType + '"]').prop('selected', true);
-                        $('#selectDBServer').val('Colfusion Server');
-                        $('#dbServerDatabase').val('Dump File');
-                        $('#selectDBServer')
-                                .add('#dbServerName')
-                                .add('#dbServerPort')
-                                .add('#dbServerUserName')
-                                .add('#dbServerPassword')
-                                .add('#dbServerDatabase').prop('disabled', true);
-                        $('#isImport').val(true);
-                        $('input[name="place"][id="database"]').prop('checked', true);
-                        $('#divFromComputer').hide();
-                        $('#divFromDatabase').show();
-
+                        connectFromDumpFile();
                     } else {
+                        $(messageDom).text(resultJson.message);
                         wizard.enableNextButton();
                     }
                 } else {
-                    $(messageDom).css('color', 'red');
+                    $(messageDom).css('color', 'red').text(resultJson.message);
                 }
-                $(messageDom).text(data.result.message);
             },
             progressall: function(e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -103,12 +99,32 @@ var wizardFromFile = (function() {
                 $('#uploadProgressBar').find('.bar').css('width', progress + '%');
             }
         });
-
-        wizardExcelPreviewViewModel = new WizardExcelPreviewViewModel($('#sid').val());
-        var secondNode = document.getElementById('second');
-        ko.cleanNode(secondNode);
-        ko.applyBindings(wizardExcelPreviewViewModel, secondNode);
     };
+
+    function connectFromDumpFile() {
+
+        $('input[id="database"]').attr('checked', true);
+
+        var messageDom = $('#uploadMessage');
+        $(messageDom).text('Connecting to database...');
+
+        // Jump to "From database" and fill inputs to tell user the database is built from dump file.
+        var dbType = $('#dbType').val();
+        $('#selectDBServer option[value="' + dbType + '"]').prop('selected', true);
+        $('#selectDBServer').val('Colfusion Server');
+        $('#dbServerDatabase').val('Dump File');
+        $('#selectDBServer')
+                .add('#dbServerName')
+                .add('#dbServerPort')
+                .add('#dbServerUserName')
+                .add('#dbServerPassword')
+                .add('#dbServerDatabase').prop('disabled', true);
+        $('#isImport').val(true);
+
+        wizardFromDB.TestDBConnection(null, null, null, null, null, $('#dbType').val(), null, true).done(function(data) {
+            $(messageDom).css('color', data.isSuccessful ? 'green' : 'red').text(data.message);
+        });
+    }
 
     wizardFromFile.submitUploadForm = function()
     {
@@ -118,7 +134,7 @@ var wizardFromFile = (function() {
         intervals[0] = setInterval("wizardFromFile.getUploadMsg()", 1000);
 
         intervals[1] = 0;
-    }
+    };
 
     wizardFromFile.getUploadMsg = function() {
 
@@ -139,7 +155,7 @@ var wizardFromFile = (function() {
         else {
             clearInterval(intervals[0]);
         }
-    }
+    };
 
     wizardFromFile.getFileExtentsion = function() {
 

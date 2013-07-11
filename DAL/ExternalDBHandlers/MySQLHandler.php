@@ -45,13 +45,13 @@ class MySQLHandler extends DatabaseHandler {
     public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
         $pdo = $this->GetConnection();
 
-        $sql = "SELECT * FROM $table_name ";
+        $sql = "SELECT * FROM `$table_name` ";
         $startPoint = ($pageNo - 1) * $perPage;
         $sql .= " LIMIT " . $startPoint . "," . $perPage;
-
+      
         $res = $pdo->query($sql);
         $result = array();
-        foreach ($res->fetchAll() as $row) {
+        while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
             $result[] = $row;
         }
 

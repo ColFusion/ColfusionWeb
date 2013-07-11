@@ -23,7 +23,7 @@ abstract class DatabaseImporter {
         $sql_query = $this->remove_comments($sql_query);
         $sql_query = $this->remove_remarks($sql_query);
         $sql_query = $this->split_sql_file($sql_query, $sqlDelimiter);
-        
+
         foreach ($sql_query as $sql) {
             $sql = trim($sql);
             if (!empty($sql)) {
@@ -159,10 +159,11 @@ abstract class DatabaseImporter {
         }
         return $output;
     }
-    
-    public function getDatabase(){
+
+    public function getDatabase() {
         return $this->database;
     }
+
 }
 
 ?>

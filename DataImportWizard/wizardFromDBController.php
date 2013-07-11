@@ -51,6 +51,7 @@ function TestConnection($sid) {
         } else {
             $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName);
         }
+        $dbHandler->setDriver($driver);
         $dbHandler->getConnection();
         $_SESSION["dbHandler_$sid"] = serialize($dbHandler);
 
@@ -88,7 +89,7 @@ function PrintTableForSchemaMatchingStep($sid, DatabaseHandler $dbHandler) {
     }
 }
 
-function PrintTableForDataMatchingStep() {
+function PrintTableForDataMatchingStep($sid) {
     $spd = $_POST["schemaMatchingUserInputs"]["spd"];
     $drd = $_POST["schemaMatchingUserInputs"]["drd"];
     $start = $_POST["schemaMatchingUserInputs"]["start"];
@@ -140,15 +141,13 @@ function PrintTableForDataMatchingStep() {
 }
 
 //TODO: the logic should be moved to some other classes
-function Execute() {
-    global $db;
+function Execute($sid, $dbHandler) {
+    global $driver;
 
     $inputData = $_POST;
-
-    $sid = getSid();
     $queryEngine = new QueryEngine();
 
-    $queryEngine->simpleQuery->addSourceDBInfo($sid, $inputData["server"], $inputData["port"], $inputData["user"], $inputData["password"], $inputData["database"], $inputData["driver"]);
+    $queryEngine->simpleQuery->addSourceDBInfo($sid, $dbHandler->getHost(), $dbHandler->getPort(), $dbHandler->getUser(), $dbHandler->getPassword(), $dbHandler->getDatabase(), $dbHandler->getDriver());
 
     UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $inputData["schemaMatchingUserInputs"]);
     UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $inputData["dataMatchingUserInputs"]);
