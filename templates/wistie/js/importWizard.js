@@ -353,18 +353,10 @@ var importWizard = (function() {
                 if (resultJson.isSuccessful) {
                     wizard.trigger("success");
 
-                    // Load table list.
-                    dataPreviewViewModel.getTablesList();
-
-                    //TODO: good candidate for ko
-                    relationshipViewModel.mineRelationships(10, 1);
-
                     wizard.hideButtons();
                     wizard._submitting = false;
                     wizard.showSubmitCard("success");
 
-                    // Load dataset for adding relationship.
-                    loadInitialFromDataSet();
                     $('#fromDataSetWrapper').find('.sidInput').val('New Dataset');
                 } else {
                     wizard.trigger("error");
@@ -428,9 +420,15 @@ var importWizard = (function() {
                 .add('#uploadFileType')
                 .add('#dbType').prop('disabled', false);
         $('input[name="place"]').prop('disabled', false);
-        var uploadForm = $('#upload_form');       
+        var uploadForm = $('#upload_form');
         $(uploadForm).remove().prependTo('#divFromComputer');
         wizardFromFile.initFileUploadForm(uploadForm);
+    }
+
+    function finishSubmittingData() {
+        dataPreviewViewModel.getTablesList();
+        relationshipViewModel.mineRelationships(10, 1);
+        loadInitialFromDataSet();
     }
 
     function execute() {

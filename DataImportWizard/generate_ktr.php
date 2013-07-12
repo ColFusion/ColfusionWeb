@@ -57,7 +57,7 @@ switch ($phase) {
 // Step 2 - get start column.
         dynamic_column();
         break;
-    case 5:      
+    case 5:
         // When submit btn in step4 is clicked, this is called.
         add_normalizer();
         unsetFileResources();
@@ -93,25 +93,19 @@ function getSid() {
 }
 
 function createTemplate() {
-    global $dataSource_filename, $dataSource_filePath, $dataSource_dir, $dataSource_dirPath, $sid;
+    global $dataSource_dir, $dataSource_dirPath, $sid;
 
-    $ext = strtolower(pathinfo($dataSource_filename, PATHINFO_EXTENSION));
-    if ($ext == 'xls' || $ext == 'xlsx') {
-        $tmpDir = 'excel-to-target_schema.ktr';
-    } else if ($ext == 'csv') {
-        $tmpDir = 'csv_to_target_schema.ktr';
-    }
-
+    $template = 'excel-to-target_schema.ktr';
     $newDir = mnmpath . "temp/" . getSid() . '.ktr';
-    copy($tmpDir, $newDir);
+    copy($template, $newDir);
 
     foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
         if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
             $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
         }
     }
-    
-    $ktrManager = new KTRManager($tmpDir, $newDir);
+
+    $ktrManager = new KTRManager($template, $newDir);
     $_SESSION["ktrArguments_$sid"]["ktrManager"] = serialize($ktrManager);
     $_SESSION["ktrArguments_$sid"]["fileUrls"] = $fileURLs;
 }
@@ -154,7 +148,7 @@ function display_csv() {
 
 function loadExcelPreview() {
     global $sid, $dataSource_filePath;
-    
+
     $previewRowsPerPage = $_POST['previewRowsPerPage'];
     $previewPage = $_POST['previewPage'];
 
@@ -335,7 +329,7 @@ function match_schema() {
 
     // Should be more complicated like the case with DB to take care of different sheets names
     $data[$_SESSION['sheetZero']] = $normalizer_header;
-    $_SESSION['$normalizer_header'] = $data;		
+    $_SESSION['$normalizer_header'] = $data;
 
     $_SESSION["ktrArguments_$sid"]["ktrManager"] = serialize($ktrManager);
     echo UtilsForWizard::PrintTableForDataMatchingStep($data);
@@ -360,7 +354,7 @@ function add_normalizer() {
         unset($_SESSION["ktrArguments_$sid"]);
 
         UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $_POST["schemaMatchingUserInputs"]);
-        UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $_POST["dataMatchingUserInputs"]);        
+        UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $_POST["dataMatchingUserInputs"]);
     } else {
         echo "error";
     }

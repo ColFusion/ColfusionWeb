@@ -217,3 +217,23 @@ loadingProgressContainer{
 #schemaMatchinTable {
     margin-top: 10px;
 }
+
+.datasetTypeWrapper {
+    margin-bottom: 15px;
+}
+
+#upload_form {
+    margin-top: 15px;
+}
+
+#uploadPanel {
+    margin-top: 10px;
+}
+
+.filenameList{
+    list-style-type: none;
+}
+
+.filenameList li{
+    list-style-type: none;
+}

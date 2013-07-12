@@ -20,9 +20,6 @@ include(mnminclude . 'smartyvariables.php');
 error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 ini_set('display_errors', 1);
 
-//to check anonymous mode activated
-global $current_user;
-
 // module system hook
 $vars = '';
 check_actions('submit_post_authentication', $vars);
@@ -48,7 +45,7 @@ switch ($phase) {
 function upload_0() {
     global $db, $current_user;
     $sid = getSid();
-    
+
     $author = $current_user->user_id;
 
     // check file type
@@ -62,12 +59,27 @@ function upload_0() {
         $_SESSION["upload_file_$sid"]['error'] = $error;
     } else {
         $_SESSION['extension'] = $extension;
- 
+
         //save upload file	     
         if ($_FILES['upload_file']['error'] > 0) {
             $error = "ERROR: " . get_file_err($_FILES['upload_file']['error']) . "</br>";
             $_SESSION["upload_file_$sid"]['error'] = $error;
         } else {
+
+            // match the raw_data_file to sid
+            $upload_dir = mnmpath . "upload_raw_data/$sid/";
+
+            if (!file_exists($upload_dir)) {
+                mkdir($upload_dir);
+            }
+
+            // Delete former files if user upload more than one time.
+            $uploadTimestamp = $_POST['uploadTimestamp'];
+            if (isset($_SESSION["uploadTimestamp_$sid"]) && $_SESSION["uploadTimestamp_$sid"] != $uploadTimestamp) {
+                emptyDir($dirPath);
+            }
+            $_SESSION["uploadTimestamp_$sid"] = $uploadTimestamp;
+
             // the file name that should be uploaded		
             $file_tmp = $_FILES['upload_file']['tmp_name'];
             $raw_file_name = $_FILES['upload_file']['name'];
@@ -76,11 +88,6 @@ function upload_0() {
             $sql2 = "UPDATE " . table_prefix . "sourceinfo SET raw_data_path='$file_name' WHERE Sid=$sid;";
             $db->query($sql2);
 
-            // match the raw_data_file to sid
-            $upload_dir = mnmpath . "upload_raw_data/$sid/";
-
-            deleteDirWithFiles($upload_dir);
-            mkdir($upload_dir);
             $upload_path = $upload_dir . $raw_file_name;
 
             // check upload status
@@ -163,7 +170,7 @@ function upload_0() {
         $json_response['isSuccessful'] = true;
         $json_response['message'] = $_SESSION["upload_file_$sid"]['loc'];
     }
-    
+
     unset($_SESSION["upload_file_$sid"]['error']);
     unset($_SESSION["upload_file_$sid"]['loc']);
     echo json_encode($json_response);
@@ -189,7 +196,7 @@ function getSid() {
     return $sid;
 }
 
-function deleteDirWithFiles($dirPath) {
+function emptyDir($dirPath) {
     if (file_exists($dirPath)) {
         $it = new RecursiveDirectoryIterator($dirPath);
         $files = new RecursiveIteratorIterator($it, RecursiveIteratorIterator::CHILD_FIRST);
@@ -203,7 +210,7 @@ function deleteDirWithFiles($dirPath) {
                 unlink($file->getRealPath());
             }
         }
-        rmdir($dirPath);
     }
 }
+
 ?>

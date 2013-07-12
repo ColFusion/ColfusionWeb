@@ -9,92 +9,101 @@
                 <img src='help.png' width='15' height='15' title='When the upload process completed successfully, you can go forward (next button will be actived)'/>
             </p>
             <div class='control-group'>
-                <label style="display: inline;"><input id='computer' type='radio' name='place' value="computer" /> From this computer </label>
-                <img src='help.png' width='15' height='15' title='Select a valid file (.xls,.xlsx, .csv)'/>
-                <br/>
-                <br/>
-                <div id='divFromComputer' >
-                    <form class='upload-form' name='upload_form' id='upload_form' action='DataImportWizard/acceptFileFromWizard.php' method='post' enctype='multipart/form-data'> <input type='hidden' name='phase' value='0'> 
-                        <p id='tohide' style="margin-bottom: 0;"> 
-                            <label for='upload_file'>
-                                <b>Select file:</b>
-                            </label> 
-                            <input name='upload_file' type='file' size='15' multiple/>
-                            <span id='uploadWidgetCover'>No file chosen</span>
-                            <br/>
-                            <select name="fileType" id="uploadFileType">
-                                <option value="dataFile">CSV, Excel File</option>
-                                <option value="dbDump">Database Dump File</option>
-                            </select>
-                            <select name="dbType" id="dbType" style="display:none;">
-                                <option value="MySQL">MySQL</option>
-                                <option value="MSSQL">MS SQL Server</option>
-                                <option value="PostgreSQL">PostgreSQL</option>
-                                <option value="Oracle">Oracle</option>
-                            </select>
-                        </p>
-                        <div id='uploadPanel'>
-                            <div class='progress' id='uploadProgressBar' style='display: none;'>
-                                <div class='bar'></div>                             
-                            </div>                      
-                            <input type='button' name='Submit' value='Upload' id='uploadBtn' style='display:none;' class='btn btn-primary' />
-                            <span id='uploadProgressText'></span>
-                        </div>
-                        <p id='uploadMessage'></p>
-                    </form>
+                <div class="datasetTypeWrapper">
+                    <label style="display: inline;"><input id='computer' type='radio' name='place' value="computer" /> From this computer </label>
+                    <img src='help.png' width='15' height='15' title='Select a valid file (.xls,.xlsx, .csv)'/>
+                    <div id='divFromComputer' >
+                        <form class='upload-form' name='upload_form[]' id='upload_form' action='DataImportWizard/acceptFileFromWizard.php' method='post' enctype='multipart/form-data'> 
+                            <input type='hidden' name='phase' value='0'> 
+                            <input type='hidden' name='uploadTimestamp' id="uploadTimestamp" value='0'>
+                            <p id='tohide' style="margin-bottom: 0;"> 
+                                <select name="fileType" id="uploadFileType">
+                                    <option value="dataFile">CSV, Excel File</option>
+                                    <option value="dbDump">Database Dump File</option>
+                                </select>
+                                <select name="dbType" id="dbType" style="display:none;">
+                                    <option value="MySQL">MySQL</option>
+                                    <option value="MSSQL">MS SQL Server</option>
+                                    <option value="PostgreSQL">PostgreSQL</option>
+                                    <option value="Oracle">Oracle</option>
+                                </select>
+                                <label for='upload_file'>
+                                    <b>Select file:</b>
+                                </label>
+                                <input name='upload_file' type='file' size='15' multiple/>
+                                <span id='uploadWidgetCover'>No file chosen</span>                         
+                            </p>
+                            <div id="filenameListContainer">
+                                <table data-bind="foreach: fileInfos" class="filenameList">                                   
+                                    <tr>
+                                        <td data-bind="text: $data.files[0].name"></td>
+                                        <td><i data-bind="click: $parent.removeFileInfo.bind($data, $index)" class="icon-remove-sign" style="margin-left: 10px;"></i></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div id='uploadPanel'>
+                                <div class='progress' id='uploadProgressBar' style='display: none;'>
+                                    <div class='bar'></div>                             
+                                </div>                      
+                                <input type='button' name='Submit' value='Upload' id='uploadBtn' style='display:none;' class='btn btn-primary' />
+                                <span id='uploadProgressText'></span>
+                            </div>
+                            <p id='uploadMessage'></p>
+                        </form>
+                    </div>
+                </div>
+                <div  class="datasetTypeWrapper">
+                    <label style="display: inline;"><input id='internet' type='radio' name='place' value="internet" /> Internet accessable resource </label>
+                    <img src='help.png' width='15' height='15' title='Type in a valid url'/>
+                    <div id='divFromInternet'>
+                        <input type='text' id='in_url'/>
+                        <br/>
+                        <input type='button' name='checkAv' value='check availability' id='checkAv' class='btn btn-primary' onClick='wizardFromFile.validateUrl();'/>
+                    </div>
                 </div>
 
-                <label style="display: inline;"><input id='internet' type='radio' name='place' value="internet" /> Internet accessable resource </label>
-                <img src='help.png' width='15' height='15' title='Type in a valid url'/>
-                <br/>
-                <br/>
-                <div id='divFromInternet'>
-                    <input type='text' id='in_url'/>
-                    <br/>
-                    <input type='button' name='checkAv' value='check availability' id='checkAv' class='btn btn-primary' onClick='wizardFromFile.validateUrl();'/>
-                </div>
-
-                <label style="display: inline;"><input id='database' type='radio' name='place' value="database" /> From database</label> 
-                <img src='help.png' width='15' height='15' title='More help coming'/>
-                <br/>
-                <div id='divFromDatabase'>
-                    <table >
-                        <tr>
-                            <td>DB server:</td>
-                            <td>
-                                <select id ='selectDBServer' onchange="wizardFromDB.setDefaultAdvancedSettingsByServerName($('#dbServerPort'), this.value)">
-                                    <option value='MySQL'>MySQL</option>
-                                    <option value='MSSQL'>Microsoft SQL</option>
-                                </select>							
-                            </td>
-                            <td><span id='showHideAdvancedOptionsFromDatabase' style='cursor: pointer;' onclick="wizardFromDB.togglePort()">Show Advanced Options</span></td>
-                        </tr>                        
-                        <tr>
-                            <td>Server address:</td>
-                            <td><input type='text' id='dbServerName'/></td>
-                        </tr>
-                        <tr>
-                            <td>Port:</td>
-                            <td><input type='text' id='dbServerPort'/></td>
-                        </tr>
-                        <tr>
-                            <td>User name:</td>
-                            <td><input type='text' id='dbServerUserName'/></td>
-                        </tr>
-                        <tr>
-                            <td>Password:</td>
-                            <td><input type='password' id='dbServerPassword'/></td>
-                        </tr>
-                        <tr>
-                            <td>Database:</td>
-                            <td>
-                                <input type='text' id='dbServerDatabase'/>
-                                <input type="hidden" id="isImport" value="false"/>
-                            </td>		
-                            <td><input type='button' value='Test Connection' id='buttonTestDBConnection' class='btn btn-primary' onClick="wizardFromDB.TestDBConnection('divFromDatabase', $('#dbServerName').val(), $('#dbServerUserName').val(), $('#dbServerPassword').val(), $('#dbServerPort').val(), $('#selectDBServer').val(), $('#dbServerDatabase').val(), $('#isImport').val())"/></td>
-                            <td><span id='testDBConnectionResultMsg'/></td>								
-                        </tr>
-                    </table>					
+                <div class="datasetTypeWrapper">
+                    <label style="display: inline;"><input id='database' type='radio' name='place' value="database" /> From database</label> 
+                    <img src='help.png' width='15' height='15' title='More help coming'/>
+                    <div id='divFromDatabase'>
+                        <table >
+                            <tr>
+                                <td>DB server:</td>
+                                <td>
+                                    <select id ='selectDBServer' onchange="wizardFromDB.setDefaultAdvancedSettingsByServerName($('#dbServerPort'), this.value)">
+                                        <option value='MySQL'>MySQL</option>
+                                        <option value='MSSQL'>Microsoft SQL</option>
+                                    </select>							
+                                </td>
+                                <td><span id='showHideAdvancedOptionsFromDatabase' style='cursor: pointer;' onclick="wizardFromDB.togglePort()">Show Advanced Options</span></td>
+                            </tr>                        
+                            <tr>
+                                <td>Server address:</td>
+                                <td><input type='text' id='dbServerName'/></td>
+                            </tr>
+                            <tr>
+                                <td>Port:</td>
+                                <td><input type='text' id='dbServerPort'/></td>
+                            </tr>
+                            <tr>
+                                <td>User name:</td>
+                                <td><input type='text' id='dbServerUserName'/></td>
+                            </tr>
+                            <tr>
+                                <td>Password:</td>
+                                <td><input type='password' id='dbServerPassword'/></td>
+                            </tr>
+                            <tr>
+                                <td>Database:</td>
+                                <td>
+                                    <input type='text' id='dbServerDatabase'/>
+                                    <input type="hidden" id="isImport" value="false"/>
+                                </td>		
+                                <td><input type='button' value='Test Connection' id='buttonTestDBConnection' class='btn btn-primary' onClick="wizardFromDB.TestDBConnection('divFromDatabase', $('#dbServerName').val(), $('#dbServerUserName').val(), $('#dbServerPassword').val(), $('#dbServerPort').val(), $('#selectDBServer').val(), $('#dbServerDatabase').val(), $('#isImport').val())"/></td>
+                                <td><span id='testDBConnectionResultMsg'/></td>								
+                            </tr>
+                        </table>					
+                    </div>
                 </div>
             </div>
 
