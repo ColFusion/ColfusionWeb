@@ -7,12 +7,36 @@ var tabledata;
 var maxDepth;
 var Canid;
 
+
+function setChart(chart){
+	
+	switch (chart['type']){
+	case 'pie':
+		drawPie(chart['queryResult'],"displaychart");
+		break;
+	case 'motion':
+		drawMotion(chart['queryResult'],"displaychart");
+		break;
+	case 'map':
+		drawMap(chart['queryResult'],"displaychart");
+		break;
+	case 'table':
+		drawTable(chart['queryResult'],"displaychart");
+		break;
+	case 'combo':
+		drawCombo(chart['queryResult'],"displaychart");
+		break;
+	case 'column':
+		drawColumn(chart['queryResult'],"displaychart");
+		break;
+	}
+}
+
 function openCharts(vid,vname){
 	Canid = vid;
-	$("#filter_section").children("div").hide();
-	$("#charts_section").show();
+	$("#filter_section").children("div").hide(1000);
+	$("#charts_section").show(1000);
 	$("#openbutton_section").html('<button id="openButton" class="btn btn-info" type="button" onclick="openCanvas('+vid+')"> OpenCanvas </button>')
-	$(".alert-info").html("<strong>How To Add Charts To Your Own Canvas:</strong> Drag the charts to the canvas on the left (Click the text input box to go back to filter state). ");
 
 	$.ajax(
 			{
@@ -26,7 +50,8 @@ function openCharts(vid,vname){
 				    for(var i in _data['charts']){
 				    	var temp = _data['charts'][i];
 				    	result = temp;
-				    		$("#charts_section ul").append('<li><a onclick = "setType('+temp['type']+')" href="#openchart" data-toggle="modal">'+temp['name']+'</a></li>');
+				    	var chartj = $.toJSON(temp);
+				    		$("#charts_section ul").append("<li><a onclick = 'setChart("+chartj+")' href='#openchart' data-toggle='modal'>"+temp['name']+"</a></li>");
 				    }
 				    $("#charts_section li").last().append('</ul>');
 				}
@@ -44,12 +69,7 @@ function openCharts(vid,vname){
 		 })
 }
 
-function returnNormal(){
-	$("#charts_section").hide();
-	$("#authorization_filter").show();
-	$("#date_filter").show();
-	$(".alert-info").html("<strong>How To Use Search:</strong>Use the initial letters of CANVAS NAME , OWNER'S NAME or OWNER'S NAME + CANVAS NAME of THAT OWNER to filter.   ");
-}
+
 
 function openCanvas(vid){
 	

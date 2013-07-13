@@ -3,6 +3,9 @@ var d = new Date();
 var vYear = d.getFullYear();
 var vMon = d.getMonth() + 1;
 var vDay = d.getDate();
+var completeResult;
+var authorizationLevel=-1;
+
 var CHARTS ={};
 var CANVAS ={};
 function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResult) {
@@ -21,8 +24,31 @@ function saveConfig(){
 	var aut = $("#shareAuthorization").val();
 }
 
-function everyUser(){
+function showNote(){
+	if (!$("#viewChartsNote").hasClass("active")){
+		$("#viewChartsNote").addClass("active");
+		$("#note_section").animate({
+			marginLeft:"0%"
+		});
+	}
+	else {
+		$("#viewChartsNote").removeClass("active");
+		$("#note_section").animate({
+			marginLeft:"-15%"
+		});
+	}
 	
+}
+
+function CurCanId(id){
+	$("#shareWith").attr("name",id);
+}
+
+function shareCanvases(){
+	var vid = $("#shareWith").attr("name");
+	var authorization = $("#autSele").val();
+	var NameEmail = $("#NameEmail").val();
+
 }
 function showChart(type){
 
@@ -49,34 +75,52 @@ function showChart(type){
 		break;
 	}
 }
-function showHint(str){
+function showHint(str,currentPage){
+	
+	$("#note_section").show();
 	
 	$("#authorization_filter li").removeClass('active');
+	if (currentPage!=null&&currentPage!="")
+		$("#hiddenPageCount").val(currentPage);
+	else 
+		currentPage = $("#hiddenPageCount").val();
+
 	xmlHttp=new XMLHttpRequest();
 	var url="contentResponse.php";
-		url=url+"?content="+str;
+	url=url+"?content="+str+"&columnNum="+(COLUMNNUM-1)+"&currentPage="+currentPage+"&authorizationLevel="+authorizationLevel;
 	xmlHttp.onreadystatechange=stateChanged;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send(null);
+	
+}
+
+
+function returnNormal(){
+	$("#charts_section").hide(1000);
+	$("#authorization_filter").show(1000);
+	$("#date_filter").show(1000);
 }
 
 function stateChanged(){
 	if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
 	 { 
 	 document.getElementById("display_section").innerHTML=xmlHttp.responseText;
+
+	 
+
+		$("td.tableadjust").mouseover(function(){
+			$(this).parent().children("td").css({"background-color":"#0088CC","color":"white"});
+		}).mouseout(function(){
+			$(this).parent().children("td").css({"background-color":"#F5F5F5","color":"#0088CC"});
+		}).click(function(){
+			var vid = $(this).parent().attr('id').split("**")[0];
+			var vname = $(this).parent().attr('name');
+			openCharts(vid,vname);
+		});
+		
+		returnNormal();
+
 	 }
-	
-	$("td.tableadjust").mouseover(function(){
-		$(this).parent().children("td").css({"background-color":"#0088CC","color":"white"});
-	}).mouseout(function(){
-		$(this).parent().children("td").css({"background-color":"#F5F5F5","color":"#0088CC"});
-	}).click(function(){
-		var vid = $(this).parent().attr('id').split("**")[0];
-		var vname = $(this).parent().attr('name');
-		openCharts(vid,vname);
-	});
-	
-	returnNormal();
 
 }
 
@@ -87,9 +131,11 @@ $(document).ready(function(){
 		$("#view-dropdown").hide();
 	}
 })
+
 function autFilter(id){
-	$("#result_table tbody tr").hide();
-	$(".authorizationLevel"+id).show();
+	
+	authorizationLevel = id;
+	
 	
 }
 
@@ -117,6 +163,12 @@ function outCanvasEffect(id){
 }
 
 $(function() {
+
+	var oriTableHeight = parseInt($("#display_section").css("height").split("px")[0]);
+	var actTableHeight = (oriTableHeight%37>18)?oriTableHeight+(37-(oriTableHeight%37)):oriTableHeight-(oriTableHeight%37);
+	$("#display_section").css("height",actTableHeight+"px");
+	COLUMNNUM = actTableHeight/37;
+	
 	var vids=new Array();
 	$("#deleteButton").click(
 			function(){

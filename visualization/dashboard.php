@@ -101,7 +101,8 @@
 		<!-- styles and functions for pie chart -->
 	    <script type="text/javascript" src="js/pieJS.js"></script>
 		<script type="text/javascript" src="js/json2.js"></script>
-
+		<script type="text/javascript" src="js/jquery.json-2.4.js"></script>
+		
 		<!-- styles and functions for column chart -->
 		<script type="text/javascript" src="js/columnJS.js"></script>
 
@@ -111,11 +112,12 @@
 		<!-- styles and functions for motion chart -->
 		<script type="text/javascript" src="js/motionJS.js"></script>
 	</head>
-	<body onload="showHint('');loadTables();loadMotions();loadColumns();loadPies();loadCombos();">
+	<body onload="showHint('',1);loadTables();loadMotions();loadColumns();loadPies();loadCombos();">
 <input type="hidden" id="hiddenJoinQuery" value="<?php echo $_POST['joinQuery'] ?>"/>
 <input type="hidden" id="hiddenSidsWithColumns" value="<?php echo $_POST['sisToSearch'] ?>"/>
+<input type="hidden" id="hiddenPageCount" value="1"/>
 
-		<!-- Navigation bar -->
+<!-- Navigation bar -->
 		<div class="navbar navbar-inverse navbar-fixed-top">
 			<div class="navbar-inner">
 				<div class="container">
@@ -132,7 +134,7 @@
 								<ul class="dropdown-menu">
 									<li><a onclick="openCanvasManager()">Canvas Manger</a></li>
 									<li><a href="#newCanvas" data-toggle="modal">New</a></li>
-									<li><a href="#open" data-toggle="modal">Open</a></li>
+<!-- 								<li><a href="#open" data-toggle="modal">Open</a></li> -->
 									<li><a href="#share" data-toggle="modal">Share</a></li>
 									
 								</ul>
@@ -148,17 +150,8 @@
 									<li><a href="#addMap" data-toggle="modal">Add Map</a></li>
 								</ul>
 							</li>			
-							<li class="dropdown" id="view-dropdown">
-								<a href="#view" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
-								<ul class="dropdown-menu" id="chartview">
-									<?php if(!$visGadgets){ ?>
-									<li id="viewnone"><a data-toggle="modal">None</a></li>
-									<?php }else{ foreach($visGadgets as $vis) { ?>
-									<li class="view" id="view<?php echo $vis->vid?>">
-										<a href="#" data-toggle="modal"><?php $vis->type?> <?php $vis->vid?></a>
-									</li>
-									<?php } } ?>
-								</ul>
+							<li id = "viewChartsNote" class="dropdown" id="view-dropdown" >
+								<a href="#view" onclick = "showNote()" class="dropdown-toggle" >Charts Notes</a>
 							</li>
 						</ul>
 						<!--<button class="btn" name="save" id="save">Save</button>-->
@@ -195,9 +188,9 @@
 					<div id="authorization_filter" class='round'>
 						<ul class="nav nav-list">
 							<li class="nav-header">Authorization Filter:</li>
-							<li onclick = "autFilter(1)"><a href="#">Readable</a></li>
-							<li onclick = "autFilter(2)"><a href="#">Modifiable</a></li>
-							<li onclick = "autFilter(0)"><a href="#">User Owned</a></li>
+							<li id="liadjust1" onclick = "autFilter(1)"><a href="#">Readable</a></li>
+							<li id="liadjust2" onclick = "autFilter(2)"><a href="#">Modifiable</a></li>
+							<li id="liadjust0" onclick = "autFilter(0)"><a href="#">User Owned</a></li>
 						</ul>
 					</div>
 					<div id="date_filter" class='round' >
@@ -212,13 +205,20 @@
 				</div>
 				<div id ="button_section" class='round'>
 					<label class="nav-header" style="float:left">Search Canvas By Canvas Name Or By Owner: </label>
-					<input type="text" style="width:auto" onkeyup="showHint(this.value)" onfocus="showHint(this.value)" name="searchText">
+					<input type="text" style="width:auto" onkeyup="showHint(this.value,1)" onfocus="showHint(this.value)" name="searchText">
 					<button id = "deleteButton" class="btn btn-info" type="button" > DELETE </button>
 					<a id = "newButton" href="#newCanvas" data-toggle="modal" class="btn btn-info"> NEW CANVAS </a>
 				</div>
 				<div id="display_section" class='round'>
 				</div>
 		</div>
+		
+		<div id = "note_section" class = 'round' style="display:none">
+		    <ul class="nav nav-list">
+		    	<li class="nav-header">Charts Note:</li>
+		    </ul>
+		</div>
+		
 		<!--New Canvas -->
 		<div id="newCanvas" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="motionAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
@@ -247,7 +247,7 @@
 			<div class="modal-body">
 						<div class="seachArea1"> 
 						     <label class = "tabContentTitle" style = "float:left">Enter The Person By Name Or By Email:</label>
-						     <input type="text"  name="searchText" style = "width:auto"></input>
+						     <input id = "NameEmail" type="text"  name="searchText" style = "width:auto"></input>
 						</div>
 						<div class="seachArea2"> 
 						     <label class = "tabContentTitle" style = "float:left">Set The Authorization:</label>
@@ -275,7 +275,7 @@
 		<div id="openchart" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-				<h3 id="tableAddModalLabel">Charts Manager</h3>
+				<h3 id="tableAddModalLabel">Copy Current Canvas To Other Canvas</h3>
 			</div>
 			<div class="modal-body">
 						 
@@ -284,10 +284,8 @@
 							
 				    </div>
 					<div id="copyto"> 
-						<select id = 'shareAuthorization'>
-						  <option>Readble</option>
-						  <option>Modifiable</option>
-						</select>
+						<label class = "tabContentTitle" >Enter Targeted Canvas By Name: </label>
+						<input type="text" id = "shareToWhom" style="width:auto" name="ShareToWhom">
 				    </div>
 			   </div>	
 			</div>
@@ -299,7 +297,7 @@
 		
 		
 	    	<!-- Open Canvas Modal -->
-		<div id="open" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
+	<!--	<div id="open" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="tableAddModalLabel">Open Canvases</h3>
@@ -331,7 +329,7 @@
 				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
 				<button class="btn btn-primary" id="addTableSave" onclick="loadTableData(1,0);">Save changes</button>
 			</div>
-		</div>
+		</div>-->
 		
 		  
 		<!-- Add Table Modal -->

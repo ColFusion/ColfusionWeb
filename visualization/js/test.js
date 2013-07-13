@@ -175,6 +175,7 @@ function closeCanvas(){
     $('#chart-dropdown').hide();
     $('#view-dropdown').hide();
     $('#testSave').hide();
+    $('#viewChartsNote').hide();
     $('#vid').val('');
     $('#canvasName').val('');
     $('#privilege').val('');
@@ -185,8 +186,9 @@ function closeCanvas(){
 }
 function openCanvasManager() {
     $('#file-dropdown').hide();
+    $("#note_section").hide();
+    showHint("");
     $('#brand').text('Col*Fusion Canvas Manager');
     closeCanvas();
     $('#file_manager').show();
-    
 }
