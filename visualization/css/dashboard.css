@@ -2,7 +2,6 @@
 	position : relative;
 	width:100%;
 	height:300px;
-
 }
 
 #shareWith input{
@@ -20,16 +19,11 @@
 	margin-left:10px;	
 }
 
-#openChart label{
-	margin-top:7px;
-	margin-left:10px;
-}
 
 #displaychart{
-	position :relative;
-	width:400px;
-	height:250px;
-	overflow:hidden;
+	position : relative;
+	width:100%;
+	height:85%;
 }
 
 #copyto{	
@@ -39,13 +33,8 @@
 	border-top: 3px solid #E3E3E3;
 }
 
-#copyto *{
-	display:inline;
-}
-
-#shareToWhom{
-	margin-top:7px;
-	margin-left:10px;
+#copyto select{
+	width:200px;
 }
 
 #file_manager{
@@ -81,14 +70,6 @@
 
 
 #filter_section{
-	position:relative;
-	width:230px;
-	height:71%;
-	float:left;
-	padding-left:5px;
-}
-
-#note_section{
 	position:relative;
 	width:230px;
 	height:71%;
@@ -162,21 +143,6 @@ margin-right:20px;
 }
 
 
-#result_table th{
-	width:19%;
-}
-
-#thadjust{
-	position:relative;
-	padding:0px;
-	width:24%;
-}
-
-#result_table td:last-child input{
-	float:left;
-	margin-left:90px;
-}
-
 
 #display_section{
 	position:relative;
@@ -184,6 +150,7 @@ margin-right:20px;
 	height:63%;
 	float:left;
 	margin-left:20px;
+
 }
 
 .gridEffect{
@@ -195,10 +162,6 @@ margin-right:20px;
 	background-color:inherit;
 }
 
-.pagbut {
-	margin-top:-6px;
-	margin-left:57px;
-}
 
 body {
     padding-bottom: 40px;

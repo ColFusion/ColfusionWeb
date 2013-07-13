@@ -80,6 +80,8 @@ function saveCanvas() {
     var authorization = $('#authorization').val();
     var charts = new Array();
     $('.gadget').each(function(){ //get informaton about each chart from browser;
+        var cid = $(this).find('.chartID').val();
+        var datainfo = CHARTS[cid].datainfo;
         var obj = {
             cid :$('.chartID ', this).val(),
             name: $(this).find('.chartName').val(),
@@ -89,7 +91,7 @@ function saveCanvas() {
             height:  Math.round($(this).height()),
             width:  Math.round($(this).width()),
             depth: 0,
-            datainfo: $('.datainfo',this).val(),
+            datainfo: datainfo,
             note: $('.chartNote', this).val()
         }
         charts.push(obj);
@@ -112,6 +114,8 @@ function saveCanvas() {
                 for(var i = 0; i<JSONResponse['newOldChartId'].length;i++) {
                     if (JSONResponse['newOldChartId'][i]['oldId'] == oldId) {
                         $('.chartID ', this).val(JSONResponse['newOldChartId'][i]['newId']);
+                        CHARTS[JSONResponse['newOldChartId'][i]['newId']] = CHARTS[oldId];
+                        CHARTS[oldId] = null;
                     }
                 }
             })
@@ -167,6 +171,7 @@ function openAlert(str,type) {
 }
 function closeCanvas(){
     clearScreen();
+    CHARTS = new Array();
     $('#chart-dropdown').hide();
     $('#view-dropdown').hide();
     $('#testSave').hide();
@@ -180,7 +185,6 @@ function closeCanvas(){
 }
 function openCanvasManager() {
     $('#file-dropdown').hide();
-    showHint("");
     $('#brand').text('Col*Fusion Canvas Manager');
     closeCanvas();
     $('#file_manager').show();

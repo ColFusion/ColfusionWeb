@@ -11,9 +11,6 @@ class Canvas{
     //public $version;
     public $charts = array();
     public $statusCode;
-    private $pri = array(
-    		'User-Owned'=>0,'Readable'=>1,'Modifiable'=>2
-    );
     
     function __construct($_vid, $_name, $_owner, $_note, $_mdate, $_cdate, $_privilege, $_authorization, $_charts){
         $this->vid = $_vid;
@@ -60,8 +57,11 @@ class Canvas{
         $sql = "select * from colfusion_charts where vid = ".$id;
         $rst = $db->get_results($sql);
         $chartArr = array();
+        
         foreach($rst as $obj){
-            $chartArr[$obj->cid] = ChartFactory::openChart($obj->cid,$obj->name,$obj->vid,$obj->type,$obj->left, $obj->top,$obj->depth,$obj->height,$obj->width,$obj->datainfo,$obj->note);
+            $datainfo = str_replace('\"','"',$obj->datainfo);
+            $da = json_decode($datainfo);
+            $chartArr[$obj->cid] = ChartFactory::openChart($obj->cid,$obj->name,$obj->vid,$obj->type,$obj->left, $obj->top,$obj->depth,$obj->height,$obj->width,$da,$obj->note);
         }
         return new Canvas($id, $_canvas->name, $_canvas->user_id, $_canvas->note, $_canvas->mdate, $_canvas->cdate, $_canvas->privilege, $_authorization, $chartArr);
     }
@@ -155,9 +155,8 @@ class Canvas{
     }
     function addChart($_name, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         require_once('ChartFactory.php');
-        
         $chart = ChartFactory::createChart($_name, $this->vid, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
-        //$this->charts[$chart->cid] = $chart;
+        $this->charts[$chart->cid] = $chart;
         //var_dump($this->charts);
         return $chart;
     }
@@ -173,37 +172,28 @@ class Canvas{
         
     }
     function shareCanvas($shareTo,$authorization){
-    	require_once('../config.php');
-    	global $db;
-
-    	
-    	if (strstr($shareTo,"@")!=false){
-    		$userSql = "select user_id from colfusion_users where user_email = '".$shareTo."'";
-    	}
-    	
-    	else {
-    		$userSql = "select user_id from colfusion_users where user_login = '".$shareTo."'";		
-    	}
-    
-    	
-    	$userRes = $db->get_results($userSql);
-
-    	foreach($userRes as $userRow){
-			    		
-    		$shareTo= $userRow->user_id;
-    		
-            $sql = "select * from colfusion_shares where vid =".$this->vid." AND user_id = ".$shareTo;
-            
+        if($this->authorization!=0){
+            return null;
+        }else{
+            require_once('../config.php');
+            global $db;
+            $sql = "select * from cofulsion_shares where vid =".$this->vid." user_id = ".$shareTo;
             $rst = $db->get_row($sql);
             if($rst == null){
-                $sql = "insert into colfusion_shares(vid, user_id,privilege) values(".$this->vid.",".$shareTo.",".$this->pri[$authorization].")";
+                $sql = 'insert into colfusion_shares(vid, user_id,) values('.$this->vid.','.$shareTo.','.$authorization.')';
                 $db->query($sql);
             }else{
-                    $sql = 'update colfusion_shares set privilege = '.$this->pri[$authorization].' where vid ='.$this->vid.' AND user_id = '.$shareTo;
+                if($rst->privilege == 0){
+                    return 'You cannot share ownnership';
+                }else{
+                    $sql = 'update colfusion_shares where vid ='.$this->vid.' user_id = '.$shareTo.' set privilege = '.$authorization;
                     $db->query($sql);
+                }
             }
-           
-    	}
+        }
     }
-
+    function updateChartResult($_cid,$_datainfo){
+        $chart = $this->charts[$_cid];
+        return $chart->query($_datainfo);
+    }
 }

@@ -3,83 +3,27 @@ var d = new Date();
 var vYear = d.getFullYear();
 var vMon = d.getMonth() + 1;
 var vDay = d.getDate();
-var completeResult;
-var currentRow = 0;
-
-
-function nextPageBut(){
-	currentRow += (COLUMNNUM-1);
-	showHint("");
+var CHARTS ={};
+var CANVAS ={};
+function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResult) {
+	this.cid = cid;
+	this.name = name;
+	this.type = top;
+	this.left = left;
+	this.height = height;
+	this.width = width;
+	this.depth = depth;
+	this.note = note;
+	this.datainfo = datainfo;
+	this.queryResult = queryResult;
 }
-
-function lastPageBut(){
-	currentRow -= (COLUMNNUM-1);
-	showHint("");
-}
-
-function showNote(){
-	$("#note_section").show();
-}
-
-function CurCanId(id){
-	$("#shareWith").attr("name",id);
-}
-
-function shareCanvases(){
-	var vid = $("#shareWith").attr("name");
-	var authorization = $("#autSele").val();
-	var NameEmail = $("#NameEmail").val();
-	
-	$.ajax({
-		  type: "POST",
-		  url: "control.php",
-		  data:{
-			  action:'shareCanvas',
-			  vid:vid,
-			  authorization:authorization,
-			  shareTo: NameEmail
-		  },
-		  async:true,
-		});
-		
-	$("#shareWith").modal("hide");
-}
-
-function setChart(chart){
-	
-	$("#displaychart").html("");
-	var displayDiv = "displaychart";
-	var chartArr = chart['queryResult'];
-	
-	switch (chart['type']){
-	case 'pie':
-		drawPies(chartArr,displayDiv);	
-		break;
-	case 'motion':
-		drawMotion(chartArr,displayDiv);
-		break;
-	case 'map':
-		drawMap(chartArr,displayDiv);
-		$("#displaychart").css("width","250px");
-		break;
-	case 'table':
-		drawTable(chartArr,displayDiv);
-		break;
-	case 'combo':
-		drawCombo(chartArr,displayDiv);
-		break;
-	case 'column':
-		drawColumns(displayDiv);
-		break;
-	}
-	
-}
-
 function saveConfig(){
-	var whom = $("#shareToWhom").val();
-	$("#openChart").modal("hide");
+	var aut = $("#shareAuthorization").val();
 }
 
+function everyUser(){
+	
+}
 function showChart(type){
 
 	$("#openchart").modal("hide");
@@ -105,17 +49,12 @@ function showChart(type){
 		break;
 	}
 }
-
-
 function showHint(str){
 	
 	$("#authorization_filter li").removeClass('active');
-	
-	
-	
 	xmlHttp=new XMLHttpRequest();
 	var url="contentResponse.php";
-		url=url+"?content="+str+"&columnNum="+(COLUMNNUM-1)+"&currentRow="+currentRow;
+		url=url+"?content="+str;
 	xmlHttp.onreadystatechange=stateChanged;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send(null);
@@ -123,24 +62,22 @@ function showHint(str){
 
 function stateChanged(){
 	if (xmlHttp.readyState==4 || xmlHttp.readyState=="complete")
-	 {
+	 { 
 	 document.getElementById("display_section").innerHTML=xmlHttp.responseText;
-	 
-		
-		$("td.tableadjust").mouseover(function(){
-			$(this).parent().children("td").css({"background-color":"#0088CC","color":"white"});
-		}).mouseout(function(){
-			$(this).parent().children("td").css({"background-color":"#F5F5F5","color":"#0088CC"});
-		}).click(function(){
-			var vid = $(this).parent().attr('id').split("**")[0];
-			var vname = $(this).parent().attr('name');
-			openCharts(vid,vname);
-		});
-		
-		returnNormal();
+	 }
 	
-	}
+	$("td.tableadjust").mouseover(function(){
+		$(this).parent().children("td").css({"background-color":"#0088CC","color":"white"});
+	}).mouseout(function(){
+		$(this).parent().children("td").css({"background-color":"#F5F5F5","color":"#0088CC"});
+	}).click(function(){
+		var vid = $(this).parent().attr('id').split("**")[0];
+		var vname = $(this).parent().attr('name');
+		openCharts(vid,vname);
+	});
 	
+	returnNormal();
+
 }
 
 $(document).ready(function(){
@@ -180,13 +117,6 @@ function outCanvasEffect(id){
 }
 
 $(function() {
-	
-	var oriTableHeight = parseInt($("#display_section").css("height").split("px")[0]);
-	var actTableHeight = (oriTableHeight%37>18)?oriTableHeight+(37-(oriTableHeight%37)):oriTableHeight-(oriTableHeight%37);
-	$("#display_section").css("height",actTableHeight+"px");
-	COLUMNNUM = actTableHeight/37;
-	
-	
 	var vids=new Array();
 	$("#deleteButton").click(
 			function(){
@@ -479,7 +409,7 @@ $(function() {
 	//edit motion save
 	$('#editMapSave').click(function() {
 		// alert(editGadgetID);
-		loadMap(3,editGadgetID);
+		
 	});	
 
     //edit pie chart
@@ -517,10 +447,13 @@ $(function() {
 			}
 		});	
 	});
-
 	$('#editComboSave').click(function(){
 		drawCombo(3,editGadgetID);
 	});
-	
 });
+$(document).ready(function() {
+	$('.modal').on('hidden', function () {
+		$(this).find('.nav-tabs a:first').tab('show');
+	});
+})
 

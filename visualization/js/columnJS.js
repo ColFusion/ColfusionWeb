@@ -86,7 +86,7 @@ type
 	}
 }*/
 
-function generateColumn(a) {
+/*function generateColumn(a) {
 	var options = {
 		title: 'Column Chart for ' + columnAgg + ' ' + columnAggType + ' based on ' + columnCat,
 		//hAxis: {title: 'Location', titleTextStyle: {color: 'red'}},
@@ -95,8 +95,44 @@ function generateColumn(a) {
 	};
 	var chart = new google.visualization.ColumnChart(document.getElementById('columnResult'+a));
 	chart.draw(columndata,options);
+}*/
+$(document).ready(function (){
+	$('#editColumn').on('hidden', function () {
+		clearColumnEditForm();
+		})
+	})
+function columnFormToDatainfo() {
+	var sid;
+	var where;	
+	var columnCat = $('#columnCat').val();
+	var columnAgg = $('#columnAgg').val();
+	var columnAggType = $('input:radio[name="columnAggType"]:checked').val();
+	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,where);
 }
-
+function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,where) {
+	this.columnCat = columnCat;
+	this.columnAgg = columnAgg;
+	this.columnAggType = columnAggType;
+	this.sid = sid;
+	this.where = where;
+}
+function columnDataInfoToForm(columnDatainfo) {
+	var sid = columnDatainfo.sid;
+	var where = columnDatainfo.where;
+	var columnCat = columnDatainfo.columnCat;
+	var columnAgg = columnDatainfo.columnAgg;
+	var columnAggType = columnDatainfo.columnAggType;
+	$('#columnCatEdit').val(columnCat);
+	$('#columnAggEdit').val(columnAgg);
+	$('input:radio[name="columnAggTypeEdit"][value="'+columnAggType+'"]').attr('checked',true);
+}
+function clearColumnEditForm() {
+	$('#columnCatEdit').val(1);
+	$('#columnAggEdit').val(1);
+	$('input:checkbox[name="columnAggTypeEdit"]').each(function() {
+	    $(this).removeAttr('checked');
+	})
+}
 function createNewColumnGadget() {
 	var d = new Date();
 	var ranNum = 1 + Math.floor(Math.random() * 100);
@@ -105,7 +141,7 @@ function createNewColumnGadget() {
 	var gadget = "<div name='columnDivs' id='"+gadgetID+"' class='gadget' style='top: 50px; left:0px; width:500px; height:400px' type='column'>";
 	gadget += "<div class='gadget-header'>column chart " + gadgetID;
 	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>";
-	gadget += "<div class='gadget-edit edit-column edit-new-column'><a href='#editColumn' data-toggle='modal'><i class='icon-edit'></i></a></div></div>";
+	gadget += "<div class='gadget-edit edit-column edit-new-column'><i class='icon-edit'></i></div></div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />";
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='columnResult"+gadgetID+"' style='width:100%'></div>";
@@ -121,33 +157,25 @@ function createNewColumnGadget() {
 	$(".gadget-close").click(function() {	
 		$(this).parent().parent().remove();
 	})
-	$('.edit-column').click(function() {
-		//get ID of the gadget user selects to edit
-		editGadgetID = $(this).parent().parent().attr('id');
-		//old settings of gadget
-		var oldSettings = $('#setting'+editGadgetID).val(); 
-		var n = oldSettings.split(";");
 	
-		var oldColumn = n[1];// column
-		$("input:radio[name='chartColumnEdit']").each(function(j){
-			if($(this).val() == oldColumn) {
-				$(this).attr('checked', true);
-			}
-		});
-		
-		var oldType = n[2]; //aggregation type
-		$("input:radio[name='columnTypeEdit']").each(function(j){
-			if($(this).val() == oldType) {
-				$(this).attr('checked', true);
-			}
-		});				
-	});	
 
+	$('#'+gadgetID+' .edit-column').click(function(){
+		var editGadgetID = $(this).parent().parent().attr('id');
+		var cid = $("#"+editGadgetID+" .chartID").val();
+		columnDataInfoToForm(CHARTS[cid]['datainfo']);
+		$('#editColumn').modal('show')
+       });
 	//edit motion save
 	$('#editColumnSave').click(function() {
 		//alert(editGadgetID);
 		drawColumn(3,editGadgetID);
 	});
+	$("div[name='columnDivs']").resize(function() {
+		var cid = $(this).find('.chartID').val();
+		var gadgetID = $(this).attr('id');
+		var chart = CHARTS[cid];
+		refreshColumn(chart.chartData,chart.queryResult,"columnResult"+gadgetID);
+	})
 	return gadgetID;
 	/*
 	$(".edit-new-column").click(function() {
@@ -164,18 +192,22 @@ function drawColumn(souceData,gadgetID) {
 		width: "100%",
 		height:"90%"
 	};
-	var chart = new google.visualization.ColumnChart(document.getElementById('columnResult'+gadgetID));
+	var chart = new google.visualization.ColumnChart(document.getElementById(gadgetID));
+	chart.draw(data,options);
+	return data;
+}
+function refreshColumn(data,soucreData,gadgetID) {
+	var options = {
+		title: 'Column Chart',
+		//hAxis: {title: 'Location', titleTextStyle: {color: 'red'}},
+		width: "100%",
+		height:"90%"
+	};
+	var chart = new google.visualization.ColumnChart(document.getElementById(gadgetID));
 	chart.draw(data,options);
 }
 function addColumnChart() {
-	var titleNo = $('#titleNo').val();
-	var where = $("#where").val();	
-	var settings = "";
-	var columnCat = $('#columnCat').val();
-	var columnAgg = $('#columnAgg').val();
-	var columnAggType = $('input:radio[name="columnAggType"]:checked').val();
-	var settings = columnCat + ";" + columnAgg + ";" + columnAggType + ";";
-	var datainfo = {'columnCat':columnCat,'columnAgg':columnAgg,'columnAggType':columnAggType,'titleNo':titleNo, 'where':where};
+	var datainfo = columnFormToDatainfo();
 	var gadgetID = createNewColumnGadget();
 	$.ajax({
 		type: 'POST',
@@ -194,7 +226,8 @@ function addColumnChart() {
 		success: function(JSON_Response){
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			var queryResult = JSON_Response['queryResult'];
-			drawColumn(queryResult,gadgetID);
+			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'])
+			CHARTS[JSON_Response['cid']].chartData = drawColumn(queryResult,'columnResult'+gadgetID);
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#columnResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 			$('#addColumn').modal('hide');
@@ -205,7 +238,9 @@ function addColumnChart() {
 function loadColumnChart(sourceData) {
 	var gadgetID = createNewColumnGadget();
 	var queryResult = sourceData['queryResult'];
-	drawColumn(queryResult,gadgetID);
+	drawColumn(queryResult,'columnResult'+gadgetID);
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
-	
+	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'])
+	CHARTS[sourceData['cid']].chartData = drawColumn(queryResult,'columnResult'+gadgetID);
+
 }

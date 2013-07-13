@@ -80,7 +80,6 @@
 		<link rel="stylesheet" href="css/dashboard.css">	
 		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 		<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
-		<script type="text/javascript" src="js/jquery.json-2.4.js"></script>
 		<script type="text/javascript" src="js/bootstrap.js"></script>	
 		<script type="text/javascript" src="js/jquery-ui.js"></script>	
 		<script type="text/javascript" src="js/jquery.ui.core.js"></script>
@@ -152,7 +151,13 @@
 							<li class="dropdown" id="view-dropdown">
 								<a href="#view" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
 								<ul class="dropdown-menu" id="chartview">
-									<li><input type = "checkbox" onclick = "showNote()">View Charts' Note</li>
+									<?php if(!$visGadgets){ ?>
+									<li id="viewnone"><a data-toggle="modal">None</a></li>
+									<?php }else{ foreach($visGadgets as $vis) { ?>
+									<li class="view" id="view<?php echo $vis->vid?>">
+										<a href="#" data-toggle="modal"><?php $vis->type?> <?php $vis->vid?></a>
+									</li>
+									<?php } } ?>
 								</ul>
 							</li>
 						</ul>
@@ -214,13 +219,6 @@
 				<div id="display_section" class='round'>
 				</div>
 		</div>
-		
-		<div id = "note_section" class = 'round' style="display:none">
-		    <ul class="nav nav-list">
-		    	<li class="nav-header">Charts Note:</li>
-		    </ul>
-		</div>
-		
 		<!--New Canvas -->
 		<div id="newCanvas" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="motionAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
@@ -234,7 +232,7 @@
 				</table>
 			</div>
 			<div class="modal-footer">
-				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+				<button class="btn" data-dismiss="modal" id='motionedit-close' aria-hidden="true">Close</button>
 				<button class="btn btn-primary" id="addMotionSave" onclick="createNewCanvas()">Create</button>
 			</div>
 		</div>
@@ -249,7 +247,7 @@
 			<div class="modal-body">
 						<div class="seachArea1"> 
 						     <label class = "tabContentTitle" style = "float:left">Enter The Person By Name Or By Email:</label>
-						     <input id = "NameEmail" type="text"  name="searchText" style = "width:auto"></input>
+						     <input type="text"  name="searchText" style = "width:auto"></input>
 						</div>
 						<div class="seachArea2"> 
 						     <label class = "tabContentTitle" style = "float:left">Set The Authorization:</label>
@@ -277,7 +275,7 @@
 		<div id="openchart" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-				<h3 id="tableAddModalLabel">Copy Current Canvas To Other Canvas</h3>
+				<h3 id="tableAddModalLabel">Charts Manager</h3>
 			</div>
 			<div class="modal-body">
 						 
@@ -286,8 +284,10 @@
 							
 				    </div>
 					<div id="copyto"> 
-						<label class = "tabContentTitle" >Enter Targeted Canvas By Name: </label>
-						<input type="text" id = "shareToWhom" style="width:auto" name="ShareToWhom">
+						<select id = 'shareAuthorization'>
+						  <option>Readble</option>
+						  <option>Modifiable</option>
+						</select>
 				    </div>
 			   </div>	
 			</div>
@@ -464,7 +464,7 @@
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select one column as DATE (year)</label>
-				<select id="motionDate" size=3 multiple>
+				<select id="motionDate">
 					<?php foreach($columns as $date) { ?>
 					<option value=<?php echo $date?>><?php echo $date; ?></option>
 					<?php } ?>
@@ -498,7 +498,7 @@
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select one column as DATE</label>
-				<select id="motionDateEdit" size=3 multiple>
+				<select id="motionDateEdit">
 					<?php foreach($columns as $date) { ?>
 					<option value=<?php echo $date?>><?php echo $date; ?></option>
 					<?php } ?>
