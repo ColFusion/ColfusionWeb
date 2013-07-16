@@ -6,6 +6,10 @@ var vDay = d.getDate();
 var completeResult;
 var authorizationLevel=-1;
 
+var CHARTS ={};
+var CANVAS ={};
+
+
 function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
 	this.vid = vid;
 	this.name = name;
@@ -17,7 +21,7 @@ function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
 	this.selectedChart = null;
 	this.stories = new Array();
 }
-//use sid to get story name and tables in the story
+
 Canvas.prototype.addStory = function(sid,callback) {
 	$.ajax({
 		type: 'POST',
@@ -29,9 +33,9 @@ Canvas.prototype.addStory = function(sid,callback) {
 		success: function(JSON_Response) {
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			if(JSON_Response['status'] == 'success'){
-				/*var sid = JSON_Response['sid'];
+				var sid = JSON_Response['sid'];
 				var sname = JSON_Response['sname'];
-				var tables = JSON_Response['tables'];*/
+				var tables = JSON_Response['tables'];
 				var story = JSON_Response['story'];
 				var sid = story.sid;
 				CANVAS.stories[sid] = story;
@@ -43,8 +47,9 @@ Canvas.prototype.addStory = function(sid,callback) {
 			}
 		}
 		
-		})
+		});
 }
+
 //get the story name and tables in the a story
 Canvas.prototype.getStory = function(sid) {
 	return CANVAS.stories[sid];
@@ -80,8 +85,8 @@ Canvas.prototype.getTableRelatedCharts = function(sid,table) {
 Canvas.prototype.getColumns = function(sid,table){
 	
 }
-var CANVAS = new Canvas();
-var CHARTS ={};
+
+
 function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResult,gadgetID) {
 	this.cid = cid;
 	this.name = name;
@@ -96,7 +101,6 @@ function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResu
 	this.gadgetID = gadgetID;
 	CANVAS.addStory(this.getSid());
 }
-//get the sid from the chart datainfo
 Chart.prototype.getSid = function() {
 	return this.datainfo.sid;
 }
@@ -108,12 +112,15 @@ function addStory() {
 	var sid = $('#search-sid').val();
 	var func =function(obj){
 		if (obj['status']=='success') {
-			$('#story-search-result').html('<p style="color: green">Successfully find Story: '+ obj['story']['sname']+'</p>');
+			$('#story-search-result').html('<p style="color: green">Successfully find Story: '+ obj['story']
+
+['sname']+'</p>');
 		}else{
 			$('#story-search-result').html('<p style="color: red">'+obj['message']+'</p>');
 		}
 	}
 	CANVAS.addStory(sid,func);
+	showNote();
 }
 
 function saveConfig(){
@@ -134,6 +141,97 @@ function showNote(){
 		});
 	}
 	
+	var noteStr = "";
+	var noteObj = CANVAS.getStories();
+	
+	for(var temp in noteObj){
+		
+		var tableStr ="";
+		var story = noteObj[temp];
+		noteStr += "<li id = "+story['sid']+"storiesTable class='unfold' onclick = 'StoryHighlight("+story
+
+['sid']+")'><a href ='#'>"+story["sid"]+":"+story["sname"]+"&nbsp&nbsp<i class='icon-plus' onclick = 'showRelatedTables
+
+("+story['sid']+")'></i></a></li>";
+
+		for (var TempTable in story['tables']){
+			noteStr += "<li class = "+story['sid']+"StoriesChildren onclick = TableHighlight("+story
+
+['sid']+",'"+TempTable+"') style = 'display:none'><a href = '#' ><i class='icon-arrow-right'></i>"+TempTable+"</a></li>";
+		}
+			
+	}
+	
+	$("#note_section ul").html('<li class="nav-header">CHARTS SELECTOR:</li>'+ noteStr);
+	
+}
+
+function showRelatedTables(sid){
+	if ($("#"+sid+"storiesTable").hasClass("unfold")){
+		
+		$("#"+sid+"storiesTable i").removeClass('icon-plus');
+		$("#"+sid+"storiesTable i").addClass('icon-minus');
+		
+		$("."+sid+"StoriesChildren").show(500);
+		$("#"+sid+"storiesTable").removeClass("unfold");
+	}
+	else {
+		$("#"+sid+"storiesTable i").removeClass('icon-minus');
+		$("#"+sid+"storiesTable i").addClass('icon-plus');
+		
+		$("#"+sid+"storiesTable").addClass("unfold");
+		$("."+sid+"StoriesChildren").hide(500);
+	}
+	
+}
+
+function StoryHighlight(sid){
+	
+	for (var chart in CHARTS){
+	    var compare = CHARTS[chart].getSid();
+		
+		if (compare!=sid){
+			var G = CHARTS[chart]['gadgetID'].split('Result');
+			var gid = G[1];
+			$("#"+gid).animate({
+				opacity:0.2
+			});
+		}
+		else {
+			var G = CHARTS[chart]['gadgetID'].split('Result');
+			var gid = G[1];
+			$("#"+gid).animate({
+				opacity:1.0
+			});
+		}
+		
+	}
+}
+
+
+function TableHighlight(sid,tablename){
+	
+	for (var chart in CHARTS){
+	    var compareSid = CHARTS[chart].getSid();
+	    var compareTname = CHARTS[chart].getTable();
+		
+		if (compareSid!=sid||compareTname!=tablename){
+			var G = CHARTS[chart]['gadgetID'].split('Result');
+			var gid = G[1];
+			$("#"+gid).animate({
+				opacity:0.2
+			});
+		}
+		else {
+			var G = CHARTS[chart]['gadgetID'].split('Result');
+			var gid = G[1];
+			$("#"+gid).animate({
+				opacity:1.0
+			});
+		}
+		
+	}
+	
 }
 
 function CurCanId(id){
@@ -144,8 +242,10 @@ function shareCanvases(){
 	var vid = $("#shareWith").attr("name");
 	var authorization = $("#autSele").val();
 	var NameEmail = $("#NameEmail").val();
-
+	
+	
 }
+
 function showChart(type){
 
 	$("#openchart").modal("hide");
@@ -175,6 +275,11 @@ function showHint(str,currentPage){
 	
 	$("#note_section").show();
 	
+	if (currentPage>0&&currentPage!=null)
+		authorizationLevel=-1;
+	else if (currentPage<0)
+		currentPage *= -1;
+	
 	$("#authorization_filter li").removeClass('active');
 	if (currentPage!=null&&currentPage!="")
 		$("#hiddenPageCount").val(currentPage);
@@ -183,7 +288,9 @@ function showHint(str,currentPage){
 
 	xmlHttp=new XMLHttpRequest();
 	var url="contentResponse.php";
-	url=url+"?content="+str+"&columnNum="+(COLUMNNUM-1)+"&currentPage="+currentPage+"&authorizationLevel="+authorizationLevel;
+	url=url+"?content="+str+"&columnNum="+(COLUMNNUM-1)+"&currentPage="+currentPage
+
++"&authorizationLevel="+authorizationLevel;
 	xmlHttp.onreadystatechange=stateChanged;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send(null);
@@ -213,11 +320,8 @@ function stateChanged(){
 			var vname = $(this).parent().attr('name');
 			openCharts(vid,vname);
 		});
-		
 		returnNormal();
-
 	 }
-
 }
 
 $(document).ready(function(){
@@ -229,10 +333,9 @@ $(document).ready(function(){
 })
 
 function autFilter(id){
-	
 	authorizationLevel = id;
-	
-	
+	var currentSearchText = $("#button_section input[type='text']").val();
+	showHint(currentSearchText,-1);
 }
 
 function pickDate(){
@@ -258,10 +361,12 @@ function outCanvasEffect(id){
 	$("#"+id).css({"background-color":"#F5F5F5","color":"#0088CC"});
 }
 
-$(document).ready(function() {
+$(function() {
 
 	var oriTableHeight = parseInt($("#display_section").css("height").split("px")[0]);
-	var actTableHeight = (oriTableHeight%37>18)?oriTableHeight+(37-(oriTableHeight%37)):oriTableHeight-(oriTableHeight%37);
+	var actTableHeight = (oriTableHeight%37>18)?oriTableHeight+(37-(oriTableHeight%37)):oriTableHeight-
+
+(oriTableHeight%37);
 	$("#display_section").css("height",actTableHeight+"px");
 	COLUMNNUM = actTableHeight/37;
 	
@@ -329,7 +434,9 @@ $(document).ready(function() {
 			var setting = $('#setting'+gadgetID).val();
 			var userid = $('#userid').val();
 			var titleNo = $('#titleNo').val();
-			var data = {"vid": gadgetID, "type": type, "height": height, "width": width, "left": left, "top": top, "setting": setting, "userid": userid, "titleNo": titleNo };
+			var data = {"vid": gadgetID, "type": type, "height": height, "width": width, "left": left, "top": 
+
+top, "setting": setting, "userid": userid, "titleNo": titleNo };
 			$.ajax({
 			  type: "POST",
 			  url: "setVisGadget.php",
@@ -452,7 +559,7 @@ $(document).ready(function() {
 	
 	//edit table save
 	$('#editTableSave').click(function() {
-		updateTableResult(CANVAS.selectedChart);
+		loadTableData(3,editGadgetID);
 	});
 	
 	$('input[name="display"]').click(function() {
@@ -506,7 +613,8 @@ $(document).ready(function() {
 
 	//edit motion save
 	$('#editMotionSave').click(function() {
-		updateMotionResult(CANVAS.selectedChart);
+		//alert(editGadgetID);
+		drawMotion(3,editGadgetID);
 	});
 	
 	//edit column chart
@@ -535,7 +643,8 @@ $(document).ready(function() {
 
 	//edit motion save
 	$('#editColumnSave').click(function() {
-		updateColumnResult(CANVAS.selectedChart);
+		//alert(editGadgetID);
+		drawColumn(3,editGadgetID);
 	});
 	
 	//edit geo chart
@@ -554,7 +663,7 @@ $(document).ready(function() {
 
 	//edit motion save
 	$('#editMapSave').click(function() {
-		updateMapResult(CANVAS.selectedChart);
+		// alert(editGadgetID);
 		
 	});	
 
@@ -579,7 +688,7 @@ $(document).ready(function() {
    });
 
 	$('#editPieSave').click(function(){
-		updatePieResult(CANVAS.selectedChart);
+		drawPie(3,editGadgetID);
 	});
 	
     //edit combo chart
@@ -594,14 +703,9 @@ $(document).ready(function() {
 		});	
 	});
 	$('#editComboSave').click(function(){
-		updateComboResult(CANVAS.selectedChart);
+		drawCombo(3,editGadgetID);
 	});
-	
-	//make modal active the first table after being hidden;
-	$('.modal').on('hidden', function () {
-		$(this).find('.nav-tabs a:first').tab('show');
-	});
-	
+
 	//When open add chart modal
 	$('.addChartModal').on('show',function(e) {
 		var target = $(e.target);
@@ -650,11 +754,19 @@ $(document).ready(function() {
 		$(this).parent().parent().find('lable.table-column').each(function() {
 			$(this).html('');
 			for (var i = 0;i<columns.length;i++) {
-				$(this).append('<input value="'+columns[i]+'" type="checkbox" name="table-column" checked/>'+columns[i]);
+				$(this).append('<input value="'+columns[i]+'" type="checkbox" name="table-column" 
+
+checked/>'+columns[i]);
 			}
 			})
 	})
 });
+$(document).ready(function() {
+	$('.modal').on('hidden', function () {
+		$(this).find('.nav-tabs a:first').tab('show');
+	});
+})
+
 function resetEditFormSidTable(editSID,editTable) {
 	$('.edit-chart .story-list').html('');
 	$('.edit-chart .table-list').html('');
@@ -671,4 +783,3 @@ function resetEditFormSidTable(editSID,editTable) {
 	}
 	$('#'+editSID).change();
 }
-
