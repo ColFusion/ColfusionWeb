@@ -60,6 +60,19 @@ class RelationshipDAO {
         return $relationship;
     }
 
+    public function deleteRelationship($relId, $userId) {
+        
+        // Check if deletor is creator.
+        $sql = "select relId from colfusion_relationship where creator = '$userId'";
+        $matchCreatorResult = $this->ezSql->get_results($sql);    
+        if(!$matchCreatorResult){
+            throw new Exception("You are not able to delete this relationship.");
+        }
+        
+        $delSql = "delete from colfusion_relationship where creator = '$userId' and rel_id='$relId'";
+        $this->ezSql->query($delSql);
+    }
+
     // Decode cid(xxx) in link parts and return an array of used column names.
     private function getUsedColumnNames(array $linkParts) {
         foreach ($linkParts as $linkPart) {

@@ -6,6 +6,7 @@ var RelationshipModel = {
         self.description = ko.observable(relJson.description);
         self.creator = ko.observable(relJson.creator);
         self.createdTime = ko.observable(relJson.createdTime);
+        self.isOwned = ko.observable(relJson.isOwned);
 
         self.fromDataset = ko.observable(createDatasetModel(relJson.fromDataset, relJson.fromTableName));
         self.toDataset = ko.observable(createDatasetModel(relJson.toDataset, relJson.toTableName));

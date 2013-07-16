@@ -17,88 +17,99 @@ include(mnminclude . 'link.php');
 include(mnminclude . 'tags.php');
 include(mnminclude . 'user.php');
 include(mnminclude . 'smartyvariables.php');
+include(mnminclude . 'smartyvariables.php');
+require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
+require_once(realpath(dirname(__FILE__)) . "/UtilsForWizard.php");
+
+error_reporting(E_ALL ^ E_STRICT);
 
 global $current_user, $db, $dblang;
 
 $author = $current_user->user_id;
 
 $sid = getSid();
-$ktrFilePath = mnmpath . "temp/$sid.ktr";
+$filenames = $_SESSION["ktrArguments_$sid"]["filenames"];
+unset($_SESSION["ktrArguments_$sid"]);
 
-$sql = 'INSERT INTO ' . table_prefix . 'executeinfo (Sid ,Userid ,TimeStart)VALUES (' . $sid . ' , ' . $author . ',CURRENT_TIMESTAMP);';
+foreach ($filenames as $filename) {
+
+    $ktrFilePath = mnmpath . "temp/$sid/$filename.ktr";
+
+    $sql = 'INSERT INTO ' . table_prefix . 'executeinfo (Sid ,Userid ,TimeStart)VALUES (' . $sid . ' , ' . $author . ',CURRENT_TIMESTAMP);';
 //print($sql);
-$rs = $db->query($sql);
-if ($rs) {
-    //get eid returned from the insert
-    $logID = mysql_insert_id();
-    //print $logID;
-} else {
-    print (mysql_error());
-    return;
-}
-
-if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-    $locationOfPan = mnmpath . 'kettle-data-integration\\Pan_WHDV.bat';
-    $command = 'cmd.exe /C ' . $locationOfPan . ' /file:"' . $ktrFilePath . '" ' . '"-param:Sid=' . $sid . '"' . ' "-param:Eid=' . $logID . '"';
-} else {
-    $locationOfPan = mnmpath . 'kettle-data-integration/pan.sh';
-    $command = 'sh ' . $locationOfPan . ' -file="' . $ktrFilePath . '" ' . '-param:Sid=' . $sid . ' -param:Eid=' . $logID;
-}
-
-$ret = exec($command, $outA, $returnVar);
-
-if (strpos($ret, 'ended successfully') === false) {
-    $num = 0;
-    $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=0, ErrorMessage='" . mysql_real_escape_string(implode("\n", $outA)) . "', RecordsProcessed='" . $num . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
     $rs = $db->query($sql);
-    if (!$rs) {
+    if ($rs) {
+        //get eid returned from the insert
+        $logID = mysql_insert_id();
+        //print $logID;
+    } else {
         print (mysql_error());
-        //rollback();
-        die;
+        return;
     }
 
-    $error = implode("<br />", $outA);
-    //print($error);
+    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        $locationOfPan = mnmpath . 'kettle-data-integration\\Pan_WHDV.bat';
+        $command = 'cmd.exe /C ' . $locationOfPan . ' /file:"' . $ktrFilePath . '" ' . '"-param:Sid=' . $sid . '"' . ' "-param:Eid=' . $logID . '"';
+    } else {
+        $locationOfPan = mnmpath . 'kettle-data-integration/pan.sh';
+        $command = 'sh ' . $locationOfPan . ' -file="' . $ktrFilePath . '" ' . '-param:Sid=' . $sid . ' -param:Eid=' . $logID;
+    }
+    
+    $commands[] = $command;
+    $ret = exec($command, $outA, $returnVar);
 
-    $errora = array();
-    $errorb = array();
-    $re1 = '(at)';
-    $re2 = '( )';
-
-    for ($i = 0; $i < count($outA); $i++) {
-        if (strstr($outA[$i], 'ERROR') != FALSE) {
-            break;
+    if (strpos($ret, 'ended successfully') === false) {
+        $num = 0;
+        $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=0, ErrorMessage='" . mysql_real_escape_string(implode("\n", $outA)) . "', RecordsProcessed='" . $num . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
+        $rs = $db->query($sql);
+        if (!$rs) {
+            print (mysql_error());
+            //rollback();
+            die;
         }
-    }
 
-    $n = $i;
-    for ($j = $n + 1; $j < count($outA); $j++) {
-        if ($c = preg_match_all("/" . $re1 . $re2 . '/is', $outA[$j], $matches)) {
-            break;
+        $error = implode("<br />", $outA);
+        //print($error);
+
+        $errora = array();
+        $errorb = array();
+        $re1 = '(at)';
+        $re2 = '( )';
+
+        for ($i = 0; $i < count($outA); $i++) {
+            if (strstr($outA[$i], 'ERROR') != FALSE) {
+                break;
+            }
         }
-    }
-    for ($i; $i < $j; $i++) {
-        array_push($errora, $outA[$i]);
-    }
 
-    for ($o = 0; $o < count($outA); $o++) {
-        if ($c = preg_match_all("/" . $re1 . $re2 . '/is', $outA[$o], $matches)) {
-            array_push($errorb, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $outA[$o]);
+        $n = $i;
+        for ($j = $n + 1; $j < count($outA); $j++) {
+            if ($c = preg_match_all("/" . $re1 . $re2 . '/is', $outA[$j], $matches)) {
+                break;
+            }
         }
-    }
+        for ($i; $i < $j; $i++) {
+            array_push($errora, $outA[$i]);
+        }
 
-    $mysql_error = implode("<br />", $errora);
-    $mysql_errordetail = implode("<br />", $errorb);
+        for ($o = 0; $o < count($outA); $o++) {
+            if ($c = preg_match_all("/" . $re1 . $re2 . '/is', $outA[$o], $matches)) {
+                array_push($errorb, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $outA[$o]);
+            }
+        }
 
-    $msg = '<p class="error">Error Message:<br />' . $mysql_error . '</p><div id="details" style="display:none">' . $mysql_errordetail . '</div>
+        $mysql_error = implode("<br />", $errora);
+        $mysql_errordetail = implode("<br />", $errorb);
+
+        $msg = '<p class="error">Error Message:<br />' . $mysql_error . '</p><div id="details" style="display:none">' . $mysql_errordetail . '</div>
 	<center>
 	   <span id="btn_all" class="button_max" style="display:block" onclick="show_detail()">Show Detailed Error</span>
        <span id="btn_hide" class="button_max" style="display:none" onclick="hide_detail()">Hide Detailed Error</span>
     </center>';
 
 
-    //TODO: fix this
-    $jsCode = "<script type='text/javascript'>
+        //TODO: fix this
+        $jsCode = "<script type='text/javascript'>
 	function show_detail()
 		{		
 				document.getElementById('btn_show').style.display='none';
@@ -115,61 +126,64 @@ if (strpos($ret, 'ended successfully') === false) {
     
     </script>";
 
-    $result = new stdClass;
-    $result->isSuccessful = false;
-    $result->message = $msg . $jsCode;
-    $result->pentaho_cmd = $command;
-    echo json_encode($result);
+        $result = new stdClass;
+        $result->isSuccessful = false;
+        $result->message = $msg . $jsCode;
+        $result->pentaho_cmd = $commands;
+        echo json_encode($result);
+        
+        exit;
+    } else {
+        //TODO parse msg to get num inserted
+        $lastLine = $outA[count($outA) - 1];
+        preg_match("/d+\s{1}[0-9]+\s{1}l+/", $lastLine, $matches);
+        $m = explode(' ', $matches[0]);
+        $numProcessed = $m[1];
 
-    return;
-} else {
-    //TODO parse msg to get num inserted
-    $lastLine = $outA[count($outA) - 1];
-    preg_match("/d+\s{1}[0-9]+\s{1}l+/", $lastLine, $matches);
-    $m = explode(' ', $matches[0]);
-    $numProcessed = $m[1];
+        $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=1, RecordsProcessed='" . $numProcessed . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
+        //print($sql);
+        $rs = $db->query($sql);
+        if (!$rs) {
+            print (mysql_error());
+            //rollback();
+            die;
+        }
 
-    $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=1, RecordsProcessed='" . $numProcessed . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
-    //print($sql);
-    $rs = $db->query($sql);
-    if (!$rs) {
-        print (mysql_error());
-        //rollback();
-        die;
-    }
+        $sid = getSid();
 
-    $sid = getSid();
+        $dnamelistquery = "SELECT DISTINCT Dname FROM " . table_prefix . "temporary WHERE Sid = $sid";
+        $dnamelist = $db->get_results($dnamelistquery);
+        $num = count($dnamelist);
+        //echo $num.'<br>';
+        //print_r( $dnamelist);
 
-    $dnamelistquery = "SELECT DISTINCT Dname FROM " . table_prefix . "temporary WHERE Sid = $sid";
-    $dnamelist = $db->get_results($dnamelistquery);
-    $num = count($dnamelist);
-    //echo $num.'<br>';
-    //print_r( $dnamelist);
-
-    $query = "UPDATE `colfusion_temporary` AS t, 
+        $query = "UPDATE `colfusion_temporary` AS t, 
        (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
         FROM `colfusion_temporary`, (select @rownumN := -1) rn
         where `Sid` = $sid
        ) AS r
 SET t.`rownum` = r.rownumN DIV $num + 1
 WHERE t.`Tid` = r.`Tid`";
-    $db->query($query);
+        $db->query($query);
 
-    $query = "UPDATE `colfusion_temporary` AS t, 
+        $query = "UPDATE `colfusion_temporary` AS t, 
        (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
         FROM `colfusion_temporary`, (select @rownumN := -1) rn
         where `Sid` = $sid
        ) AS r
 SET t.`columnnum` = r.rownumN % $num + 1
 WHERE t.`Tid` = r.`Tid`";
-    $db->query($query);
-
-    $result = new stdClass;
-    $result->isSuccessful = true;
-    $result->message = 'Success!';
-    $result->pentaho_cmd = $command;
-    echo json_encode($result);
+        $db->query($query);
+        
+        UtilsForWizard::insertCidToNewData($sid, $filename);
+    }
 }
+
+$result = new stdClass;
+$result->isSuccessful = true;
+$result->message = 'Success!';
+$result->pentaho_cmd = $commands;
+echo json_encode($result);
 
 exit;
 

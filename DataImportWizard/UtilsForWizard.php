@@ -96,29 +96,7 @@ class UtilsForWizard {
             $result .= "<div id='inDiv$i' style='display:none;'><label for='Dtype'>Corresponding value type:<img src='help.png' width='15' height='15' title='Data type of the header.'/></label><select name='dname_value_type'><option value='STRING' selected>STRING</option><option value='INT'>INT</option><option value='DATE'>DATE</option></select>";
             $result .= "<label>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label><input type='text' name='dname_value_unit'/>";
             $result .= "<label>Description: <img src='help.png' width='15' height='15' title='More description the header.'/></label><input type='text' name='dname_value_description'/></div></div></td>";
-            $result .= "<td><div ><input type='text' value='$tableColumns[$i]' id='suggestmatch$i' name=\"Dname\" onClick=''/>";
-
-            //		<input type='button' value='...' id='more2$i' onClick='return $(\"#suggested$i\").toggle();' />
-            //		<img src='help.png' width='15' height='15' title='Type a new Dname in the input box if you want to change the original one and optionally click ... button to make some data matching.'/>";
-            //		echo "<div id='suggested$i' style='display:none;' >";
-            //		$cat = array ("country","city","province","aggrtype");
-// 			for($j=0;$j<count($cat);$j++){
-// 				echo "<input type='checkbox' value='".$cat[$j]."' name=\"match_checkbox$i\"></input>".$cat[$j];
-// 				$flag="";
-// 				for($k=0;$k<count($edited_array_word[$i]);$k++){
-// 					$sql="select distinct(type) from ".table_prefix."dname_meta_data where value='".$edited_array_word[$i][$k]."'";
-// 					$results[$i][$k]=$db->get_results($sql,ARRAY_N);
-// 					if($results[$i][$k][0][0]!=""){
-// 						foreach($results[$i][$k][0] as $value){
-// 							if($cat[$j]==$value){
-// 								echo "<input name=\"suggest_from_user$i\" type=\"text\" value='".$edited_array_word[$i][$k]."'></input><br/>";
-// 								$flag="ok";
-// 							}
-// 						}
-// 					}
-// 				}	if($flag!="ok")
-// 					echo "<input name=\"suggest_from_user$i\" type=\"text\"></input><br/>";
-// 			}
+            $result .= "<td><div ><input type='text' value='$tableColumns[$i]' id='suggestmatch$i' name=\"Dname\" onClick=''/><input type='hidden' name='dname_value_tableName' value='$oneTableName'>";
 
             $result .= "</td></tr>";
         }
@@ -192,14 +170,22 @@ class UtilsForWizard {
         }
     }
 
-    static function processOneColumn($sid, $originalDname, $newDname, $type, $unit, $description, $metadata) {
+    public static function processDataMatchingUserInputsWithTableNameStoreDB($sid, $dataMatchingUserInputs) {
+        foreach ($dataMatchingUserInputs as $value) {
+            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"], $value["tableName"]);
+        }
+    }
+
+    static function processOneColumn($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName = null) {
 
         $queryEngine = new QueryEngine();
 
         $originalDnameStripped = UtilsForWizard::stripWordUntilFirstDot($originalDname);
         $cid = $queryEngine->simpleQuery->addColumnInfo($sid, $newDname, $type, $unit, $description, $originalDnameStripped);
 
-        $tableName = UtilsForWizard::getWordUntilFirstDot($originalDname);
+        if (!isset($tableName)) {
+            $tableName = UtilsForWizard::getWordUntilFirstDot($originalDname);
+        }
         $queryEngine->simpleQuery->addColumnTableInfo($cid, $tableName);
 
         if (!($metadata === NULL)) {
@@ -212,6 +198,11 @@ class UtilsForWizard {
     static function processOneConstantColumn($sid, $newDname, $type, $unit, $description, $value) {
         $queryEngine = new QueryEngine();
         $queryEngine->simpleQuery->addConstantColumnInfo($sid, $newDname, $type, $unit, $description, "user input constant", $value);
+    }
+
+    public static function insertCidToNewData($sid, $tableName) {
+        $queryEngine = new QueryEngine();
+        $queryEngine->simpleQuery->addCidToNewData($sid, $tableName);
     }
 
 }

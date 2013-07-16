@@ -96,7 +96,7 @@ function WizardExcelPreviewViewModel(sid) {
             dataType: 'json',
             success: function(data) {
                 self.worksheets(data);
-				self.numOfWorksheetsOptions([]);
+		self.numOfWorksheetsOptions([]);
                 for (var i = 0; i < data.length; i++) {
                     self.numOfWorksheetsOptions.push(i + 1);
                 }

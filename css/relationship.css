@@ -2,6 +2,10 @@
     background-color: white;
 }
 
+.relProfile {
+    width: 100%;
+}
+
 .relProfile td, .linkProfileTable td{
     background-color: white;
     border-width: 0;
@@ -20,7 +24,11 @@
     width: 15%;
 }
 
-.relProfile .profileContent, .linkProfileTable .linkProfileContent{
+.relProfile .profileContent{
+    width: 80%;
+}
+
+.linkProfileTable .linkProfileContent{
     width: 75%;
 }
 

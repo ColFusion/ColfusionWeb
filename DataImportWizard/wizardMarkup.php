@@ -15,6 +15,7 @@
                     <div id='divFromComputer' >
                         <form class='upload-form' name='upload_form[]' id='upload_form' action='DataImportWizard/acceptFileFromWizard.php' method='post' enctype='multipart/form-data'> 
                             <input type='hidden' name='phase' value='0'> 
+                            <input type='hidden' name='sid' id="uploadFormSid" value='0'>
                             <input type='hidden' name='uploadTimestamp' id="uploadTimestamp" value='0'>
                             <p id='tohide' style="margin-bottom: 0;"> 
                                 <select name="fileType" id="uploadFileType">
@@ -107,18 +108,30 @@
                 </div>
             </div>
 
-            <div id='result' />
-            <a href='#' id='help1'>Click here for help</a>
-            <div id='h1'>Step 1 help:<br/>
-                <p class='hlp'>Select from this computer option, if you have the dataset locally in your machine. Be sure that you upload only valid files (.xls, .xlsx). Otherwise, Type a valid url when choosing the second option.<br/>When the upload process completed successfully, you can go forward (next button will be actived) </p>
-                <a href='#' id='hd1' style='color:green;'>hide help</a>
+            <div id='result' >
+                <a href='#' id='help1'>Click here for help</a>
+                <div id='h1'>Step 1 help:<br/>
+                    <p class='hlp'>Select from this computer option, if you have the dataset locally in your machine. Be sure that you upload only valid files (.xls, .xlsx). Otherwise, Type a valid url when choosing the second option.<br/>When the upload process completed successfully, you can go forward (next button will be actived) </p>
+                    <a href='#' id='hd1' style='color:green;'>hide help</a>
+                </div>
             </div>
         </div>
     </div>
 
     <div class='wizard-card' data-cardname='displayOptionsStepCard' style='overflow: hidden;' id='opt'>
-        <h3 style="display: inline;">Source Selection</h3> 
+        <h3 style="display: inline-block; margin-bottom: 0;">Source Selection</h3> 
+        <span style="margin-left: 10px;" id="loadingProgressContainer">
+            <img src="images/ajax-loader.gif"/>
+            <span class="loadingText">Loading...</span>
+        </span>
         <div id="displayOptoinsStepCardFromFile">
+            <a href='#' id='help2'>Click here for help</a>
+            <div id='h2'>Step 2 help:
+                <br/>
+                <p class='hlp'> Select the number of sheets you need to get their headers.<br/> Then, for each sheet, provide the sheet name, the row and column where the header starts.</p>
+                <a href='#' id='hd2' style='color:green;'>hide help</a>
+            </div>
+            <!--
             <form id="displayOptoinsStepCardFromFileForm">
                 <a href='#' id='help2'>Click here for help</a>
                 <div id='h2'>Step 2 help:
@@ -170,7 +183,8 @@
                             Load Excel File
                         </button>
                     </div>
-            </form>
+                </div>
+            </form>                          
             <div data-bind="visible: !isPreviewLoadingComplete()" id ="loadingProgressContainer">
                 <div class="loadingTextWrapper" style="margin-top: 60px;">
                     <span class="loadingText">Preview is loading...</span>
@@ -192,18 +206,66 @@
                         <div data-bind="previewTable: cells,                                       
                              attr: { id: sheetName(), class: $index() == 0 ? 'tab-pane active' : 'tab-pane' }"
                              class="previewTable">
-
+    
                         </div>
                     </div>
                 </div>
                 <i class="icon-arrow-left previewNavBtn" id="prevBtn" data-bind="visible: previewPage() > 1, click: loadPreviewPreviousPage" title="Previous Page"></i>
                 <i class="icon-arrow-right previewNavBtn" id="nextBtn" data-bind="visible: hasMoreData(), click: loadPreviewNextPage" title="Next Page" style="margin-left: 5px;"></i>              
             </div>
-            <input id='sid' type='hidden' value=''/>
+            -->
+            <form data-bind="visible: isPreviewLoadingComplete()" id="displayOptoinsStepCardFromFileForm">
+                <div data-bind="foreach: sourceWorksheetSettings" id="sourceSelectionWrapper">
+                    <div class="sourceWorksheetSettingsWrapper">
+                        <p data-bind="text: sourceName" class="sourceName"></p>
+                        <div>
+                            <p style="margin-bottom: 0;">How many table sheets you want?
+                                <span id='star'>*</span>
+                                <select data-bind="
+                                        options: numOfWorksheetsOptions, 
+                                        optionsCaption: 'Number of worksheets', 
+                                        value: numOfWorksheets,
+                                        event: { change: chooseNumOfWorsheets}" 
+                                        data-required="true"
+                                        id ='selectNumberOfSheets' name='customers'>               
+                                </select>
+                            </p>
+                        </div>
+                        <div id='sheetRowColumnsTable'>
+                            <table border="1" style="table">             
+                                <tr data-bind="visible: worksheetSettings().length > 0">
+                                    <th>sheet name</th>
+                                    <th>header row</th>
+                                    <th>start column</th>
+                                </tr>
+                                <tbody data-bind="foreach: worksheetSettings">
+                                    <tr style="height:40px;">
+                                        <td>
+                                            <select data-bind="
+                                                    options: $parent.worksheets, 
+                                                    optionsCaption: 'Select a worksheet', 
+                                                    value: sheetName"
+                                                    data-required="true"
+                                                    class='sheetNameSelect'
+                                                    style="margin-bottom: 0;"> 
+                                            </select>             
+                                        </td>
+                                        <td>
+                                            <input data-bind="value: startRow" data-required="true" data-min="1" style="width: 100px; margin: 0 10px 0 10px;"/>
+                                        </td>
+                                        <td>
+                                            <input data-bind="value: startColumn" data-required="true" data-excelcol="true" style="width: 100px; margin: 0 10px 0 10px;"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>              
+            </form>            
         </div>
-        <div id='csv' style='display: block; position: relative; width: 100%; height: 100%; overflow: auto;' ></div>
-    </div>
-    <div id="displayOptoinsStepCardFromDB" style="height: 100%;">
+        <div id="displayOptoinsStepCardFromDB" style="height: 100%;">
+        </div>
     </div>
 
     <div class='wizard-card' data-cardname='schemaMatchinStepCard'>
@@ -213,7 +275,7 @@
         <span id="schemaMatchinStepInProgressWrapper">
             <img id="schemaMatchinStepInProgress"  src="templates/wistie/images/ajax-loader_cp.gif" style="width: 35px; vertical-align: middle;margin-left: 5px;"/>
             <span style="margin-left: 5px;" id="schemaMatchinStepInProgressText">
-                Loading... 0%
+                Loading...
             </span>
         </span>
         <div id='schemaMatchinTable'></div>
@@ -251,16 +313,17 @@
         </div>
     </div>
 
-
     <div class='wizard-error'>
         <div class='alert alert-error'><strong>There was a problem</strong> with your completing your submission. Please report this to <a href='mailto:radwanfatima@gmail.com?subject=ErrorReported from Colfusion importing wizard'>Colfusion</a> and restart the wizard again from the main page.
             <p id='exe'></p>
         </div>
     </div>
+
     <div class='wizard-failure'>
         <div class='alert alert-error'><strong>There was a problem</strong> submitting the form.Please try again in a minute.
         </div>
     </div>
+
     <div class='wizard-success'>
         <div class='alert alert-success'>
             <p id='exe' value=''> Your dataset has been imported successfully. Please click on the finish button to close the wizard and go to the original submit new data page to finish up your submission.</p>
@@ -268,4 +331,5 @@
         </div>
         <a id='done' class='btn im-done'>Finish</a> 
     </div>
+
 </div>

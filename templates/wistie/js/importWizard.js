@@ -15,16 +15,8 @@ var importWizard = (function() {
     importWizard.Init = function() {
         wizardFromFile.Init();
 
-
-        $(document).ajaxSend(function(event, jqxhr, settings) {
-            var sid = $('#sid').val();
-            if (settings.data && settings.data.append) {
-                settings.data.append('sid', sid);
-            } else if (settings.data) {
-                settings.data += '&sid=' + sid;
-            } else {
-                settings.data = 'sid=' + sid;
-            }
+        $.ajaxSetup({
+            data: {sid: sid}
         });
 
         $("#computer").click(function() {
@@ -204,7 +196,7 @@ var importWizard = (function() {
 
         return {"spd": spd, "spd2": spd2, "drd": drd, "drd2": drd2, "start": start, "end2": end2, "start2": start2, "end": end, "location": location,
             'location2': location2, 'aggrtype': aggrtype, 'aggrtype2': aggrtype2};
-    }
+    };
 
     importWizard.getDataMatchingUserInputs = function() {
         var result = new Array();
@@ -232,13 +224,13 @@ var importWizard = (function() {
                     }
                 }
 
-
                 result.push({
                     'originalDname': checkboxes[i].value,
                     'newDname': document.getElementsByName('Dname')[i].value,
                     'type': document.getElementsByName('dname_value_type')[i].value,
                     'unit': document.getElementsByName('dname_value_unit')[i].value,
                     'description': document.getElementsByName('dname_value_description')[i].value,
+                    'tableName': document.getElementsByName('dname_value_tableName')[i].value,
                     'metadata': metadata
                 });
             }
@@ -249,19 +241,23 @@ var importWizard = (function() {
 
     importWizard.passInfofromDisplayOptionsStep = function() {
         $('#schemaMatchinStepInProgressWrapper').show();
+        $("#schemaMatchinTable").empty();
         document.getElementById("schemaMatchinTable").innerHTML = '';
         if (getImportSource() == "database") {
-            wizardFromDB.passSelectedTablesFromDisplayOptionStep();
+            var deferred = wizardFromDB.passSelectedTablesFromDisplayOptionStep();
         }
         else {
-            wizardFromFile.passSheetInfoFromDisplayOptionStep();
+            var deferred = wizardFromFile.passSheetInfoFromDisplayOptionStep();
         }
+        deferred.done(function(data) {
+            importWizard.showSchemaMatchingStep(data);
+        });
     };
 
     importWizard.showSchemaMatchingStep = function(data) {
 
         $('#schemaMatchinStepInProgressWrapper').hide();
-        document.getElementById("schemaMatchinTable").innerHTML = data;
+        $("#schemaMatchinTable").html(data);
         importWizard.checkToEnableNextButtonOnSchemaMatchinStep();
 
         var datePickerOption = {
@@ -278,16 +274,20 @@ var importWizard = (function() {
     };
 
     importWizard.passSchemaMatchinInfo = function() {
+        $('#dataMatchingTable').empty();
         if (getImportSource() == "database") {
-            wizardFromDB.passSchemaMatchinInfo();
+            var deferred = wizardFromDB.passSchemaMatchinInfo(importWizard.getSchemaMatchingUserInputs());
         }
         else {
-            wizardFromFile.passSchemaMatchinInfo();
+            var deferred = wizardFromFile.passSchemaMatchinInfo(importWizard.getSchemaMatchingUserInputs());
         }
+        deferred.done(function(data) {
+            importWizard.showDataMatchingStep(data);
+        });
     };
 
     importWizard.showDataMatchingStep = function(data) {
-        document.getElementById("dataMatchingTable").innerHTML = data;
+        $('#dataMatchingTable').html(data);
         $('#dataMatchingStepInProgress').hide();
     };
     //***********************************************************************************************  
@@ -298,7 +298,7 @@ var importWizard = (function() {
     /* Helper functions */
 
     function initBootstrapWizard() {
-        $.fn.wizard.logging = true;
+        $.fn.wizard.logging = false;
 
         wizard = $("#wizard-demo").wizard();
 
@@ -456,20 +456,50 @@ var importWizard = (function() {
             $("#displayOptoinsStepCardFromDB").show();
 
             $("#displayOptoinsStepCardFromDB").append(importWizard.loadingGif);
-            wizardFromDB.LoadDatabaseTables($("#displayOptoinsStepCardFromDB"), $("#dbServerName").val(), $("#dbServerUserName").val(), $("#dbServerPassword").val(), $("#dbServerDatabase").val(), $('#dbServerPort').val(), $('#selectDBServer').val(), $('#isImport').val());
+            wizardFromDB
+                    .LoadDatabaseTables($("#dbServerName").val(), $("#dbServerUserName").val(), $("#dbServerPassword").val(), $("#dbServerDatabase").val(), $('#dbServerPort').val(), $('#selectDBServer').val(), $('#isImport').val())
+                    .done(function(JSON_Response) {
+                printTableList($("#displayOptoinsStepCardFromDB"), JSON_Response);
+                wizard.enableNextButton();
+            });
         }
         else {
             $("#displayOptoinsStepCardFromFile").show();
             $("#displayOptoinsStepCardFromDB").hide();
 
             wizard.disableNextButton();
-            wizardFromFile.showExcelFile();
-            $('#sheetParent').sheet({editable: false});
-            $('#sheetParent').height($('#sheetExcel').height() * 0.6);
-            $('#sheetParent').width($('#sheetExcel').width() * 0.9);
-            wizard.enableNextButton();
+            wizardFromFile.createKtrFiles().done(function() {
+                /* For appending           
+                 wizardFromFile.showExcelFile();
+                 $('#sheetParent').sheet({editable: false});
+                 $('#sheetParent').height($('#sheetExcel').height() * 0.6);
+                 $('#sheetParent').width($('#sheetExcel').width() * 0.9);
+                 wizard.enableNextButton();
+                 */
 
+                // For joining
+                wizardFromFile.getFileSources().done(function() {
+                    $('#loadingProgressContainer').hide();
+                    wizard.enableNextButton();
+                });
+            });
         }
+    }
+
+    function printTableList(container, JSON_Response) {
+        container.empty();
+
+        if (JSON_Response.isSuccessful) {
+            var el = "<p>Tables in selected database:</p><div style='height: 80%; overflow-y: scroll;'>";
+            for (var i = 0; i < JSON_Response.data.length; i++) {
+                el += "<label style='display: inline;'><input type='checkbox' name='table[]' value='" + JSON_Response.data[i] + "'/>" + JSON_Response.data[i] + "</lable><br/>";
+            }
+            el += "</div>";
+        } else {
+            var el = "<p style='color:red;'>Errors occur when loading tables.</p>";
+        }
+
+        container.append(el);
     }
 
     function getImportSource() {

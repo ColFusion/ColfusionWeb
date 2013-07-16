@@ -20,14 +20,27 @@ function RelationshipViewModel(sid) {
     self.isRelationshipInfoLoaded = {};
     self.relationshipInfos = {};
 
+    self.removeRelationship = function(relId) {
+        delete self.relationshipInfos[relId];
+        $('tr[id="relationship_' + relId + '"]').add('#mineRelRec_' + relId).remove();
+        if ($('.relationshipInfoRow').length === 0) {
+            self.isNoRelationshipData(true);
+        }
+
+        $.ajax({
+            url: 'datasetController/deleteRelationship.php',
+            type: 'POST',
+            dataType: 'json',
+            data: {relId: relId}
+        });
+    };
+
     self.mineRelationships = function(perPage, pageNo) {
-        //$('#relationshipMiningInProgress').show();
+
         self.isRelationshipDataLoading(true);
         self.isNoRelationshipData(false);
 
         dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function(data) {
-            //  $('#relationshipMiningInProgress').hide();
-
             if (!data.Control || !data.Control.cols || data.Control.cols.length === 0) {
                 // Show 'no data' text;
                 self.isRelationshipDataLoading(false);
@@ -44,9 +57,11 @@ function RelationshipViewModel(sid) {
             var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
             console.log(transformedData);
             console.log(data);
-            for(var i=0 ; i<data.data.length ; i++){
+
+            for (var i = 0; i < data.data.length; i++) {
                 self.isRelationshipInfoLoaded[data.data[i].rel_id] = ko.observable(false);
             }
+
             self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table('mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
             self.isRelationshipDataLoading(false);
         });

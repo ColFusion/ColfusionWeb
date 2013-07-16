@@ -140,7 +140,7 @@ class KTRManager {
 
     private function addNormalizer($baseHeader, $dataMatchingUserInputs) {
 
-        $this->addExcelInputFields(reset($baseHeader));
+        $this->addExcelInputFields($baseHeader);
 
         $steps = $this->ktrXml->xpath('//step[name = "Row Normalizer"]');
         $step = $steps[0];
@@ -159,7 +159,7 @@ class KTRManager {
 
         foreach ($steps as $step) {
             $name = $step->name;
-            if ($name == 'Excel Input File') {
+            if ($name == 'Excel Input File') {                             
                 foreach ($baseHeader as $item) {
                     $fields = $step->fields;
 

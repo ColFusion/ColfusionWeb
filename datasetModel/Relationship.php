@@ -9,6 +9,7 @@ class Relationship{
     public $description;
     public $creator;
     public $createdTime;
+    public $isOwned;
     
     public $fromDataset;
     public $toDataset;

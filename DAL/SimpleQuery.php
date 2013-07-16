@@ -21,8 +21,8 @@ class SimpleQuery {
         $db->query($sql);
     }
 
-    // Get info of all attachments of a source.
-    // Return an array of objects with properties mapped to table's columns.
+// Get info of all attachments of a source.
+// Return an array of objects with properties mapped to table's columns.
     public function getSourceAttachmentsInfo($sid) {
         global $db;
         $sid = $db->escape($sid);
@@ -31,8 +31,8 @@ class SimpleQuery {
         return $results;
     }
 
-    // Get source attachment info.
-    // Return an object with properties mapped to table's columns.
+// Get source attachment info.
+// Return an object with properties mapped to table's columns.
     public function getSourceAttachmentInfo($fileId) {
         global $db;
         $fileId = $db->escape($fileId);
@@ -44,8 +44,8 @@ class SimpleQuery {
             return $results[0];
     }
 
-    // Store attachment info.
-    // Returns fileId.
+// Store attachment info.
+// Returns fileId.
     public function addSourceAttachmentInfo($sourceId, $userId, $title, $filename, $size, $description) {
         global $db;
 
@@ -58,30 +58,30 @@ class SimpleQuery {
         return mysql_insert_id();
     }
 
-    // Delete file info in DB.
-    // Use userId to check if the file is deleted by uploader.
-    // Return filename.
+// Delete file info in DB.
+// Use userId to check if the file is deleted by uploader.
+// Return filename.
     public function deleteSourceAttachmentInfo($fileId, $userId) {
         global $db;
 
         $fileId = $db->escape($fileId);
         $userId = $db->escape($userId);
 
-        // Get filename.                       
+// Get filename.                       
         $filename_sql = "SELECT Filename FROM colfusion_des_attachments WHERE FileId='$fileId' AND UserId='$userId';";
         $results = $db->get_results($filename_sql);
         foreach ($results as $result) {
             $filename = $result->Filename;
         }
 
-        // Delete file info.
+// Delete file info.
         $delete_sql = "DELETE FROM colfusion_des_attachments WHERE FileId='$fileId' AND UserId='$userId';";
         $db->query($delete_sql);
 
         return $filename;
     }
 
-    // Store info about external source db.
+// Store info about external source db.
     public function addSourceDBInfo($sid, $server, $port, $user, $password, $database, $driver) {
         global $db;
 
@@ -98,7 +98,7 @@ class SimpleQuery {
         $db->query($sql);
     }
 
-    // Store metadata about column.
+// Store metadata about column.
     public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname) {
         global $db;
 
@@ -116,7 +116,7 @@ class SimpleQuery {
         return mysql_insert_id();
     }
 
-    // Store metadata about column.
+// Store metadata about column.
     public function addConstantColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $value) {
         global $db;
 
@@ -135,7 +135,7 @@ class SimpleQuery {
         return mysql_insert_id();
     }
 
-    // Store "parent" between column and tables
+// Store "parent" between column and tables
     public function addColumnTableInfo($cid, $tableName) {
         global $db;
 
@@ -146,7 +146,7 @@ class SimpleQuery {
         $db->query($sql);
     }
 
-    // Store "parent" between column and tables
+// Store "parent" between column and tables
     public function addColumnDataMatchingInfo($sid, $cid, $category, $suggestedValue) {
         global $db;
 
@@ -159,6 +159,25 @@ class SimpleQuery {
         $db->query($sql);
     }
 
+    public function addCidToNewData($sid, $tableName) {
+        global $db;
+        
+        $tableName = mysql_real_escape_string($tableName);     
+        $query = <<< EOQ
+             update colfusion_temporary t1
+set cid =  ( 
+    SELECT cid 
+    FROM colfusion_dnameinfo, colfusion_columnTableInfo
+    where sid = t1.sid and dname_chosen = t1.dname
+      and colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid
+      and colfusion_columnTableInfo.tableName = '$tableName'
+    
+   )
+where cid is null and sid = $sid;
+EOQ;
+        
+        $db->query($query);
+    }
 }
 
 ?>

@@ -7,7 +7,7 @@
                 <img src="images/ajax-loader-wt.gif" style="padding-left: 220px;"/>
             </div>
             <div data-bind="visible: isNoRelationshipData" style="color: grey;">This dataset has no relationships yet</div>
-            <div data-bind="with: mineRelationshipsTable" id="mineRelationshipsTableWrapper">
+            <div data-bind="visible: !isNoRelationshipData(), with: mineRelationshipsTable" id="mineRelationshipsTableWrapper">
                 <table id="tfhover" class="tftable" border="1" style="width: 100%;">
                     <thead>
                         <tr>
@@ -18,7 +18,7 @@
                         </tr>
                     </thead>
                     <tbody data-bind="foreach: rawData">                            
-                        <tr data-bind="attr: { 'id' : 'relationship_' + rel_id}">
+                        <tr data-bind="attr: { 'id' : 'relationship_' + rel_id}" class="relationshipInfoRow">
                             <td>
                                 <div style="display: inline;"><a data-bind='attr: { href: "story.php?title=" + sidFrom }, text: titleFrom' > </a></div>.
                                 <div style="display: inline;"><span data-bind='text: tableNameFrom'/></div>
@@ -44,7 +44,11 @@
                                 <div data-bind="if: $root.isRelationshipInfoLoaded[rel_id]">
                                     <div data-bind="with: $root.relationshipInfos[rel_id]">
                                         <table class="relProfile">
-                                            <tr><td class="profileHeader">Name:</td><td data-bind='text: name' class="profileContent"></td></tr>
+                                            <tr>
+                                                <td class="profileHeader">Name:</td>
+                                                <td data-bind='text: name' class="profileContent"></td>
+                                                <td data-bind="visible: isOwned()" rowspan="2"><button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn deleteRelBtn">Delete</button></td>
+                                            </tr>
                                             <tr><td class="profileHeader">Description:</td><td data-bind='text: description' class="profileContent"></td></tr>
                                             <tr><td class="profileHeader">Creator:</td><td data-bind='text: creator' class="profileContent"></td></tr>
                                             <tr><td class="profileHeader">CreatedTime:</td><td data-bind='text: createdTime' class="profileContent"></td></tr>

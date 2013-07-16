@@ -6,6 +6,7 @@
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/style.css" media="screen" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/wizard.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/submit1.css" />
+<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/importWizard/sourceSelectionStep.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/bootstrap-lightbox.min.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/sourceAttachment.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/dataTableModel.css" />
@@ -38,6 +39,7 @@
 
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.2.1.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Utils.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/dataTableModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>

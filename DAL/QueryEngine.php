@@ -287,15 +287,13 @@ class QueryEngine {
 
 FROM 
 	colfusion_relationships as rel, 
-	colfusion_relationships_columns as rc,
 	colfusion_users as u,		
 	colfusion_sourceinfo as siFrom, 
 	colfusion_sourceinfo as siTo,
 	statOnVerdicts
 	
-where 
-		rel.rel_id = rc.rel_id     
-		and rel.creator = u.user_id
+where    
+		rel.creator = u.user_id
 		and rel.rel_id = statOnVerdicts.rel_id
 		and rel.sid1 = siFrom.Sid
 		and rel.sid2 = siTo.Sid		
