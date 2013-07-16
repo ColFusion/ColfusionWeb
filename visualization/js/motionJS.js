@@ -19,7 +19,7 @@ type
 2: reload motion chart from database
 3: edit existing motion
 *****************/
-function drawMotion(type, vid) {
+/*function drawMotion(type, vid) {
 	gadgetID = vid;
 	titleNo = $('#titleNo').val();  
 	where = $("#where").val();
@@ -88,12 +88,26 @@ function drawMotion(type, vid) {
  //       data.addColumn('number',otherColumns[i]);
 //    }
 
+    var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
+
 	$.ajax({
 		type: 'POST',
-		url: "getMotion.php",
-		data: {'titleNo':titleNo, 'firstColumn':firstColumn, 'dateColumn':dateColumn, 'otherColumns':otherColumns, 'where': where},
+		url: "control.php",
+		data: {
+			action: 'addChart',
+			name: 'bddfasfd',
+			vid: $('#vid').val(),
+			type: 'motion',
+			width: 400,
+			height: 300,
+			depth: 2,
+			top: 50,
+			left: 0,
+			note: 'dfdff',
+			datainfo: datainfo
+		},
 		success: function(JSON_Response){
-			var JSONResponse = JSON_Response;
+			var JSONResponse = JSON_Response['queryResult'];
 			for(i=0; JSONResponse[i]!=null; i++) {
 				data.addRow();
 				data.setCell(i, 0, String(JSONResponse[i]["disease"]));
@@ -122,23 +136,108 @@ function drawMotion(type, vid) {
 	else if(type == 3){
 		$('#editMotion').modal('hide');		
 	}
+}*/
+$(document).ready(function (){
+	$('#editMotion').on('hidden', function () {
+		clearMotionEditForm();
+		})
+	
+	})
+function motionFormToDatainfo() {
+	var sid;
+	var table;
+	var where;
+	var otherColumns = new Array();
+	var firstColumn = $('#motionFirstColumn').val();
+	var dateColumn = $('#motionDate').val();
+	var otherColCount = 0;
+	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
+	$.each($("input[name='motionOtherColumn[]']:checked"), function(){
+		otherColumns.push($(this).val());
+		otherColCount++;
+	});
+	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where);
+}
+function editMotionFormToDatainfo() {
+	var sid;
+	var table;
+	var where;
+	var otherColumns = new Array();
+	var firstColumn = $('#motionFirstColumnEdit').val();
+	var dateColumn = $('#motionDateEdit').val();
+	var otherColCount = 0;
+	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
+	$.each($("input[name='motionOtherColumnEdit[]']:checked"), function(){
+		otherColumns.push($(this).val());
+		otherColCount++;
+	});
+	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where);
+}
+function MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where) {
+	this.firstColumn = firstColumn;
+	this.dateColumn = dateColumn;
+	this.otherColumns = otherColumns;
+	this.sid = sid;
+	this.table = table;
+	this.where = where;
+}
+function motionDataInfoToForm(motionDatainfo) {
+	clearMotionEditForm();
+	var sid = motionDatainfo.sid;
+	var table = motionDatainfo.table;
+	var where = motionDatainfo.where;
+	var firstColumn = motionDatainfo.firstColumn;
+	var dateColumn = motionDatainfo.dateColumn;
+	var otherColumns = motionDatainfo.otherColumns;
+	$('#motionFirstColumnEdit').val(firstColumn);
+	$('#motionDateEdit').val(dateColumn);
+	for (var i = 0;i<otherColumns.length;i++) {
+		var value = otherColumns[i];
+		var obj = $('input:checkbox[name="motionOtherColumnEdit[]"][value="'+value+'"]');
+		obj.prop('checked','checked');
+	}
+}
+function clearMotionEditForm() {
+	$('#motionFirstColumnEdit').val(1);
+	$('#motionDateEdit').val(1);
+	$('input:checkbox[name="motionOtherColumnEdit[]"]').each(function() {
+	    $(this).removeAttr('checked');
+	})
+}
+function drawMotion(sourceData,gadgetID) {
+	var data = new google.visualization.DataTable();
+	data.addColumn('string', 'Disease');
+  	data.addColumn('date', 'Date');
+  	data.addColumn('number', 'Number of disease cases');
+  	data.addColumn('number', 'Precipitation');
+  	data.addColumn('string', 'State');
+	for(i=0; sourceData[i]!=null; i++) {
+		data.addRow();
+		data.setCell(i, 0, String(sourceData[i]["disease"]));
+		data.setCell(i, 1, new Date(sourceData[i]["year"], sourceData[i]["month"], 1));
+		data.setCell(i, 2, parseInt(sourceData[i]["numberOfCases"]));
+		data.setCell(i, 3, parseInt(sourceData[i]["precipitation"]));
+		data.setCell(i, 4, sourceData[i]["state"]);
+	}
+	var chart = new google.visualization.MotionChart(document.getElementById(gadgetID));
+	chart.draw(data, {width: "100%", height:"100%"});
+	return data;
 }
 
-function generateMotion(a) {
-	var chart = new google.visualization.MotionChart(document.getElementById('motionResult'+gadgetID));
-	//chart.draw(data, {width: 600, height:300});	
-	chart.draw(motiondata, {width: "100%", height:"100%"});
-}
-   
-function createNewMotion() {
+//refresh chart without loading new data.
+function refreshMotion(sourceData,gadgetID) {
+	var chart = new google.visualization.MotionChart(document.getElementById(gadgetID));
+	chart.draw(data, {width: "100%", height:"100%"});
+}  
+function createNewMotionGadget() {
 	var d = new Date();
 	var ranNum = 1 + Math.floor(Math.random() * 100);
-	gadgetID = d.getTime() + ranNum + "";
+	var gadgetID = d.getTime() + ranNum + "";
 
 	var gadget = "<div name='motionDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:500px; height:320px' type='motion'>";
 	gadget += "<div class='gadget-header'>Motion Chart " + gadgetID;
-    gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>"
-	gadget += "<div class='gadget-edit edit-motion'><a href='#editMotion' data-toggle='modal'><i class='icon-edit'></i></a></div></div>";
+	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>"
+	gadget += "<div class='gadget-edit edit-motion'><i class='icon-edit'></i></div></div>";
 	gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='motionResult" + gadgetID + "' style='width:100%'></div></div></div>";
@@ -149,7 +248,98 @@ function createNewMotion() {
 		.resizable();
 	
 	$(".gadget-close").click(function() {	
-		$(this).parent().parent().hide();
-	})	
+		$(this).parent().parent().remove();
+	})
+	$("div[name='motionDivs']").resize(function() {
+		var cid = $(this).find('chartID');
+		var gadgetID = $(this).attr('id');
+		var chart = CHARTS[cid];
+		refreshMotion(chart.queryResult,gadgetID);
+	})
+	$("#"+gadgetID+' .edit-motion').click(function(){
+		var editGadgetID = $(this).parent().parent().attr('id');
+		var cid = $("#"+editGadgetID+" .chartID").val();
+		motionDataInfoToForm(CHARTS[cid]['datainfo']);
+		$('#editMotion').modal('show')
+		CANVAS.selectedChart = cid;
+	});
+	return gadgetID;
 
+}
+function addMotionChart() {
+	var titleNo = $('#titleNo').val();
+	var where = $("#where").val();	
+	var settings = "";
+	var otherColumns = new Array();
+	var firstColumn = $('#motionFirstColumn').val();
+	var dateColumn = $('#motionDate').val();
+	var otherColCount = 0;
+	var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
+	$.each($("input[name='motionOtherColumn[]']:checked"), function(){
+		otherColumns.push($(this).val());
+		settings += "," + $(this).val();
+		otherColCount++;
+	});
+	settings = settings.substring(1) + ";";
+	settings = firstColumn + ';' + dateColumn + ';' + settings;
+	$('#setting' + gadgetID).val(settings);
+	var gadgetID = createNewMotionGadget();
+	$.ajax({
+		type: 'POST',
+		url: "control.php",
+		data: {action: 'addChart',
+			name: 'MotionChart',
+			vid: $('#vid').val(),
+			type: 'motion',
+			width: 1200,
+			height: 600,
+			depth: ++maxDepth,
+			top: 50,
+			left: 0,
+			note: 'dfdff',
+			datainfo: datainfo},
+		success: function(JSON_Response){
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"motionResult" + gadgetID)
+			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
+			$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+			CHARTS[JSON_Response['cid']].chartData = drawMotion(queryResult,'motionResult'+gadgetID);
+			$('#addMotion').modal('hide');
+		}
+		})
+}
+//Load existing chart.
+function loadMotionChart(sourceData) {
+	var gadgetID = createNewMotionGadget();
+	var queryResult = sourceData['queryResult'];
+	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
+	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"motionResult" + gadgetID)
+	$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+	CHARTS[sourceData['cid']].chartData = drawMotion(queryResult,'motionResult'+gadgetID);
+		
+}
+//update the chart
+function updateMotionResult(cid) {
+	var chart = CHARTS[cid];
+	var gadgetID = CHARTS[cid].gadgetID;
+	var datainfo = editMotionFormToDatainfo();
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			vid: CANVAS.vid,
+			action: 'updateChartResult',
+			cid: cid,
+			datainfo: datainfo,
+			},
+		success: function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			CHARTS[cid].datainfo = datainfo;
+			CHARTS[cid].queryResult = queryResult;
+			drawMotion(queryResult,gadgetID);
+			$('#editMotion').modal('hide');
+		}
+		})
 }

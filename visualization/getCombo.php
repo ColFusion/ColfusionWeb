@@ -21,6 +21,8 @@
         $sql .= $where;		
 	$sql .= " GROUP BY `" . $comboColumnCat . "` ";
 	
+	echo $sql;
+	
 	//echo $sql . "<br>";
 
     $rst = $db->get_results($sql);
