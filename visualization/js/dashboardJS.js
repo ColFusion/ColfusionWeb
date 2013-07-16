@@ -112,15 +112,8 @@ Chart.prototype.getSname = function() {
 }
 function addStory() {
 	var sid = datasetSearcher.sid;
-	var sname = datasetSearcher.datasetName;
-	var func =function(obj){
-		if (obj['status']=='success') {
-			$('#story-search-result').html('<p style="color: green">Successfully find Story: '+ obj['story']['sname']+'</p>');
-		}else{
-			$('#story-search-result').html('<p style="color: red">'+obj['message']+'</p>');
-		}
-	}
-	CANVAS.addStory(sid,sname,func);
+	var sname = datasetSearcher.datasetName;	
+	CANVAS.addStory(sid,sname);
 }
 
 function saveConfig(){

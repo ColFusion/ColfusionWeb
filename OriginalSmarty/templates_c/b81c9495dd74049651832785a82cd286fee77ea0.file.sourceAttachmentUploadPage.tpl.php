@@ -1,22 +1,20 @@
-<?php /* Smarty version Smarty-3.1.13, created on 2013-07-03 17:37:38
+<?php /* Smarty version Smarty-3.1.13, created on 2013-07-12 16:11:51
          compiled from "C:\wamp\www\Colfusion\OriginalSmarty\templates\sourceAttachmentUploadPage.tpl" */ ?>
-<?php /*%%SmartyHeaderCode:182805183f0f95e59f9-87960084%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
+<?php /*%%SmartyHeaderCode:1065551e02ac79a1b20-77693083%%*/if(!defined('SMARTY_DIR')) exit('no direct access allowed');
 $_valid = $_smarty_tpl->decodeProperties(array (
   'file_dependency' => 
   array (
     'b81c9495dd74049651832785a82cd286fee77ea0' => 
     array (
       0 => 'C:\\wamp\\www\\Colfusion\\OriginalSmarty\\templates\\sourceAttachmentUploadPage.tpl',
-      1 => 1372175153,
+      1 => 1373569790,
       2 => 'file',
     ),
   ),
-  'nocache_hash' => '182805183f0f95e59f9-87960084',
+  'nocache_hash' => '1065551e02ac79a1b20-77693083',
   'function' => 
   array (
   ),
-  'version' => 'Smarty-3.1.13',
-  'unifunc' => 'content_5183f0f9740a80_23431030',
   'variables' => 
   array (
     'appRootPath' => 0,
@@ -24,8 +22,10 @@ $_valid = $_smarty_tpl->decodeProperties(array (
     'sid' => 0,
   ),
   'has_nocache_code' => false,
+  'version' => 'Smarty-3.1.13',
+  'unifunc' => 'content_51e02ac7b572a2_99315317',
 ),false); /*/%%SmartyHeaderCode%%*/?>
-<?php if ($_valid && !is_callable('content_5183f0f9740a80_23431030')) {function content_5183f0f9740a80_23431030($_smarty_tpl) {?><html>
+<?php if ($_valid && !is_callable('content_51e02ac7b572a2_99315317')) {function content_51e02ac7b572a2_99315317($_smarty_tpl) {?><html>
     <head>
         <meta charset="UTF-8">
         <title>File Uploader</title>
@@ -260,25 +260,11 @@ $_valid = $_smarty_tpl->decodeProperties(array (
                 {% } %}
             
         </script>
-        <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> -->
-        <!-- The jQuery UI widget factory, can be omitted if jQuery UI is already included -->
-        <!-- <script src="js/vendor/jquery.ui.widget.js"></script>-->
-        <!-- The Templates plugin is included to render the upload/download listings -->
-        <script src="http://blueimp.github.com/JavaScript-Templates/tmpl.min.js"></script>
-        <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
-        <script src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js"></script>
-        <!-- The Canvas to Blob plugin is included for image resizing functionality -->
-        <script src="http://blueimp.github.com/JavaScript-Canvas-to-Blob/canvas-to-blob.min.js"></script>
-        <!-- Bootstrap JS and Bootstrap Image Gallery are not required, but included for the demo -->
-        <script src="http://blueimp.github.com/Bootstrap-Image-Gallery/js/bootstrap-image-gallery.min.js"></script>
-        <!-- The Iframe Transport is required for browsers without support for XHR file uploads -->
-        <!-- The XDomainRequest Transport is included for cross-domain file deletion for IE8+ -->
-        <!--[if gte IE 8]><script src="js/cors/jquery.xdr-transport.js"></script><![endif]-->
-
         <!-- Bootstrap CSS fixes for IE6 -->
         <!--[if lt IE 7]><link rel="stylesheet" href="http://blueimp.github.com/cdn/css/bootstrap-ie6.min.css"><![endif]-->
         <!-- Bootstrap Image Gallery styles -->
-        <link rel="stylesheet" href="http://blueimp.github.com/Bootstrap-Image-Gallery/css/bootstrap-image-gallery.min.css">
+        <link rel="stylesheet" href="<?php echo $_smarty_tpl->tpl_vars['appRootPath']->value;?>
+/css/jquery-file-upload/bootstrap-image-gallery.min.css">
         <!-- CSS to style the file input field as button and adjust the Bootstrap progress bars -->
         <!-- JQuery file upload -->
         <link href="<?php echo $_smarty_tpl->tpl_vars['appRootPath']->value;?>
