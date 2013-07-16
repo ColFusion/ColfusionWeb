@@ -1,32 +1,23 @@
-USE `colfusion`;
-DROP procedure IF EXISTS `doJoinWithTime`;
-
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
 DELIMITER $$
-USE `colfusion`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `doJoinWithTime`(IN sidParam varchar(200), IN tableNameParam varchar(200))
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `doJoinWithTime`(IN `sidParam` VARCHAR(200), IN `tableNameParam` VARCHAR(200))
     READS SQL DATA
 BEGIN
 
 	SET @sid := TRIM(BOTH ',' FROM sidParam);
 	SET @tableName := TRIM(BOTH ',' FROM tableNameParam);
-	
-	SET @i := 1;
 
-	
-	SET @joinTableIndex := 0;
-	
 	SET @sql = CONCAT('drop temporary table if exists resultDoJoin');
 	PREPARE stmt FROM @sql;
 	EXECUTE stmt;
 	DEALLOCATE PREPARE stmt;
 
 	IF @sid <> "" THEN
-
-			SET @sql = CONCAT('drop temporary table if exists tmpTable', @i);
-			PREPARE stmt FROM @sql;
-			EXECUTE stmt;
-			DEALLOCATE PREPARE stmt;
-
+			
 			SET @sql = NULL;
 
 			SELECT
@@ -53,8 +44,4 @@ BEGIN
 
 	END IF;
 
-END$$
-
-DELIMITER ;
-
-
+END
