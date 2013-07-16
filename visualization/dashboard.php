@@ -81,18 +81,22 @@
 		<link rel="stylesheet" href="css/dashboard.css">	
 		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 		<script type="text/javascript" src="js/jquery-1.9.1.js"></script>
-		<script type="text/javascript" src="js/bootstrap.js"></script>	
+		<script type="text/javascript" src="js/bootstrap.min.js"></script>	
 		<script type="text/javascript" src="js/jquery-ui.js"></script>	
 		<script type="text/javascript" src="js/jquery.ui.core.js"></script>
 		<script type="text/javascript" src="js/jquery.ui.widget.js"></script>
 		<script type="text/javascript" src="js/jquery.ui.mouse.js"></script>
 		<script type="text/javascript" src="js/jquery.ui.resizable.js"></script>
 		<script type="text/javascript" src="js/jquery.ui.draggable.js"></script>
-	    <script type="text/javascript" src="js/dashboardJS.js"></script>		
+                <script type="text/javascript" src="js/dashboardJS.js"></script>		
 		<script type="text/javascript" src="js/test.js"></script>
 		<script type="text/javascript" src="js/ContentResponse.js"></script>
 		<!-- styles and functions for table -->
 	    <link rel="stylesheet" href="css/googleTableCSS.css" />
+                       
+            <link rel="stylesheet" href="/colfusion//css/typeahead.js-bootstrap.css">
+            <link rel="stylesheet" href="/colfusion/css/addRelationship.css">
+                    
 	    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 	    <script type="text/javascript" src="js/tableJS.js"></script>
 
@@ -112,6 +116,10 @@
 
 		<!-- styles and functions for motion chart -->
 		<script type="text/javascript" src="js/motionJS.js"></script>
+                
+                <script type="text/javascript" src="/colfusion/javascripts/hogan.min.js"></script>
+                <script type="text/javascript" src="/colfusion/javascripts/typeahead.min.js"></script>
+                <script type="text/javascript" src="js/datasetTypeahead.js"></script>
 	</head>
 	<body onload="showHint('',1);loadTables();loadMotions();loadColumns();loadPies();loadCombos();">
 <input type="hidden" id="hiddenJoinQuery" value="<?php echo $_POST['joinQuery'] ?>"/>
@@ -338,10 +346,10 @@
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="motionAddModalLabel">Add a Story to the Canvas</h3>
 			</div>
-			<div class="modal-body">
+			<div class="modal-body" style="width: 500px;height: 300px;">
 				<div class="seachArea"> 
-				     <label class = "tabContentTitle" style = "float:left">Search By SID:</label>
-				     <input id = "search-sid" type="text"  name="searchText" style = "width:auto"></input>
+				     <label class="tabContentTitle" style="float:left;margin-right: 10px;">Search: </label>
+				     <input id="search-sid" type="text" name="searchText" style = "width:240px;"></input>
 				</div>
 				<div id='story-search-result'></div>
 			</div>

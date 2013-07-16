@@ -111,8 +111,8 @@ Chart.prototype.getSname = function() {
 	return this.datainfo.sname;
 }
 function addStory() {
-	var sid = $('#search-sid').val();
-	var sname;
+	var sid = datasetSearcher.sid;
+	var sname = datasetSearcher.datasetName;
 	var func =function(obj){
 		if (obj['status']=='success') {
 			$('#story-search-result').html('<p style="color: green">Successfully find Story: '+ obj['story']['sname']+'</p>');

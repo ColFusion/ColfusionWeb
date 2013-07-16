@@ -226,6 +226,7 @@ function getStory(){
     
     $queryEngine = new QueryEngine();
     $sid = $_REQUEST['sid'];
+    $sname = $_REQUEST['sname'];
     $result = $queryEngine->GetTablesInfo($sid);
     $rst = array();
     if($result!=null){
@@ -240,7 +241,7 @@ function getStory(){
             $tables[$tname]['columns'] = $columns;
         }
         $rst['story']['sid'] = $_REQUEST['sid'];
-        $rst['story']['sname'] = 'story100';
+        $rst['story']['sname'] = $sname;
         $rst['story']['tables'] = $tables;
     }else{
         $rst['status'] = 'failed';
