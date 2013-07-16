@@ -12,6 +12,7 @@
         <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
         <div data-bind="with: currentTable">
             <div id="dataPreviewTableWrapper" data-bind="makeHorizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
+                <button id="visualizeBtn" class="btn" onclick="openVisualizationPage()"><i class="icon-bar-chart" style="margin-right: 5px;"></i>Visualize</button>
                 <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
                     <tr data-bind="foreach: headers">
                         <th data-bind="text: name"></th>

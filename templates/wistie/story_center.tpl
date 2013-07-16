@@ -42,11 +42,11 @@
         var xmlhttp;
 
         if (window.XMLHttpRequest)
-        xmlhttp = new XMLHttpRequest();
+            xmlhttp = new XMLHttpRequest();
         else if (window.ActiveXObject)
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         else
-        alert("Your browser does not support XMLHTTP!");
+            alert("Your browser does not support XMLHTTP!");
 
         var sid = $.url().param('title');
         var dataPreviewViewModel;
@@ -61,81 +61,91 @@
                 url: "DataImportWizard/dataPreviewMarkup.php",
                 data: {},
                 success: function(data) {
-                $("#dataPreviewContainer").append(data);
+                    $("#dataPreviewContainer").append(data);
                     ko.applyBindings(dataPreviewViewModel, document.getElementById("dataPreviewContainer"));
                 },
                 dataType: 'html'
             });
 
-             dataPreviewViewModel = new DataPreviewViewModel(sid);
-             relationshipViewModel = new RelationshipViewModel(sid);
-             ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
+            dataPreviewViewModel = new DataPreviewViewModel(sid);
+            relationshipViewModel = new RelationshipViewModel(sid);
+            ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
 
-             dataPreviewViewModel.getTablesList();
-             relationshipViewModel.mineRelationships(10, 1);
-         });
+            dataPreviewViewModel.getTablesList();
+            relationshipViewModel.mineRelationships(10, 1);        
+        });
 
         window.onload = function showData()
         {
-        xmlhttp.open("GET", my_pligg_base + "/display_data.php?count=5", false);
-        xmlhttp.send(null);
+            xmlhttp.open("GET", my_pligg_base + "/display_data.php?count=5", false);
+            xmlhttp.send(null);
 
-        if (xmlhttp.responseText !== "") {
-        $('#upload_result').prepend(xmlhttp.responseText);
-        var dataset_title = $('#dataset_title').text();
-        dataset_title = dataset_title ? dataset_title : "New Dataset";           
-        $('#fromDataSetWrapper').find('.dataSetDesTable').find('.sidInput').val(dataset_title);
-        }
+            if (xmlhttp.responseText !== "") {
+                $('#upload_result').prepend(xmlhttp.responseText);
+                var dataset_title = $('#dataset_title').text();
+                dataset_title = dataset_title ? dataset_title : "New Dataset";
+                $('#fromDataSetWrapper').find('.dataSetDesTable').find('.sidInput').val(dataset_title);
+            }
 
-        else {
-        document.getElementById('upload_result').innerHTML = "nothing";
-        }
+            else {
+                document.getElementById('upload_result').innerHTML = "nothing";
+            }
         };
 
 
         function savefile()
         {
-        var filetype = saveform.filetype.value;
+            var filetype = saveform.filetype.value;
 
-        xmlhttp.open("GET", my_pligg_base + "/display_data.php?filetype=" + filetype, false);
-        xmlhttp.send(null);
-        alert(my_pligg_base + "/display_data.php?filetype=" + filetype);
+            xmlhttp.open("GET", my_pligg_base + "/display_data.php?filetype=" + filetype, false);
+            xmlhttp.send(null);
+            alert(my_pligg_base + "/display_data.php?filetype=" + filetype);
 
 
         }
         function goBack()
         {
-        window.history.back()
+            window.history.back()
         }
 
         function dopage(url) {
-        document.getElementById('upload_result').innerHTML = "Loading...";
+            document.getElementById('upload_result').innerHTML = "Loading...";
 
-        xmlhttp.open("GET", my_pligg_base + "/" + url, false);
-        xmlhttp.send(null);
+            xmlhttp.open("GET", my_pligg_base + "/" + url, false);
+            xmlhttp.send(null);
 
-        if (xmlhttp.responseText != "")
-        {
-        document.getElementById('upload_result').innerHTML = xmlhttp.responseText;
-        document.getElementById('btn_all').style.display = 'none';
-        document.getElementById('btn_hide').style.display = 'block';
-        //document.getElementById('hint').style.display='block';
-        }
+            if (xmlhttp.responseText != "")
+            {
+                document.getElementById('upload_result').innerHTML = xmlhttp.responseText;
+                document.getElementById('btn_all').style.display = 'none';
+                document.getElementById('btn_hide').style.display = 'block';
+                //document.getElementById('hint').style.display='block';
+            }
 
-        else {
-        document.getElementById('upload_result').innerHTML = 'nothing';
-        }
+            else {
+                document.getElementById('upload_result').innerHTML = 'nothing';
+            }
 
         }
         function go_visualization() {
-        //window.location.href = my_pligg_base+"/visualization/dashboard.php";
-        titleNum = location.href.substring(location.href.indexOf("=") + 1);
-        window.open(my_pligg_base + "/visualization/dashboard.php?title=" + titleNum, " _blank");
+            //window.location.href = my_pligg_base+"/visualization/dashboard.php";
+            titleNum = location.href.substring(location.href.indexOf("=") + 1);
+            window.open(my_pligg_base + "/visualization/dashboard.php?title=" + titleNum, " _blank");
         }
 
+        function openVisualizationPage() {
+            $('#visualizationParaForm').find('#visualTableNameParam').val(dataPreviewViewModel.currentTable().tableName);
+            $('#visualizationParaForm').attr('action', my_pligg_base + "/visualization/dashboard.php");
+            document.getElementById('visualizationParaForm').submit();
+        }
     </script>
 
 {/literal}
+
+<form id="visualizationParaForm" target="_blank" method="POST" action="">
+    <input type="hidden" name="tableName" id="visualTableNameParam"/>
+    <input type="hidden" name="title" id="visualSidParam" value="{$sid}"/>
+</form>
 
 <div id="upload_result">	
     <table style="margin: 0 0 9px 10px;">
@@ -158,9 +168,9 @@
 {include file='addRelationships.tpl'}
 {literal}
     <script type="text/javascript">
-        $(function(){
-        $('.searchDatasetBtn').prop('disabled', true);
-        loadInitialFromDataSet();        
+        $(function() {
+            $('.searchDatasetBtn').prop('disabled', true);
+            loadInitialFromDataSet();
         });
     </script>
 {/literal}

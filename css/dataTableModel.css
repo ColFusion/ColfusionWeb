@@ -35,6 +35,14 @@
     border-color: #729ea5;
 }
 
+#visualizeBtn{
+    float: right;
+    margin-top: -35px;
+    left: 73.8%;
+    position: absolute;
+    z-index: 3;
+}
+
 #previewTableList {
     float: left;
     width: 160px;
