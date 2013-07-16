@@ -112,9 +112,7 @@ function addStory() {
 	var sid = $('#search-sid').val();
 	var func =function(obj){
 		if (obj['status']=='success') {
-			$('#story-search-result').html('<p style="color: green">Successfully find Story: '+ obj['story']
-
-['sname']+'</p>');
+			$('#story-search-result').html('<p style="color: green">Successfully find Story: '+ obj['story']['sname']+'</p>');
 		}else{
 			$('#story-search-result').html('<p style="color: red">'+obj['message']+'</p>');
 		}
@@ -148,16 +146,10 @@ function showNote(){
 		
 		var tableStr ="";
 		var story = noteObj[temp];
-		noteStr += "<li id = "+story['sid']+"storiesTable class='unfold' onclick = 'StoryHighlight("+story
-
-['sid']+")'><a href ='#'>"+story["sid"]+":"+story["sname"]+"&nbsp&nbsp<i class='icon-plus' onclick = 'showRelatedTables
-
-("+story['sid']+")'></i></a></li>";
+		noteStr += "<li id = "+story['sid']+"storiesTable class='unfold' onclick = 'StoryHighlight("+story['sid']+")'><a href ='#'>"+story["sid"]+":"+story["sname"]+"&nbsp&nbsp<i class='icon-plus' onclick = 'showRelatedTables("+story['sid']+")'></i></a></li>";
 
 		for (var TempTable in story['tables']){
-			noteStr += "<li class = "+story['sid']+"StoriesChildren onclick = TableHighlight("+story
-
-['sid']+",'"+TempTable+"') style = 'display:none'><a href = '#' ><i class='icon-arrow-right'></i>"+TempTable+"</a></li>";
+			noteStr += "<li class = "+story['sid']+"StoriesChildren onclick = TableHighlight("+story['sid']+",'"+TempTable+"') style = 'display:none'><a href = '#' ><i class='icon-arrow-right'></i>"+TempTable+"</a></li>";
 		}
 			
 	}
@@ -288,9 +280,7 @@ function showHint(str,currentPage){
 
 	xmlHttp=new XMLHttpRequest();
 	var url="contentResponse.php";
-	url=url+"?content="+str+"&columnNum="+(COLUMNNUM-1)+"&currentPage="+currentPage
-
-+"&authorizationLevel="+authorizationLevel;
+	url=url+"?content="+str+"&columnNum="+(COLUMNNUM-1)+"&currentPage="+currentPage+"&authorizationLevel="+authorizationLevel;
 	xmlHttp.onreadystatechange=stateChanged;
 	xmlHttp.open("GET",url,true);
 	xmlHttp.send(null);
@@ -364,9 +354,7 @@ function outCanvasEffect(id){
 $(function() {
 
 	var oriTableHeight = parseInt($("#display_section").css("height").split("px")[0]);
-	var actTableHeight = (oriTableHeight%37>18)?oriTableHeight+(37-(oriTableHeight%37)):oriTableHeight-
-
-(oriTableHeight%37);
+	var actTableHeight = (oriTableHeight%37>18)?oriTableHeight+(37-(oriTableHeight%37)):oriTableHeight-(oriTableHeight%37);
 	$("#display_section").css("height",actTableHeight+"px");
 	COLUMNNUM = actTableHeight/37;
 	
@@ -434,9 +422,7 @@ $(function() {
 			var setting = $('#setting'+gadgetID).val();
 			var userid = $('#userid').val();
 			var titleNo = $('#titleNo').val();
-			var data = {"vid": gadgetID, "type": type, "height": height, "width": width, "left": left, "top": 
-
-top, "setting": setting, "userid": userid, "titleNo": titleNo };
+			var data = {"vid": gadgetID, "type": type, "height": height, "width": width, "left": left, "top": top, "setting": setting, "userid": userid, "titleNo": titleNo };
 			$.ajax({
 			  type: "POST",
 			  url: "setVisGadget.php",
@@ -754,10 +740,8 @@ top, "setting": setting, "userid": userid, "titleNo": titleNo };
 		$(this).parent().parent().find('lable.table-column').each(function() {
 			$(this).html('');
 			for (var i = 0;i<columns.length;i++) {
-				$(this).append('<input value="'+columns[i]+'" type="checkbox" name="table-column" 
-
-checked/>'+columns[i]);
-			}
+				$(this).append('<input value="'+columns[i]+'" type="checkbox" name="table-column" checked/>'+columns[i]);
+		    }
 			})
 	})
 });
