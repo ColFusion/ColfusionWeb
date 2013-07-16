@@ -104,6 +104,7 @@ var importWizard = (function() {
 
         $("#done").click(function() {
             document.getElementById("final").disabled = false;
+            finishSubmittingData();
         });
 
         $("img").tooltip();
@@ -363,7 +364,7 @@ var importWizard = (function() {
                     wizard._submitting = false;
                     wizard.showSubmitCard("error");
                     wizard.updateProgressBar(0);
-                }
+                }              
             }).error(function(jqXHR, textStatus, errorThrown) {
                 var resultJson = {isSuccessful: false, message: errorThrown};
                 $("#exe").html(resultJson.message);
@@ -464,7 +465,7 @@ var importWizard = (function() {
             });
         }
         else {
-            $("#displayOptoinsStepCardFromFile").show();
+            $("#displayOptoinsStepCardFromFile").hide();
             $("#displayOptoinsStepCardFromDB").hide();
 
             wizard.disableNextButton();
@@ -480,6 +481,7 @@ var importWizard = (function() {
                 // For joining
                 wizardFromFile.getFileSources().done(function() {
                     $('#loadingProgressContainer').hide();
+                    $("#displayOptoinsStepCardFromFile").show();
                     wizard.enableNextButton();
                 });
             });

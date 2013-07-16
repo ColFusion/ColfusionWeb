@@ -105,12 +105,10 @@
                                 <td colspan="3" style="padding: 0 10px 0 10px">
                                     <button type="button" data-bind="click: addLink" class="btn" >
                                         Add row
-                                    </button>
-                                    <!--
+                                    </button>                                  
                                     <button type="button" data-bind="click: checkDataMatching" class="btn" >
                                         Check data matching
                                     </button>
-                                    -->
                                     <!--
                                     <button type="button" data-bind="click: testDataEncoding" class="btn" >
                                         Test Data Encoding

@@ -1,6 +1,5 @@
 <?php
 
-error_reporting(E_ALL ^ E_NOTICE);
 include_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 
 class UtilsForWizard {

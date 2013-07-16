@@ -168,15 +168,10 @@ class QueryEngine {
     }
     
     function runQuerySingleSidTableFromFile($query, $sid, $tableName) {
-    	global $db;
-    	
-    	$doJoinQuery = "call doJoinWithTime('" . $sid . "." . $tableName . "')";
-    	
-    	
-//echo $doJoinQuery;
+    	global $db; 	
+    	$doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
     	
     	$res = $db->query($doJoinQuery);
-    	
     	$rst = $db->get_results($query);
     	return $rst;
     }
@@ -215,7 +210,7 @@ class QueryEngine {
     public function GetTotalNumberTuplesInTableBySidAndNameFromFile($sid, $table_name) {
         global $db;
 
-        $res = $db->query("call doJoinWithTime('" . $sid . "." . $table_name . "')");
+        $res = $db->query("call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($table_name) . "')");
         $sql = "SELECT COUNT(*) FROM resultDoJoin ";
         $totalTuple = $db->get_var($sql);
 

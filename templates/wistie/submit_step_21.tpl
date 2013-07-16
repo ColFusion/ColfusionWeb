@@ -242,7 +242,12 @@
             // Load attachment list.
             fileManager.loadSourceAttachments(sid, $("#attachmentList"));          
         });
-
+        
+        function submitDataSubmissionForm(){
+            if($('#thisform').parsley('validate')){
+                document.forms['thisform'].submit();
+            }
+        }     
     </script>
 
 {/literal}
@@ -254,7 +259,7 @@
 <div id="submit">
     <div id="submit_step_1_content">
         {checkActionsTpl location="tpl_pligg_submit_step2_start"}
-        <form data-validate="parsley" action="submit1.php" method="post" name="thisform" id="thisform" enctype="multipart/form-data">
+        <form onsubmit="return checkDataForm(this)" action="submit1.php" method="post" name="thisform" id="thisform" enctype="multipart/form-data">
 
             <div class="submit_step_1_left">
                 <h4 class="stepHeader">Step 1: Describe Your Data</h4>
@@ -391,7 +396,7 @@
         });
     </script>
 {/literal}
-<input onclick="document.forms['thisform'].submit();" class="button_max" type="submit" value="{#PLIGG_Visual_Submit2_Continue#}" id ="final"  disabled = true />
+<input onclick="submitDataSubmissionForm()" class="button_max" type="submit" value="{#PLIGG_Visual_Submit2_Continue#}" id ="final"  disabled = true />
 </div>	
 </div>
 <div id="uploadAttachmentLightBox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">

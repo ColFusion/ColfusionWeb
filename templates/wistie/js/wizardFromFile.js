@@ -85,16 +85,7 @@ var wizardFromFile = (function() {
             url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=8",
             type: 'post',
             dataType: 'json',
-            success: function(jsonResponse) {
-
-                var jsonResponse = {"isSuccessful": true,
-                    "data": [
-                        {filename: "small.xls", worksheets: ["sheet1", "sheet2"]},
-                        {filename: "small.xlsx", worksheets: ["Second1", "Second2"]},
-                        {filename: "small2_multiple.xls", worksheets: ["third1", "third2"]}
-                    ]
-                };
-
+            success: function(jsonResponse) {               
                 sourceWorksheetSettingsViewModel.cleanSource();
 
                 for (var i = 0; i < jsonResponse.data.length; i++) {
@@ -110,28 +101,9 @@ var wizardFromFile = (function() {
     };
 
     wizardFromFile.passSheetInfoFromDisplayOptionStep = function() {
-
-        var sheetsRanges = {};
-
-        var sheetsRange = {};
-        sheetsRange['Sheet1'] = {};
-        sheetsRange['Sheet1']['startRow'] = 1;
-        sheetsRange['Sheet1']['startColumn'] = 'A';
-        sheetsRange['Sheet2'] = {};
-        sheetsRange['Sheet2']['startRow'] = 1;
-        sheetsRange['Sheet2']['startColumn'] = 'A';
-
-        sheetsRanges['small.xls'] = sheetsRange;
-
-        var sheetsRange = {};
-        sheetsRange['Sheet1'] = {};
-        sheetsRange['Sheet1']['startRow'] = 1;
-        sheetsRange['Sheet1']['startColumn'] = 'A';
-        sheetsRange['Sheet2'] = {};
-        sheetsRange['Sheet2']['startRow'] = 1;
-        sheetsRange['Sheet2']['startColumn'] = 'A';
-
-        sheetsRanges['small.xlsx'] = sheetsRange;
+        
+        console.log('passSheetInfoFromDisplayOptionStep');
+        var sheetsRanges = sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();     
         console.log(sheetsRanges);
 
         return $.ajax({type: 'POST',
@@ -403,7 +375,7 @@ function SourceWorksheetSettingsViewModel() {
         for (var i = 0; i < self.sourceWorksheetSettings().length; i++) {
             var sourceWorksheetSettings = self.sourceWorksheetSettings()[i];
             sourceWorksheetSettingsWithoutObservable[sourceWorksheetSettings.sourceName] =
-                    sourceWorksheetSettings.worksheetSettings.getWorksheetSettings();
+                    sourceWorksheetSettings.getWorksheetSettings();
         }
         return sourceWorksheetSettingsWithoutObservable;
     };

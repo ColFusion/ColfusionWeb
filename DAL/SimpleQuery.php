@@ -166,7 +166,7 @@ class SimpleQuery {
         $query = <<< EOQ
              update colfusion_temporary t1
 set cid =  ( 
-    SELECT cid 
+    SELECT colfusion_dnameinfo.cid 
     FROM colfusion_dnameinfo, colfusion_columnTableInfo
     where sid = t1.sid and dname_chosen = t1.dname
       and colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid

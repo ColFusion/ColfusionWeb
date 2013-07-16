@@ -312,7 +312,7 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
     }
 
     UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $_POST["schemaMatchingUserInputs"]);
-    UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $_POST["dataMatchingUserInputs"]);
+    UtilsForWizard::processDataMatchingUserInputsWithTableNameStoreDB($sid, $_POST["dataMatchingUserInputs"]);
 }
 
 function isReloadNeeded($headerRows) {
