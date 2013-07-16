@@ -13,7 +13,7 @@ $user_id = $current_user->user_id;
 $columnNum = $_REQUEST['columnNum'];
 $currentPage = $_REQUEST['currentPage'];
 
-$authorizationStr = ($_REQUEST['authorizationLevel']==-1)?"":" privilege = ".$_REQUEST['authorizationLevel']." AND ";
+$authorizationStr = ($_REQUEST['authorizationLevel']==-1)?"":"".$_REQUEST['authorizationLevel'];
 
 
 global $db;
@@ -24,7 +24,7 @@ global $db;
 		        (select t1.mdate ,t1.name,S.vid,S.privilege from colfusion_shares S ,
 		          (select C.vid ,C.mdate,C.name from colfusion_canvases C where left(C.name,".$lengt1.")='".$content[0]."'
 		          union select CT.vid ,CT.mdate,CT.name from colfusion_canvases CT,colfusion_users UT where UT.user_id = CT.user_id AND left(UT.user_login,".$lengt1.")='".$content[0]."')t1 
-		          where S.vid = t1.vid AND ".$authorizationStr." S.user_id = ".$user_id.")t2 where t2.vid = C2.vid AND C2.user_id = U.user_id order by t2.mdate)final";
+		          where S.vid = t1.vid AND S.user_id = ".$user_id.")t2 where t2.vid = C2.vid AND C2.user_id = U.user_id order by t2.mdate)final";
 	
 	$totalResult = $db->get_results($totalStr);
 	$_SESSION['totalRow'] =  $totalResult[0]->sum;
@@ -37,27 +37,27 @@ $query = "select t2.privilege, U.user_login,t2.mdate,t2.name,t2.vid
 		        (select t1.mdate ,t1.name,S.vid,S.privilege from colfusion_shares S ,
 		          (select C.vid ,C.mdate,C.name from colfusion_canvases C where left(C.name,".$lengt1.")='".$content[0]."'
 		          union select CT.vid ,CT.mdate,CT.name from colfusion_canvases CT,colfusion_users UT where UT.user_id = CT.user_id AND left(UT.user_login,".$lengt1.")='".$content[0]."')t1 
-		          where S.vid = t1.vid AND ".$authorizationStr." S.user_id = ".$user_id.")t2 where t2.vid = C2.vid AND C2.user_id = U.user_id order by t2.mdate limit ".($currentPage-1)*$columnNum.",".$columnNum;
+		          where S.vid = t1.vid AND S.user_id = ".$user_id.")t2 where t2.vid = C2.vid AND C2.user_id = U.user_id order by t2.mdate limit ".($currentPage-1)*$columnNum.",".$columnNum;
 else if (count($content)==2)
 	$query = "select t2.privilege, U.user_login,t2.mdate,t2.name,t2.vid
 		        from colfusion_canvases C2,colfusion_users U,
 		        (select t1.mdate ,t1.name,S.vid,S.privilege from colfusion_shares S ,
 		          (select C.vid ,C.mdate,C.name from colfusion_canvases C where left(C.name,".$lengt2.")='".$content[1]."')t1 
-		          where S.vid = t1.vid AND ".$authorizationStr." S.user_id = ".$user_id.")t2 where left(U.user_login,".$lengt1.")='".$content[0]."' AND t2.vid = C2.vid AND C2.user_id = U.user_id group by t2.privilege, U.user_login,t2.mdate,t2.name,t2.vid order by t2.mdate limit ".($currentPage-1)*$columnNum.",".$columnNum;
+		          where S.vid = t1.vid AND S.user_id = ".$user_id.")t2 where left(U.user_login,".$lengt1.")='".$content[0]."' AND t2.vid = C2.vid AND C2.user_id = U.user_id group by t2.privilege, U.user_login,t2.mdate,t2.name,t2.vid order by t2.mdate limit ".($currentPage-1)*$columnNum.",".$columnNum;
 else 
 	$query = "";
 
 $result = $db->get_results($query);
 
-$PagingStr=($currentPage==1)?"":'<li><a href="#" onclick = "showHint(\''.$_GET['content'].'\','.(($currentPage-1)*-1).')"><<</a></li>';
+$PagingStr=($currentPage==1)?"":'<li><a href="#" onclick = "showHint(\''.$_GET['content'].'\','.($currentPage-1).')"><<</a></li>';
 
 for($num = $currentPage;($num-1)*$columnNum<$_SESSION['totalRow'];$num++){
 	
 	if ($num>$currentPage+2){
-		$PagingStr .=  '<li><a href="#" onclick = "showHint(\''.$_GET['content'].'\','.(-1*$num).')">>></a></li>';
+		$PagingStr .=  '<li><a href="#" onclick = "showHint(\''.$_GET['content'].'\','.$num.')">>></a></li>';
 		break;
 	}
-	$PagingStr .=  '<li><a href="#" onclick = "showHint(\''.$_GET['content'].'\','.(-1*$num).')">'.$num.'</a></li>';
+	$PagingStr .=  '<li><a href="#" onclick = "showHint(\''.$_GET['content'].'\','.$num.')">'.$num.'</a></li>';
 };
 
 echo '<table id = "result_table" class="table table-hover">';

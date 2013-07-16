@@ -38,7 +38,6 @@ function openCharts(vid,vname){
 	$("#charts_section").show(1000);
 	$("#openbutton_section").html('<button id="openButton" class="btn btn-info" type="button" onclick="openCanvas('+vid+')"> OpenCanvas </button>')
 
-	
 	$.ajax(
 			{
 				url:"control.php",
@@ -58,7 +57,6 @@ function openCharts(vid,vname){
 				}
 			}
 		 ).done(function(){
-			
 			 $("#charts_section li").click(
 						function(){
 							if (!$(this).hasClass("active")){
@@ -80,7 +78,6 @@ function openCanvas(vid){
 	clearScreen();
 	$("#file_manager").hide();
 	vid = vid;
-	$("#viewChartsNote").show();
 	
 	$.ajax(
 		{
@@ -92,7 +89,6 @@ function openCanvas(vid){
 			  /*  google.setOnLoadCallback(drawPie);*/
 				
 			    var _data = jQuery.parseJSON(data);
-			    CANVAS = new Canvas(_data['vid'],_data['name'],_data['privilege'],_data['authorization'],_data['mdate'],_data['cdate'],_data['note']);
 				
 				for (var i in _data['charts']){
 					
@@ -133,7 +129,8 @@ function openCanvas(vid){
 				$('#cdate').val(_data['cdate']);
 				$('#note').val(_data['note']);
 				$('#brand').text(_data['name']);
-							}	 
+				CANVAS = new Canvas(_data['vid'],_data['name'],_data['privilege'],_data['authorization'],_data['mdate'],_data['cdate'],_data['note']);
+			}	 
 		});
 	}
 

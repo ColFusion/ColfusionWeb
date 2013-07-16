@@ -6,10 +6,6 @@ var vDay = d.getDate();
 var completeResult;
 var authorizationLevel=-1;
 
-var CHARTS ={};
-var CANVAS ={};
-
-
 function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
 	this.vid = vid;
 	this.name = name;
@@ -21,21 +17,23 @@ function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
 	this.selectedChart = null;
 	this.stories = new Array();
 }
-
-Canvas.prototype.addStory = function(sid,callback) {
+//use sid to get story name and tables in the story
+Canvas.prototype.addStory = function(sid,sname,callback) {
+	
 	$.ajax({
 		type: 'POST',
 		url: 'control.php',
 		data: {
 			action: 'getStory',
-			sid: sid
+			sid: sid,
+			sname: sname
 			},
 		success: function(JSON_Response) {
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			if(JSON_Response['status'] == 'success'){
-				var sid = JSON_Response['sid'];
+				/*var sid = JSON_Response['sid'];
 				var sname = JSON_Response['sname'];
-				var tables = JSON_Response['tables'];
+				var tables = JSON_Response['tables'];*/
 				var story = JSON_Response['story'];
 				var sid = story.sid;
 				CANVAS.stories[sid] = story;
@@ -47,9 +45,8 @@ Canvas.prototype.addStory = function(sid,callback) {
 			}
 		}
 		
-		});
+		})
 }
-
 //get the story name and tables in the a story
 Canvas.prototype.getStory = function(sid) {
 	return CANVAS.stories[sid];
@@ -58,6 +55,7 @@ Canvas.prototype.getStory = function(sid) {
 Canvas.prototype.getStories = function() {
 	return CANVAS.stories;
 }
+
 //get related charts to sid in 'charts'
 Canvas.prototype.getStoryRelatedCharts = function(sid) {
 	var rst = new Array();
@@ -85,8 +83,8 @@ Canvas.prototype.getTableRelatedCharts = function(sid,table) {
 Canvas.prototype.getColumns = function(sid,table){
 	
 }
-
-
+var CANVAS = new Canvas();
+var CHARTS ={};
 function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResult,gadgetID) {
 	this.cid = cid;
 	this.name = name;
@@ -99,8 +97,9 @@ function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResu
 	this.datainfo = datainfo;
 	this.queryResult = queryResult;
 	this.gadgetID = gadgetID;
-	CANVAS.addStory(this.getSid());
+	CANVAS.addStory(this.getSid(),this.getSname());
 }
+//get the sid from the chart datainfo
 Chart.prototype.getSid = function() {
 	return this.datainfo.sid;
 }
@@ -108,8 +107,12 @@ Chart.prototype.getSid = function() {
 Chart.prototype.getTable = function() {
 	return this.datainfo.table;
 }
+Chart.prototype.getSname = function() {
+	return this.datainfo.sname;
+}
 function addStory() {
 	var sid = $('#search-sid').val();
+	var sname;
 	var func =function(obj){
 		if (obj['status']=='success') {
 			$('#story-search-result').html('<p style="color: green">Successfully find Story: '+ obj['story']['sname']+'</p>');
@@ -117,8 +120,7 @@ function addStory() {
 			$('#story-search-result').html('<p style="color: red">'+obj['message']+'</p>');
 		}
 	}
-	CANVAS.addStory(sid,func);
-	showNote();
+	CANVAS.addStory(sid,sname,func);
 }
 
 function saveConfig(){
@@ -139,91 +141,6 @@ function showNote(){
 		});
 	}
 	
-	var noteStr = "";
-	var noteObj = CANVAS.getStories();
-	
-	for(var temp in noteObj){
-		
-		var tableStr ="";
-		var story = noteObj[temp];
-		noteStr += "<li id = "+story['sid']+"storiesTable class='unfold' onclick = 'StoryHighlight("+story['sid']+")'><a href ='#'>"+story["sid"]+":"+story["sname"]+"&nbsp&nbsp<i class='icon-plus' onclick = 'showRelatedTables("+story['sid']+")'></i></a></li>";
-
-		for (var TempTable in story['tables']){
-			noteStr += "<li class = "+story['sid']+"StoriesChildren onclick = TableHighlight("+story['sid']+",'"+TempTable+"') style = 'display:none'><a href = '#' ><i class='icon-arrow-right'></i>"+TempTable+"</a></li>";
-		}
-			
-	}
-	
-	$("#note_section ul").html('<li class="nav-header">CHARTS SELECTOR:</li>'+ noteStr);
-	
-}
-
-function showRelatedTables(sid){
-	if ($("#"+sid+"storiesTable").hasClass("unfold")){
-		
-		$("#"+sid+"storiesTable i").removeClass('icon-plus');
-		$("#"+sid+"storiesTable i").addClass('icon-minus');
-		
-		$("."+sid+"StoriesChildren").show(500);
-		$("#"+sid+"storiesTable").removeClass("unfold");
-	}
-	else {
-		$("#"+sid+"storiesTable i").removeClass('icon-minus');
-		$("#"+sid+"storiesTable i").addClass('icon-plus');
-		
-		$("#"+sid+"storiesTable").addClass("unfold");
-		$("."+sid+"StoriesChildren").hide(500);
-	}
-	
-}
-
-function StoryHighlight(sid){
-	
-	for (var chart in CHARTS){
-	    var compare = CHARTS[chart].getSid();
-		
-		if (compare!=sid){
-			var G = CHARTS[chart]['gadgetID'].split('Result');
-			var gid = G[1];
-			$("#"+gid).animate({
-				opacity:0.2
-			});
-		}
-		else {
-			var G = CHARTS[chart]['gadgetID'].split('Result');
-			var gid = G[1];
-			$("#"+gid).animate({
-				opacity:1.0
-			});
-		}
-		
-	}
-}
-
-
-function TableHighlight(sid,tablename){
-	
-	for (var chart in CHARTS){
-	    var compareSid = CHARTS[chart].getSid();
-	    var compareTname = CHARTS[chart].getTable();
-		
-		if (compareSid!=sid||compareTname!=tablename){
-			var G = CHARTS[chart]['gadgetID'].split('Result');
-			var gid = G[1];
-			$("#"+gid).animate({
-				opacity:0.2
-			});
-		}
-		else {
-			var G = CHARTS[chart]['gadgetID'].split('Result');
-			var gid = G[1];
-			$("#"+gid).animate({
-				opacity:1.0
-			});
-		}
-		
-	}
-	
 }
 
 function CurCanId(id){
@@ -234,10 +151,8 @@ function shareCanvases(){
 	var vid = $("#shareWith").attr("name");
 	var authorization = $("#autSele").val();
 	var NameEmail = $("#NameEmail").val();
-	
-	
-}
 
+}
 function showChart(type){
 
 	$("#openchart").modal("hide");
@@ -266,11 +181,6 @@ function showChart(type){
 function showHint(str,currentPage){
 	
 	$("#note_section").show();
-	
-	if (currentPage>0&&currentPage!=null)
-		authorizationLevel=-1;
-	else if (currentPage<0)
-		currentPage *= -1;
 	
 	$("#authorization_filter li").removeClass('active');
 	if (currentPage!=null&&currentPage!="")
@@ -310,8 +220,11 @@ function stateChanged(){
 			var vname = $(this).parent().attr('name');
 			openCharts(vid,vname);
 		});
+		
 		returnNormal();
+
 	 }
+
 }
 
 $(document).ready(function(){
@@ -323,9 +236,10 @@ $(document).ready(function(){
 })
 
 function autFilter(id){
+	
 	authorizationLevel = id;
-	var currentSearchText = $("#button_section input[type='text']").val();
-	showHint(currentSearchText,-1);
+	
+	
 }
 
 function pickDate(){
@@ -351,7 +265,7 @@ function outCanvasEffect(id){
 	$("#"+id).css({"background-color":"#F5F5F5","color":"#0088CC"});
 }
 
-$(function() {
+$(document).ready(function() {
 
 	var oriTableHeight = parseInt($("#display_section").css("height").split("px")[0]);
 	var actTableHeight = (oriTableHeight%37>18)?oriTableHeight+(37-(oriTableHeight%37)):oriTableHeight-(oriTableHeight%37);
@@ -545,7 +459,7 @@ $(function() {
 	
 	//edit table save
 	$('#editTableSave').click(function() {
-		loadTableData(3,editGadgetID);
+		updateTableResult(CANVAS.selectedChart);
 	});
 	
 	$('input[name="display"]').click(function() {
@@ -599,8 +513,7 @@ $(function() {
 
 	//edit motion save
 	$('#editMotionSave').click(function() {
-		//alert(editGadgetID);
-		drawMotion(3,editGadgetID);
+		updateMotionResult(CANVAS.selectedChart);
 	});
 	
 	//edit column chart
@@ -629,8 +542,7 @@ $(function() {
 
 	//edit motion save
 	$('#editColumnSave').click(function() {
-		//alert(editGadgetID);
-		drawColumn(3,editGadgetID);
+		updateColumnResult(CANVAS.selectedChart);
 	});
 	
 	//edit geo chart
@@ -649,7 +561,7 @@ $(function() {
 
 	//edit motion save
 	$('#editMapSave').click(function() {
-		// alert(editGadgetID);
+		updateMapResult(CANVAS.selectedChart);
 		
 	});	
 
@@ -674,7 +586,7 @@ $(function() {
    });
 
 	$('#editPieSave').click(function(){
-		drawPie(3,editGadgetID);
+		updatePieResult(CANVAS.selectedChart);
 	});
 	
     //edit combo chart
@@ -689,9 +601,14 @@ $(function() {
 		});	
 	});
 	$('#editComboSave').click(function(){
-		drawCombo(3,editGadgetID);
+		updateComboResult(CANVAS.selectedChart);
 	});
-
+	
+	//make modal active the first table after being hidden;
+	$('.modal').on('hidden', function () {
+		$(this).find('.nav-tabs a:first').tab('show');
+	});
+	
 	//When open add chart modal
 	$('.addChartModal').on('show',function(e) {
 		var target = $(e.target);
@@ -741,16 +658,10 @@ $(function() {
 			$(this).html('');
 			for (var i = 0;i<columns.length;i++) {
 				$(this).append('<input value="'+columns[i]+'" type="checkbox" name="table-column" checked/>'+columns[i]);
-		    }
+			}
 			})
 	})
 });
-$(document).ready(function() {
-	$('.modal').on('hidden', function () {
-		$(this).find('.nav-tabs a:first').tab('show');
-	});
-})
-
 function resetEditFormSidTable(editSID,editTable) {
 	$('.edit-chart .story-list').html('');
 	$('.edit-chart .table-list').html('');
@@ -767,3 +678,4 @@ function resetEditFormSidTable(editSID,editTable) {
 	}
 	$('#'+editSID).change();
 }
+

@@ -14,7 +14,7 @@ exit;
 function GetTablesList() {
     $queryEngine = new QueryEngine();
 
-    echo json_encode($queryEngine->GetTablesList($_POST["sid"]));
+    echo json_encode($queryEngine->GetTablesList($_REQUEST["sid"]));
 }
 
 // Simple case, expects sid and table_name in post
@@ -58,8 +58,8 @@ function GetTableInfo(){
 	
 	
     $queryEngine = new QueryEngine();
-    $sid = $_POST["sid"];
-    $tableName = $_POST["table_name"];
+    $sid = $_REQUEST["sid"];
+    $tableName = $_REQUEST["table_name"];
     
     $result = $queryEngine->GetTablesInfo($sid);
    

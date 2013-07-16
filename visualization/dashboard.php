@@ -21,7 +21,8 @@
 	***********************/
 	$titleNum = $_GET['title'];
 	$where = $_GET['where'];
-	
+	$sid = $_POST['title'];
+	$tname = $_POST['tableName'];
 	
 	$userid = $current_user->user_id;
 	$sqlVis = "SELECT * FROM colfusion_visualization WHERE userid = '" . $userid . "' ";
@@ -135,7 +136,6 @@
 									<li><a onclick="openCanvasManager()">Canvas Manger</a></li>
 									<li><a href="#newCanvas" data-toggle="modal">New</a></li>
 <!-- 								<li><a href="#open" data-toggle="modal">Open</a></li> -->
-									<li><a href="#addStory" data-toggle="modal">Add Story</a></li>
 									<li><a href="#share" data-toggle="modal">Share</a></li>
 									
 								</ul>
@@ -143,7 +143,7 @@
 							<li class="dropdown" id="chart-dropdown">
 								<a href="#visualization" class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									
+									<li><a href="#addStory" data-toggle="modal">Add Story</a></li>
 									<li><a href="#addTable" data-toggle="modal">Add Table</a></li>
 									<li><a href="#addPie" data-toggle="modal">Add Pie Chart</a></li>
 									<li><a href="#addMotion" data-toggle="modal">Add Motion Chart</a></li>
@@ -152,7 +152,7 @@
 									<li><a href="#addMap" data-toggle="modal">Add Map</a></li>
 								</ul>
 							</li>			
-							<li id = "viewChartsNote" class="dropdown" id="view-dropdown" style="display:none">
+							<li id = "viewChartsNote" class="dropdown" id="view-dropdown" >
 								<a href="#view" onclick = "showNote()" class="dropdown-toggle" >Charts Notes</a>
 							</li>
 						</ul>
@@ -217,6 +217,7 @@
 		
 		<div id = "note_section" class = 'round' style="display:none">
 		    <ul class="nav nav-list">
+		    	<li class="nav-header">Charts Note:</li>
 		    </ul>
 		</div>
 		
@@ -1004,4 +1005,10 @@
 		</div> <!-- /container -->
 		
 	</body>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			createNewCanvas("<?php echo $sid ?>"+"  <?php echo $tname ?>");
+			CANVAS.addStory("<?php echo $sid ?>","temp story");
+			})
+	</script>
 </html>

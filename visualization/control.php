@@ -13,6 +13,7 @@ require_once("charts/TableChart.php");
 require_once("charts/ComboChart.php");
 require_once("charts/MotionChart.php");
 require_once("charts/MapChart.php");
+include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 global $current_user;
 
 if($current_user->authenticated != TRUE) {
@@ -21,7 +22,7 @@ if($current_user->authenticated != TRUE) {
         header("Location: " . $my_base_url . $my_pligg_base . "/login.php?return=" . $_SERVER['REQUEST_URI']);
 }
 $action = $_REQUEST['action'];
-if (in_array($action, array('openCanvas','saveCanvas','createNewCanvas', 'addChart','deleteCanvas','shareCanvas','updateChartResult','getStory'))){
+if (in_array($action, array('openCanvas','saveCanvas','createNewCanvas', 'addChart','deleteCanvas','shareCanvas','updateChartResult','getStory','GetTableInfo'))){
     //header('Content-type: text/plain');
     $action();
 }elseif (in_array($action, array(''))){
@@ -222,7 +223,31 @@ function updateChartResult(){
 }
 //use sid to get story name and related tables
 function getStory(){
+    
+    $queryEngine = new QueryEngine();
     $sid = $_REQUEST['sid'];
+    $result = $queryEngine->GetTablesInfo($sid);
+    $rst = array();
+    if($result!=null){
+        $rst['status'] = 'success';
+        $tables = array();
+        foreach($result as $tname => $table){
+            $columns = array();
+            foreach($table as $column){
+                array_push($columns,$column->dname_chosen);
+            }
+            $tables[$tname]['table'] = $tname;
+            $tables[$tname]['columns'] = $columns;
+        }
+        $rst['story']['sid'] = $_REQUEST['sid'];
+        $rst['story']['sname'] = 'story100';
+        $rst['story']['tables'] = $tables;
+    }else{
+        $rst['status'] = 'failed';
+        $rst['message'] = 'Cannot find story '.$sid.'.';
+    }
+
+    echo json_encode($rst);/*
     $rst = array();
     if($sid == '100'){
         $rst['status'] = 'success';
@@ -233,15 +258,14 @@ function getStory(){
         $table2 = array();
         $table3 = array();
         $table4 = array();
-       
         $table1['table'] = 'table1001';
-        $table1['columns'] = array('1001ID','1001Name','1001Date','1001Where');
+        $table1['columns'] = ['1001ID','1001Name','1001Date','1001Where'];
         $table2['table'] = 'table1002';
-        $table2['columns'] = array('1002ID','1002Name','1002Date','1002Where');
+        $table2['columns'] = ['1002ID','1002Name','1002Date','1002Where'];
         $table3['table'] = 'table1003';
-        $table3['columns'] = array('1003ID','1003Name','1003Where');
+        $table3['columns'] = ['1003ID','1003Name','1003Where'];
         $table4['table'] = 'table1004';
-        $table4['columns'] = array('1004ID');
+        $table4['columns'] = ['1004ID'];
         $tables['table1001'] = $table1;
         $tables['table1002'] = $table2;
         $tables['table1003'] = $table3;
@@ -257,13 +281,13 @@ function getStory(){
         $table3 = array();
         $table4 = array();
         $table1['table'] = 'table2001';
-        $table1['columns'] = array('2001ID','2001Name','2001Date','2001Where');
+        $table1['columns'] = ['2001ID','2001Name','2001Date','2001Where'];
         $table2['table'] = 'table2002';
-        $table2['columns'] = array('2002ID','2002Name','2002Date','2002Where');
+        $table2['columns'] = ['2002ID','2002Name','2002Date','2002Where'];
         $table3['table'] = 'table2003';
-        $table3['columns'] = array('2003ID','2003Name','2003Where');
+        $table3['columns'] = ['2003ID','2003Name','2003Where'];
         $table4['table'] = 'table2004';
-        $table4['columns'] = array('2004ID');
+        $table4['columns'] = ['2004ID'];
         $tables['table2001'] = $table1;
         $tables['table2002'] = $table2;
         $tables['table2003'] = $table3;
@@ -278,13 +302,13 @@ function getStory(){
         $table3 = array();
         $table4 = array();
         $table1['table'] = 'table3001';
-        $table1['columns'] = array('3001ID','3001Name','3001Date','3001Where');
+        $table1['columns'] = ['3001ID','3001Name','3001Date','3001Where'];
         $table2['table'] = 'table3002';
-        $table2['columns'] = array('3002ID','3002Name','3002Date','3002Where');
+        $table2['columns'] = ['3002ID','3002Name','3002Date','3002Where'];
         $table3['table'] = 'table3003';
-        $table3['columns'] = array('3003ID','3003Name','3003Where');
+        $table3['columns'] = ['3003ID','3003Name','3003Where'];
         $table4['table'] = 'table3004';
-        $table4['columns'] = array('3004ID');
+        $table4['columns'] = ['3004ID'];
         $tables['table3001'] = $table1;
         $tables['table3002'] = $table2;
         $tables['table3003'] = $table3;
@@ -294,5 +318,83 @@ function getStory(){
         $rst['status'] = 'failed';
         $rst['message'] = 'Cannot find story '.$sid.'.';
     }
-    echo json_encode($rst);
+    echo json_encode($rst);*/
+}
+function GetTablesList() {
+    $queryEngine = new QueryEngine();
+    echo json_encode($queryEngine->GetTablesList($_REQUEST["sid"]));
+}
+function GetTableDataBySidAndName() {
+    $queryEngine = new QueryEngine();
+
+    $sid = $_POST["sid"];
+    $table_name = $_POST["table_name"];
+    $perPage = $_POST["perPage"];
+    $pageNo = $_POST["pageNo"];
+
+    $result = $queryEngine->GetTableDataBySidAndName($sid, $table_name, $perPage, $pageNo);
+
+    $columns = NULL;
+
+    foreach ($result as $r) {
+        $json_array["data"][] = $r;
+
+        if ($columns === NULL) {
+            if (is_array($r))
+                $columns = implode(",", array_keys($r));
+            else
+                $columns = implode(",", array_keys(get_object_vars($r)));
+        }
+    }
+
+    $totalTuple = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, $table_name);
+    $totalPage = ceil($totalTuple / $perPage);
+
+    $json_array["Control"]["perPage"] = $perPage;
+    $json_array["Control"]["totalPage"] = $totalPage;
+    $json_array["Control"]["pageNo"] = $pageNo;
+    $json_array["Control"]["cols"] = $columns;
+
+    echo json_encode($json_array);
+}
+function GetTableInfo(){
+	
+	
+    $queryEngine = new QueryEngine();
+    $sid = $_REQUEST["sid"];
+    $tableName = $_REQUEST["table_name"];
+    
+    $result = $queryEngine->GetTablesInfo($sid);
+   
+    echo json_encode($result[$tableName]);
+}
+function GetTablesInfo(){
+    $queryEngine = new QueryEngine();
+    $sid = $_POST["sid"];
+    
+    $result = $queryEngine->GetTablesInfo($sid);
+    echo json_encode($result);
+}
+function AddRelationship() {
+	global $current_user;
+
+	$name = $_POST["name"];
+	$description = $_POST["description"];
+	$from = $_POST["from"];
+	$to = $_POST["to"];
+
+	$confidence = $_POST["confidence"];
+	$comment = $_POST["comment"];
+
+	$queryEngine = new QueryEngine();
+
+	echo json_encode($queryEngine->AddRelationship($current_user->user_id, $name, $description, $from, $to, $confidence, $comment));
+}
+function CheckDataMatching() {
+	$from = $_POST["from"];
+	$to = $_POST["to"];
+	
+	$queryEngine = new QueryEngine();
+	
+	echo json_encode($queryEngine->CheckDataMatching($from, $to));
 }

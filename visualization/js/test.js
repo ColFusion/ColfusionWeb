@@ -40,9 +40,11 @@ function saveTest() {
         }
         })
 }
-function createNewCanvas() {
+function createNewCanvas(_name) {
     $("#file_manager").hide();
-    var _name = $("#createCanvasName").val();
+    if (_name==null) {
+        _name = $("#createCanvasName").val();
+    }
     $.ajax({
         type: 'POST',
 		//url: "getPie.php",
@@ -187,10 +189,7 @@ function closeCanvas(){
 }
 function openCanvasManager() {
     $('#file-dropdown').hide();
-    $('#viewChartsNote').hide();
-    $("#note_section").css({
-		marginLeft:"-100%"
-	});
+    $("#note_section").hide();
     showHint("");
     $('#brand').text('Col*Fusion Canvas Manager');
     closeCanvas();
