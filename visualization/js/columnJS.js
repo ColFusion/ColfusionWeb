@@ -102,26 +102,41 @@ $(document).ready(function (){
 		})
 	})
 function columnFormToDatainfo() {
-	var sid;
-	var where;	
+	var sid = $("#addColumnSid").val();
+	var where;
+	var table = $("#addColumnTable").val();
 	var columnCat = $('#columnCat').val();
 	var columnAgg = $('#columnAgg').val();
 	var columnAggType = $('input:radio[name="columnAggType"]:checked').val();
-	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,where);
+	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where);
 }
-function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,where) {
+function editColumnFormToDatainfo() {
+	var sid = $("#editColumnSid").val(); 
+	var table = $("#editColumnTable").val();
+	var where;	
+	var columnCat = $('#columnCatEdit').val();
+	var columnAgg = $('#columnAggEdit').val();
+	var columnAggType = $('input:radio[name="columnAggTypeEdit"]:checked').val();
+	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where);
+}
+function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where) {
 	this.columnCat = columnCat;
 	this.columnAgg = columnAgg;
 	this.columnAggType = columnAggType;
 	this.sid = sid;
+	this.table = table;
 	this.where = where;
 }
 function columnDataInfoToForm(columnDatainfo) {
 	var sid = columnDatainfo.sid;
 	var where = columnDatainfo.where;
+	var table = columnDatainfo.table;
 	var columnCat = columnDatainfo.columnCat;
 	var columnAgg = columnDatainfo.columnAgg;
 	var columnAggType = columnDatainfo.columnAggType;
+	$('#editColumnSid').val(sid);
+	$('#editColumnTable').val(table);
+	$('#editColumnTable').change();
 	$('#columnCatEdit').val(columnCat);
 	$('#columnAggEdit').val(columnAgg);
 	$('input:radio[name="columnAggTypeEdit"][value="'+columnAggType+'"]').attr('checked',true);
@@ -157,19 +172,14 @@ function createNewColumnGadget() {
 	$(".gadget-close").click(function() {	
 		$(this).parent().parent().remove();
 	})
-	
-
 	$('#'+gadgetID+' .edit-column').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
+		resetEditFormSidTable("editColumnSid",'editColumnTable');
 		columnDataInfoToForm(CHARTS[cid]['datainfo']);
-		$('#editColumn').modal('show')
+		$('#editColumn').modal('show');
+		CANVAS.selectedChart = cid;
        });
-	//edit motion save
-	$('#editColumnSave').click(function() {
-		//alert(editGadgetID);
-		drawColumn(3,editGadgetID);
-	});
 	$("div[name='columnDivs']").resize(function() {
 		var cid = $(this).find('.chartID').val();
 		var gadgetID = $(this).attr('id');
@@ -226,7 +236,7 @@ function addColumnChart() {
 		success: function(JSON_Response){
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			var queryResult = JSON_Response['queryResult'];
-			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'])
+			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"columnResult" + gadgetID)
 			CHARTS[JSON_Response['cid']].chartData = drawColumn(queryResult,'columnResult'+gadgetID);
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#columnResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
@@ -240,7 +250,31 @@ function loadColumnChart(sourceData) {
 	var queryResult = sourceData['queryResult'];
 	drawColumn(queryResult,'columnResult'+gadgetID);
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
-	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'])
+	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"columnResult" + gadgetID)
 	CHARTS[sourceData['cid']].chartData = drawColumn(queryResult,'columnResult'+gadgetID);
 
+}
+//update the chart
+function updateColumnResult(cid) {
+	var chart = CHARTS[cid];
+	var gadgetID = CHARTS[cid].gadgetID;
+	var datainfo = editColumnFormToDatainfo();
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			vid: CANVAS.vid,
+			action: 'updateChartResult',
+			cid: cid,
+			datainfo: datainfo,
+			},
+		success: function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			CHARTS[cid].datainfo = datainfo;
+			CHARTS[cid].queryResult = queryResult;
+			drawColumn(queryResult,gadgetID);
+			$('#editColumn').modal('hide');
+		}
+		})
 }

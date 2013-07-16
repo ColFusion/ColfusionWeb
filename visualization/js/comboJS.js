@@ -134,8 +134,9 @@ $(document).ready(function (){
 		})
 	})
 function comboFormToDatainfo() {
-	var sid;
-	var where;	
+	var sid = $("#addComboSid").val();
+	var where;
+	var table = $("#addComboTable").val();
 	var comboColumnCat = "";
 	var comboColumnAgg = "";
 	var comboAggType = new Array();
@@ -144,18 +145,35 @@ function comboFormToDatainfo() {
 		});
 	comboColumnCat = $('#comboColumnCat').val();
 	comboColumnAgg = $('#comboColumnAgg').val();
-	return new ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,where);
+	return new ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,table,where);
 }
-function ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,where){
+function editComboFormToDatainfo() {
+	var sid = $("#editComboSid").val(); 
+	var table = $("#editComboTable").val();
+	var where;
+	var comboColumnCat = "";
+	var comboColumnAgg = "";
+	var comboAggType = new Array();
+	$('input:checkbox[name="comboAggTypeEdit"]:checked').each(function(){
+		comboAggType.push($(this).val());
+		});
+	comboColumnCat = $('#comboColumnCatEdit').val();
+	comboColumnAgg = $('#comboColumnAggEdit').val();
+	return new ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,table,where);
+}
+
+function ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,table,where){
 	this.comboColumnCat = comboColumnCat;
 	this.comboColumnAgg = comboColumnAgg;
 	this.comboAggType = comboAggType;
 	this.sid = sid;
+	this.table = table;
 	this.where = where;
 }
 function comboDataInfoToForm(comboDatainfo) {
 	clearComboEditForm();
 	var sid = comboDatainfo.sid;
+	var table = comboDatainfo.table;
 	var where = comboDatainfo.where;
 	var comboColumnCat = comboDatainfo.comboColumnCat;
 	var comboColumnAgg = comboDatainfo.comboColumnAgg;
@@ -253,16 +271,14 @@ function createNewComboGadget(){
 	$(".gadget-close").click(function() {   
         $(this).parent().parent().remove();
 	})
-	$('.edit-combo').click(function(){
+	$('#'+gadgetID+' .edit-combo').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
 		comboDataInfoToForm(CHARTS[cid]['datainfo']);
-		$('#editCombo').modal('show')
+		$('#editCombo').modal('show');
+		CANVAS.selectedChart = cid;
 	});
 
-	$('#editComboSave').click(function(){
-		drawCombo(3,editGadgetID);
-	});
 	return gadgetID;
 }
 //create new combo chart
@@ -286,7 +302,7 @@ function addComboChart() {
 		success: function(JSON_Response){
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			var queryResult = JSON_Response['queryResult'];
-			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'])
+			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"comboResult" + gadgetID)
 
 			CHARTS[JSON_Response['cid']].chartData = drawCombo(queryResult,'comboResult'+gadgetID);
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
@@ -299,8 +315,32 @@ function addComboChart() {
 function loadComboChart(sourceData) {
 	var gadgetID = createNewComboGadget();
 	var queryResult = sourceData['queryResult'];
-	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'])
+	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"comboResult" + gadgetID)
 	CHARTS[sourceData['cid']].chartData =  drawCombo(queryResult,'comboResult'+ gadgetID);
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
 	$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+}
+//Update the chart
+function updateComboResult(cid) {
+	var chart = CHARTS[cid];
+	var gadgetID = CHARTS[cid].gadgetID;
+	var datainfo = editComboFormToDatainfo();
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			vid: CANVAS.vid,
+			action: 'updateChartResult',
+			cid: cid,
+			datainfo: datainfo,
+			},
+		success: function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			CHARTS[cid].datainfo = datainfo;
+			CHARTS[cid].queryResult = queryResult;
+			drawCombo(queryResult,gadgetID);
+			$('#editCombo').modal('hide');
+		}
+		})
 }

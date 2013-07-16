@@ -149,6 +149,7 @@ function changePage(page,vid){
 function tableFormToDatainfo() {
 	var sid;
 	var where;
+	var table;
 	var perPage = $('input:radio[name="page"]:checked').val(); // number of turples per page
 	var color = $('input:radio[name="color"]:checked').val(); // color of the new table		
 	var currentPage = $('input:hidden[name="currentPage"]').val();
@@ -156,26 +157,42 @@ function tableFormToDatainfo() {
 	$.each($("input[name='tableColumns']:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
 	});	
-	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,where);
+	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where);
 }
-function TableDatainfo(tableColumns,perPage,color,currentPage,sid,where) {
+function editTableFormToDatainfo() {
+	var sid;
+	var where;
+	var table;
+	var perPage = $('input:radio[name="pageEdit"]:checked').val(); // number of turples per page
+	var color = $('input:radio[name="colorEdit"]:checked').val(); // color of the new table		
+	var currentPage = $('input:hidden[name="currentPageEdit"]').val();
+	var tableColumns = new Array();
+	$.each($("input[name='tableColumnsEdit']:checked"), function(){
+		tableColumns.push($(this).val()); // columns to show
+	});	
+	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where);
+}
+function TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where) {
 	this.tableColumns = tableColumns;
 	this.perPage = perPage;
 	this.color = color;
 	this.currentPage = currentPage;
 	this.sid = sid;
+	this.table = table;
 	this.where = where;
 }
 function tableDataInfoToForm(tableDatainfo) {
 	clearTableEditForm();
 	var sid = tableDatainfo.sid;
 	var where = tableDatainfo.where;
+	var table = tableDatainfo.table;
 	var tableColumns = tableDatainfo.tableColumns;
 	var perPage = tableDatainfo.perPage;
 	var currentPage = tableDatainfo.currentPage;
 	var color = tableDatainfo.color;
 	$('input:radio[name="pageEdit"][value="'+perPage+'"]').prop('checked','checked');
 	$('input:radio[name="colorEdit"][value="'+color+'"]').prop('checked','checked');
+	$('input:hidden[name="currentPageEdit"]').val(currentPage);
 	for (var i = 0;i<tableColumns.length;i++) {
 		var value = tableColumns[i];
 		var obj = $('input:checkbox[name="tableColumnsEdit"][value="'+value+'"]');
@@ -250,7 +267,8 @@ function createNewTableGadget(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
 		tableDataInfoToForm(CHARTS[cid]['datainfo']);
-		$('#editTable').modal('show')
+		$('#editTable').modal('show');
+		CANVAS.selectedChart = cid;
 	});
 	$("#"+gadgetID).resize(function() {
 		var cid = $(this).find('.chartID').val();
@@ -258,10 +276,6 @@ function createNewTableGadget(){
 		var chart = CHARTS[cid];
 		refreshTable(chart.chartData,chart.queryResult,"pieResult"+gadgetID);
 	})
-	$('#editTableSave').click(function() {
-		loadTableData(3,editGadgetID);
-	});	
-	
 	var dropdown = "<li class='view' id='view" + gadgetID + "'><a href='#' data-toggle='modal'>'table' "+gadgetID+"</a></li>";
 	$("#chartview").append(dropdown);
 	return gadgetID;
@@ -361,7 +375,7 @@ function addTableChart() {
 		success: function(JSON_Response){
 		    JSON_Response = jQuery.parseJSON(JSON_Response);
 		    var queryResult = JSON_Response['queryResult'];
-		    CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'])
+		    CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"tableResult" + gadgetID)
 		    gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 		    $("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);
 		    initPageSelect(gadgetID);
@@ -375,8 +389,31 @@ function loadTableChart(sourceData) {
 	var gadgetID = createNewTableGadget();
 	var queryResult = sourceData['queryResult'];
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
-	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'])
+	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"tableResult" + gadgetID)
 	$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);
 	CHARTS[sourceData['cid']].chartData = drawTable(queryResult,'tableResult'+gadgetID);
-		
+}
+//update the chart
+function updateTableResult(cid) {
+	var chart = CHARTS[cid];
+	var gadgetID = CHARTS[cid].gadgetID;
+	var datainfo = editTableFormToDatainfo();
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			vid: CANVAS.vid,
+			action: 'updateChartResult',
+			cid: cid,
+			datainfo: datainfo,
+			},
+		success: function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			CHARTS[cid].datainfo = datainfo;
+			CHARTS[cid].queryResult = queryResult;
+			drawTable(queryResult,gadgetID);
+			$('#editTable').modal('hide');
+		}
+		})
 }

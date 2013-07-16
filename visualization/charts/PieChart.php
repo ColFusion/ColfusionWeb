@@ -14,6 +14,8 @@ class PieChart extends Chart {
         }else{
             $this->datainfo = $_datainfo;
         }
-        return '{"string":"aaa","number":"bbb","content":[{"Category":" 2.0","AggValue":"1"},{"Category":" 3.0","AggValue":"2"},{"Category":" 4.0","AggValue":"3"}]}';
+        $queryResult = json_decode('{"string":"aaa","number":"bbb","content":[{"Category":" 2.0","AggValue":"1"},{"Category":" 3.0","AggValue":"2"},{"Category":" 4.0","AggValue":"3"}]}');
+        $this->queryResult = $queryResult;
+        return $queryResult;
     }
 }

@@ -14,7 +14,8 @@ class ColumnChart extends Chart{
         }else{
             $this->datainfo = $_datainfo;
         }
-        return '{"cat":"aaa","agg":"bbb","content":[["Year", "Sales"],["2004",15],["2005",12],["2006",16],["2007",18]]}';
-      
+        $queryResult = json_decode('{"cat":"aaa","agg":"bbb","content":[["Year", "Sales"],["2004",15],["2005",12],["2006",16],["2007",18]]}');
+        $this->queryResult = $queryResult;
+        return $queryResult;
     }
 }

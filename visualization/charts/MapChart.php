@@ -14,7 +14,8 @@ class MapChart extends Chart {
         }else{
             $this->datainfo = $_datainfo;
         }
-      return '[{"la":"37.4232","long":"-122.0853","ID":"1","dvalue":"3"},{"la":"37.42234","long":"-122.0134","ID":"2","dvalue":"5"},{"la":"37.4452","long":"-122.0753","ID":"3","dvalue":"4"}]';
-        
+        $queryResult = json_decode('[{"la":"37.4232","long":"-122.0853","ID":"1","dvalue":"3"},{"la":"37.42234","long":"-122.0134","ID":"2","dvalue":"5"},{"la":"37.4452","long":"-122.0753","ID":"3","dvalue":"4"}]');
+        $this->queryResult = $queryResult;
+        return $queryResult; 
     }
 }

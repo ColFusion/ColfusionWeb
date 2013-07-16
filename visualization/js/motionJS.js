@@ -145,6 +145,7 @@ $(document).ready(function (){
 	})
 function motionFormToDatainfo() {
 	var sid;
+	var table;
 	var where;
 	var otherColumns = new Array();
 	var firstColumn = $('#motionFirstColumn').val();
@@ -155,18 +156,35 @@ function motionFormToDatainfo() {
 		otherColumns.push($(this).val());
 		otherColCount++;
 	});
-	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,where);
+	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where);
 }
-function MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,where) {
+function editMotionFormToDatainfo() {
+	var sid;
+	var table;
+	var where;
+	var otherColumns = new Array();
+	var firstColumn = $('#motionFirstColumnEdit').val();
+	var dateColumn = $('#motionDateEdit').val();
+	var otherColCount = 0;
+	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
+	$.each($("input[name='motionOtherColumnEdit[]']:checked"), function(){
+		otherColumns.push($(this).val());
+		otherColCount++;
+	});
+	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where);
+}
+function MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where) {
 	this.firstColumn = firstColumn;
 	this.dateColumn = dateColumn;
 	this.otherColumns = otherColumns;
 	this.sid = sid;
+	this.table = table;
 	this.where = where;
 }
 function motionDataInfoToForm(motionDatainfo) {
 	clearMotionEditForm();
 	var sid = motionDatainfo.sid;
+	var table = motionDatainfo.table;
 	var where = motionDatainfo.where;
 	var firstColumn = motionDatainfo.firstColumn;
 	var dateColumn = motionDatainfo.dateColumn;
@@ -243,6 +261,7 @@ function createNewMotionGadget() {
 		var cid = $("#"+editGadgetID+" .chartID").val();
 		motionDataInfoToForm(CHARTS[cid]['datainfo']);
 		$('#editMotion').modal('show')
+		CANVAS.selectedChart = cid;
 	});
 	return gadgetID;
 
@@ -282,7 +301,7 @@ function addMotionChart() {
 		success: function(JSON_Response){
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			var queryResult = JSON_Response['queryResult'];
-			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'])
+			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"motionResult" + gadgetID)
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 			CHARTS[JSON_Response['cid']].chartData = drawMotion(queryResult,'motionResult'+gadgetID);
@@ -295,8 +314,32 @@ function loadMotionChart(sourceData) {
 	var gadgetID = createNewMotionGadget();
 	var queryResult = sourceData['queryResult'];
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
-	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'])
+	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"motionResult" + gadgetID)
 	$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 	CHARTS[sourceData['cid']].chartData = drawMotion(queryResult,'motionResult'+gadgetID);
 		
+}
+//update the chart
+function updateMotionResult(cid) {
+	var chart = CHARTS[cid];
+	var gadgetID = CHARTS[cid].gadgetID;
+	var datainfo = editMotionFormToDatainfo();
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			vid: CANVAS.vid,
+			action: 'updateChartResult',
+			cid: cid,
+			datainfo: datainfo,
+			},
+		success: function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			CHARTS[cid].datainfo = datainfo;
+			CHARTS[cid].queryResult = queryResult;
+			drawMotion(queryResult,gadgetID);
+			$('#editMotion').modal('hide');
+		}
+		})
 }

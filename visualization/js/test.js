@@ -41,7 +41,7 @@ function saveTest() {
         })
 }
 function createNewCanvas() {
-	$("#file_manager").hide();
+    $("#file_manager").hide();
     var _name = $("#createCanvasName").val();
     $.ajax({
         type: 'POST',
@@ -69,6 +69,7 @@ function createNewCanvas() {
             $('#chart-dropdown').show();
             $('#view-dropdown').show();
             $('#brand').text(JSONResponse['name']);
+            CANVAS = new Canvas(JSONResponse['vid'],JSONResponse['name'],JSONResponse['privilege'],JSONResponse['authorization'],JSONResponse['mdate'],JSONResponse['cdate'],JSONResponse['note']);
         }
         
     })

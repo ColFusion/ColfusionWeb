@@ -142,6 +142,7 @@
 							<li class="dropdown" id="chart-dropdown">
 								<a href="#visualization" class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
 								<ul class="dropdown-menu">
+									<li><a href="#addStory" data-toggle="modal">Add Story</a></li>
 									<li><a href="#addTable" data-toggle="modal">Add Table</a></li>
 									<li><a href="#addPie" data-toggle="modal">Add Pie Chart</a></li>
 									<li><a href="#addMotion" data-toggle="modal">Add Motion Chart</a></li>
@@ -330,15 +331,42 @@
 				<button class="btn btn-primary" id="addTableSave" onclick="loadTableData(1,0);">Save changes</button>
 			</div>
 		</div>-->
-		
+		<!-- Add Story Modal -->
+		<div id="addStory" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="addStoryLable" aria-hidden="true">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+				<h3 id="motionAddModalLabel">Add a Story to the Canvas</h3>
+			</div>
+			<div class="modal-body">
+				<div class="seachArea"> 
+				     <label class = "tabContentTitle" style = "float:left">Search By SID:</label>
+				     <input id = "search-sid" type="text"  name="searchText" style = "width:auto"></input>
+				</div>
+				<div id='story-search-result'></div>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+				<button class="btn btn-primary" id="addStory-button" onclick="addStory()">Add Story</button>
+			</div>
+		</div>
 		  
 		<!-- Add Table Modal -->
-		<div id="addTable" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
+		<div id="addTable" class="modal hide fade addChartModal" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="tableAddModalLabel">Add Table</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='add-chart story-list' id="addTableSid">
+						
+					</select>
+					Table:
+					<select class='add-chart table-list' id="addTableTable">
+						
+					</select>
+				</div>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#columns" data-toggle="tab">Columns</a></li>
 					<li><a href="#page" data-toggle="tab">Pages</a></li>
@@ -349,7 +377,7 @@
 						<label class="tabContentTitle">Select from following columns</label>
 						<div class="columnSelection">
 							<?php foreach($columns as $name) { ?>
-							<label class="checkbox">
+							<label class="checkbox table-column">
 								<input value= <?php echo $name?> type="checkbox" name="tableColumns" checked /> <?php echo $name; ?>
 							</label>
 							<?php } ?>
@@ -391,12 +419,22 @@
 
 
 		<!-- Edit Table Modal -->
-		<div id="editTable" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableEditModalLabel" aria-hidden="true">
+		<div id="editTable" class="modal hide fade editChartModal" tabindex="-1" role="dialog" aria-labelledby="tableEditModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="tableEditModalLabel">Edit Table</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='edit-chart story-list' id="editTableSid" disabled>
+						
+					</select>
+					Table:
+					<select class='edit-chart table-list' id="editTableTable" disabled>
+						
+					</select>
+				</div>
 				<ul class="nav nav-tabs">
 					<li id="columnEditTab" class="active"><a href="#columnsEdit" data-toggle="tab">Columns</a></li>
 					<li id="pageEditTab"><a href="#pageEdit" data-toggle="tab">Pages</a></li>
@@ -407,7 +445,7 @@
 						<label class="tabContentTitle">Select from following columns</label>
 						<div class="columnSelection">
 							<?php foreach($columns as $name) { ?>
-							<label class="checkbox">
+							<label class="checkbox table-column">
 								<input type="checkbox" name="tableColumnsEdit" value="<?php echo $name?>" checked /> <?php echo $name; ?>
 							</label>
 							<?php } ?>
@@ -419,7 +457,7 @@
 						<label class="radio"><input type="radio" name="pageEdit" id="optionsEditRadios2" value="50" checked> 50 per page</label>
 						<label class="radio"><input type="radio" name="pageEdit" id="optionsEditRadios3" value="100"> 100 per page</label>			
 					</div>
-					<input type="hidden" name="currentPage" value="1" />
+					<input type="hidden" name="currentPageEdit" value="1" />
 					<div class="tab-pane" id="styleEdit">
 						<label class="tabContentTitle">Table color-themes</label>
 						<label class="radio">
@@ -438,7 +476,7 @@
 							<input type="radio" name="colorEdit" id="themeEditRadios4" value="orange">
 							Orange Theme
 							<img src="img/tableThemes/orangeTheme.png" alt="Orange Theme" />
-						</label><br />
+						</label><br/>
 					</div>
 				</div>
 			</div>
@@ -449,27 +487,37 @@
 		</div>	
 
 		<!-- Add Motion Chart Modal-->
-		<div id="addMotion" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="motionAddModalLabel" aria-hidden="true">
+		<div id="addMotion" class="modal hide fade addChartModal" tabindex="-1" role="dialog" aria-labelledby="motionAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="motionAddModalLabel">Add Motion Chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='add-chart story-list' id="addMotionSid">
+						
+					</select>
+					Table:
+					<select class='add-chart table-list' id="addMotionTable">
+						
+					</select>
+				</div>
 				<label class="tabContentTitle">Select one column as CATEGORY (string)</label>
-				<select id="motionFirstColumn">
+				<select id="motionFirstColumn" class="table-column">
 					<?php foreach($columns as $col_name) { ?>
 					<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select one column as DATE (year)</label>
-				<select id="motionDate">
+				<select id="motionDate" class="table-column">
 					<?php foreach($columns as $date) { ?>
 					<option value=<?php echo $date?>><?php echo $date; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select at least one from the following columns (number)</label>
 					<?php foreach($columns as $col_name) { ?>
-					<label class="checkbox">
+					<label class="checkbox table-column">
 						<input type="checkbox" name="motionOtherColumn[]" value=<?php echo $col_name?>> <?php echo $col_name; ?>
 					</label>
 					<?php } ?>
@@ -483,27 +531,37 @@
 		
 
 		<!-- Edit Motion Chart Modal-->
-		<div id="editMotion" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="motionEditModalLabel" aria-hidden="true">
+		<div id="editMotion" class="modal hide fade editChartModal" tabindex="-1" role="dialog" aria-labelledby="motionEditModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="motionEditModalLabel">Edit Motion Chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='edit-chart story-list' id="editMotionSid" disabled>
+						
+					</select>
+					Table:
+					<select class='edit-chart table-list' id="editMotionTable" disabled>
+						
+					</select>
+				</div>
 				<label class="tabContentTitle">Select one column as CATEGORY</label>
-				<select id="motionFirstColumnEdit">
+				<select id="motionFirstColumnEdit" class="table-column">
 					<?php foreach($columns as $col_name) { ?>
 					<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select one column as DATE</label>
-				<select id="motionDateEdit">
+				<select id="motionDateEdit" class="table-column">
 					<?php foreach($columns as $date) { ?>
 					<option value=<?php echo $date?>><?php echo $date; ?></option>
 					<?php } ?>
 				</select>
 				<label class="tabContentTitle">Select at least one from the following columns</label>
 					<?php foreach($columns as $col_name) { ?>
-					<label class="checkbox">
+					<label class="checkbox table-column">
 						<input type="checkbox" name="motionOtherColumnEdit[]" value=<?php echo $col_name?>> <?php echo $col_name; ?>
 					</label>
 					<?php } ?>			
@@ -517,21 +575,31 @@
 
 		
 		<!-- Add Map Modal-->
-		<div id="addMap" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mapAddModalLabel" aria-hidden="true">
+		<div id="addMap" class="modal hide fade addChartModal" tabindex="-1" role="dialog" aria-labelledby="mapAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="mapAddModalLabel">Add Map</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='add-chart story-list' id="addMapSid">
+						
+					</select>
+					Table:
+					<select class='add-chart table-list' id="addMapTable">
+						
+					</select>
+				</div>
 				<label class="tabContentTitle">Location</label>
 				<label>Latitude:</label>
-				<select id="latitude">
+				<select id="latitude" class="table-column">
 					<?php foreach($columns as $name) { ?>
 						<option value=<?php echo $name?>><?php echo $name; ?></option>
 					<?php } ?>
 				</select><br>
 				<label>Longitude:</label>
-				<select id="longitude">
+				<select id="longitude" class="table-column">
 					<?php foreach($columns as $name) { ?>
 						<option value=<?php echo $name?>><?php echo $name; ?></option>
 					<?php } ?>
@@ -550,21 +618,31 @@
 		</div>
 
 		<!-- Edit Map Modal-->
-		<div id="editMap" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="mapAddModalLabel" aria-hidden="true">
+		<div id="editMap" class="modal hide fade editChartModal" tabindex="-1" role="dialog" aria-labelledby="mapAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="mapAddModalLabel">Edit geo chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='edit-chart story-list' id="editMapSid" disabled>
+						
+					</select>
+					Table:
+					<select class='edit-chart table-list' id="editMapTable" disabled>
+						
+					</select>
+				</div>
 				<label class="tabContentTitle">Location</label>
 				<label>Latitude:</label>
-				<select id="latitudeEdit">
+				<select id="latitudeEdit" class="table-column">
 					<?php foreach($columns as $name) { ?>
 						<option value=<?php echo $name?>><?php echo $name; ?></option>
 					<?php } ?>
 				</select><br>
 				<label>Longitude:</label>
-				<select id="longitudeEdit">
+				<select id="longitudeEdit" class="table-column">
 					<?php foreach($columns as $name) { ?>
 						<option value=<?php echo $name?>><?php echo $name; ?></option>
 					<?php } ?>
@@ -583,12 +661,22 @@
 		</div>
 		
 		<!-- Add Pie Chart Modal -->
-		<div id="addPie" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="pieAddModalLabel" aria-hidden="true">
+		<div id="addPie" class="modal hide fade addChartModal" tabindex="-1" role="dialog" aria-labelledby="pieAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="myPieLabel">Add Pie Chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='add-chart story-list' id="addPieSid">
+						
+					</select>
+					Table:
+					<select class='add-chart table-list' id="addPieTable">
+						
+					</select>
+				</div>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#pcolumn" data-toggle="tab">Columns</a></li>		  
 					<li><a href="#ptype" data-toggle="tab">Aggregation Type</a></li>
@@ -596,13 +684,13 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="pcolumn">
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
-						<select id="pieColumnCat">
+						<select id="pieColumnCat" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
-						<select id="pieColumnAgg">
+						<select id="pieColumnAgg" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
@@ -626,12 +714,22 @@
 
 
         <!-- Edit Pie Chart Modal -->
-		<div id="editPie" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="pieEditModalLabel" aria-hidden="true">
+		<div id="editPie" class="modal hide fade editChartModal" tabindex="-1" role="dialog" aria-labelledby="pieEditModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="myPieLabel">Edit Pie Chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='edit-chart story-list' id="editPieSid" disabled>
+						
+					</select>
+					Table:
+					<select class='edit-chart table-list' id="editPieTable" disabled>
+						
+					</select>
+				</div>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#pcolumnEdit" data-toggle="tab">Column</a></li>		  
 					<li><a href="#ptypeEdit" data-toggle="tab">Aggregation</a></li>
@@ -639,13 +737,13 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="pcolumnEdit">
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
-						<select id="pieColumnCatEdit">
+						<select id="pieColumnCatEdit" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
-						<select id="pieColumnAggEdit">
+						<select id="pieColumnAggEdit" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
@@ -669,12 +767,22 @@
 
 
         <!--Add Column Chart Modal -->
-		<div id="addColumn" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="columnAddModalLabel" aria-hidden="true">
+		<div id="addColumn" class="modal hide fade addChartModal" tabindex="-1" role="dialog" aria-labelledby="columnAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="columnAddModalLabel">Add Column Chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='add-chart story-list' id="addColumnSid">
+						
+					</select>
+					Table:
+					<select class='add-chart table-list' id="addColumnTable">
+						
+					</select>
+				</div>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#column" data-toggle="tab">Columns</a></li>
 					<li><a href="#ctype" data-toggle="tab">Aggregation</a></li>
@@ -682,13 +790,13 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="column">
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
-						<select id="columnCat">
+						<select id="columnCat" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
-						<select id="columnAgg">
+						<select id="columnAgg" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
@@ -711,12 +819,22 @@
 		</div>
 
 		<!-- Edit Column Chart Modal-->
-		<div id="editColumn" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="columnEditModalLabel" aria-hidden="true">
+		<div id="editColumn" class="modal hide fade editChartModal" tabindex="-1" role="dialog" aria-labelledby="columnEditModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="columnEditModalLabel">Edit Column Chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='edit-chart story-list' id="editColumnSid" disabled>
+						
+					</select>
+					Table:
+					<select class='edit-chart table-list' id="editColumnTable" disabled>
+						
+					</select>
+				</div>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#columnEdit" data-toggle="tab">Column</a></li>
 					<li><a href="#ctypeEdit" data-toggle="tab">Aggregation</a></li>
@@ -724,13 +842,13 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="columnEdit">
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
-						<select id="columnCatEdit">
+						<select id="columnCatEdit" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
-						<select id="columnAggEdit">
+						<select id="columnAggEdit" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
@@ -754,12 +872,22 @@
 
 
 		<!-- Add Combo Chart Modal-->
-		<div id="addCombo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="comboAddModalLabel" aria-hidden="true">
+		<div id="addCombo" class="modal hide fade addChartModal" tabindex="-1" role="dialog" aria-labelledby="comboAddModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="comboAddModalLabel">Add Combo Chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='add-chart story-list' id="addComboSid">
+						
+					</select>
+					Table:
+					<select class='add-chart table-list' id="addComboTable">
+						
+					</select>
+				</div>
 				<ul class="nav nav-tabs">
 					<li class="active"><a href="#combocolumn" data-toggle="tab">Columns</a></li>
 					<li><a href="#combotype" data-toggle="tab">Aggregation</a></li>
@@ -767,13 +895,13 @@
 				<div class="tab-content">
 					<div class="tab-pane active" id="combocolumn">
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
-						<select id="comboColumnCat">
+						<select id="comboColumnCat" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
-						<select id="comboColumnAgg">
+						<select id="comboColumnAgg" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value="<?php echo $col_name?>"><?php echo $col_name; ?></option>
 						<?php } ?>
@@ -798,26 +926,48 @@
 
 
 		<!-- Edit Combo Chart Modal-->
-		<div id="editCombo" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="comboEditModalLabel" aria-hidden="true">
+		<div id="editCombo" class="modal hide fade editChartModal" tabindex="-1" role="dialog" aria-labelledby="comboEditModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
 				<h3 id="comboEditModalLabel">Edit Combo Chart</h3>
 			</div>
 			<div class="modal-body">
+				<div>
+					Story: 
+					<select class='edit-chart story-list' id="editComboSid" disabled>
+						
+					</select>
+					Table:
+					<select class='edit-chart table-list' id="editComboTable" disabled>
+						
+					</select>
+				</div>
+				<ul class="nav nav-tabs">
+					<li class="active"><a href="#combocolumnEdit" data-toggle="tab">Columns</a></li>
+					<li><a href="#combotypeEdit" data-toggle="tab">Aggregation</a></li>
+				</ul>	
 				<div class="tab-content">
 					<div class="tab-pane active" id="combocolumnEdit">
 						<label class="tabContentTitle">Select one column as CATEGORY</label>
-						<select id="comboColumnCatEdit">
+						<select id="comboColumnCatEdit" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
 						<label class="tabContentTitle">Select one column for aggregation</label>
-						<select id="comboColumnAggEdit">
+						<select id="comboColumnAggEdit" class="table-column">
 						<?php foreach($columns as $col_name) { ?>
 							<option value=<?php echo $col_name?>><?php echo $col_name; ?></option>
 						<?php } ?>
 						</select>
+					</div>
+					<div class="tab-pane" id="combotypeEdit">
+						<label class="tabContentTitle">Select from following aggregation types</label>
+						<label class="checkbox"><input type="checkbox" value="Count" name="comboAggTypeEdit">Count</label>
+						<label class="checkbox"><input type="checkbox" value="Sum" name="comboAggTypeEdit" /> Sum</label>
+						<label class="checkbox"><input type="checkbox" value="Avg" name="comboAggTypeEdit" /> Avg</label>
+						<label class="checkbox"><input type="checkbox" value="Min" name="comboAggTypeEdit" /> Min</label>
+						<label class="checkbox"><input type="checkbox" value="Max" name="comboAggTypeEdit" /> Max</label>
 					</div>
 				</div>
 			</div>

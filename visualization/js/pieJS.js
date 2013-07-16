@@ -124,31 +124,46 @@ $(document).ready(function (){
 	
 	})
 function pieFormToDatainfo() {
-	var sid;
+	var sid = $("#addPieSid").val();
 	var where;
+	var table = $("#addPieTable").val();
 	var pieColumnCat = $('#pieColumnCat').val();
 	var pieColumnAgg = $('#pieColumnAgg').val();
 	var pieAggType = $('input:radio[name="pieAggType"]:checked').val();
-	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,where);
+	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,table,where);
 }
-function PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,where) {
+function editPieFormToDatainfo() {
+	var sid = $("#editPieSid").val(); 
+	var table = $("#editPieTable").val();
+	var where;
+	var pieColumnCat = $('#pieColumnCatEdit').val();
+	var pieColumnAgg = $('#pieColumnAggEdit').val();
+	var pieAggType = $('input:radio[name="pieAggTypeEdit"]:checked').val();
+	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,table,where);
+}
+function PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,table,where) {
 	this.pieColumnCat = pieColumnCat;
 	this.pieColumnAgg = pieColumnAgg;
 	this.pieAggType = pieAggType;
 	this.sid = sid;
+	this.table = table;
 	this.where = where;
 }
 function pieDataInfoToForm(pieDatainfo) {
 	var sid = pieDatainfo.sid;
+	var table = pieDatainfo.table;
 	var where = pieDatainfo.where;
 	var pieColumnCat = pieDatainfo.pieColumnCat;
 	var pieColumnAgg = pieDatainfo.pieColumnAgg;
 	var pieAggType = pieDatainfo.pieAggType;
+	$('#editPieSid').val(sid);
+	$('#editPieTable').val(table);
+	$('#editPieTable').change();
 	$('#pieColumnCatEdit').val(pieColumnCat);
 	$('#pieColumnAggEdit').val(pieColumnAgg);
 	$('input:radio[name="pieAggTypeEdit"][value="'+pieAggType+'"]').attr('checked',true);
 }
-function clearMapEditForm() {
+function clearPieEditForm() {
 	$('#pieColumnCatEdit').val(1);
 	$('#pieColumnAggEdit').val(1);
 	$('input:checkbox[name="pieAggTypeEdit"]').each(function() {
@@ -177,8 +192,10 @@ function createNewPieGadget(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
 		$('#pieColumnAgg').val('long');
+		resetEditFormSidTable("editPieSid",'editPieTable');
 		pieDataInfoToForm(CHARTS[cid]['datainfo']);
-		$('#editPie').modal('show')
+		$('#editPie').modal('show');
+		CANVAS.selectedChart = cid;
        });
 	$("#"+gadgetID).resize(function() {
 		var cid = $(this).find('.chartID').val();
@@ -186,9 +203,6 @@ function createNewPieGadget(){
 		var chart = CHARTS[cid];
 		refreshPie(chart.chartData,chart.queryResult,"pieResult"+gadgetID);
 	})
-	$('#editPieSave').click(function(){
-		drawPie(3,editGadgetID);
-	});
 	return gadgetID;
 	
 }
@@ -217,7 +231,7 @@ function addPieChart() {
 	    success:function(JSON_Response){
 		JSON_Response = jQuery.parseJSON(JSON_Response);
 		var queryResult = JSON_Response['queryResult'];
-		CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'])
+		CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"pieResult" + gadgetID)
 		gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 		$("#pieResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 		CHARTS[JSON_Response['cid']].chartData = drawPie(queryResult,"pieResult"+gadgetID);
@@ -258,8 +272,31 @@ function loadPieChart(sourceData) {
 	var gadgetID = createNewPieGadget();
 	var queryResult = sourceData['queryResult'];
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
-	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'])
+	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"pieResult" + gadgetID)
 	$("#pieResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 	CHARTS[sourceData['cid']].chartData = drawPie(queryResult,'pieResult'+gadgetID);
-		
+}
+//Update the chart
+function updatePieResult(cid) {
+	var chart = CHARTS[cid];
+	var gadgetID = CHARTS[cid].gadgetID;
+	var datainfo = editPieFormToDatainfo();
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			vid: CANVAS.vid,
+			action: 'updateChartResult',
+			cid: cid,
+			datainfo: datainfo,
+			},
+		success: function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			CHARTS[cid].datainfo = datainfo;
+			CHARTS[cid].queryResult = queryResult;
+			drawPie(queryResult,gadgetID);
+			$('#editPie').modal('hide');
+		}
+		})
 }

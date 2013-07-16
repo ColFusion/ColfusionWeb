@@ -21,7 +21,7 @@ if($current_user->authenticated != TRUE) {
         header("Location: " . $my_base_url . $my_pligg_base . "/login.php?return=" . $_SERVER['REQUEST_URI']);
 }
 $action = $_REQUEST['action'];
-if (in_array($action, array('openCanvas','saveCanvas','createNewCanvas', 'addChart','deleteCanvas','shareCanvas'))){
+if (in_array($action, array('openCanvas','saveCanvas','createNewCanvas', 'addChart','deleteCanvas','shareCanvas','updateChartResult','getStory'))){
     //header('Content-type: text/plain');
     $action();
 }elseif (in_array($action, array(''))){
@@ -219,4 +219,79 @@ function updateChartResult(){
     $rst['cid'] = $_REQUEST['cid'];
     echo json_encode($rst);
     $_SESSION['Canvases'][$canvas->vid] = serialize($canvas);
+}
+//use sid to get story name and related tables
+function getStory(){
+    $sid = $_REQUEST['sid'];
+    $rst = array();
+    if($sid == '100'){
+        $rst['status'] = 'success';
+        $rst['story'] = array();
+        $rst['story']['sid'] = 100;
+        $rst['story']['sname'] = 'story100';
+        $table1 = array();
+        $table2 = array();
+        $table3 = array();
+        $table4 = array();
+        $table1['table'] = 'table1001';
+        $table1['columns'] = ['1001ID','1001Name','1001Date','1001Where'];
+        $table2['table'] = 'table1002';
+        $table2['columns'] = ['1002ID','1002Name','1002Date','1002Where'];
+        $table3['table'] = 'table1003';
+        $table3['columns'] = ['1003ID','1003Name','1003Where'];
+        $table4['table'] = 'table1004';
+        $table4['columns'] = ['1004ID'];
+        $tables['table1001'] = $table1;
+        $tables['table1002'] = $table2;
+        $tables['table1003'] = $table3;
+        $tables['table1004'] = $table4;
+        $rst['story']['tables'] = $tables;
+    }else if($sid == '200'){
+        $rst['status'] = 'success';
+        $rst['story']['sid'] = 200;
+        $rst['story']['sname'] = 'story200';
+                $table1 = array();
+        $table1 = array();
+        $table2 = array();
+        $table3 = array();
+        $table4 = array();
+        $table1['table'] = 'table2001';
+        $table1['columns'] = ['2001ID','2001Name','2001Date','2001Where'];
+        $table2['table'] = 'table2002';
+        $table2['columns'] = ['2002ID','2002Name','2002Date','2002Where'];
+        $table3['table'] = 'table2003';
+        $table3['columns'] = ['2003ID','2003Name','2003Where'];
+        $table4['table'] = 'table2004';
+        $table4['columns'] = ['2004ID'];
+        $tables['table2001'] = $table1;
+        $tables['table2002'] = $table2;
+        $tables['table2003'] = $table3;
+        $tables['table2004'] = $table4;
+        $rst['story']['tables'] = $tables;
+    }else if($sid == '300'){
+        $rst['status'] = 'success';
+        $rst['story']['sid'] = 300;
+        $rst['story']['sname'] = 'story300';
+        $table1 = array();
+        $table2 = array();
+        $table3 = array();
+        $table4 = array();
+        $table1['table'] = 'table3001';
+        $table1['columns'] = ['3001ID','3001Name','3001Date','3001Where'];
+        $table2['table'] = 'table3002';
+        $table2['columns'] = ['3002ID','3002Name','3002Date','3002Where'];
+        $table3['table'] = 'table3003';
+        $table3['columns'] = ['3003ID','3003Name','3003Where'];
+        $table4['table'] = 'table3004';
+        $table4['columns'] = ['3004ID'];
+        $tables['table3001'] = $table1;
+        $tables['table3002'] = $table2;
+        $tables['table3003'] = $table3;
+        $tables['table3004'] = $table4;
+        $rst['story']['tables'] = $tables;
+    }else{
+        $rst['status'] = 'failed';
+        $rst['message'] = 'Cannot find story '.$sid.'.';
+    }
+    echo json_encode($rst);
 }

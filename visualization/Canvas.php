@@ -136,7 +136,18 @@ class Canvas{
             $cid = $chart['cid'];
             if($cid!=null){
                 if(in_array($cid, array_keys($this->charts))){
-                    $this->charts[$cid]->save($chart['name'],$chart['type'],$chart['left'],$chart['top'],$chart['depth'],$chart['height'], $chart['width'], $chart['datainfo'], $chart['note']);
+                    if(substr($cid,0,9) == 'TempChart'){
+                        $chart1 = $this->charts[$cid];
+                        $chart1->canvas = $this->vid;
+                        $chart1->save($chart['name'],$chart['type'],$chart['left'],$chart['top'],$chart['depth'],$chart['height'], $chart['width'], $chart['datainfo'], $chart['note']);
+                        $this->charts[$chart1->cid] = $chart1;
+                        unset($this->charts[$cid]);
+                        $temp['newId'] = $chart1->cid;
+                        $temp['oldId'] = $chart['cid'];
+                        array_push($rst,$temp);
+                    }else{
+                        $this->charts[$cid]->save($chart['name'],$chart['type'],$chart['left'],$chart['top'],$chart['depth'],$chart['height'], $chart['width'], $chart['datainfo'], $chart['note']);
+                    }
                 }else{
                     //$chart1 = $this->addChart($chart['name'],$chart['type'],$chart['left'],$chart['top'],$chart['depth'],$chart['height'], $chart['width'], $chart['datainfo'], $chart['note']);
                     $chart1 = ChartFactory::createChart($chart['name'],$this->vid,$chart['type'],$chart['left'],$chart['top'],$chart['depth'],$chart['height'], $chart['width'], $chart['datainfo'], $chart['note']);

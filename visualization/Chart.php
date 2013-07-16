@@ -34,8 +34,6 @@ abstract class Chart {
         if(substr($this->cid,0,9)=='TempChart'){
             $sql = 'insert into colfusion_charts(`name`, `vid`, `type`, `left`, `top`, `depth`, `height`, `width`, `datainfo`, `note`) values("'.$_name.'",'.$this->canvas.',"'.$_type.'",'.$_left.','.$_top.','.$_depth.','.$_height.','.$_width.',"'.$datainfo.'","'.$_note.'")';
             //echo $sql;
-            include_once('Debug/Debugger.php');
-            Debugger::var_dump_value('sql',$sql,null);
             $db->query($sql);
             $_cid = mysql_insert_id();
             $this->cid = $_cid;
@@ -78,7 +76,7 @@ abstract class Chart {
         $rst['depth'] =$this->depth;
         $rst['height'] =$this->height;
         $rst['width'] =$this->width;
-        $rst['queryResult'] =json_decode($this->queryResult);
+        $rst['queryResult'] =$this->queryResult;
         $rst['datainfo'] = $this->datainfo;
         $rst['note'] =$this->note;
         return $rst;

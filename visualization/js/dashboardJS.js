@@ -6,9 +6,83 @@ var vDay = d.getDate();
 var completeResult;
 var authorizationLevel=-1;
 
+function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
+	this.vid = vid;
+	this.name = name;
+	this.privilege = privilege;
+	this.authorization = authorization;
+	this.mdate = mdate;
+	this.cdate = cdate;
+	this.note = note;
+	this.selectedChart = null;
+	this.stories = new Array();
+}
+//use sid to get story name and tables in the story
+Canvas.prototype.addStory = function(sid,callback) {
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			action: 'getStory',
+			sid: sid
+			},
+		success: function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			if(JSON_Response['status'] == 'success'){
+				/*var sid = JSON_Response['sid'];
+				var sname = JSON_Response['sname'];
+				var tables = JSON_Response['tables'];*/
+				var story = JSON_Response['story'];
+				var sid = story.sid;
+				CANVAS.stories[sid] = story;
+			}else{
+				
+			}
+			if (callback!=null) {
+				callback(JSON_Response);
+			}
+		}
+		
+		})
+}
+//get the story name and tables in the a story
+Canvas.prototype.getStory = function(sid) {
+	return CANVAS.stories[sid];
+}
+//get all the story names and tables 
+Canvas.prototype.getStories = function() {
+	return CANVAS.stories;
+}
+//get related charts to sid in 'charts'
+Canvas.prototype.getStoryRelatedCharts = function(sid) {
+	var rst = new Array();
+	var chart;
+	for (chart in CHARTS) {
+		if (CHARTS[chart].getSid() == sid) {
+			rst.push(CHARTS[chart]);
+		}
+	}
+	return rst;
+}
+//get table related charts
+Canvas.prototype.getTableRelatedCharts = function(sid,table) {
+	var rst = new Array();
+	var chart;
+	for (chart in CHARTS) {
+		if (CHARTS[chart].getSid() == sid && CHARTS[chart].getTable() == table) {
+			rst.push(CHARTS[chart]);
+		}
+	}
+	return rst;
+	
+}
+//get the columns in one table in one story
+Canvas.prototype.getColumns = function(sid,table){
+	
+}
+var CANVAS = new Canvas();
 var CHARTS ={};
-var CANVAS ={};
-function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResult) {
+function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResult,gadgetID) {
 	this.cid = cid;
 	this.name = name;
 	this.type = top;
@@ -19,7 +93,29 @@ function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResu
 	this.note = note;
 	this.datainfo = datainfo;
 	this.queryResult = queryResult;
+	this.gadgetID = gadgetID;
+	CANVAS.addStory(this.getSid());
 }
+//get the sid from the chart datainfo
+Chart.prototype.getSid = function() {
+	return this.datainfo.sid;
+}
+//get the table from the chart datainfo
+Chart.prototype.getTable = function() {
+	return this.datainfo.table;
+}
+function addStory() {
+	var sid = $('#search-sid').val();
+	var func =function(obj){
+		if (obj['status']=='success') {
+			$('#story-search-result').html('<p style="color: green">Successfully find Story: '+ obj['story']['sname']+'</p>');
+		}else{
+			$('#story-search-result').html('<p style="color: red">'+obj['message']+'</p>');
+		}
+	}
+	CANVAS.addStory(sid,func);
+}
+
 function saveConfig(){
 	var aut = $("#shareAuthorization").val();
 }
@@ -162,7 +258,7 @@ function outCanvasEffect(id){
 	$("#"+id).css({"background-color":"#F5F5F5","color":"#0088CC"});
 }
 
-$(function() {
+$(document).ready(function() {
 
 	var oriTableHeight = parseInt($("#display_section").css("height").split("px")[0]);
 	var actTableHeight = (oriTableHeight%37>18)?oriTableHeight+(37-(oriTableHeight%37)):oriTableHeight-(oriTableHeight%37);
@@ -356,7 +452,7 @@ $(function() {
 	
 	//edit table save
 	$('#editTableSave').click(function() {
-		loadTableData(3,editGadgetID);
+		updateTableResult(CANVAS.selectedChart);
 	});
 	
 	$('input[name="display"]').click(function() {
@@ -410,8 +506,7 @@ $(function() {
 
 	//edit motion save
 	$('#editMotionSave').click(function() {
-		//alert(editGadgetID);
-		drawMotion(3,editGadgetID);
+		updateMotionResult(CANVAS.selectedChart);
 	});
 	
 	//edit column chart
@@ -440,8 +535,7 @@ $(function() {
 
 	//edit motion save
 	$('#editColumnSave').click(function() {
-		//alert(editGadgetID);
-		drawColumn(3,editGadgetID);
+		updateColumnResult(CANVAS.selectedChart);
 	});
 	
 	//edit geo chart
@@ -460,7 +554,7 @@ $(function() {
 
 	//edit motion save
 	$('#editMapSave').click(function() {
-		// alert(editGadgetID);
+		updateMapResult(CANVAS.selectedChart);
 		
 	});	
 
@@ -485,7 +579,7 @@ $(function() {
    });
 
 	$('#editPieSave').click(function(){
-		drawPie(3,editGadgetID);
+		updatePieResult(CANVAS.selectedChart);
 	});
 	
     //edit combo chart
@@ -500,12 +594,81 @@ $(function() {
 		});	
 	});
 	$('#editComboSave').click(function(){
-		drawCombo(3,editGadgetID);
+		updateComboResult(CANVAS.selectedChart);
 	});
-});
-$(document).ready(function() {
+	
+	//make modal active the first table after being hidden;
 	$('.modal').on('hidden', function () {
 		$(this).find('.nav-tabs a:first').tab('show');
 	});
-})
+	
+	//When open add chart modal
+	$('.addChartModal').on('show',function(e) {
+		var target = $(e.target);
+		if ($(e.target).hasClass('addChartModal')) {
+			$(this).find('.story-list').html('');
+			$(this).find('.table-list').html('');
+			var stories = CANVAS.getStories();
+			var firstSid;
+			var firstTname;
+			var i = 0;
+			for (var sid in stories) {
+				if (i++ == 0) {
+					firstSid = sid;
+				}
+				var story = stories[sid];
+				var sname =story['sname'];
+				$(this).find('.story-list').append('<option value="'+sid+'">'+sname+'</option>');
+			}
+			$(this).find('.story-list').change();
+		}
+	})
+	$('.story-list').change(function() {
+		var sid = $(this).val();
+		var story = CANVAS.getStory(sid);
+		var tables = story['tables'];
+		$(this).parent().find('.table-list').html('');
+		for (var tname in tables) {
+			$(this).parent().find('.table-list').append('<option value="'+tname+'">'+tname+'</option>');
+		}
+		$(this).parent().find('.table-list').change();
+		$(this).parent().find('.table-list').val(1);
+	
+		
+	})
+	$('.table-list').change(function() {
+		var tname =$(this).val();
+		var sid = $(this).parent().find('.story-list').val();
+		var story = CANVAS.getStory(sid);
+		var columns = story['tables'][tname]['columns'];
+		$(this).parent().parent().find('select.table-column').each(function() {
+			$(this).html('');
+			for (var i = 0;i<columns.length;i++) {
+				$(this).append('<option value="'+columns[i]+'">'+columns[i]+'</option>');
+			}
+			})
+		$(this).parent().parent().find('lable.table-column').each(function() {
+			$(this).html('');
+			for (var i = 0;i<columns.length;i++) {
+				$(this).append('<input value="'+columns[i]+'" type="checkbox" name="table-column" checked/>'+columns[i]);
+			}
+			})
+	})
+});
+function resetEditFormSidTable(editSID,editTable) {
+	$('.edit-chart .story-list').html('');
+	$('.edit-chart .table-list').html('');
+	var stories = CANVAS.getStories();
+	var firstSid;
+	var i = 0;
+	for (var sid in stories) {
+		if (i++ == 0) {
+			firstSid = sid;
+		}
+		var story = stories[sid];
+		var sname =story['sname'];
+		$('#'+editSID).append('<option value="'+sid+'">'+sname+'</option>');
+	}
+	$('#'+editSID).change();
+}
 

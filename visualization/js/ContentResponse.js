@@ -129,7 +129,7 @@ function openCanvas(vid){
 				$('#cdate').val(_data['cdate']);
 				$('#note').val(_data['note']);
 				$('#brand').text(_data['name']);
-				
+				CANVAS = new Canvas(_data['vid'],_data['name'],_data['privilege'],_data['authorization'],_data['mdate'],_data['cdate'],_data['note']);
 			}	 
 		});
 	}

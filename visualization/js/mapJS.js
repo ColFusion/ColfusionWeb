@@ -123,6 +123,7 @@ $(document).ready(function (){
 	})
 function mapFormToDatainfo() {
 	var sid;
+	var table;
 	var where;
 	var mapTooltip = new Array();
 	var latitude = $("#latitude").val();
@@ -130,19 +131,33 @@ function mapFormToDatainfo() {
 	$.each($("input[name='mapTooltip']:checked"), function(){
             mapTooltip.push($(this).val());
         });
-	return new MapDatainfo(latitude,longitude,mapTooltip,sid,where);
+	return new MapDatainfo(latitude,longitude,mapTooltip,sid,table,where);
 }
-function MapDatainfo(latitude,longitude,mapTooltip,sid,where) {
+function editMapFormToDatainfo() {
+	var sid;
+	var table;
+	var where;
+	var mapTooltip = new Array();
+	var latitude = $("#latitudeEdit").val();
+	var longitude = $("#longitudeEdit").val();
+	$.each($("input[name='mapTooltipEdit']:checked"), function(){
+            mapTooltip.push($(this).val());
+        });
+	return new MapDatainfo(latitude,longitude,mapTooltip,sid,table,where);
+}
+function MapDatainfo(latitude,longitude,mapTooltip,sid,table,where) {
 	this.latitude = latitude;
 	this.longitude = longitude;
 	this.mapTooltip = mapTooltip;
 	this.sid = sid;
+	this.table = table;
 	this.where = where;
 }
 function mapDataInfoToForm(mapDatainfo) {
 	clearMapEditForm();
 	var sid = mapDatainfo.sid;
 	var where = mapDatainfo.where;
+	var table = mapDatainfo.table;
 	var latitude = mapDatainfo.latitude;
 	var longitude = mapDatainfo.longitude;
 	var mapTooltip = mapDatainfo.mapTooltip;
@@ -238,16 +253,12 @@ function createNewMapGadget(){
 		var cid = $("#"+editGadgetID+" .chartID").val();
 		mapDataInfoToForm(CHARTS[cid]['datainfo']);
 		$('#editMap').modal('show')
+		CANVAS.selectedChart = cid;
 	});
 
     //edit geo chart
     $('.edit-map').click(function() {
         editGadgetID = $(this).parent().parent().attr('id');
-    });
-
-    //edit motion save
-    $('#editMapSave').click(function() {
-        alert('ddd');
     });
     return gadgetID;
 }
@@ -271,7 +282,7 @@ function addMapChart() {
 		success: function(JSON_Response){
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			var queryResult = JSON_Response['queryResult'];
-			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'])
+			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"mapResult" + gadgetID)
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#mapResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height()-20);
 			CHARTS[JSON_Response['cid']].chartData = drawMap(queryResult,'mapResult' + gadgetID);
@@ -285,7 +296,31 @@ function loadMapChart(sourceData) {
 	var gadgetID = createNewMapGadget();
 	var queryResult = sourceData['queryResult'];
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
-	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'])
+	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"mapResult" + gadgetID)
 	$("#mapResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height()-20);
 	CHARTS[sourceData['cid']].chartData = drawMap(queryResult,'mapResult' + gadgetID);
+}
+//update the chart
+function updateMapResult(cid) {
+	var chart = CHARTS[cid];
+	var gadgetID = CHARTS[cid].gadgetID;
+	var datainfo = editMapFormToDatainfo();
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			vid: CANVAS.vid,
+			action: 'updateChartResult',
+			cid: cid,
+			datainfo: datainfo,
+			},
+		success: function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			var queryResult = JSON_Response['queryResult'];
+			CHARTS[cid].datainfo = datainfo;
+			CHARTS[cid].queryResult = queryResult;
+			drawMap(queryResult,gadgetID);
+			$('#editMap').modal('hide');
+		}
+		})
 }
