@@ -13,7 +13,27 @@ class QueryEngine {
         $this->simpleQuery = new SimpleQuery();
     }
 
-    public function doQuery($select, $from, $where, $groupby, $limit) {
+    // select - valid sql select part
+    // from - array of following obejects {sid: , tableName: , alias: }
+    // where - valid SQL where part
+    // group by - valid SQL group by
+    // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
+    public function doQuery($select, $from, $where, $groupby, $limit, $relationships, $perPage, $pageNo) {
+    	
+    	if (count($from) == 1) { // then we don't need to do any joins.
+    		   		    		
+    		return $this->prepareAndRunQuery($select, $from[0], $where, $groupby, $limit, $relationships, $perPage, $pageNo);
+    			
+    	}
+    	else { // need to do joins
+    		// TODO: implement
+    		
+    	}
+    }
+
+
+    // $from is excepcted to be sid here.
+    public function doQueryOld($select, $from, $where, $groupby, $limit) {
 
         global $db;
 
@@ -116,21 +136,70 @@ class QueryEngine {
         return ExternalDBs::GetTableDataBySidAndName($table_name, $perPage, $pageNo, $externalDBCredentials);
     }
 
+    // select - valid sql select part
+    // from - array of following obejects {sid: , tableName: , alias: }
+    // where - valid SQL where part
+    // group by - valid SQL group by
+    // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
+    function prepareAndRunQuery($select, $from, $where, $groupby, $limit, $relationships, $perPage, $pageNo) {
+    	if ($this->GetSourceType($from->sid) == "database") {
+    		
+    	} else {
+    		$this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $limit, $relationships, $perPage, $pageNo);
+    	}
+    }
+    
+    function prepareAndRunQueryFromFile($select, $from, $where, $groupby, $limit, $relationships, $perPage, $pageNo) {
+    	$query = $select;
+    	$query .= ' from resultDoJoin ';
+    	if (isset($where))
+    		$query .= ' $where ';
+    	
+    	if (isset($groupby))
+    		$query .= ' $groupby ';
+    	 
+    	if (isset($perPage) && isset($pageNo)) {
+    	
+    		$startPoint = ($pageNo - 1) * $perPage;
+    		$query .= " LIMIT " . $startPoint . "," . $perPage;
+    	}
+      	
+    	return $this->runQuerySingleSidTableFromFile($query, $from->sid, $from->tableName);
+    }
+    
+    function runQuerySingleSidTableFromFile($query, $sid, $tableName) {
+    	global $db;
+    	
+    	$doJoinQuery = "call doJoinWithTime('" . $sid . "." . $tableName . "')";
+    	
+    	
+//echo $doJoinQuery;
+    	
+    	$res = $db->query($doJoinQuery);
+    	
+    	$rst = $db->get_results($query);
+    	return $rst;
+    }
+    
     function GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo) {
-        if (strlen(strstr(my_base_url, 'localhost')) > 0) {
-            global $db;
+//        if (strlen(strstr(my_base_url, 'localhost')) > 0) {
+	
+    	$from = (object) array('sid' => $sid, 'tableName' => $table_name);
+    	
+    	return $this->prepareAndRunQueryFromFile("SELECT *", $from, null, null, null, null, $perPage, $pageNo);
+    	
+//     	global $db;
 
-            $res = $db->query("call doJoinWithTime('" . $sid . "')");
+//             $res = $db->query("call doJoinWithTime('" . $sid . "." . $table_name . "')");
 
-            $sql = "SELECT * FROM resultDoJoin ";
-            $startPoint = ($pageNo - 1) * $perPage;
-            $sql .= " LIMIT " . $startPoint . "," . $perPage;
+//             $sql = "SELECT * FROM resultDoJoin ";
+            
 
-            $rst = $db->get_results($sql);
-            return $rst;
-        } else {
-            return ExternalMSSQL::GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo);
-        }
+//             $rst = $db->get_results($sql);
+//             return $rst;
+//        } else {
+//            return ExternalMSSQL::GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo);
+//        }
     }
 
     public function GetTotalNumberTuplesInTableBySidAndName($sid, $table_name) {
@@ -139,14 +208,14 @@ class QueryEngine {
         if ($this->GetSourceType($sid) == "database") {
             return $this->GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $table_name);
         } else {
-            return $this->GetTotalNumberTuplesInTableBySidAndNameFromFile($sid);
+            return $this->GetTotalNumberTuplesInTableBySidAndNameFromFile($sid, $table_name);
         }
     }
 
-    public function GetTotalNumberTuplesInTableBySidAndNameFromFile($sid) {
+    public function GetTotalNumberTuplesInTableBySidAndNameFromFile($sid, $table_name) {
         global $db;
 
-        $res = $db->query("call doJoinWithTime('" . $sid . "')");
+        $res = $db->query("call doJoinWithTime('" . $sid . "." . $table_name . "')");
         $sql = "SELECT COUNT(*) FROM resultDoJoin ";
         $totalTuple = $db->get_var($sql);
 

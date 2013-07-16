@@ -1,9 +1,8 @@
--- --------------------------------------------------------------------------------
--- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
--- --------------------------------------------------------------------------------
-DELIMITER $$
+USE `colfusion`;
+DROP procedure IF EXISTS `doJoinWithTime`;
 
+DELIMITER $$
+USE `colfusion`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `doJoinWithTime`(IN param1 varchar(200))
     READS SQL DATA
 BEGIN
@@ -16,6 +15,8 @@ BEGIN
     SET @strLen := LENGTH(@sid);
     SET @i := @i + 1;
 	set @sid := SUBSTRING_INDEX(@sid, ',', -1);
+	set @tableName := SUBSTRING_INDEX(@sid, '.', -1); -- assuming following format: sid.tableName
+	set @sid := SUBSTRING_INDEX(@sid, '.', 1);
 
 	SET @joinTableIndex := 0;
 	
@@ -43,11 +44,13 @@ BEGIN
 				)
 			  ) INTO @sql
 			FROM
-			  colfusion_temporary
+			  colfusion_temporary, colfusion_columnTableInfo
 			where 
-			sid = @sid;
+				colfusion_temporary.cid = colfusion_columnTableInfo.cid
+				and colfusion_columnTableInfo.tableName = @tableName 
+				and sid = @sid;
 				
-			SET @sql = CONCAT('CREATE TEMPORARY TABLE tmpTable', @i, ' SELECT * FROM (SELECT rownum, ', @sql, ' FROM colfusion_temporary where sid = ', @sid,' GROUP BY rownum) as t1 natural join (select distinct Spd, Drd, Location, AggrType, Start, End, rownum from colfusion_temporary where sid = ', @sid, ') as t2');
+			SET @sql = CONCAT('CREATE TEMPORARY TABLE tmpTable', @i, ' SELECT * FROM (SELECT rownum, ', @sql, ' FROM colfusion_temporary, colfusion_columnTableInfo where colfusion_temporary.cid = colfusion_columnTableInfo.cid and colfusion_columnTableInfo.tableName = \'', @tableName, '\' and sid = ', @sid,' GROUP BY rownum) as t1 natural join (select distinct Spd, Drd, Location, AggrType, Start, End, rownum from colfusion_temporary, colfusion_columnTableInfo where colfusion_temporary.cid = colfusion_columnTableInfo.cid and colfusion_columnTableInfo.tableName = \'', @tableName, '\' and sid = ', @sid, ') as t2');
 
 			PREPARE stmt FROM @sql;
 			EXECUTE stmt;
@@ -79,12 +82,14 @@ BEGIN
 						)
 					  ) INTO @sql
 					FROM
-					  colfusion_temporary
+						colfusion_temporary, colfusion_columnTableInfo
 					where 
-					sid = @sid;
+						colfusion_temporary.cid = colfusion_columnTableInfo.cid
+						and colfusion_columnTableInfo.tableName = @tableName 
+						and sid = @sid;
 			
 
-					SET @sql = CONCAT('CREATE TEMPORARY TABLE tmpTable', @i, ' SELECT * FROM (SELECT rownum, ', @sql, ' FROM colfusion_temporary where sid = ', @sid,' GROUP BY rownum) as t1 natural join (select distinct Spd, Drd, Location, AggrType, Start, End, rownum from colfusion_temporary where sid = ', @sid, ') as t2');
+					SET @sql = CONCAT('CREATE TEMPORARY TABLE tmpTable', @i, ' SELECT * FROM (SELECT rownum, ', @sql, ' FROM colfusion_temporary, colfusion_columnTableInfo where colfusion_temporary.cid = colfusion_columnTableInfo.cid and colfusion_columnTableInfo.tableName = \'', @tableName, '\' and sid = ', @sid,' GROUP BY rownum) as t1 natural join (select distinct Spd, Drd, Location, AggrType, Start, End, rownum from colfusion_temporary, colfusion_columnTableInfo where colfusion_temporary.cid = colfusion_columnTableInfo.cid and colfusion_columnTableInfo.tableName = \'', @tableName, '\' and sid = ', @sid, ') as t2');
 
 					PREPARE stmt FROM @sql;
 					EXECUTE stmt;
@@ -199,4 +204,8 @@ BEGIN
 
 
 
-END
+END$$
+
+DELIMITER ;
+
+
