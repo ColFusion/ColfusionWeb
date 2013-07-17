@@ -157,6 +157,29 @@ var wizardFromFile = (function() {
             dataType: 'json'
         });
     };
+    
+     wizardFromFile.resetFileUploadForm = function() {
+        $('#uploadWidgetCover').text('No file chosen');
+        $('#uploadMessage').text('');
+        $('#uploadProgressText').text('0%').hide();
+        $('#uploadProgressBar').hide().find('.bar').css('width', '0');
+        $('input[name="place"]').removeAttr('checked');
+        $('#divFromComputer').add('#divFromInternet').add('#divFromDatabase').hide();
+        $('#selectDBServer')
+                .add('#dbServerName')
+                .add('#dbServerPort')
+                .add('#dbServerUserName')
+                .add('#dbServerPassword')
+                .add('#dbServerDatabase')
+                .add('#uploadFileType')
+                .add('#dbType').prop('disabled', false);
+        $('input[name="place"]').prop('disabled', false);
+        var uploadForm = $('#upload_form');
+        var newUploadForm = $(uploadForm).clone();
+        $(uploadForm).remove();
+        $('#divFromComputer').prepend(newUploadForm);
+        wizardFileUpload.initFileUploadForm(newUploadForm);
+    };
 
     function getName() {
         var f_name, file_url, a_link;
@@ -207,10 +230,13 @@ var wizardFileUpload = (function() {
         };
     }
 
-    var fileListViewModel = new FileListViewModel();
+    var fileListViewModel;
 
     wizardFileUpload.initFileUploadForm = function(form) {
-
+        
+        fileListViewModel = new FileListViewModel();
+        console.log(form);
+        console.log(document.getElementById('filenameListContainer'));
         ko.applyBindings(fileListViewModel, document.getElementById('filenameListContainer'));
         initJqueryUpload(form);
 

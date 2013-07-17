@@ -347,7 +347,7 @@ var importWizard = (function() {
         });
 
         wizard.on("reset", function(wizard) {
-            resetFileUploadForm();
+            wizardFromFile.resetFileUploadForm();
             wizard.setSubtitle("");
             wizard.el.find("#new-server-fqdn").val("");
             wizard.el.find("#new-server-name").val("");
@@ -379,28 +379,7 @@ var importWizard = (function() {
             wizard.enableNextButton();
         });
     }
-
-    function resetFileUploadForm() {
-        $('#uploadWidgetCover').text('No file chosen');
-        $('#uploadMessage').text('');
-        $('#uploadProgressText').text('0%').hide();
-        $('#uploadProgressBar').hide().find('.bar').css('width', '0');
-        $('input[name="place"]').removeAttr('checked');
-        $('#divFromComputer').add('#divFromInternet').add('#divFromDatabase').hide();
-        $('#selectDBServer')
-                .add('#dbServerName')
-                .add('#dbServerPort')
-                .add('#dbServerUserName')
-                .add('#dbServerPassword')
-                .add('#dbServerDatabase')
-                .add('#uploadFileType')
-                .add('#dbType').prop('disabled', false);
-        $('input[name="place"]').prop('disabled', false);
-        var uploadForm = $('#upload_form');
-        $(uploadForm).remove().prependTo('#divFromComputer');
-        wizardFromFile.initFileUploadForm(uploadForm);
-    }
-
+  
     function finishSubmittingData() {
         dataPreviewViewModel.getTablesList();
         relationshipViewModel.mineRelationships(10, 1);
@@ -430,11 +409,13 @@ var importWizard = (function() {
         if (getImportSource() == "database") {
             $("#displayOptoinsStepCardFromFile").hide();
             $("#displayOptoinsStepCardFromDB").show();
+            $('#loadingProgressContainer').show();
 
             $("#displayOptoinsStepCardFromDB").append(importWizard.loadingGif);
             wizardFromDB
                     .LoadDatabaseTables($("#dbServerName").val(), $("#dbServerUserName").val(), $("#dbServerPassword").val(), $("#dbServerDatabase").val(), $('#dbServerPort').val(), $('#selectDBServer').val(), $('#isImport').val())
                     .done(function(JSON_Response) {
+                $('#loadingProgressContainer').hide();
                 printTableList($("#displayOptoinsStepCardFromDB"), JSON_Response);
                 wizard.enableNextButton();
             });
@@ -472,7 +453,7 @@ var importWizard = (function() {
 
         if (JSON_Response.isSuccessful) {
             var el = "<p>Tables in selected database:</p><div style='height: 80%; overflow-y: scroll;'>";
-            for (var i = 0; i < JSON_Response.data.length; i++) {
+            for (var i = 0; JSON_Response.data && i < JSON_Response.data.length; i++) {
                 el += "<label style='display: inline;'><input type='checkbox' name='table[]' value='" + JSON_Response.data[i] + "'/>" + JSON_Response.data[i] + "</lable><br/>";
             }
             el += "</div>";

@@ -74,6 +74,7 @@
                                     <select id ='selectDBServer' onchange="wizardFromDB.setDefaultAdvancedSettingsByServerName($('#dbServerPort'), this.value)">
                                         <option value='MySQL'>MySQL</option>
                                         <option value='MSSQL'>Microsoft SQL</option>
+                                        <option value='PostgreSQL'>PostgreSQL</option>
                                     </select>							
                                 </td>                             
                             </tr>                        
