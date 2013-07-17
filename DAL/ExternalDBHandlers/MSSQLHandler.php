@@ -91,11 +91,11 @@ EOQ;
     }
     
     // select - valid sql select part
-    // from - array of following obejects {sid: , tableName: , alias: }
+    // from - tableName with alias if specified
     // where - valid SQL where part
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
-    public function prepareAndRunQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
+    public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
     	 
     }
 

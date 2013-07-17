@@ -43,19 +43,23 @@ class MySQLHandler extends DatabaseHandler {
     }
 
     public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
-        $pdo = $this->GetConnection();
+        
+    	return $this->prepareAndRunQuery("select * ", "`$table_name`", null, null, null, $perPage, $pageNo);
+    	
+    	
+//     	$pdo = $this->GetConnection();
 
-        $sql = "SELECT * FROM `$table_name` ";
-        $startPoint = ($pageNo - 1) * $perPage;
-        $sql .= " LIMIT " . $startPoint . "," . $perPage;
+//         $sql = "SELECT * FROM `$table_name` ";
+//         $startPoint = ($pageNo - 1) * $perPage;
+//         $sql .= " LIMIT " . $startPoint . "," . $perPage;
       
-        $res = $pdo->query($sql);
-        $result = array();
-        while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
-            $result[] = $row;
-        }
+//         $res = $pdo->query($sql);
+//         $result = array();
+//         while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
+//             $result[] = $row;
+//         }
 
-        return $result;
+//         return $result;
     }
 
     public function getTotalNumberTuplesInTable($table_name) {
@@ -69,12 +73,34 @@ class MySQLHandler extends DatabaseHandler {
     }
     
     // select - valid sql select part
-    // from - array of following obejects {sid: , tableName: , alias: }
+    // from - tableName with alias if specified
     // where - valid SQL where part
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
-    public function prepareAndRunQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
+    public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
+    	$pdo = $this->GetConnection();
     	
+    	$query = $select . " from " . $from . " ";
+    	
+    	if (isset($where))
+    		$query .= ' ' . $where . ' ';
+    	 
+    	if (isset($groupby))
+    		$query .= ' '. $groupby . ' ';
+    	
+    	if (isset($perPage) && isset($pageNo)) {
+    		 
+    		$startPoint = ($pageNo - 1) * $perPage;
+    		$query .= " LIMIT " . $startPoint . "," . $perPage;
+    	}
+    	    	    	
+    	$res = $pdo->query($query);
+    	$result = array();
+    	while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
+    		$result[] = $row;
+    	}
+    	
+    	return $result;
     }
 
 }

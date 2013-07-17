@@ -32,11 +32,11 @@ abstract class DatabaseHandler {
     abstract public function getTotalNumberTuplesInTable($table_name);
 
     // select - valid sql select part
-    // from - array of following obejects {sid: , tableName: , alias: }
+    // from - tableName with alias if specified
     // where - valid SQL where part
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
-    abstract public function prepareAndRunQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo);
+    abstract public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo);
     
     public function getDriver(){
         return $this->driver;
