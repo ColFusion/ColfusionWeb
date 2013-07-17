@@ -143,7 +143,8 @@ class QueryEngine {
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     function prepareAndRunQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
     	if ($this->GetSourceType($from->sid) == "database") {
-    		
+            $externalDBCredentials = $this->GetExternalDBCredentialsBySid($from->sid);
+    		ExternalDBs::PrepareAndRunQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo, $externalDBCredentials);
     	} else {
     		return $this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $relationships, $perPage, $pageNo);
     	}
