@@ -18,11 +18,11 @@ class QueryEngine {
     // where - valid SQL where part
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
-    public function doQuery($select, $from, $where, $groupby, $limit, $relationships, $perPage, $pageNo) {
+    public function doQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
     	
     	if (count($from) == 1) { // then we don't need to do any joins.
     		   		    		
-    		return $this->prepareAndRunQuery($select, $from[0], $where, $groupby, $limit, $relationships, $perPage, $pageNo);
+    		return $this->prepareAndRunQuery($select, $from[0], $where, $groupby, $relationships, $perPage, $pageNo);
     			
     	}
     	else { // need to do joins
@@ -141,17 +141,21 @@ class QueryEngine {
     // where - valid SQL where part
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
-    function prepareAndRunQuery($select, $from, $where, $groupby, $limit, $relationships, $perPage, $pageNo) {
+    function prepareAndRunQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
     	if ($this->GetSourceType($from->sid) == "database") {
     		
     	} else {
-    		$this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $limit, $relationships, $perPage, $pageNo);
+    		$this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $relationships, $perPage, $pageNo);
     	}
     }
     
-    function prepareAndRunQueryFromFile($select, $from, $where, $groupby, $limit, $relationships, $perPage, $pageNo) {
+    function prepareAndRunQueryFromFile($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
     	$query = $select;
     	$query .= ' from resultDoJoin ';
+
+        if (isset($from->alias))
+            $query .= ' as ' . $from->alias . ' ';
+
     	if (isset($where))
     		$query .= ' $where ';
     	
@@ -181,7 +185,7 @@ class QueryEngine {
 	
     	$from = (object) array('sid' => $sid, 'tableName' => $table_name);
     	
-    	return $this->prepareAndRunQueryFromFile("SELECT *", $from, null, null, null, null, $perPage, $pageNo);
+    	return $this->prepareAndRunQueryFromFile("SELECT *", $from, null, null, null, $perPage, $pageNo);
     	
 //     	global $db;
 
