@@ -1028,10 +1028,12 @@ $chart_columns[] = "Location";
         </div> <!-- /container -->
 
     </body>
+    <?php if($sid!=null){?>
     <script type="text/javascript">
         $(document).ready(function() {
             createNewCanvas("<?php echo $sid ?>" + "  <?php echo $tname ?>");
             CANVAS.addStory("<?php echo $sid ?>", "temp story");
         })
     </script>
+    <?php }?>
 </html>

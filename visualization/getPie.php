@@ -14,37 +14,42 @@
 	$pieAggType = "Count";
 	*/
 
-	$res = $db->query("call doJoin('" . $titleNo . "')");
+	//$res = $db->query("call doJoin('" . $titleNo . "')");
 	
-	$sql = "SELECT `" . $pieColumnCat . "` AS 'Category', ";
+	$select = "SELECT `" . $pieColumnCat . "` AS 'Category', ";
 	  
 	switch($pieAggType) {
 		case "Count":
-			$sql .= "COUNT(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			$select .= "COUNT(`" . $pieColumnAgg . "`) AS 'AggValue' ";
 			break;
 		case "Sum":
-			$sql .= "SUM(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			$select .= "SUM(`" . $pieColumnAgg . "`) AS 'AggValue' ";
 			break;	
 		case "Avg":
-			$sql .= "AVG(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			$select .= "AVG(`" . $pieColumnAgg . "`) AS 'AggValue' ";
 			break;
 		case "Max":
-			$sql .= "MAX(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			$select .= "MAX(`" . $pieColumnAgg . "`) AS 'AggValue' ";
 			break;
 		case "Min":
-			$sql .= "MIN(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			$select .= "MIN(`" . $pieColumnAgg . "`) AS 'AggValue' ";
 			break;
 	}
 	
-	$sql .= "FROM resultDoJoin ";
-	if (!empty($where))
-        $sql .= $where;
+	$from = (object) array('sid' => $sid, 'tableName' => $table_name);	
 
-	$sql .= " GROUP BY `" . $pieColumnCat . "` ";
+	
+	$groupby .= " GROUP BY `" . $pieColumnCat . "` ";
+	
+	$queryEngine = new QueryEngine();
+	$rst = $queryEngine->doQuery($select, $from, null, $groupby, null, null, null);
 	
 	//echo $sql . "<br>";
 
-    $rst = $db->get_results($sql);
+	
+	
+	
+   // $rst = $db->get_results($sql);
     $rows = array();
     foreach ($rst as $r) {
         $rows[] = $r;

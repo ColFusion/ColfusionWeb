@@ -103,24 +103,27 @@ $(document).ready(function (){
 	})
 function columnFormToDatainfo() {
 	var sid = $("#addColumnSid").val();
+	var sname = $('#addColumnSid').find("option:selected").text();
 	var where;
 	var table = $("#addColumnTable").val();
 	var columnCat = $('#columnCat').val();
 	var columnAgg = $('#columnAgg').val();
 	var columnAggType = $('input:radio[name="columnAggType"]:checked').val();
-	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where);
+	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,sname,table,where);
 }
 function editColumnFormToDatainfo() {
 	var sid = $("#editColumnSid").val(); 
+	var sname = $('#editColumnSid').find("option:selected").text();
 	var table = $("#editColumnTable").val();
 	var where;	
 	var columnCat = $('#columnCatEdit').val();
 	var columnAgg = $('#columnAggEdit').val();
 	var columnAggType = $('input:radio[name="columnAggTypeEdit"]:checked').val();
-	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where);
+	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,name,table,where);
 }
-function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where) {
+function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,sname,table,where) {
 	this.columnCat = columnCat;
+	this.sname = sname;
 	this.columnAgg = columnAgg;
 	this.columnAggType = columnAggType;
 	this.sid = sid;
@@ -129,12 +132,14 @@ function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where) {
 }
 function columnDataInfoToForm(columnDatainfo) {
 	var sid = columnDatainfo.sid;
+	var sname = columnDatainfo.sname;
 	var where = columnDatainfo.where;
 	var table = columnDatainfo.table;
 	var columnCat = columnDatainfo.columnCat;
 	var columnAgg = columnDatainfo.columnAgg;
 	var columnAggType = columnDatainfo.columnAggType;
 	$('#editColumnSid').val(sid);
+	$('#editColumnSid').find("option:selected").text(sname);
 	$('#editColumnTable').val(table);
 	$('#editColumnTable').change();
 	$('#columnCatEdit').val(columnCat);

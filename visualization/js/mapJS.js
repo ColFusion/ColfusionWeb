@@ -122,52 +122,63 @@ $(document).ready(function (){
 		})
 	})
 function mapFormToDatainfo() {
-	var sid;
-	var table;
+	var sid = $("#addMapSid").val();
+	var sname = $('#addMapSid').find("option:selected").text();
 	var where;
+	var table = $("#addMapTable").val();
 	var mapTooltip = new Array();
 	var latitude = $("#latitude").val();
 	var longitude = $("#longitude").val();
 	$.each($("input[name='mapTooltip']:checked"), function(){
             mapTooltip.push($(this).val());
         });
-	return new MapDatainfo(latitude,longitude,mapTooltip,sid,table,where);
+	return new MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where);
 }
 function editMapFormToDatainfo() {
-	var sid;
-	var table;
+	var sid = $("#editMapSid").val();
+	var sname = $('#editMapSid').find("option:selected").text();
 	var where;
+	var table = $("#editMapTable").val();
 	var mapTooltip = new Array();
 	var latitude = $("#latitudeEdit").val();
 	var longitude = $("#longitudeEdit").val();
 	$.each($("input[name='mapTooltipEdit']:checked"), function(){
             mapTooltip.push($(this).val());
         });
-	return new MapDatainfo(latitude,longitude,mapTooltip,sid,table,where);
+	return new MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where);
 }
-function MapDatainfo(latitude,longitude,mapTooltip,sid,table,where) {
+function MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where) {
 	this.latitude = latitude;
 	this.longitude = longitude;
 	this.mapTooltip = mapTooltip;
 	this.sid = sid;
+	this.sname = sname;
 	this.table = table;
 	this.where = where;
 }
 function mapDataInfoToForm(mapDatainfo) {
 	clearMapEditForm();
 	var sid = mapDatainfo.sid;
+	var sname = mapDatainfo.sname;
 	var where = mapDatainfo.where;
 	var table = mapDatainfo.table;
 	var latitude = mapDatainfo.latitude;
 	var longitude = mapDatainfo.longitude;
 	var mapTooltip = mapDatainfo.mapTooltip;
+	$('#editMapSid').val(sid);
+	$('#editMapSid').find("option:selected").text(sname);
+	$('#editMapTable').val(table);
+	$('#editMapTable').change();
 	$('#latitudeEdit').val(latitude);
 	$('#longitudeEdit').val(longitude);
-	for (var i = 0;i<mapTooltip.length;i++) {
+	if (mapTooltip!=null) {
+	    for (var i = 0;i<mapTooltip.length;i++) {
 		var value = mapTooltip[i];
 		var obj = $('input:checkbox[name="mapTooltipEdit"][value="'+value+'"]');
 		obj.prop('checked','checked');
+	    }
 	}
+	
 }
 function clearMapEditForm() {
 	$('#latitudeEdit').val(1);
@@ -251,6 +262,7 @@ function createNewMapGadget(){
     $("#"+gadgetID+' .edit-map').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
+		resetEditFormSidTable("editMapSid",'editMapTable');
 		mapDataInfoToForm(CHARTS[cid]['datainfo']);
 		$('#editMap').modal('show')
 		CANVAS.selectedChart = cid;

@@ -135,6 +135,7 @@ $(document).ready(function (){
 	})
 function comboFormToDatainfo() {
 	var sid = $("#addComboSid").val();
+	var sname = $('#addComboSid').find("option:selected").text();
 	var where;
 	var table = $("#addComboTable").val();
 	var comboColumnCat = "";
@@ -145,10 +146,11 @@ function comboFormToDatainfo() {
 		});
 	comboColumnCat = $('#comboColumnCat').val();
 	comboColumnAgg = $('#comboColumnAgg').val();
-	return new ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,table,where);
+	return new ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,sname,table,where);
 }
 function editComboFormToDatainfo() {
-	var sid = $("#editComboSid").val(); 
+	var sid = $("#editComboSid").val();
+	var sname = $('#editComboSid').find("option:selected").text();
 	var table = $("#editComboTable").val();
 	var where;
 	var comboColumnCat = "";
@@ -159,11 +161,12 @@ function editComboFormToDatainfo() {
 		});
 	comboColumnCat = $('#comboColumnCatEdit').val();
 	comboColumnAgg = $('#comboColumnAggEdit').val();
-	return new ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,table,where);
+	return new ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,sname,table,where);
 }
 
-function ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,table,where){
+function ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,sname,table,where){
 	this.comboColumnCat = comboColumnCat;
+	this.sname = sname;
 	this.comboColumnAgg = comboColumnAgg;
 	this.comboAggType = comboAggType;
 	this.sid = sid;
@@ -173,17 +176,25 @@ function ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,table,wher
 function comboDataInfoToForm(comboDatainfo) {
 	clearComboEditForm();
 	var sid = comboDatainfo.sid;
+	var sname = comboDatainfo.sname;
 	var table = comboDatainfo.table;
 	var where = comboDatainfo.where;
 	var comboColumnCat = comboDatainfo.comboColumnCat;
 	var comboColumnAgg = comboDatainfo.comboColumnAgg;
 	var comboAggType = comboDatainfo.comboAggType;
+	$('#editComboSid').val(sid);
+	$('#editComboSid').find("option:selected").text(sname);
+	$('#editComboTable').val(table);
+	$('#editComboTable').change();
 	$('#comboColumnCatEdit').val(comboColumnCat);
 	$('#comboColumnAggEdit').val(comboColumnAgg);
-	for (var i = 0; i<comboAggType.length;i++) {
-		var value = comboAggType[i]
-		$('input:checkbox[name="comboAggTypeEdit"][value="'+value+'"]').prop('checked','checked');
+	if (comboAggType!=null) {
+		for (var i = 0; i<comboAggType.length;i++) {
+			var value = comboAggType[i]
+			$('input:checkbox[name="comboAggTypeEdit"][value="'+value+'"]').prop('checked','checked');
+		}
 	}
+
 }
 function clearComboEditForm() {
 	$('#comboColumnCatEdit').val(1);
@@ -274,6 +285,7 @@ function createNewComboGadget(){
 	$('#'+gadgetID+' .edit-combo').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
+		resetEditFormSidTable("editComboSid",'editComboTable');
 		comboDataInfoToForm(CHARTS[cid]['datainfo']);
 		$('#editCombo').modal('show');
 		CANVAS.selectedChart = cid;
