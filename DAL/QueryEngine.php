@@ -145,12 +145,12 @@ class QueryEngine {
     	if ($this->GetSourceType($from->sid) == "database") {
     		
     	} else {
-    		$this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $relationships, $perPage, $pageNo);
+    		return $this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $relationships, $perPage, $pageNo);
     	}
     }
     
     function prepareAndRunQueryFromFile($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
-    	$query = $select;
+        $query = $select;
     	$query .= ' from resultDoJoin ';
 
         if (isset($from->alias))
@@ -160,7 +160,7 @@ class QueryEngine {
     		$query .= ' $where ';
     	
     	if (isset($groupby))
-    		$query .= ' $groupby ';
+    		$query .= ' '. $groupby . ' ';
     	 
     	if (isset($perPage) && isset($pageNo)) {
     	
@@ -175,8 +175,11 @@ class QueryEngine {
     	global $db; 	
     	$doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
     	
+        
     	$res = $db->query($doJoinQuery);
     	$rst = $db->get_results($query);
+        
+        
     	return $rst;
     }
     
