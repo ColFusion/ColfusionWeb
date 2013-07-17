@@ -135,6 +135,7 @@
 
         function openVisualizationPage() {
             $('#visualizationParaForm').find('#visualTableNameParam').val(dataPreviewViewModel.currentTable().tableName);
+            $('#visualizationParaForm').find('#visualTitleParam').val($('#dataset_title').text());
             $('#visualizationParaForm').attr('action', my_pligg_base + "/visualization/dashboard.php");
             document.getElementById('visualizationParaForm').submit();
         }
@@ -142,9 +143,10 @@
 
 {/literal}
 
-<form id="visualizationParaForm" target="_blank" method="POST" action="">
+<form id="visualizationParaForm" style="display:none;" target="_blank" method="POST" action="">
     <input type="hidden" name="tableName" id="visualTableNameParam"/>
-    <input type="hidden" name="title" id="visualSidParam" value="{$sid}"/>
+    <input type="hidden" name="sid" id="visualSidParam" value="{$sid}"/>
+    <input type="hidden" name="title" id="visualTitleParam"/>
 </form>
 
 <div id="upload_result">	

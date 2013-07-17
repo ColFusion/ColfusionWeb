@@ -15,7 +15,7 @@ var typeahead_template = '<div class="dataColumnSuggestion">' +
 var search_typeahead_tpl = typeahead_template
         .replace("{{dname_chosen}}", "{{title}}")
         .replace("{{dataset_name}}", "{{userName}}")
-        .replace("{{dname_value_description}}", "{{content}}");
+        .replace("{{dname_value_description}}", "{{description}}");
 
 function DatasetSearcher(inputDom, selectedCallback) {
     var self = this;
@@ -27,7 +27,7 @@ function DatasetSearcher(inputDom, selectedCallback) {
         name: 'datasets',
         prefetch: {
             url: '/colfusion/datasetController/findDataset.php',
-            ttl: 10 * 60 * 1000 // cache 10 mins
+            ttl: 30 * 60 * 1000 // cache 30 mins
         },
         valueKey: 'source_key',
         template: search_typeahead_tpl,
@@ -45,7 +45,7 @@ function DatasetSearcher(inputDom, selectedCallback) {
 function showDescriptionInPopup(datum) {
     var table = $("<table id='addStoryDesTable'></table>");
     var datasetTitle = $('<tr><td class="desTitle">Dataset Title:</td><td>' + datum.title + '</td></tr>');
-    var description = $('<tr><td class="desTitle">Description:</td><td>' + datum.content + '</td></tr>');
+    var description = $('<tr><td class="desTitle">Description:</td><td>' + datum.description + '</td></tr>');
     var creator = $('<tr><td class="desTitle">Submit by:</td><td>' + datum.userName + '</td></tr>');
     var dateSubmitted = $('<tr><td class="desTitle">Date Submitted:</td><td>' + datum.entryDate + '</td></tr>');
     var lastUpdated = datum.lastUpdated ? datum.lastUpdated : datum.entryDate;

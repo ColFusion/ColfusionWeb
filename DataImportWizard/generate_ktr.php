@@ -110,7 +110,6 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath) {
 
     $_SESSION["ktrArguments_$sid"]["ktrManagers"] = serialize($ktrManagers);
     $_SESSION["ktrArguments_$sid"]["filenames"] = $filenames;
-    var_dump($_SESSION["ktrArguments_$sid"]["filenames"]);
     $_SESSION["ktrArguments_$sid"]["filePaths"] = $filePaths;
     $_SESSION["ktrArguments_$sid"]["fileUrls"] = $fileURLs;
 }
@@ -305,7 +304,6 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
                 $dataMatchingUserInputsForATable[] = $value;
             }
         }
-        var_dump($dataMatchingUserInputsForATable);
 
         $fileUrls[] = $fileUrl;
         $ktrManager->createTemplate($fileUrls, $sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputsForATable);

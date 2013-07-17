@@ -43,7 +43,7 @@ ko.bindingHandlers.searchDatasetTypeahead = {
         var search_typeahead_tpl = typeahead_template
                 .replace("{{dname_chosen}}", "{{title}}")
                 .replace("{{dataset_name}}", "{{userName}}")
-                .replace("{{dname_value_description}}", "{{content}}");
+                .replace("{{dname_value_description}}", "{{description}}");
 
         var dataSet = valueAccessor();
         $(element).parent().next('button').prop("disabled", true);

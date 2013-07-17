@@ -86,7 +86,7 @@ $chart_columns[] = "Location";
 
             .desTitle {
                 font-weight: bold;
-                width: 130px;
+                width: 130px !important;
             }
         </style>
 
@@ -104,8 +104,8 @@ $chart_columns[] = "Location";
         <!-- styles and functions for table -->
         <link rel="stylesheet" href="css/googleTableCSS.css" />
 
-        <link rel="stylesheet" href="/colfusion//css/typeahead.js-bootstrap.css">
-        <link rel="stylesheet" href="/colfusion/css/addRelationship.css">
+        <link rel="stylesheet" href="<?php echo $my_pligg_base ;?>/css/typeahead.js-bootstrap.css">
+        <link rel="stylesheet" href="<?php echo $my_pligg_base ;?>/css/addRelationship.css">
 
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript" src="js/tableJS.js"></script>
@@ -127,8 +127,8 @@ $chart_columns[] = "Location";
         <!-- styles and functions for motion chart -->
         <script type="text/javascript" src="js/motionJS.js"></script>
 
-        <script type="text/javascript" src="/colfusion/javascripts/hogan.min.js"></script>
-        <script type="text/javascript" src="/colfusion/javascripts/typeahead.min.js"></script>
+        <script type="text/javascript" src="<?php echo $my_pligg_base ;?>/javascripts/hogan.min.js"></script>
+        <script type="text/javascript" src="<?php echo $my_pligg_base ;?>/javascripts/typeahead.min.js"></script>
         <script type="text/javascript" src="js/datasetTypeahead.js"></script>
     </head>
     <body onload="showHint('', 1);
