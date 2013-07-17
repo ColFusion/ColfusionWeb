@@ -44,7 +44,7 @@ class PostgreSQLHandler extends DatabaseHandler {
 
     public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
 		
-    	return $this->prepareAndRunQuery("select * ", "`$table_name`", null, null, null, $perPage, $pageNo);
+    	return $this->prepareAndRunQuery("select * ", " \"$table_name\" ", null, null, null, $perPage, $pageNo);
     	
     	
 //     	$pdo = $this->GetConnection();
@@ -64,7 +64,7 @@ class PostgreSQLHandler extends DatabaseHandler {
 
     public function getTotalNumberTuplesInTable($table_name) {
         $pdo = $this->GetConnection();
-        $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM `$table_name`");
+        $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM \"$table_name\"");
         $stmt->execute();
         $row = $stmt->fetch(PDO::FETCH_BOTH);
         $tupleNum = (int) $row[0];
@@ -95,7 +95,9 @@ class PostgreSQLHandler extends DatabaseHandler {
     		$query .= " LIMIT " . $startPoint . " OFFSET " . $perPage;
     	}
     	    	       	
-    	$res = $pdo->query($sql);
+    	//echo $query;
+    	
+    	$res = $pdo->query($query);
     	$result = array();
     	
     	foreach ($res->fetchAll() as $row) {
