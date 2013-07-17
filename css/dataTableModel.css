@@ -37,10 +37,9 @@
 
 #visualizeBtn{
     float: right;
-    margin-top: -35px;
-    left: 73.8%;
-    position: absolute;
     z-index: 3;
+    margin-right: 30px;
+    margin-top: 10px;
 }
 
 #previewTableList {

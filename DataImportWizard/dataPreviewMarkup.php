@@ -1,7 +1,7 @@
 <?php ?>
 <div class="preview-story">
+    <button data-bind="visible: currentTable != null" id="visualizeBtn" class="btn" onclick="openVisualizationPage()"><i class="icon-bar-chart" style="margin-right: 5px;"></i>Visualize</button>
     <h3 class="preview-title">Data Preview</h3>
-
     <div class="storycontent" id="dataPreviewContainer">
         <ul data-bind="visible: tableList().length > 1, foreach: tableList" class="tableList" id="previewTableList">
             <li data-bind="click: $root.chooseTable" class="tableListItem">
@@ -12,7 +12,6 @@
         <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
         <div data-bind="with: currentTable">
             <div id="dataPreviewTableWrapper" data-bind="makeHorizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
-                <button id="visualizeBtn" class="btn" onclick="openVisualizationPage()"><i class="icon-bar-chart" style="margin-right: 5px;"></i>Visualize</button>
                 <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
                     <tr data-bind="foreach: headers">
                         <th data-bind="text: name"></th>
@@ -36,11 +35,11 @@
 </div>
 <script type="text/javascript" src="javascripts/jquery.mousewheel.js"></script>
 <script>
-    function bindHorizontalScrollToPreviewTable(element) {      
-        $(element).bind('mousewheel', function(event, delta) {
-            val = this.scrollLeft - (delta * 100);
-            jQuery(this).stop().animate({scrollLeft: val});
-            event.preventDefault();
-        });
-    }
+        function bindHorizontalScrollToPreviewTable(element) {
+            $(element).bind('mousewheel', function(event, delta) {
+                val = this.scrollLeft - (delta * 100);
+                jQuery(this).stop().animate({scrollLeft: val});
+                event.preventDefault();
+            });
+        }
 </script>
