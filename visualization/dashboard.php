@@ -10,6 +10,7 @@ include('Canvas.php');
 /* * **************
   force login
  * ************** */
+
 global $current_user;
 if ($current_user->authenticated != TRUE) {
     echo "not log in";
@@ -175,7 +176,7 @@ $chart_columns[] = "Location";
                                     <li><a href="#addMap" data-toggle="modal">Add Map</a></li>
                                 </ul>
                             </li>			
-                            <li id = "viewChartsNote" class="dropdown" id="view-dropdown" >
+                            <li id = "viewChartsNote" class="dropdown" id="view-dropdown" style="display:none" >
                                 <a href="#view" onclick = "showNote()" class="dropdown-toggle" >Charts Notes</a>
                             </li>
                         </ul>
@@ -238,10 +239,17 @@ $chart_columns[] = "Location";
             </div>
         </div>
 
-        <div id = "note_section" class = 'round' style="display:none">
-            <ul class="nav nav-list">
-                <li class="nav-header">Charts Note:</li>
-            </ul>
+        <div id = "note_section" class = 'round' >
+        	<input type = "hidden" id = "focus_recorder" value = "">
+            <div id = "selector_part">
+            </div>
+            
+            <div id = "note_part">
+	            <ul class="nav nav-list">
+	                <li class="nav-header">Charts Note:</li>
+	            </ul>
+	            <textarea id = "CHART_NOTE"></textarea>
+            </div>
         </div>
 
         <!--New Canvas -->
@@ -1003,7 +1011,7 @@ $chart_columns[] = "Location";
 
 
         <!-- Canvas Information -->
-        <div class="container">
+        <div class="container" onclick = "lostFocus()">
             <input type="hidden" id="vid" value=""/>
             <input type="hidden" id="canvasName" value=""/>
             <input type="hidden" id="privilege" value=""/>

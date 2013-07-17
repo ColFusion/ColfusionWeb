@@ -73,16 +73,16 @@ function openCharts(vid,vname){
 
 function openCanvas(vid){
 	
-	var s = confirm("Save The Current Canvas????");
 	$("#open").modal('hide');
 	clearScreen();
 	$("#file_manager").hide();
 	vid = vid;
+	$("#viewChartsNote").show();
 	
 	$.ajax(
 		{
 			url:"control.php",
-			data:{vid:vid,s:s,action:'openCanvas'},
+			data:{vid:vid,action:'openCanvas'},
 			success:function(data){
 				maxDepth = -1;
 			
@@ -176,7 +176,23 @@ function gadgetProcess(gadgetID,cid,name,top,left,height,width,depth,type,note,d
 	$("#"+gadgetID).append("<input type='hidden' class='datainfo' name = 'datainfo 'value = '"+datainfo+"'>");
 	$("#"+gadgetID).append("<input type='hidden' class='chartID' name = 'chartID 'value = '"+cid+"'>");
 	$("#"+gadgetID).click(function (){
-		$("#"+gadgetID).css({"z-index":++maxDepth})			
+		$("#"+gadgetID).css({"z-index":++maxDepth});
+		var chartID = $("#"+gadgetID+" input.chartID").val();
+		var sid = CHARTS[chartID].getSid();
+		var tablename = CHARTS[chartID].getTable();
+		
+		
+		$("#"+sid+"storiesTable").css({
+		    "text-shadow":"0 0 5px #00FFFF"
+		});
+		
+		tablename = tablename.split(".");
+		tablename = tablename[0]+tablename[1];
+		var temp = "#"+sid+tablename;
+		$(temp).css({
+			"text-shadow":"0 0 5px #00FFFF"
+		});
+		
 	})
 	if (parseInt(depth)>maxDepth) {
 		maxDepth = parseInt(depth);

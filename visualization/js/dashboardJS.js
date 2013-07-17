@@ -6,6 +6,10 @@ var vDay = d.getDate();
 var completeResult;
 var authorizationLevel=-1;
 
+var CHARTS ={};
+var CANVAS ={};
+
+
 function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
 	this.vid = vid;
 	this.name = name;
@@ -130,8 +134,109 @@ function showNote(){
 	else {
 		$("#viewChartsNote").removeClass("active");
 		$("#note_section").animate({
-			marginLeft:"-15%"
+			marginLeft:"-30%"
 		});
+	}
+	
+	var noteStr = "";
+	var noteObj = CANVAS.getStories();
+	
+	for(var temp in noteObj){
+		
+		var tableStr ="";
+		var story = noteObj[temp];
+		noteStr += "<li id = "+story['sid']+"storiesTable class='unfold' onclick = 'StoryHighlight("+story['sid']+")'><a href ='#'>"+story["sid"]+":"+story["sname"]+"&nbsp&nbsp<i class='icon-plus' onclick = 'showRelatedTables("+story['sid']+")'></i></a></li>";
+
+		
+		for (var TempTable in story['tables']){
+			TempTable = TempTable.split(".");
+			TempTable = TempTable[0]+TempTable[1];
+			noteStr += "<li id = "+story['sid']+TempTable+" class = "+story['sid']+"StoriesChildren onclick = TableHighlight("+story['sid']+",'"+TempTable+"') style = 'display:none'><a href = '#' ><i class='icon-arrow-right'></i>"+TempTable+"</a></li>";
+		}
+	}
+	
+	
+	$("#selector_part").html('<li class="nav-header">CHARTS SELECTOR:</li>'+ noteStr);
+}
+
+
+function showRelatedTables(sid){
+	if ($("#"+sid+"storiesTable").hasClass("unfold")){
+		
+		$("#"+sid+"storiesTable i").removeClass('icon-plus');
+		$("#"+sid+"storiesTable i").addClass('icon-minus');
+		
+		$("."+sid+"StoriesChildren").show(500);
+		$("#"+sid+"storiesTable").removeClass("unfold");
+	}
+	else {
+		$("#"+sid+"storiesTable i").removeClass('icon-minus');
+		$("#"+sid+"storiesTable i").addClass('icon-plus');
+		
+		$("#"+sid+"storiesTable").addClass("unfold");
+		$("."+sid+"StoriesChildren").hide(500);
+	}
+}
+
+function lostFocus(){
+	for (var chart in CHARTS){
+		var G = CHARTS[chart]['gadgetID'].split('Result');
+		var gid = G[1];
+		$("#"+gid).animate({
+			opacity:1.0
+		});
+	}
+}
+
+function StoryHighlight(sid){
+	
+	$("#focus_recorder").val(sid);
+	
+	for (var chart in CHARTS){
+	    var compare = CHARTS[chart].getSid();
+		
+		if (compare!=sid){
+			var G = CHARTS[chart]['gadgetID'].split('Result');
+			var gid = G[1];
+			$("#"+gid).animate({
+				opacity:0.2
+			});
+		}
+		else {
+			var G = CHARTS[chart]['gadgetID'].split('Result');
+			var gid = G[1];
+			$("#"+gid).animate({
+				opacity:1.0
+			});
+		}
+		
+	}
+}
+
+
+function TableHighlight(sid,tablename){
+	
+	$("#focus_recorder").val(sid+"&"+tablename);
+	
+	for (var chart in CHARTS){
+	    var compareSid = CHARTS[chart].getSid();
+	    var compareTname = CHARTS[chart].getTable();
+		
+		if (compareSid!=sid||compareTname!=tablename){
+			var G = CHARTS[chart]['gadgetID'].split('Result');
+			var gid = G[1];
+			$("#"+gid).animate({
+				opacity:0.2
+			});
+		}
+		else {
+			var G = CHARTS[chart]['gadgetID'].split('Result');
+			var gid = G[1];
+			$("#"+gid).animate({
+				opacity:1.0
+			});
+		}
+		
 	}
 	
 }
@@ -174,6 +279,11 @@ function showChart(type){
 function showHint(str,currentPage){
 	
 	$("#note_section").show();
+	
+	if (currentPage>0&&currentPage!=null)
+		authorizationLevel=-1;
+	else if (currentPage<0)
+		currentPage *= -1;
 	
 	$("#authorization_filter li").removeClass('active');
 	if (currentPage!=null&&currentPage!="")
@@ -231,8 +341,8 @@ $(document).ready(function(){
 function autFilter(id){
 	
 	authorizationLevel = id;
-	
-	
+	var currentSearchText = $("#button_section input[type='text']").val();
+	showHint(currentSearchText,-1);
 }
 
 function pickDate(){

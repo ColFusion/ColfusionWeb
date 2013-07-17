@@ -147,10 +147,9 @@ function changePage(page,vid){
 }
 
 function tableFormToDatainfo() {
-	var sid = $("#addTableSid").val();
-	var sname = $('#addTableSid').find("option:selected").text();
+	var sid;
 	var where;
-	var table = $("#addTableTable").val();
+	var table;
 	var perPage = $('input:radio[name="page"]:checked').val(); // number of turples per page
 	var color = $('input:radio[name="color"]:checked').val(); // color of the new table		
 	var currentPage = $('input:hidden[name="currentPage"]').val();
@@ -158,13 +157,12 @@ function tableFormToDatainfo() {
 	$.each($("input[name='tableColumns']:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
 	});	
-	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where);
+	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where);
 }
 function editTableFormToDatainfo() {
-	var sid = $("#editTableSid").val();
-	var sname = $('#editTableSid').find("option:selected").text();
+	var sid;
 	var where;
-	var table = $("#editTableTable").val();
+	var table;
 	var perPage = $('input:radio[name="pageEdit"]:checked').val(); // number of turples per page
 	var color = $('input:radio[name="colorEdit"]:checked').val(); // color of the new table		
 	var currentPage = $('input:hidden[name="currentPageEdit"]').val();
@@ -172,43 +170,34 @@ function editTableFormToDatainfo() {
 	$.each($("input[name='tableColumnsEdit']:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
 	});	
-	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where);
+	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where);
 }
-function TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where) {
+function TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where) {
 	this.tableColumns = tableColumns;
 	this.perPage = perPage;
 	this.color = color;
 	this.currentPage = currentPage;
 	this.sid = sid;
-	this.sname = sname;
 	this.table = table;
 	this.where = where;
 }
 function tableDataInfoToForm(tableDatainfo) {
 	clearTableEditForm();
 	var sid = tableDatainfo.sid;
-	var sname =tableDatainfo.sname;
 	var where = tableDatainfo.where;
 	var table = tableDatainfo.table;
 	var tableColumns = tableDatainfo.tableColumns;
 	var perPage = tableDatainfo.perPage;
 	var currentPage = tableDatainfo.currentPage;
 	var color = tableDatainfo.color;
-	$('#editTableSid').val(sid);
-	$('#editTableSid').find("option:selected").text(sname);
-	$('#editTableTable').val(table);
-	$('#editTableTable').change();
 	$('input:radio[name="pageEdit"][value="'+perPage+'"]').prop('checked','checked');
 	$('input:radio[name="colorEdit"][value="'+color+'"]').prop('checked','checked');
 	$('input:hidden[name="currentPageEdit"]').val(currentPage);
-	if (tableColumns!=null) {
-	    for (var i = 0;i<tableColumns.length;i++) {
-		    var value = tableColumns[i];
-		    var obj = $('input:checkbox[name="tableColumnsEdit"][value="'+value+'"]');
-		    obj.prop('checked','checked');
-	    }
+	for (var i = 0;i<tableColumns.length;i++) {
+		var value = tableColumns[i];
+		var obj = $('input:checkbox[name="tableColumnsEdit"][value="'+value+'"]');
+		obj.prop('checked','checked');
 	}
-	
 }
 function clearTableEditForm() {
 	$('input:checkbox[name="pageEdit"]').each(function() {
@@ -277,7 +266,6 @@ function createNewTableGadget(){
 	$("#"+gadgetID+' .edit-table').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
-		resetEditFormSidTable("editTableSid",'editTableTable');
 		tableDataInfoToForm(CHARTS[cid]['datainfo']);
 		$('#editTable').modal('show');
 		CANVAS.selectedChart = cid;

@@ -188,8 +188,14 @@ function closeCanvas(){
     $('#note').val('');
 }
 function openCanvasManager() {
+	var s = confirm("Save The Current Canvas????");
+	if (s)saveCanvas();
+	
     $('#file-dropdown').hide();
-    $("#note_section").hide();
+    $('#viewChartsNote').hide();
+    $("#note_section").css({
+		marginLeft:"-100%"
+	});
     showHint("");
     $('#brand').text('Col*Fusion Canvas Manager');
     closeCanvas();
