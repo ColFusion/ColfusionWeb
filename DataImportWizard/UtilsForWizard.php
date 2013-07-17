@@ -6,7 +6,6 @@ class UtilsForWizard {
 
     public static function PrintTableForSchemaMatchingStep($data) {
         $result = "";
-        var_dump($data);
 
         $result .= "<div class=\"wizard-input-section\">";
         $result .= "<table border=\"0\">";
@@ -66,7 +65,6 @@ class UtilsForWizard {
 
     public static function PrintTableForDataMatchingStep($data) {
         $result = "";
-        var_dump($data);
         foreach ($data as $oneTableName => $oneTableColumns) {
             if (count($data) > 1)
                 $result .= '<div> <span>' . $oneTableName . '</span>';

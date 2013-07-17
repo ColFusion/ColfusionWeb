@@ -1,6 +1,6 @@
 <?php ?>
 <div class="preview-story">
-    <button data-bind="visible: currentTable != null" id="visualizeBtn" class="btn" onclick="openVisualizationPage()"><i class="icon-bar-chart" style="margin-right: 5px;"></i>Visualize</button>
+    <button data-bind="visible: currentTable" id="visualizeBtn" class="btn" onclick="openVisualizationPage()"><i class="icon-bar-chart" style="margin-right: 5px;"></i>Visualize</button>
     <h3 class="preview-title">Data Preview</h3>
     <div class="storycontent" id="dataPreviewContainer">
         <ul data-bind="visible: tableList().length > 1, foreach: tableList" class="tableList" id="previewTableList">

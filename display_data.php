@@ -31,16 +31,18 @@ include_once(mnminclude.'user.php');
 	
 	echo '<br/>
             <span style="font-weight:bold;padding-left:10px;">Dataset Title: </span>
-            <span id="dataset_title">'.$s->Title.'</span>
-                <br />
-                <span style="font-weight:bold;padding-left:10px;">Description: </span> '
-                .$s->link_content.'
+            <span id="dataset_title">'.$s->Title.'</span>              
                 <br />
                 <span style="font-weight:bold;padding-left:10px;">Submit by:</span> '
-                .$u->user_login.'
-                    <br />
+                .$u->user_login.
+                '<br />
                     <span style="font-weight:bold;padding-left:10px;">Date Submitted:</span> '
-                .$s->EntryDate.'<br /><span style="font-weight:bold;padding-left:10px;">Date Last Refreshed:</span> '
-                .$lastUpdated.'<br /><br/>'
+                .$s->EntryDate.
+                '<br />
+                    <span style="font-weight:bold;padding-left:10px;">Date Last Refreshed:</span> '
+                .$lastUpdated.
+                '<br /> 
+                <span style="font-weight:bold;padding-left:10px;float:left;">Description: </span>
+                <span id="profile_datasetDescription">'.$s->link_content.'</span><br/><br/>'
                 ."\n";	
 ?>

@@ -17,8 +17,8 @@ include(mnminclude . 'user.php');
 include_once(mnminclude . 'utils.php');
 include(mnminclude . 'smartyvariables.php');
 
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-ini_set('display_errors', 1);
+// error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+// ini_set('display_errors', 1);
 
 // module system hook
 $vars = '';
@@ -104,6 +104,7 @@ function upload_0() {
                     $xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
                     $raw_file_name = $xlsxFileName;
                     unlink($csvFilePath);
+                    
                 } else if (strtolower($ext) == 'zip') {
 
                     // If a zip file is provided, unzip all files.

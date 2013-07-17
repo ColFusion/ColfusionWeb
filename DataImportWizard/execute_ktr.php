@@ -21,7 +21,7 @@ include(mnminclude . 'smartyvariables.php');
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/UtilsForWizard.php");
 
-error_reporting(E_ALL ^ E_STRICT);
+// error_reporting(E_ALL ^ E_STRICT);
 
 global $current_user, $db, $dblang;
 

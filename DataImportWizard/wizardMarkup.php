@@ -75,8 +75,7 @@
                                         <option value='MySQL'>MySQL</option>
                                         <option value='MSSQL'>Microsoft SQL</option>
                                     </select>							
-                                </td>
-                                <td><span id='showHideAdvancedOptionsFromDatabase' style='cursor: pointer;' onclick="wizardFromDB.togglePort()">Show Advanced Options</span></td>
+                                </td>                             
                             </tr>                        
                             <tr>
                                 <td>Server address:</td>
@@ -84,7 +83,7 @@
                             </tr>
                             <tr>
                                 <td>Port:</td>
-                                <td><input type='text' id='dbServerPort'/></td>
+                                <td><input type='text' id='dbServerPort' value="3306"/></td>
                             </tr>
                             <tr>
                                 <td>User name:</td>
@@ -314,7 +313,7 @@
     </div>
 
     <div class='wizard-error'>
-        <div class='alert alert-error'><strong>There was a problem</strong> with your completing your submission. Please report this to <a href='mailto:radwanfatima@gmail.com?subject=ErrorReported from Colfusion importing wizard'>Colfusion</a> and restart the wizard again from the main page.
+        <div class='alert alert-error'><strong>There was a problem</strong> during your submission. Please report this to <a href='mailto:radwanfatima@gmail.com?subject=ErrorReported from Colfusion importing wizard'>Colfusion</a> and restart the wizard again from the main page.
             <p id='exe'></p>
         </div>
     </div>

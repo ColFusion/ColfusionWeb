@@ -88,6 +88,7 @@ $chart_columns[] = "Location";
             .desTitle {
                 font-weight: bold;
                 width: 130px !important;
+                vertical-align: top;
             }
         </style>
 

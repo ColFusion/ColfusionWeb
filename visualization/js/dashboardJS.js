@@ -651,15 +651,7 @@ $(document).ready(function() {
 	//edit geo chart
 	$('.edit-map').click(function() {
 		//get ID of the gadget user selects to edit
-		editGadgetID = $(this).parent().parent().attr('id');
-		//alert(editGadgetID);
-		/*var oldSettings = $('#setting'+editGadgetID).val(); //old settings of gadget
-		oldColumn = oldSettings;
-		$("input:radio[name='motionColumnEdit[]']").each(function(j){
-			if($(this).val() == oldColumn) {
-				$(this).attr('checked', true);
-			}
-		});*/
+		editGadgetID = $(this).parent().parent().attr('id');		
 	});
 
 	//edit motion save

@@ -36,6 +36,13 @@
             margin: 0 0 13px 15px; 
             display: block;
         }
+        
+        #profile_datasetDescription {
+            width: 75%;
+            display: inline-block;
+            word-wrap: break-word;
+            margin-left: 8px;
+        }
     </style>
     <script type="text/javascript">
 
@@ -72,7 +79,7 @@
             ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
 
             dataPreviewViewModel.getTablesList();
-            relationshipViewModel.mineRelationships(10, 1);        
+            relationshipViewModel.mineRelationships(10, 1);
         });
 
         window.onload = function showData()

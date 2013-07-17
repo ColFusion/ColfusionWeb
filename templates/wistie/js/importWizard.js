@@ -16,7 +16,10 @@ var importWizard = (function() {
         wizardFromFile.Init();
 
         $.ajaxSetup({
-            data: {sid: sid}
+            data: {sid: sid},
+            error: function(jqXHR, textStatus, errorThrown) {
+                triggerError();
+            }
         });
 
         $("#computer").click(function() {
@@ -112,31 +115,6 @@ var importWizard = (function() {
         initBootstrapWizard();
 
         importWizard.loadingGif = "<img src='" + my_pligg_base + "/templates/wistie/images/ajax-loader_cp.gif'/>";
-    };
-
-
-    importWizard.getXMLHttp = function() {
-        var xmlHttp
-        try {
-            //Firefox, Opera 8.0+, Safari
-            xmlHttp = new XMLHttpRequest();
-        }
-        catch (e) {
-            //Internet Explorer
-            try {
-                xmlHttp = new ActiveXObject("Msxml2.XMLHTTP");
-            }
-            catch (e) {
-                try {
-                    xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
-                }
-                catch (e) {
-                    alert("Your browser does not support AJAX!")
-                    return false;
-                }
-            }
-        }
-        return xmlHttp;
     };
 
     //***********************************************************************************************
@@ -360,11 +338,8 @@ var importWizard = (function() {
 
                     $('#fromDataSetWrapper').find('.sidInput').val('New Dataset');
                 } else {
-                    wizard.trigger("error");
-                    wizard._submitting = false;
-                    wizard.showSubmitCard("error");
-                    wizard.updateProgressBar(0);
-                }              
+                    triggerError();
+                }
             }).error(function(jqXHR, textStatus, errorThrown) {
                 var resultJson = {isSuccessful: false, message: errorThrown};
                 $("#exe").html(resultJson.message);
@@ -408,8 +383,8 @@ var importWizard = (function() {
     function resetFileUploadForm() {
         $('#uploadWidgetCover').text('No file chosen');
         $('#uploadMessage').text('');
-        $('#uploadProgressText').text('0%');
-        $('#uploadProgressBar').find('.bar').css('width', '0');
+        $('#uploadProgressText').text('0%').hide();
+        $('#uploadProgressBar').hide().find('.bar').css('width', '0');
         $('input[name="place"]').removeAttr('checked');
         $('#divFromComputer').add('#divFromInternet').add('#divFromDatabase').hide();
         $('#selectDBServer')
@@ -469,6 +444,8 @@ var importWizard = (function() {
             $("#displayOptoinsStepCardFromDB").hide();
 
             wizard.disableNextButton();
+
+            $('#loadingProgressContainer').show();
             wizardFromFile.createKtrFiles().done(function() {
                 /* For appending           
                  wizardFromFile.showExcelFile();
@@ -484,6 +461,8 @@ var importWizard = (function() {
                     $("#displayOptoinsStepCardFromFile").show();
                     wizard.enableNextButton();
                 });
+            }).fail(function() {
+                $('#loadingProgressContainer').hide();
             });
         }
     }
@@ -539,6 +518,13 @@ var importWizard = (function() {
         });
         var isValid = $(inputContainer).parsley('validate');
         return isValid;
+    }
+
+    function triggerError() {
+        wizard.trigger("error");
+        wizard._submitting = false;
+        wizard.showSubmitCard("error");
+        wizard.updateProgressBar(0);
     }
 
     /********************/

@@ -50,7 +50,7 @@ function showDescriptionInPopup(datum) {
     var dateSubmitted = $('<tr><td class="desTitle">Date Submitted:</td><td>' + datum.entryDate + '</td></tr>');
     var lastUpdated = datum.lastUpdated ? datum.lastUpdated : datum.entryDate;
     var lastReferenced = $('<tr><td class="desTitle">Date Last Updated:</td><td>' + lastUpdated + '</td></tr>');   
-    $(table).append(datasetTitle).append(description).append(creator).append(dateSubmitted).append(lastReferenced); 
+    $(table).append(datasetTitle).append(creator).append(dateSubmitted).append(lastReferenced).append(description); 
     $('#story-search-result').html(table);
 }
 

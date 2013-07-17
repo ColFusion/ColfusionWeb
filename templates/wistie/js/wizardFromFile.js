@@ -201,6 +201,9 @@ var wizardFileUpload = (function() {
 
         self.removeFileInfo = function(index) {
             self.fileInfos.splice(index, 1);
+            if(self.fileInfos().length === 0){
+                $('#uploadPanel').hide();
+            }
         };
     }
 
