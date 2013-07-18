@@ -1,0 +1,56 @@
+.nav.nav-tabs {
+    margin-bottom: 0;
+}
+
+.addSynonymInputWrapper {
+    padding: 10px 0 0 13px;
+}
+
+.synonymInput {
+    height: 25px !important;
+    margin-bottom: 0;
+}
+
+.addSynonymBtn {
+    margin-top: -10px;
+}
+
+.addSynonymPanel {
+    background-color: #FFEEBB;
+}
+
+.accordionWrapper {
+    width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+}
+
+.accordion-heading {
+    background-color: #dbdbdb;
+}
+
+.accordion-heading a{
+    color: black;
+}
+
+.linkDataContainer {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.linkDataTable td, .linkDataTable th {
+    border: solid 1px black;
+}
+
+.dataTables_filter > label > input {
+    margin-bottom: 0 !important;
+    height: 28px;
+}
+
+.linkDataTable form {
+    margin-bottom: 0 !important;
+}

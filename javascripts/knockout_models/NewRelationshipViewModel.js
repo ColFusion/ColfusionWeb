@@ -255,8 +255,11 @@ function NewRelationshipViewModel() {
     };
 
     self.checkDataMatching = function() {
+        console.log(self.links());
+        console.log(JSON.stringify(self.links()));
+        
+        /*
         self.isPerformingDataMatchingCheck(true);
-
         dataSourceUtil.checkDataMatching(getSentFromData(), getSentToData()).done(function(data) {
             self.isPerformingDataMatchingCheck(false);
             self.dataMatchingCheckResult(data);
@@ -264,6 +267,7 @@ function NewRelationshipViewModel() {
             self.isPerformingDataMatchingCheck(false);
             self.dataMatchingCheckResult('Some errors occur when performing data checking.');
         });
+        */
     };
 
     self.testDataEncoding = function() {
