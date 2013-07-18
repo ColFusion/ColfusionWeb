@@ -144,9 +144,10 @@ $(document).ready(function (){
 	
 	})
 function motionFormToDatainfo() {
-	var sid;
-	var table;
+	var sid = $("#addMotionSid").val();
+	var sname = $('#addMotionSid').find("option:selected").text();
 	var where;
+	var table = $("#addMotionTable").val();
 	var otherColumns = new Array();
 	var firstColumn = $('#motionFirstColumn').val();
 	var dateColumn = $('#motionDate').val();
@@ -156,12 +157,13 @@ function motionFormToDatainfo() {
 		otherColumns.push($(this).val());
 		otherColCount++;
 	});
-	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where);
+	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where);
 }
 function editMotionFormToDatainfo() {
-	var sid;
-	var table;
+	var sid = $("#editMotionSid").val();
+	var sname = $('#editMotionSid').find("option:selected").text();
 	var where;
+	var table = $("#editMotionTable").val();
 	var otherColumns = new Array();
 	var firstColumn = $('#motionFirstColumnEdit').val();
 	var dateColumn = $('#motionDateEdit').val();
@@ -171,31 +173,40 @@ function editMotionFormToDatainfo() {
 		otherColumns.push($(this).val());
 		otherColCount++;
 	});
-	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where);
+	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where);
 }
-function MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,table,where) {
+function MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where) {
 	this.firstColumn = firstColumn;
 	this.dateColumn = dateColumn;
 	this.otherColumns = otherColumns;
 	this.sid = sid;
+	this.sname = sname;
 	this.table = table;
 	this.where = where;
 }
 function motionDataInfoToForm(motionDatainfo) {
 	clearMotionEditForm();
 	var sid = motionDatainfo.sid;
+	var sname = motionDatainfo.sname;
 	var table = motionDatainfo.table;
 	var where = motionDatainfo.where;
 	var firstColumn = motionDatainfo.firstColumn;
 	var dateColumn = motionDatainfo.dateColumn;
 	var otherColumns = motionDatainfo.otherColumns;
+	$('#editMotionSid').val(sid);
+	$('#editMotionSid').find("option:selected").text(sname);
+	$('#editMotionTable').val(table);
+	$('#editMotionTable').change();
 	$('#motionFirstColumnEdit').val(firstColumn);
 	$('#motionDateEdit').val(dateColumn);
-	for (var i = 0;i<otherColumns.length;i++) {
-		var value = otherColumns[i];
-		var obj = $('input:checkbox[name="motionOtherColumnEdit[]"][value="'+value+'"]');
-		obj.prop('checked','checked');
+	if (otherColumns!=null) {
+		for (var i = 0;i<otherColumns.length;i++) {
+			var value = otherColumns[i];
+			var obj = $('input:checkbox[name="motionOtherColumnEdit[]"][value="'+value+'"]');
+			obj.prop('checked','checked');
+		}
 	}
+	
 }
 function clearMotionEditForm() {
 	$('#motionFirstColumnEdit').val(1);
@@ -254,11 +265,13 @@ function createNewMotionGadget() {
 		var cid = $(this).find('chartID');
 		var gadgetID = $(this).attr('id');
 		var chart = CHARTS[cid];
+		$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 		refreshMotion(chart.queryResult,gadgetID);
 	})
 	$("#"+gadgetID+' .edit-motion').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
+		resetEditFormSidTable("editMotionSid",'editMotionTable');
 		motionDataInfoToForm(CHARTS[cid]['datainfo']);
 		$('#editMotion').modal('show')
 		CANVAS.selectedChart = cid;

@@ -749,10 +749,10 @@ $(document).ready(function() {
 				$(this).append('<option value="'+columns[i]+'">'+columns[i]+'</option>');
 			}
 			})
-		$(this).parent().parent().find('lable.table-column').each(function() {
+		$(this).parent().parent().find('.columnSelection').each(function() {
 			$(this).html('');
 			for (var i = 0;i<columns.length;i++) {
-				$(this).append('<input value="'+columns[i]+'" type="checkbox" name="table-column" checked/>'+columns[i]);
+				$(this).append('<lable class="checkbox"><input value="'+columns[i]+'" type="checkbox" name="tableColumns" checked/>'+columns[i])+'<</lable>';
 			}
 			})
 	})

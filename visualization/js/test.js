@@ -45,6 +45,7 @@ function createNewCanvas(_name) {
     if (_name==null) {
         _name = $("#createCanvasName").val();
     }
+    
     $.ajax({
         type: 'POST',
 		//url: "getPie.php",
@@ -67,6 +68,7 @@ function createNewCanvas(_name) {
             $('#cdate').val(JSONResponse['cdate']);
             $('#note').val(JSONResponse['note']);
             $('#testSave').show();
+            $("#viewChartsNote").show();
             $('#file-dropdown').show();
             $('#chart-dropdown').show();
             $('#view-dropdown').show();

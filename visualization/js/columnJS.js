@@ -103,24 +103,27 @@ $(document).ready(function (){
 	})
 function columnFormToDatainfo() {
 	var sid = $("#addColumnSid").val();
+	var sname = $('#addColumnSid').find("option:selected").text();
 	var where;
 	var table = $("#addColumnTable").val();
 	var columnCat = $('#columnCat').val();
 	var columnAgg = $('#columnAgg').val();
 	var columnAggType = $('input:radio[name="columnAggType"]:checked').val();
-	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where);
+	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,sname,table,where);
 }
 function editColumnFormToDatainfo() {
 	var sid = $("#editColumnSid").val(); 
+	var sname = $('#editColumnSid').find("option:selected").text();
 	var table = $("#editColumnTable").val();
 	var where;	
 	var columnCat = $('#columnCatEdit').val();
 	var columnAgg = $('#columnAggEdit').val();
 	var columnAggType = $('input:radio[name="columnAggTypeEdit"]:checked').val();
-	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where);
+	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,name,table,where);
 }
-function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where) {
+function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,sname,table,where) {
 	this.columnCat = columnCat;
+	this.sname = sname;
 	this.columnAgg = columnAgg;
 	this.columnAggType = columnAggType;
 	this.sid = sid;
@@ -129,12 +132,14 @@ function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,table,where) {
 }
 function columnDataInfoToForm(columnDatainfo) {
 	var sid = columnDatainfo.sid;
+	var sname = columnDatainfo.sname;
 	var where = columnDatainfo.where;
 	var table = columnDatainfo.table;
 	var columnCat = columnDatainfo.columnCat;
 	var columnAgg = columnDatainfo.columnAgg;
 	var columnAggType = columnDatainfo.columnAggType;
 	$('#editColumnSid').val(sid);
+	$('#editColumnSid').find("option:selected").text(sname);
 	$('#editColumnTable').val(table);
 	$('#editColumnTable').change();
 	$('#columnCatEdit').val(columnCat);
@@ -184,6 +189,7 @@ function createNewColumnGadget() {
 		var cid = $(this).find('.chartID').val();
 		var gadgetID = $(this).attr('id');
 		var chart = CHARTS[cid];
+		$("#columnResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 		refreshColumn(chart.chartData,chart.queryResult,"columnResult"+gadgetID);
 	})
 	return gadgetID;
@@ -195,7 +201,17 @@ function createNewColumnGadget() {
 }
 function drawColumn(souceData,gadgetID) {
 	google.load("visualization", "1", {packages:["corechart"]});
-	var data = new google.visualization.arrayToDataTable(souceData['content']);
+	var columnCat = souceData['columnCat'];
+	var columnAggType = souceData['columnAggType'];
+	var data = new google.visualization.DataTable();
+	data.addColumn('string', columnCat);
+	data.addColumn('number',columnAggType);		
+	for(var i=0 ; souceData['content'][i]!=null ; i++){
+		data.addRow();
+		data.setCell(i,0,String(souceData['content'][i]["Category"]));
+		data.setCell(i,1,parseFloat(String(souceData['content'][i]["AggValue"])));
+	}
+	//var data = new google.visualization.arrayToDataTable(souceData['content']);
 	var options = {
 		title: 'Column Chart',
 		//hAxis: {title: 'Location', titleTextStyle: {color: 'red'}},

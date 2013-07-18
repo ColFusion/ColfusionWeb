@@ -3,19 +3,49 @@ require_once('Chart.php');
 class PieChart extends Chart {
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
-        $this->query();
+        //$this->query();
     }
     function query($_datainfo){
-        /*
-         * Here implement the query code;
-         */
+        include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
         if($_datainfo == null){
-            
+            $_datainfo = $this->datainfo;
         }else{
             $this->datainfo = $_datainfo;
         }
-        $queryResult = json_decode('{"string":"aaa","number":"bbb","content":[{"Category":" 2.0","AggValue":"1"},{"Category":" 3.0","AggValue":"2"},{"Category":" 4.0","AggValue":"3"}]}');
-        $this->queryResult = $queryResult;
-        return $queryResult;
+        $sid = $_datainfo['sid'];
+        $table = $_datainfo['table'];
+        $pieColumnCat = $_datainfo['pieColumnCat'];
+        $pieColumnAgg = $_datainfo['pieColumnAgg'];
+        $pieAggType = $_datainfo['pieAggType'];
+        $where = $_datainfo['where'];
+        $select = "SELECT `" . $pieColumnCat . "` AS 'Category', ";
+        switch($pieAggType) {
+		case "Count":
+			$select .= "COUNT(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			break;
+		case "Sum":
+			$select .= "SUM(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			break;	
+		case "Avg":
+			$select .= "AVG(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			break;
+		case "Max":
+			$select .= "MAX(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			break;
+		case "Min":
+			$select .= "MIN(`" . $pieColumnAgg . "`) AS 'AggValue' ";
+			break;
+	}
+        $from = (object) array('sid' => $sid, 'tableName' => $table);
+        $fromArray = [$from];
+        $groupby .= " GROUP BY `" . $pieColumnCat . "` ";
+        $queryEngine = new QueryEngine();
+        $rst = array();
+        $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
+        $rst['pieAggType'] = $pieAggType;
+        $rst['$pieColumnCat'] = $pieColumnCat;
+        //$queryResult = json_decode('{"string":"aaa","number":"bbb","content":[{"Category":" 2.0","AggValue":"1"},{"Category":" 3.0","AggValue":"2"},{"Category":" 4.0","AggValue":"3"}]}');
+        $this->queryResult = $rst;
+        return $rst;
     }
 }

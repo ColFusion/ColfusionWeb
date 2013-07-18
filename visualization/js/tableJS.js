@@ -92,7 +92,7 @@ function loadTableData(type, vid){
 */
 
 
-function initPageSelect(gadgetID) {
+function initPageSelect(gadgetID,totalPage,currentPage) {
     var pageSelect = document.getElementById("pages" + gadgetID);
     while (pageSelect.hasChildNodes()) {
         pageSelect.removeChild(pageSelect.lastChild);
@@ -116,10 +116,36 @@ function initPageSelect(gadgetID) {
 	}
 	$('#pages'+gadgetID).val(currentPage);
 }
+function activatePageSelect(cid, gadgetID){
+	$("#pages"+gadgetID).change(function(){
+	    alert('dfdf')});
+	$("#prePage"+gadgetID).click(changePage(cid));
+	$("#nextPage"+gadgetID).click(changePage(cid));
+}
 
-function changePage(page,vid){
-	gadgetID = vid;
-	settings = $('#setting' + gadgetID).val();
+function changePage(gadgetID){
+    var cid = $(this).parent().parent().parent().find()
+    var chart = CHARTS[cid];
+    var datainfo = chart.datainfo;
+    chart.datainfo.currentPage = $(this).val();
+    $.ajax({
+	    type: 'POST',
+	    url: 'control.php',
+	    data: {
+		    vid: CANVAS.vid,
+		    action: 'updateChartResult',
+		    cid: cid,
+		    datainfo: datainfo,
+		    },
+	    success: function(JSON_Response) {
+		    JSON_Response = jQuery.parseJSON(JSON_Response);
+		    var queryResult = JSON_Response['queryResult'];
+		    CHARTS[cid].datainfo = datainfo;
+		    CHARTS[cid].queryResult = queryResult;
+		    drawTable(queryResult,gadgetID);
+	    }
+	    })
+    /*var settings = $('#setting' + gadgetID).val();
     var n = settings.split(";");
     columns = n[0].split(",");
 	tableColumns = new Array();
@@ -143,13 +169,14 @@ function changePage(page,vid){
 		$("#nextPage"+gadgetID).show();
 	}
 	
-	drawTable();
+	drawTable();*/
 }
 
 function tableFormToDatainfo() {
-	var sid;
+	var sid = $("#addTableSid").val();
+	var sname = $('#addTableSid').find("option:selected").text();
 	var where;
-	var table;
+	var table = $("#addTableTable").val();
 	var perPage = $('input:radio[name="page"]:checked').val(); // number of turples per page
 	var color = $('input:radio[name="color"]:checked').val(); // color of the new table		
 	var currentPage = $('input:hidden[name="currentPage"]').val();
@@ -157,12 +184,13 @@ function tableFormToDatainfo() {
 	$.each($("input[name='tableColumns']:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
 	});	
-	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where);
+	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where);
 }
 function editTableFormToDatainfo() {
-	var sid;
+	var sid = $("#editTableSid").val();
+	var sname = $('#editTableSid').find("option:selected").text();
 	var where;
-	var table;
+	var table = $("#editTableTable").val();
 	var perPage = $('input:radio[name="pageEdit"]:checked').val(); // number of turples per page
 	var color = $('input:radio[name="colorEdit"]:checked').val(); // color of the new table		
 	var currentPage = $('input:hidden[name="currentPageEdit"]').val();
@@ -170,34 +198,43 @@ function editTableFormToDatainfo() {
 	$.each($("input[name='tableColumnsEdit']:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
 	});	
-	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where);
+	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where);
 }
-function TableDatainfo(tableColumns,perPage,color,currentPage,sid,table,where) {
+function TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where) {
 	this.tableColumns = tableColumns;
 	this.perPage = perPage;
 	this.color = color;
 	this.currentPage = currentPage;
 	this.sid = sid;
+	this.sname = sname;
 	this.table = table;
 	this.where = where;
 }
 function tableDataInfoToForm(tableDatainfo) {
 	clearTableEditForm();
 	var sid = tableDatainfo.sid;
+	var sname =tableDatainfo.sname;
 	var where = tableDatainfo.where;
 	var table = tableDatainfo.table;
 	var tableColumns = tableDatainfo.tableColumns;
 	var perPage = tableDatainfo.perPage;
 	var currentPage = tableDatainfo.currentPage;
 	var color = tableDatainfo.color;
+	$('#editTableSid').val(sid);
+	$('#editTableSid').find("option:selected").text(sname);
+	$('#editTableTable').val(table);
+	$('#editTableTable').change();
 	$('input:radio[name="pageEdit"][value="'+perPage+'"]').prop('checked','checked');
 	$('input:radio[name="colorEdit"][value="'+color+'"]').prop('checked','checked');
 	$('input:hidden[name="currentPageEdit"]').val(currentPage);
-	for (var i = 0;i<tableColumns.length;i++) {
-		var value = tableColumns[i];
-		var obj = $('input:checkbox[name="tableColumnsEdit"][value="'+value+'"]');
-		obj.prop('checked','checked');
+	if (tableColumns!=null) {
+	    for (var i = 0;i<tableColumns.length;i++) {
+		    var value = tableColumns[i];
+		    var obj = $('input:checkbox[name="tableColumnsEdit"][value="'+value+'"]');
+		    obj.prop('checked','checked');
+	    }
 	}
+	
 }
 function clearTableEditForm() {
 	$('input:checkbox[name="pageEdit"]').each(function() {
@@ -261,11 +298,12 @@ function createNewTableGadget(){
 		$(this).parent().parent().remove();
 	})
 	
-	activatePageSelect(gadgetID);
+	
 	
 	$("#"+gadgetID+' .edit-table').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
+		resetEditFormSidTable("editTableSid",'editTableTable');
 		tableDataInfoToForm(CHARTS[cid]['datainfo']);
 		$('#editTable').modal('show');
 		CANVAS.selectedChart = cid;
@@ -274,6 +312,7 @@ function createNewTableGadget(){
 		var cid = $(this).find('.chartID').val();
 		var gadgetID = $(this).attr('id');
 		var chart = CHARTS[cid];
+		$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);
 		refreshTable(chart.chartData,chart.queryResult,"pieResult"+gadgetID);
 	})
 	var dropdown = "<li class='view' id='view" + gadgetID + "'><a href='#' data-toggle='modal'>'table' "+gadgetID+"</a></li>";
@@ -282,42 +321,34 @@ function createNewTableGadget(){
 	
 }
 
-function activatePageSelect(ID){
-	var gadgetID = ID;
-	$("#pages"+gadgetID).change(function() {
-		changePage($(this).val(), gadgetID);
-	})
-	
-	$("#prePage"+gadgetID).click(function() {
-		var oldPageNO = parseInt($("#pages"+gadgetID).val());
-		var newPageNO = oldPageNO - 1;
-		$("#pages"+gadgetID).val(newPageNO)
-		changePage(newPageNO, gadgetID);
-	})
-	
-	$("#nextPage"+gadgetID).click(function() {
-		var oldPageNO = parseInt($("#pages"+gadgetID).val());
-		var newPageNO = oldPageNO + 1;
-		$("#pages"+gadgetID).val(newPageNO)
-		changePage(newPageNO, gadgetID);	
-	})
-}
+
 function drawTable(sourceData,gadgetID){
-	totalPage = sourceData["Control"]["totalPage"];
-	var color = sourceData["Control"]["color"];
-	var resulData = sourceData["data"];
+	totalPage = sourceData["totalPage"];
+	var color = sourceData["color"];
+	var resulData = sourceData["content"];
 	var data = new google.visualization.DataTable();
-	var tableColumns = sourceData['column'];
+	var tableColumns = sourceData['tableColumns'];
+	data.addColumn('string','rownum');
 	for(i=0; i<tableColumns.length; i++){
 		data.addColumn('string', tableColumns[i]);
 	}
 	for(i=0 ; resulData[i]!=null ; i++){
 		data.addRow();
-		data.setCell(i, 0, String(resulData[i]["rownum"]));
+		data.setCell(i, 0, String(i+1));
+		var temp = 1;
 		for(k=0; k<tableColumns.length; k++) {
-			data.setCell(i, k, String(resulData[i][tableColumns[k]]));
+			data.setCell(i, temp++, String(resulData[i][tableColumns[k]]));
 		}
 	}
+	var arr = gadgetID.split('Result');
+	var id;
+	if (arr.length > 1) {
+	    id = arr[1];
+	}else{
+	    id = gadgetID;
+	}
+	initPageSelect(id,sourceData['totalPage']);
+	activatePageSelect(cid,id);
     	var googleTable = {
 	    'headerRow': 'header-row',
 	    'tableRow': 'table-row',
@@ -378,7 +409,6 @@ function addTableChart() {
 		    CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"tableResult" + gadgetID)
 		    gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 		    $("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);
-		    initPageSelect(gadgetID);
 		    CHARTS[JSON_Response['cid']].chartData = drawTable(queryResult,'tableResult'+gadgetID);
 		    $('#addTable').modal('hide');
 		    }

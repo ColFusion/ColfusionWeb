@@ -125,38 +125,43 @@ $(document).ready(function (){
 	})
 function pieFormToDatainfo() {
 	var sid = $("#addPieSid").val();
+	var sname = $('#addPieSid').find("option:selected").text();
 	var where;
 	var table = $("#addPieTable").val();
 	var pieColumnCat = $('#pieColumnCat').val();
 	var pieColumnAgg = $('#pieColumnAgg').val();
 	var pieAggType = $('input:radio[name="pieAggType"]:checked').val();
-	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,table,where);
+	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,sname,table,where);
 }
 function editPieFormToDatainfo() {
-	var sid = $("#editPieSid").val(); 
+	var sid = $("#editPieSid").val();
+	var sname = $('#editPieSid').find('option:selected').text();
 	var table = $("#editPieTable").val();
 	var where;
 	var pieColumnCat = $('#pieColumnCatEdit').val();
 	var pieColumnAgg = $('#pieColumnAggEdit').val();
 	var pieAggType = $('input:radio[name="pieAggTypeEdit"]:checked').val();
-	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,table,where);
+	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,sname,table,where);
 }
-function PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,table,where) {
+function PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,sname,table,where) {
 	this.pieColumnCat = pieColumnCat;
 	this.pieColumnAgg = pieColumnAgg;
 	this.pieAggType = pieAggType;
 	this.sid = sid;
+	this.sname = sname;
 	this.table = table;
 	this.where = where;
 }
 function pieDataInfoToForm(pieDatainfo) {
 	var sid = pieDatainfo.sid;
+	var sname = pieDatainfo.sname;
 	var table = pieDatainfo.table;
 	var where = pieDatainfo.where;
 	var pieColumnCat = pieDatainfo.pieColumnCat;
 	var pieColumnAgg = pieDatainfo.pieColumnAgg;
 	var pieAggType = pieDatainfo.pieAggType;
 	$('#editPieSid').val(sid);
+	$('#editPieSid').find('option:selected').text(sname);
 	$('#editPieTable').val(table);
 	$('#editPieTable').change();
 	$('#pieColumnCatEdit').val(pieColumnCat);
@@ -201,6 +206,7 @@ function createNewPieGadget(){
 		var cid = $(this).find('.chartID').val();
 		var gadgetID = $(this).attr('id');
 		var chart = CHARTS[cid];
+		$("#pieResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 		refreshPie(chart.chartData,chart.queryResult,"pieResult"+gadgetID);
 	})
 	return gadgetID;
@@ -245,8 +251,8 @@ function editPieChart(cid) {
 function drawPie(sourceData,gadgetID) {
 	google.load("visualization", "1", {packages:["corechart"]});
 	var data = new google.visualization.DataTable();
-	data.addColumn('string', sourceData['string']);
-	data.addColumn('number', sourceData['number']);
+	data.addColumn('string', sourceData['pieColumnCat']);
+	data.addColumn('number', sourceData['pieAggType']);
 	var q = sourceData['content'];
 	for(i=0 ;q[i]!=null ; i++){
 		data.addRow();
