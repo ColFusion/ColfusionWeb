@@ -1,5 +1,110 @@
-.nav.nav-tabs {
-    margin-bottom: 0;
+#relInfoWrapper{
+    border-bottom: solid 1px #dddddd;
+}
+
+#relInfoHeader{
+    text-align: center;
+    height: 23px;
+    text-transform: uppercase;
+    padding-top: 2px;
+    font-weight: bold;
+    font-size: 12px;
+    color: #999999;
+}
+
+#relInfoContainer {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100px;
+    overflow-y: auto;
+}
+
+#relInfoContainer table{
+    font-size: 12px;
+}
+
+.relProfile{
+    padding-right: 10px;
+}
+
+.relProfile .profileHeader {
+    width: 90px;
+    vertical-align: top;
+    font-weight: bold;
+}
+
+.profileContent {
+    word-break: break-word;
+}
+
+.linkProfile {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#navListContainer {
+    float: left;
+    width: 25%;
+}
+
+#navListContainer .selected{
+    border: solid;
+    border-width: 1px 0 1px 0;
+}
+
+#navListContainer .link {
+    min-height: 30px;
+    overflow: auto;
+    display: table;
+    width: 100%;
+}
+
+.linkLi {
+    margin-bottom: 5px;
+}
+
+.linkLi:hover {
+    opacity: 0.7;
+}
+
+.linkPart {
+    min-height: 30px;
+    vertical-align: middle;
+    display: table;
+}
+
+.linkPartText {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 3px;
+    font-size: 12px;
+    color: black;
+    word-break: break-word;
+}
+
+#navListContainer .link .fromPart {
+    width: 50%;
+    float: left;
+    background-color: #EFF3FB;
+}
+
+#navListContainer .link .toPart {
+    width: 50%;
+    float: right;
+    background-color: #FFEEBB;
+}
+
+#navListContainer .nav-list a{
+    padding: 0;
+    width: 100%;
+    margin: 0;
+}
+
+#tableContainer {
+    float: right;
+    width: 74.92%;
+    border-left: solid 1px #dbdbdb;
 }
 
 .addSynonymInputWrapper {
@@ -13,10 +118,6 @@
 
 .addSynonymBtn {
     margin-top: -10px;
-}
-
-.addSynonymPanel {
-    background-color: #FFEEBB;
 }
 
 .accordionWrapper {

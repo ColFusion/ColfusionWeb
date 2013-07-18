@@ -26,6 +26,7 @@
 
 .relProfile .profileContent{
     width: 80%;
+    word-break: break-all;
 }
 
 .linkProfileTable .linkProfileContent{

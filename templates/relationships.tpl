@@ -48,10 +48,10 @@
                                                 <td class="profileHeader">Name:</td>
                                                 <td data-bind='text: name' class="profileContent"></td>
                                                 <td data-bind="visible: isOwned()" rowspan="2"><button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn deleteRelBtn">Delete</button></td>
-                                            </tr>
-                                            <tr><td class="profileHeader">Description:</td><td data-bind='text: description' class="profileContent"></td></tr>
+                                            </tr>           
                                             <tr><td class="profileHeader">Creator:</td><td data-bind='text: creator' class="profileContent"></td></tr>
                                             <tr><td class="profileHeader">CreatedTime:</td><td data-bind='text: createdTime' class="profileContent"></td></tr>
+                                            <tr><td class="profileHeader">Description:</td><td data-bind='text: description' class="profileContent"></td></tr>
                                         </table>           
                                         <div class="linkProfileContainer">                                       
                                             <div data-bind="template: { name: 'linkProfile-template', data: fromDataset }" class="fromProfile linkProfile">
