@@ -14,13 +14,6 @@ var wizardFromFile = (function() {
     // Get all actions form friends.
     wizardFromFile.Init = function() {
         $('#uploadFormSid').val(sid);
-        $('#uploadFileType').change(function() {
-            if ($(this).val() == 'dbDump') {
-                $('#dbType').show();
-            } else {
-                $('#dbType').hide();
-            }
-        });
 
         // bind form using 'ajaxForm' 
         wizardFileUpload.initFileUploadForm($('#upload_form'));
@@ -85,7 +78,7 @@ var wizardFromFile = (function() {
             url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=8",
             type: 'post',
             dataType: 'json',
-            success: function(jsonResponse) {               
+            success: function(jsonResponse) {
                 sourceWorksheetSettingsViewModel.cleanSource();
 
                 for (var i = 0; i < jsonResponse.data.length; i++) {
@@ -101,9 +94,9 @@ var wizardFromFile = (function() {
     };
 
     wizardFromFile.passSheetInfoFromDisplayOptionStep = function() {
-        
+
         console.log('passSheetInfoFromDisplayOptionStep');
-        var sheetsRanges = sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();     
+        var sheetsRanges = sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
         console.log(sheetsRanges);
 
         return $.ajax({type: 'POST',
@@ -114,7 +107,7 @@ var wizardFromFile = (function() {
                 sid: $('#sid').val(),
                 sheetsRanges: sheetsRanges,
                 source: 'file'
-            }          
+            }
         });
     };
 
@@ -137,7 +130,7 @@ var wizardFromFile = (function() {
         // alert(JSON.stringify(dataToSend));
         return $.ajax({type: 'POST',
             url: my_pligg_base + '/DataImportWizard/generate_ktr.php?sid=' + $('#sid').val(),
-            data: dataToSend          
+            data: dataToSend
         });
     };
 
@@ -157,8 +150,8 @@ var wizardFromFile = (function() {
             dataType: 'json'
         });
     };
-    
-     wizardFromFile.resetFileUploadForm = function() {
+
+    wizardFromFile.resetFileUploadForm = function() {
         $('#uploadWidgetCover').text('No file chosen');
         $('#uploadMessage').text('');
         $('#uploadProgressText').text('0%').hide();
@@ -224,7 +217,7 @@ var wizardFileUpload = (function() {
 
         self.removeFileInfo = function(index) {
             self.fileInfos.splice(index, 1);
-            if(self.fileInfos().length === 0){
+            if (self.fileInfos().length === 0) {
                 $('#uploadPanel').hide();
             }
         };
@@ -234,9 +227,17 @@ var wizardFileUpload = (function() {
 
     wizardFileUpload.initFileUploadForm = function(form) {
         
+        $('#dbType').hide();
+        $(form).find('#uploadFileType').change(function() {          
+            if ($(this).val() == 'dbDump') {
+                $('#dbType').show();
+            } else {
+                $('#dbType').hide();
+            }
+        });
+
         fileListViewModel = new FileListViewModel();
-        console.log(form);
-        console.log(document.getElementById('filenameListContainer'));
+        ko.cleanNode(document.getElementById('filenameListContainer'));
         ko.applyBindings(fileListViewModel, document.getElementById('filenameListContainer'));
         initJqueryUpload(form);
 

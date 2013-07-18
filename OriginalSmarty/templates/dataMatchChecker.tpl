@@ -12,6 +12,7 @@
         <script type="text/javascript" src="{$appRootPath}/javascripts/dataTables/jquery.jeditable.min.js"></script>
         <script type="text/javascript" src="{$appRootPath}/javascripts/dataTables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="{$appRootPath}/javascripts/dataTables/jquery.dataTables.editable.js"></script>
+        <script type="text/javascript" src="{$appRootPath}/javascripts/knockout-2.3.0.js"></script>
         <script type="text/javascript" src="{$appRootPath}/javascripts/dataMatchChecker.js"></script>      
     </head>
     <body>
