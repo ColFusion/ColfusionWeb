@@ -51,7 +51,7 @@ class PieChart extends Chart {
 	}
         $from = (object) array('sid' => $sid, 'tableName' => $table);
         $fromArray = array($from);
-        $groupby .= " GROUP BY `" . $pieColumnCat . "` ";
+        $groupby = " GROUP BY `" . $pieColumnCat . "` ";
         $queryEngine = new QueryEngine();
         $rst = array();
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
