@@ -1,15 +1,18 @@
 <?php
 require_once('Chart.php');
+
+include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
+
 class MapChart extends Chart {
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
-        $this->query();
+        $this->query(null);
     }
     function query($_datainfo){
         /*
          * Here implement the query code;
          */
-        include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+        
         if($_datainfo == null){
             $_datainfo = $this->datainfo;
             $temp;
@@ -45,7 +48,7 @@ class MapChart extends Chart {
 	}	
 	$select = "SELECT `" . $latitude . "` as 'latitude', `" . $longitude . "` as 'longitude', " . $tips;
 	$from = (object) array('sid' => $sid, 'tableName' => $table);
-        $fromArray = [$from];
+        $fromArray = array($from);
 	if (!empty($where))
         $select .= $where;
         $queryEngine = new QueryEngine();

@@ -5,16 +5,34 @@ include_once('../'.mnminclude.'link.php');
 include_once('../'.mnminclude.'tags.php');
 include_once('../'.mnminclude.'user.php');
 include_once('../'.mnminclude.'smartyvariables.php');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once("Chart.php");
 require_once("Canvas.php");
-require_once("charts/ColumnChart.php");
+
+error_reporting(E_ALL);
+
+require_once('charts/ColumnChart.php');
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 require_once("charts/PieChart.php");
 require_once("charts/TableChart.php");
 require_once("charts/ComboChart.php");
 require_once("charts/MotionChart.php");
 require_once("charts/MapChart.php");
+
+
+
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+
+error_reporting(E_ALL);
+
 global $current_user;
+
+
 
 if($current_user->authenticated != TRUE) {
         echo "not log in";
@@ -164,9 +182,17 @@ function createNewCanvas(){
     $_SESSION['Canvases'][$canvas->vid] = serialize($canvas);
     $rst = array();
     $rst['charts'] = array();
-    foreach($canvas->charts as $chart){
-        array_push($rst['charts'],$chart->printToArray());
+
+    //var_dump($canvas->charts );
+
+    if (isset($canvas->charts)) {
+
+        foreach($canvas->charts as $chart){
+            array_push($rst['charts'],$chart->printToArray());
+        }
+
     }
+
     $rst['vid'] = $canvas->vid;
     $rst['name'] = $canvas->name;
     $rst['privilige'] = $canvas->privilege;

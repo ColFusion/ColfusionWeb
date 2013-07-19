@@ -1,16 +1,20 @@
 
 <?php
 require_once('Chart.php');
+
+include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
+
 class TableChart extends Chart{
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
-        $this->query();
+        $this->query(null);
     }
+
     function query($_datainfo){
         /*
          * Here implement the query code;
          */
-	include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+	
 	if($_datainfo == null){
             $_datainfo = $this->datainfo;
             $temp;
@@ -34,7 +38,7 @@ class TableChart extends Chart{
 	$pageNo = $_datainfo->currentPage; // controls which page to show, got from JS function
 	$where = $_datainfo->where;
 	$from = (object) array('sid' => $sid, 'tableName' => $table);
-        $fromArray = [$from];
+        $fromArray = array($from);
 	
 	$queryEngine = new QueryEngine();
 	$totalTuple = $queryEngine->doQuery("SELECT COUNT(*)", $fromArray, null, null, null, null, null);

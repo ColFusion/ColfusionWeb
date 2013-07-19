@@ -1,15 +1,18 @@
 <?php
 require_once('Chart.php');
+
+include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
+
 class ComboChart extends Chart{
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
-        $this->query();
+        $this->query(null);
     }
     function query($_datainfo){
         /*
          * Here implement the query code;
          */
-        include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+        
         if($_datainfo == null){
             $_datainfo = $this->datainfo;
             $temp;
@@ -31,7 +34,7 @@ class ComboChart extends Chart{
 	$comboColumnAgg = $_datainfo->comboColumnAgg;
         $comboAggType = $_datainfo->comboAggType;
         $from = (object) array('sid' => $sid, 'tableName' => $table);
-        $fromArray = [$from];	
+        $fromArray = array($from);	
 	$select = "SELECT `" . $comboColumnCat . "` AS 'Category', ";
 	$select .= "MAX(`" . $comboColumnAgg . "`) AS 'MAX', ";
 	$select .= "AVG(`" . $comboColumnAgg . "`) AS 'AVG', ";

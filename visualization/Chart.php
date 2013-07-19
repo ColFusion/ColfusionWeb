@@ -25,7 +25,7 @@ abstract class Chart {
         $this->width = $_width;
         $this->datainfo = $_datainfo;
         $this->note = $_note;
-        $this->queryResult = $this->query();
+        $this->queryResult = $this->query(null);
     }
     function save($_name, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         require_once('../config.php');
