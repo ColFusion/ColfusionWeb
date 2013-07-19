@@ -91,6 +91,9 @@ $chart_columns[] = "Location";
                 vertical-align: top;
             }
         </style>
+        <script>
+            var my_pligg_base = '<?php echo $my_pligg_base; ?>';
+        </script>
 
         <script type="text/javascript" src="js/jquery-1.9.1.js"></script>
         <script type="text/javascript" src="js/bootstrap.min.js"></script>	
@@ -106,8 +109,8 @@ $chart_columns[] = "Location";
         <!-- styles and functions for table -->
         <link rel="stylesheet" href="css/googleTableCSS.css" />
 
-        <link rel="stylesheet" href="<?php echo $my_pligg_base ;?>/css/typeahead.js-bootstrap.css">
-        <link rel="stylesheet" href="<?php echo $my_pligg_base ;?>/css/addRelationship.css">
+        <link rel="stylesheet" href="<?php echo $my_pligg_base; ?>/css/typeahead.js-bootstrap.css">
+        <link rel="stylesheet" href="<?php echo $my_pligg_base; ?>/css/addRelationship.css">
 
         <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript" src="js/tableJS.js"></script>
@@ -129,16 +132,16 @@ $chart_columns[] = "Location";
         <!-- styles and functions for motion chart -->
         <script type="text/javascript" src="js/motionJS.js"></script>
 
-        <script type="text/javascript" src="<?php echo $my_pligg_base ;?>/javascripts/hogan.min.js"></script>
-        <script type="text/javascript" src="<?php echo $my_pligg_base ;?>/javascripts/typeahead.min.js"></script>
+        <script type="text/javascript" src="<?php echo $my_pligg_base; ?>/javascripts/hogan.min.js"></script>
+        <script type="text/javascript" src="<?php echo $my_pligg_base; ?>/javascripts/typeahead.min.js"></script>
         <script type="text/javascript" src="js/datasetTypeahead.js"></script>
     </head>
     <body onload="showHint('', 1);
-            loadTables();
-            loadMotions();
-            loadColumns();
-            loadPies();
-            loadCombos();">
+                loadTables();
+                loadMotions();
+                loadColumns();
+                loadPies();
+                loadCombos();">
         <input type="hidden" id="hiddenJoinQuery" value="<?php echo $_POST['joinQuery'] ?>"/>
         <input type="hidden" id="hiddenSidsWithColumns" value="<?php echo $_POST['sisToSearch'] ?>"/>
         <input type="hidden" id="hiddenPageCount" value="1"/>
@@ -233,15 +236,15 @@ $chart_columns[] = "Location";
         </div>
 
         <div id = "note_section" class = 'round' >
-        	<input type = "hidden" id = "focus_recorder" value = "">
+            <input type = "hidden" id = "focus_recorder" value = "">
             <div id = "selector_part">
             </div>
-            
+
             <div id = "note_part">
-	            <ul class="nav nav-list">
-	                <li class="nav-header">Charts Note:</li>
-	            </ul>
-	            <textarea id = "CHART_NOTE"></textarea>
+                <ul class="nav nav-list">
+                    <li class="nav-header">Charts Note:</li>
+                </ul>
+                <textarea id = "CHART_NOTE"></textarea>
             </div>
         </div>
 

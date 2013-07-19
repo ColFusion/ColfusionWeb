@@ -26,7 +26,7 @@ function DatasetSearcher(inputDom, selectedCallback) {
     $(self.element).typeahead({
         name: 'datasets',
         prefetch: {
-            url: '/colfusion/datasetController/findDataset.php',
+            url: my_pligg_base + '/datasetController/findDataset.php',
             ttl: 30 * 60 * 1000 // cache 30 mins
         },
         valueKey: 'source_key',

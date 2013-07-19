@@ -12,10 +12,18 @@
         <script type="text/javascript" src="{$appRootPath}/javascripts/dataTables/jquery.jeditable.min.js"></script>
         <script type="text/javascript" src="{$appRootPath}/javascripts/dataTables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="{$appRootPath}/javascripts/dataTables/jquery.dataTables.editable.js"></script>
+        <script type="text/javascript" src="{$appRootPath}/javascripts/persist-min.js"></script>
         <script type="text/javascript" src="{$appRootPath}/javascripts/knockout-2.3.0.js"></script>
-        <script type="text/javascript" src="{$appRootPath}/javascripts/dataMatchChecker.js"></script>      
+        <script type="text/javascript" src="{$appRootPath}/javascripts/dataMatchChecker.js"></script>
+        <script type="text/javascript" src="{$appRootPath}/javascripts/knockout_models/dataTableModel.js"></script>
+        <script type="text/javascript" src="{$appRootPath}/javascripts/knockout_models/RelationshipModel.js"></script>
+        <script type="text/javascript" src="{$appRootPath}/javascripts/knockout_models/DataMatchCheckerViewModel.js"></script>
     </head>
     <body>
+        <input type="hidden" id="fromSidInput" value="{$fromSid}" />
+        <input type="hidden" id="toSidInput" value="{$toSid}" />
+        <input type="hidden" id="fromTableInput" value="{$fromTable}" />
+        <input type="hidden" id="toTableInput" value="{$toTable}" />
         {literal}
             <div id="relInfoWrapper">
                 <div id="relInfoHeader">
@@ -30,9 +38,9 @@
                                     <td data-bind="text: name" class="profileContent">Ccode</td>
                                     <td data-bind="visible: isOwned()" rowspan="2" style="display: none;"><button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn deleteRelBtn">Delete</button></td>
                                 </tr>                            
-                                <tr><td class="profileHeader">Creator:</td><td data-bind="text: creator" class="profileContent">gz2000</td></tr>
-                                <tr><td class="profileHeader">CreatedTime:</td><td data-bind="text: createdTime" class="profileContent">2013-07-17 22:04:43</td></tr>
-                                <tr><td class="profileHeader">Description:</td><td data-bind="text: description" class="profileContent">This description is long enough. This description is long enough. This description is long enough.</td></tr>
+                                <tr>
+                                    <td class="profileHeader">Description:</td><td data-bind="text: description" class="profileContent">This description is long enough. This description is long enough. This description is long enough.</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

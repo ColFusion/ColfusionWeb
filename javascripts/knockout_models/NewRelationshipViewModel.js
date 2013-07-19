@@ -54,10 +54,19 @@ ko.bindingHandlers.searchDatasetTypeahead = {
                 $(this).parent().next('button').prop("disabled", true);
             }
         }).typeahead({
-            name: 'datasets',
+            name: 'datasets',           
             prefetch: {
                 url: 'datasetController/findDataset.php',
                 ttl: 10 * 60 * 1000 // cache 10 mins
+            },
+            remote: {
+                url: 'datasetController/findDataset.php',
+                maxParallelRequests: 2,
+                beforeSend: function(jqXhr, settings) {
+                    console.log('Typeahead before send');
+                    console.log(settings);
+                    settings.url += '?searchTerm=' + $(element).val();
+                }
             },
             valueKey: 'source_key',
             template: search_typeahead_tpl,
@@ -172,6 +181,7 @@ function NewRelationshipViewModel() {
     self.toDataSet = ko.observable(new RelationshipModel.DataSet());
     self.confidenceValue = ko.observable(0);
     self.confidenceComment = ko.observable('');
+
     /* Properties for link. */
     self.links = ko.observableArray();
 
@@ -180,9 +190,10 @@ function NewRelationshipViewModel() {
     self.isAddingRelationship = ko.observable(false);
     self.isAddingSuccessful = ko.observable(false);
     self.isAddingFailed = ko.observable(false);
-    self.isPerformingDataMatchingCheck = ko.observable('');
-    self.dataMatchingCheckResult = ko.observable('');
     /**************************************************/
+
+    /* Used to pass data to dataMatchChecker.php */
+    self.persistStore = new Persist.Store('NewRelationshipViewModel');
 
     self.fromDataSet().currentTable.subscribe(function(newValue) {
         resetLinks();
@@ -217,7 +228,7 @@ function NewRelationshipViewModel() {
         self.isAddingFailed(false);
         var fromDateColumns = getSentFromData();
         var toDateColumns = getSentToData();
-     
+
         $.ajax({
             type: 'POST',
             url: "visualization/VisualizationAPI.php?action=AddRelationship",
@@ -257,17 +268,14 @@ function NewRelationshipViewModel() {
     self.checkDataMatching = function() {
         console.log(self.links());
         console.log(JSON.stringify(self.links()));
-        
-        /*
-        self.isPerformingDataMatchingCheck(true);
-        dataSourceUtil.checkDataMatching(getSentFromData(), getSentToData()).done(function(data) {
-            self.isPerformingDataMatchingCheck(false);
-            self.dataMatchingCheckResult(data);
-        }).error(function() {
-            self.isPerformingDataMatchingCheck(false);
-            self.dataMatchingCheckResult('Some errors occur when performing data checking.');
-        });
-        */
+        self.persistStore.set('checkDataMatching_' + self.fromDataSet().sid() + '_' + self.fromDataSet().chosenTableName()
+                + '_' + self.toDataSet().sid() + '_' + self.toDataSet().chosenTableName(), ko.toJSON(self));
+
+        $('#dataMatchCheckingForm input[name="fromSid"]').val(self.fromDataSet().sid());
+        $('#dataMatchCheckingForm input[name="toSid"]').val(self.toDataSet().sid());
+        $('#dataMatchCheckingForm input[name="fromTable"]').val(self.fromDataSet().chosenTableName());
+        $('#dataMatchCheckingForm input[name="toTable"]').val(self.toDataSet().chosenTableName());
+        $('#dataMatchCheckingForm').submit();
     };
 
     self.testDataEncoding = function() {

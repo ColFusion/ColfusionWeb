@@ -59,7 +59,7 @@ var wizardFromDB = (function() {
                 'port': port,
                 'driver': driver,
                 'isImport': isImport
-            },          
+            },
             dataType: 'json'
         });
     };
@@ -80,7 +80,7 @@ var wizardFromDB = (function() {
         // alert(JSON.stringify(dataToSend));
         return $.ajax({type: 'POST',
             url: my_pligg_base + '/DataImportWizard/wizardFromDBController.php?action=PrintTableForSchemaMatchingStep',
-            data: dataToSend          
+            data: dataToSend
         });
     };
 
@@ -134,8 +134,11 @@ var wizardFromDB = (function() {
             case "sql server":
                 container.val(1433);
                 break;
+            case "postgresql":
+                container.val(5432);
+                break;
         }
-    }
+    };
 
     /*************/
 

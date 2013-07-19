@@ -66,7 +66,7 @@
                     </tr>
                     </table>
                     <div data-bind="visible: isLoadingTableInfo()" style="padding: 30px 0 0 200px;">
-                        <img src="images/ajax-loader.gif" />
+                    <img src="images/ajax-loader.gif" />
                     </div>
                     <div class="tableInfoTableWrapper">
                     <table class="tableInfoTable" data-bind="with: currentTable">              
@@ -108,17 +108,7 @@
                                     </button>                                  
                                     <button type="button" data-bind="click: checkDataMatching" class="btn" >
                                         Check data matching
-                                    </button>
-                                    <!--
-                                    <button type="button" data-bind="click: testDataEncoding" class="btn" >
-                                        Test Data Encoding
-                                    </button>
-                                    -->
-                                    <span data-bind="visible: isPerformingDataMatchingCheck">
-                                        <img  src="images/ajax-loader.gif"/>
-                                        <span>Performing data matching in selected columns...</span>
-                                    </span>
-                                    <span data-bind="text: dataMatchingCheckResult"></span>                            
+                                    </button>                                                  
                                 </td>
                             </tr>
                         </tfoot>
@@ -175,7 +165,15 @@
                 </div>   
             </div>
         </form>
-    </div>   
+    </div>  
+{/literal}
+<form id="dataMatchCheckingForm" target="_blank" method="post" action="dataMatchChecker/dataMatchChecker.php" style="display:none;">
+    <input type="hidden" name="fromSid"/>
+    <input type="hidden" name="toSid"/>
+    <input type="hidden" name="fromTable"/>
+    <input type="hidden" name="toTable"/>
+</form>
+{literal}
     <script type="text/javascript">
         var newRelationshipViewModel = new NewRelationshipViewModel();
 
