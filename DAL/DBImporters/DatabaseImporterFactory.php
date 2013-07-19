@@ -7,7 +7,7 @@ require_once realpath(dirname(__FILE__)) . '/OracleImporter.php';
 class DatabaseImporterFactory {
 
     public static $importSettings = array(
-        "mysql" => array('user' => 'root', 'password' => '', 'port' => 3306),
+        "mysql" => array('user' => 'ImportTester', 'password' => 'importtester', 'port' => 3306),
         "mssql" => array('user' => 'ExternalConnTester', 'password' => 'gz3000gz3000', 'port' => 1433),
         "postgresql" => array('user' => 'ImportTester', 'password' => 'importtester', 'port' => 5432),
         "oracle" => array('user' => 'Colfusion1', 'password' =>'Colfusion1', 'port' =>1521)
