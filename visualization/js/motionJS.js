@@ -153,10 +153,10 @@ function motionFormToDatainfo() {
 	var dateColumn = $('#motionDate').val();
 	var otherColCount = 0;
 	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
-	$.each($("input[name='motionOtherColumn[]']:checked"), function(){
-		otherColumns.push($(this).val());
+	$.each($("#addMotion .columnSelection").find("input:checked"), function(){
+		otherColumns.push($(this).val()); // columns to show
 		otherColCount++;
-	});
+	});	
 	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where);
 }
 function editMotionFormToDatainfo() {
@@ -169,8 +169,8 @@ function editMotionFormToDatainfo() {
 	var dateColumn = $('#motionDateEdit').val();
 	var otherColCount = 0;
 	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
-	$.each($("input[name='motionOtherColumnEdit[]']:checked"), function(){
-		otherColumns.push($(this).val());
+	$.each($("#editMotion .columnSelection").find("input:checked"), function(){
+		otherColumns.push($(this).val()); // columns to show
 		otherColCount++;
 	});
 	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where);
@@ -200,11 +200,11 @@ function motionDataInfoToForm(motionDatainfo) {
 	$('#motionFirstColumnEdit').val(firstColumn);
 	$('#motionDateEdit').val(dateColumn);
 	if (otherColumns!=null) {
-		for (var i = 0;i<otherColumns.length;i++) {
-			var value = otherColumns[i];
-			var obj = $('input:checkbox[name="motionOtherColumnEdit[]"][value="'+value+'"]');
-			obj.prop('checked','checked');
-		}
+	    for (var i = 0;i<tableColumns.length;i++) {
+		    var value = tableColumns[i];
+		    var obj = $("#editMotion .columnSelection input:checkbox[value='"+value+"']");
+		    obj.prop('checked','checked');
+	    }
 	}
 	
 }
@@ -216,19 +216,25 @@ function clearMotionEditForm() {
 	})
 }
 function drawMotion(sourceData,gadgetID) {
+	var otherColumns = sourceData['otherColumns'];
+	var firstColumn = sourceData['firstColumn'];
+	var dateColumn = sourceData['dateColumn'];
 	var data = new google.visualization.DataTable();
-	data.addColumn('string', 'Disease');
-  	data.addColumn('date', 'Date');
-  	data.addColumn('number', 'Number of disease cases');
-  	data.addColumn('number', 'Precipitation');
-  	data.addColumn('string', 'State');
-	for(i=0; sourceData[i]!=null; i++) {
+	data.addColumn('string', firstColumn);
+  	data.addColumn('date', dateColumn);
+	for (var i = 0;i<otherColumns.length;i++) {
+		data.addColumn('string', otherColumns[i]);
+	}
+	for(i=0; sourceData['content'][i]!=null; i++) {
 		data.addRow();
-		data.setCell(i, 0, String(sourceData[i]["disease"]));
-		data.setCell(i, 1, new Date(sourceData[i]["year"], sourceData[i]["month"], 1));
-		data.setCell(i, 2, parseInt(sourceData[i]["numberOfCases"]));
+		data.setCell(i, 0, String(sourceData['content'][i]["firstColumn"]));
+		data.setCell(i, 1, new Date(sourceData['content'][i]["year"], sourceData['content'][i]["month"], 1));
+		for (var j=0;j<otherColumns.length;j++) {
+			data.setCell(i, j+2, sourceData['content'][otherColumns[j]]);
+		}
+		/*data.setCell(i, 2, parseInt(sourceData['content'][i]["numberOfCases"]));
 		data.setCell(i, 3, parseInt(sourceData[i]["precipitation"]));
-		data.setCell(i, 4, sourceData[i]["state"]);
+		data.setCell(i, 4, sourceData[i]["state"]);*/
 	}
 	var chart = new google.visualization.MotionChart(document.getElementById(gadgetID));
 	chart.draw(data, {width: "100%", height:"100%"});
@@ -280,23 +286,8 @@ function createNewMotionGadget() {
 
 }
 function addMotionChart() {
-	var titleNo = $('#titleNo').val();
-	var where = $("#where").val();	
-	var settings = "";
-	var otherColumns = new Array();
-	var firstColumn = $('#motionFirstColumn').val();
-	var dateColumn = $('#motionDate').val();
-	var otherColCount = 0;
-	var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
-	$.each($("input[name='motionOtherColumn[]']:checked"), function(){
-		otherColumns.push($(this).val());
-		settings += "," + $(this).val();
-		otherColCount++;
-	});
-	settings = settings.substring(1) + ";";
-	settings = firstColumn + ';' + dateColumn + ';' + settings;
-	$('#setting' + gadgetID).val(settings);
 	var gadgetID = createNewMotionGadget();
+	var datainfo = motionFormToDatainfo();
 	$.ajax({
 		type: 'POST',
 		url: "control.php",

@@ -11,18 +11,28 @@ class TableChart extends Chart{
          * Here implement the query code;
          */
 	include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
-        if($_datainfo == null){
+	if($_datainfo == null){
             $_datainfo = $this->datainfo;
+            $temp;
+            foreach($_datainfo as $key => $value){
+                $temp->$key = $value;
+            }
+            $_datainfo = $temp;
         }else{
+            $temp;
+            foreach($_datainfo as $key => $value){
+                $temp->$key = $value;
+            }
+            $_datainfo = $temp;
             $this->datainfo = $_datainfo;
         }
-        $sid = $_datainfo['sid'];
-        $table = $_datainfo['table'];
-	$color = $_datainfo['color'];
-	$tableColumns = $_datainfo['tableColumns'];
-	$perPage = $_datainfo['perPage']; // controls how many tuples shown on each page
-	$pageNo = $_datainfo['currentPage']; // controls which page to show, got from JS function
-	$where = $_datainfo['where'];
+        $sid = $_datainfo->sid;
+        $table = $_datainfo->table;
+	$color = $_datainfo->color;
+	$tableColumns = $_datainfo->tableColumns;
+	$perPage = $_datainfo->perPage; // controls how many tuples shown on each page
+	$pageNo = $_datainfo->currentPage; // controls which page to show, got from JS function
+	$where = $_datainfo->where;
 	$from = (object) array('sid' => $sid, 'tableName' => $table);
         $fromArray = [$from];
 	
@@ -55,6 +65,7 @@ class TableChart extends Chart{
 	$rst["pageNo"] = $pageNo;
 	$rst['color'] = $color;
 	$rst['tableColumns'] = $tableColumns;
+	$rst['currentPage'] = $pageNo;
     	//$rst = json_decode('{"column":["ID","la","rownum","long","dvalue"],"data":[{"rownum":"1","ID":" 2.0","la":" 35.273637","long":" 108.0","dvalue":" 2.0"},{"rownum":"2","ID":" 3.0","la":" 40.234","long":" 119.0","dvalue":" 3.0"},{"rownum":"3","ID":" 4.0","la":" 29.873","long":" 125.0","dvalue":" 4.0"}],"Control":{"perPage":"50","totalPage":1,"pageNo":"1","cols":["ID","la","long","dvalue"],"color":"blue"}}');
         $this->queryResult = $rst;
         return $rst;

@@ -32,12 +32,14 @@ Canvas.prototype.addStory = function(sid,sname,callback) {
 			sid: sid,
 			sname: sname
 			},
+		async:false,
 		success: function(JSON_Response) {
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			if(JSON_Response['status'] == 'success'){
 				/*var sid = JSON_Response['sid'];
 				var sname = JSON_Response['sname'];
 				var tables = JSON_Response['tables'];*/
+				$('#chart-dropdown').show();
 				var story = JSON_Response['story'];
 				var sid = story.sid;
 				CANVAS.stories[sid] = story;
@@ -47,6 +49,7 @@ Canvas.prototype.addStory = function(sid,sname,callback) {
 			if (callback!=null) {
 				callback(JSON_Response);
 			}
+			
 		}
 		
 		})
@@ -118,24 +121,27 @@ function addStory() {
 	var sid = datasetSearcher.sid;
 	var sname = datasetSearcher.datasetName;	
 	CANVAS.addStory(sid,sname);
+	showNote("flag");
 }
 
 function saveConfig(){
 	var aut = $("#shareAuthorization").val();
 }
 
-function showNote(){
-	if (!$("#viewChartsNote").hasClass("active")){
-		$("#viewChartsNote").addClass("active");
-		$("#note_section").animate({
-			marginLeft:"0%"
-		});
-	}
-	else {
-		$("#viewChartsNote").removeClass("active");
-		$("#note_section").animate({
-			marginLeft:"-30%"
-		});
+function showNote(refresh){
+	if (refresh==null||refresh==""){
+		if (!$("#viewChartsNote").hasClass("active")){
+			$("#viewChartsNote").addClass("active");
+			$("#note_section").animate({
+				marginLeft:"0%"
+			});
+		}
+		else {
+			$("#viewChartsNote").removeClass("active");
+			$("#note_section").animate({
+				marginLeft:"-30%"
+			});
+		}
 	}
 	
 	var noteStr = "";
@@ -186,12 +192,15 @@ function lostFocus(){
 			opacity:1.0
 		});
 	}
+	if ($(".container").hasClass("blueflag")){
+		$(".container").removeClass("blueflag")
+	}
+	else
+		$("#note_section li").removeClass("blueDecoration");
 }
 
 function StoryHighlight(sid){
-	
 	$("#focus_recorder").val(sid);
-	
 	for (var chart in CHARTS){
 	    var compare = CHARTS[chart].getSid();
 		
@@ -219,9 +228,10 @@ function TableHighlight(sid,tablename){
 	$("#focus_recorder").val(sid+"&"+tablename);
 	
 	for (var chart in CHARTS){
-	    var compareSid = CHARTS[chart].getSid();
-	    var compareTname = CHARTS[chart].getTable();
-		
+		var compareSid = CHARTS[chart].getSid();
+		var compareTname = CHARTS[chart].getTable();
+		compareTname = compareTname.split(".");
+		compareTname = compareTname[0]+compareTname[1];
 		if (compareSid!=sid||compareTname!=tablename){
 			var G = CHARTS[chart]['gadgetID'].split('Result');
 			var gid = G[1];
@@ -279,7 +289,7 @@ function showChart(type){
 function showHint(str,currentPage){
 	
 	$("#note_section").show();
-	
+	$("#note_section li").removeClass("blueDecoration");
 	if (currentPage>0&&currentPage!=null)
 		authorizationLevel=-1;
 	else if (currentPage<0)
@@ -752,7 +762,7 @@ $(document).ready(function() {
 		$(this).parent().parent().find('.columnSelection').each(function() {
 			$(this).html('');
 			for (var i = 0;i<columns.length;i++) {
-				$(this).append('<lable class="checkbox"><input value="'+columns[i]+'" type="checkbox" name="tableColumns" checked/>'+columns[i])+'<</lable>';
+				$(this).append('<p><lable class="checkbox table-column" style="padding: 0px;"><input value="'+columns[i]+'" type="checkbox" class="check-columns">'+columns[i])+'</lable></p>';
 			}
 			})
 	})

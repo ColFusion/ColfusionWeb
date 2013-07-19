@@ -78,7 +78,7 @@ function openCanvas(vid){
 	$("#file_manager").hide();
 	vid = vid;
 	$("#viewChartsNote").show();
-	
+	$("#viewChartsNote").removeClass("active");
 	$.ajax(
 		{
 			url:"control.php",
@@ -88,8 +88,9 @@ function openCanvas(vid){
 			
 			  /*  google.setOnLoadCallback(drawPie);*/
 				
-			    var _data = jQuery.parseJSON(data);
-				
+				var _data = jQuery.parseJSON(data);
+				CANVAS = new Canvas(_data['vid'],_data['name'],_data['privilege'],_data['authorization'],_data['mdate'],_data['cdate'],_data['note']);
+				$('#chart-dropdown').hide();
 				for (var i in _data['charts']){
 					
 					result =  _data['charts'][i];
@@ -118,7 +119,6 @@ function openCanvas(vid){
 				}
 				$('#testSave').show();
 				$('#file-dropdown').show();
-				$('#chart-dropdown').show();
 				$('#view-dropdown').show();
 				$('#newCanvas').modal('hide');
 				$('#vid').val(_data['vid']);
@@ -129,7 +129,7 @@ function openCanvas(vid){
 				$('#cdate').val(_data['cdate']);
 				$('#note').val(_data['note']);
 				$('#brand').text(_data['name']);
-				CANVAS = new Canvas(_data['vid'],_data['name'],_data['privilege'],_data['authorization'],_data['mdate'],_data['cdate'],_data['note']);
+				
 			}	 
 		});
 	}
@@ -180,19 +180,12 @@ function gadgetProcess(gadgetID,cid,name,top,left,height,width,depth,type,note,d
 		var chartID = $("#"+gadgetID+" input.chartID").val();
 		var sid = CHARTS[chartID].getSid();
 		var tablename = CHARTS[chartID].getTable();
-		
-		
-		$("#"+sid+"storiesTable").css({
-		    "text-shadow":"0 0 5px #00FFFF"
-		});
-		
+		$(".container").addClass("blueflag");
+		$("#note_section li").removeClass("blueDecoration");
+		$("#"+sid+"storiesTable").addClass("blueDecoration");
 		tablename = tablename.split(".");
 		tablename = tablename[0]+tablename[1];
-		var temp = "#"+sid+tablename;
-		$(temp).css({
-			"text-shadow":"0 0 5px #00FFFF"
-		});
-		
+		$("#"+sid+tablename).addClass("blueDecoration");	
 	})
 	if (parseInt(depth)>maxDepth) {
 		maxDepth = parseInt(depth);

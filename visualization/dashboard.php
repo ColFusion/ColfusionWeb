@@ -20,9 +20,9 @@ if ($current_user->authenticated != TRUE) {
 /* * *********************	
   get dataset title No
  * ********************* */
-$titleNum = $_GET['title'];
+$title = $_POST['title'];
 $where = $_GET['where'];
-$sid = $_POST['title'];
+$sid = $_POST['sid'];
 $tname = $_POST['tableName'];
 
 $userid = $current_user->user_id;
@@ -160,15 +160,15 @@ $chart_columns[] = "Location";
                                 <ul class="dropdown-menu">
                                     <li><a onclick="openCanvasManager()">Canvas Manger</a></li>
                                     <li><a href="#newCanvas" data-toggle="modal">New</a></li>
+				    <li><a href="#addStory" data-toggle="modal">Add Story</a></li>
                                     <!-- 								<li><a href="#open" data-toggle="modal">Open</a></li> -->
                                     <li><a href="#share" data-toggle="modal">Share</a></li>
 
                                 </ul>
                             </li>
                             <li class="dropdown" id="chart-dropdown">
-                                <a href="#visualization" class="dropdown-toggle" data-toggle="dropdown">Add <b class="caret"></b></a>
+                                <a href="#visualization" class="dropdown-toggle" data-toggle="dropdown" id='add-dropdown'>Add <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#addStory" data-toggle="modal">Add Story</a></li>
                                     <li><a href="#addTable" data-toggle="modal">Add Table</a></li>
                                     <li><a href="#addPie" data-toggle="modal">Add Pie Chart</a></li>
                                     <li><a href="#addMotion" data-toggle="modal">Add Motion Chart</a></li>
@@ -219,15 +219,7 @@ $chart_columns[] = "Location";
                         <li id="liadjust2" onclick = "autFilter(2)"><a href="#">Modifiable</a></li>
                         <li id="liadjust0" onclick = "autFilter(0)"><a href="#">User Owned</a></li>
                     </ul>
-                </div>
-                <div id="date_filter" class='round' >
-                    <p class = "nav-header">Data Filter:</p>
-                    <p class = "nav-header">Start From:</p>
-                    <input type="text" id="dateBeginningPicker" onclick = "pickDate()" style="width:auto">
-                    <p class = "nav-header">End with:</p>
-                    <input type="text" id="dateEndingPicker" onclick = "pickDate()" style="width:auto">
-
-                </div>
+		</div>
 
             </div>
             <div id ="button_section" class='round'>
@@ -409,11 +401,6 @@ $chart_columns[] = "Location";
                     <div class="tab-pane active" id="columns">
                         <label class="tabContentTitle">Select from following columns</label>
                         <div class="columnSelection">
-                            <?php foreach ($columns as $name) { ?>
-                                <label class="checkbox table-column">
-                                    <input value= <?php echo $name ?> type="checkbox" name="tableColumns" checked /> <?php echo $name; ?>
-                                </label>
-                            <?php } ?>
                         </div>
                     </div>
                     <div class="tab-pane" id="page">
@@ -474,15 +461,10 @@ $chart_columns[] = "Location";
                     <li id="styleEditTab"><a href="#styleEdit" data-toggle="tab">Style</a></li>
                 </ul>		 
                 <div class="tab-content">
-                    <div class="tab-pane active" id="columnsEdit">
-                        <label class="tabContentTitle">Select from following columns</label>
-                        <div class="columnSelection">
-                            <?php foreach ($columns as $name) { ?>
-                                <label class="checkbox table-column">
-                                    <input type="checkbox" name="tableColumnsEdit" value="<?php echo $name ?>" checked /> <?php echo $name; ?>
-                                </label>
-                            <?php } ?>
-                        </div>
+                <div class="tab-pane active" id="columnsEdit">
+		<label class="tabContentTitle">Select from following columns</label>
+		<div class="columnSelection">
+		</div>
                     </div>
                     <div class="tab-pane" id="pageEdit">
                         <label class="tabContentTitle">Number of tuples per page</label>
@@ -549,12 +531,8 @@ $chart_columns[] = "Location";
                     <?php } ?>
                 </select>
                 <label class="tabContentTitle">Select at least one from the following columns (number)</label>
-                <?php foreach ($columns as $col_name) { ?>
-                    <label class="checkbox table-column">
-                        <input type="checkbox" name="motionOtherColumn[]" value=<?php echo $col_name ?>> <?php echo $col_name; ?>
-                    </label>
-                <?php } ?>
-
+		<div class="columnSelection">
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -638,11 +616,8 @@ $chart_columns[] = "Location";
                     <?php } ?>
                 </select>
                 <label class="tabContentTitle">Tooltip Fields</label>
-                <?php foreach ($columns as $name) { ?>
-                    <label class="checkbox">
-                        <input type="checkbox" name="mapTooltip" value=<?php echo $name ?> /> <?php echo $name; ?>
-                    </label>
-                <?php } ?>
+		<div class="columnSelection">
+		</div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -681,11 +656,8 @@ $chart_columns[] = "Location";
                     <?php } ?>
                 </select>
                 <label class="tabContentTitle">Tooltip Fields</label>
-                <?php foreach ($columns as $name) { ?>
-                    <label class="checkbox">
-                        <input type="checkbox" name="mapTooltipEdit" value=<?php echo $name ?> /> <?php echo $name; ?>
-                    </label>
-                <?php } ?>
+		<div class="columnSelection">
+		</div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -1041,7 +1013,14 @@ $chart_columns[] = "Location";
     <script type="text/javascript">
         $(document).ready(function() {
             createNewCanvas("<?php echo $sid ?>" + "  <?php echo $tname ?>");
-            CANVAS.addStory("<?php echo $sid ?>", "temp story");
+            CANVAS.addStory("<?php echo $sid ?>", "<?php echo $title ?>");
+	    $('#addTable').modal('show');
+	    $('#addTable .table-list').val("+<?php echo $tname ?>")
+	    $('#addTable .columnSelection input').each(function() {
+		$(this).prop('checked','checked');
+		})
+	    addTableChart();
+	    
         })
     </script>
     <?php }?>

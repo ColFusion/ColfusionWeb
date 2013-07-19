@@ -55,6 +55,7 @@ function createNewCanvas(_name) {
             name: _name,
             note: 'dfdf'
         },
+        async:false,
         success:function(JSON_Response){
             clearScreen();
             var JSONResponse = jQuery.parseJSON(JSON_Response);
@@ -70,7 +71,7 @@ function createNewCanvas(_name) {
             $('#testSave').show();
             $("#viewChartsNote").show();
             $('#file-dropdown').show();
-            $('#chart-dropdown').show();
+            $('#chart-dropdown').hide();
             $('#view-dropdown').show();
             $('#brand').text(JSONResponse['name']);
             CANVAS = new Canvas(JSONResponse['vid'],JSONResponse['name'],JSONResponse['privilege'],JSONResponse['authorization'],JSONResponse['mdate'],JSONResponse['cdate'],JSONResponse['note']);

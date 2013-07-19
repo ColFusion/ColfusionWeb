@@ -116,18 +116,31 @@ function initPageSelect(gadgetID,totalPage,currentPage) {
 	}
 	$('#pages'+gadgetID).val(currentPage);
 }
-function activatePageSelect(cid, gadgetID){
-	$("#pages"+gadgetID).change(function(){
-	    alert('dfdf')});
-	$("#prePage"+gadgetID).click(changePage(cid));
-	$("#nextPage"+gadgetID).click(changePage(cid));
+function activatePageSelect(gadgetID){
+	$("#pages"+gadgetID).change(function (){
+	    changePage(this);
+	    });
+	$("#prePage"+gadgetID).click(function(gadgetID) {
+	    changePage(this);
+	    });
+	$("#nextPage"+gadgetID).click(function() {
+		changePage($(this))
+	    });
 }
 
-function changePage(gadgetID){
-    var cid = $(this).parent().parent().parent().find()
+function changePage(obj){
+    var div = $(obj).parent().parent().parent();
+    var cid = $(div).find('.chartID').val();
+    var gadgetID = $(div).attr('id');
     var chart = CHARTS[cid];
     var datainfo = chart.datainfo;
-    chart.datainfo.currentPage = $(this).val();
+    if ($(obj).val()=='Next'){
+	datainfo.currentPage = parseInt(datainfo.currentPage)+1;
+    }else if($(obj).val()=='Previous'){
+	datainfo.currentPage = parseInt(datainfo.currentPage)-1;
+    }else{
+	datainfo.currentPage = $(obj).val();
+    }
     $.ajax({
 	    type: 'POST',
 	    url: 'control.php',
@@ -142,9 +155,9 @@ function changePage(gadgetID){
 		    var queryResult = JSON_Response['queryResult'];
 		    CHARTS[cid].datainfo = datainfo;
 		    CHARTS[cid].queryResult = queryResult;
-		    drawTable(queryResult,gadgetID);
+		    drawTable(queryResult,'tableResult'+gadgetID);
 	    }
-	    })
+    })
     /*var settings = $('#setting' + gadgetID).val();
     var n = settings.split(";");
     columns = n[0].split(",");
@@ -181,7 +194,7 @@ function tableFormToDatainfo() {
 	var color = $('input:radio[name="color"]:checked').val(); // color of the new table		
 	var currentPage = $('input:hidden[name="currentPage"]').val();
 	var tableColumns = new Array();
-	$.each($("input[name='tableColumns']:checked"), function(){
+	$.each($("#addTable .columnSelection").find("input:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
 	});	
 	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where);
@@ -195,9 +208,9 @@ function editTableFormToDatainfo() {
 	var color = $('input:radio[name="colorEdit"]:checked').val(); // color of the new table		
 	var currentPage = $('input:hidden[name="currentPageEdit"]').val();
 	var tableColumns = new Array();
-	$.each($("input[name='tableColumnsEdit']:checked"), function(){
+	$.each($("#editTable .columnSelection").find("input:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
-	});	
+	});
 	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where);
 }
 function TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where) {
@@ -230,7 +243,7 @@ function tableDataInfoToForm(tableDatainfo) {
 	if (tableColumns!=null) {
 	    for (var i = 0;i<tableColumns.length;i++) {
 		    var value = tableColumns[i];
-		    var obj = $('input:checkbox[name="tableColumnsEdit"][value="'+value+'"]');
+		    var obj = $("#editTable .columnSelection input:checkbox[value='"+value+"']");
 		    obj.prop('checked','checked');
 	    }
 	}
@@ -277,7 +290,7 @@ function createNewTableGadget(){
 	var gadgetID = d.getTime() + ranNum + "";
 	
 	var gadget = "<div name='tableDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:1160px; height: 500px' type='table'>";
-	gadget += "<div class='gadget-header'>Table" + gadgetID;
+	gadget += "<div class='gadget-header'><div class='gadget-title'>Table" + gadgetID+"</div>";
 	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>";
 	gadget += "<div class='gadget-edit edit-table'><i class='icon-edit'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";
@@ -347,8 +360,7 @@ function drawTable(sourceData,gadgetID){
 	}else{
 	    id = gadgetID;
 	}
-	initPageSelect(id,sourceData['totalPage']);
-	activatePageSelect(cid,id);
+	initPageSelect(id,sourceData['totalPage'],sourceData['currentPage']);
     	var googleTable = {
 	    'headerRow': 'header-row',
 	    'tableRow': 'table-row',
@@ -410,7 +422,9 @@ function addTableChart() {
 		    gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 		    $("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);
 		    CHARTS[JSON_Response['cid']].chartData = drawTable(queryResult,'tableResult'+gadgetID);
+		    activatePageSelect(gadgetID);
 		    $('#addTable').modal('hide');
+		    $("#"+gadgetID).find('.gadget-title').text("Table chart in "+CHARTS[JSON_Response['cid']].getSname() + ":" + CHARTS[JSON_Response['cid']].getTable());
 		    }
 		})	
 }
@@ -422,6 +436,8 @@ function loadTableChart(sourceData) {
 	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"tableResult" + gadgetID)
 	$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);
 	CHARTS[sourceData['cid']].chartData = drawTable(queryResult,'tableResult'+gadgetID);
+	$("#"+gadgetID).find('.gadget-title').text("Table chart in "+CHARTS[sourceData['cid']].getSname() + ":" + CHARTS[sourceData['cid']].getTable());
+	activatePageSelect(gadgetID);
 }
 //update the chart
 function updateTableResult(cid) {

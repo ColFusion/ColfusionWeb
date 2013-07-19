@@ -129,9 +129,9 @@ function mapFormToDatainfo() {
 	var mapTooltip = new Array();
 	var latitude = $("#latitude").val();
 	var longitude = $("#longitude").val();
-	$.each($("input[name='mapTooltip']:checked"), function(){
-            mapTooltip.push($(this).val());
-        });
+	$.each($("#addMap .columnSelection").find("input:checked"), function(){
+		mapTooltip.push($(this).val()); // columns to show
+	});	
 	return new MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where);
 }
 function editMapFormToDatainfo() {
@@ -142,9 +142,9 @@ function editMapFormToDatainfo() {
 	var mapTooltip = new Array();
 	var latitude = $("#latitudeEdit").val();
 	var longitude = $("#longitudeEdit").val();
-	$.each($("input[name='mapTooltipEdit']:checked"), function(){
-            mapTooltip.push($(this).val());
-        });
+	$.each($("#editMap .columnSelection").find("input:checked"), function(){
+		mapTooltip.push($(this).val()); // columns to show
+	});
 	return new MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where);
 }
 function MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where) {
@@ -174,7 +174,7 @@ function mapDataInfoToForm(mapDatainfo) {
 	if (mapTooltip!=null) {
 	    for (var i = 0;i<mapTooltip.length;i++) {
 		var value = mapTooltip[i];
-		var obj = $('input:checkbox[name="mapTooltipEdit"][value="'+value+'"]');
+		var obj = $("#editMap .columnSelection input:checkbox[value='"+value+"']");
 		obj.prop('checked','checked');
 	    }
 	}
@@ -192,16 +192,17 @@ function drawMap(souceData,gadgetID){
 	data.addColumn('number', 'latitude');
 	data.addColumn('number', 'longitude');
 	data.addColumn('string', 'Tooltip');
-	for(i=0 ; souceData[i]!=null ; i++){
+	var mapTooltip = souceData['mapToolTip'];
+	for(i=0 ; souceData['content'][i]!=null ; i++){
 		data.addRow();
-		data.setCell(i, 0, parseFloat(String(souceData[i]["la"])));
-		data.setCell(i, 1, parseFloat(String(souceData[i]["long"])));
+		data.setCell(i, 0, parseFloat(String(souceData['content'][i]["latitude"])));
+		data.setCell(i, 1, parseFloat(String(souceData['content'][i]["longitude"])));
 		var tips = "";
-		/*
-		for(k=0; k<mapTooltip.length; k++){
-			tips += mapTooltip[k] + ": " + String(JSONResponse[i][mapTooltip[k]]);
+		
+		for(var temp in mapTooltip){
+			tips += temp + ": " + String(souceData['content'][i][mapTooltip[temp]]);
 			
-		}*/
+		}
 		data.setCell(i, 2, tips);
 	}
 	var options = {

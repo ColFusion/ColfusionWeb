@@ -218,9 +218,9 @@ function generateCombo(a){
 function drawCombo(souceData,gadgetID) {
 	var data = new google.visualization.DataTable();
 	data.addColumn('string','Type');
-	for(i=0; souceData[i]!=null ; i++)
+	for(i=0; souceData['content'][i]!=null ; i++)
 	{
-		data.addColumn('number',String(souceData[i]['Category']));
+		data.addColumn('number',String(souceData['content'][i]['Category']));
 	}
 	
 	for(i=0 ; i<3; i++){
@@ -231,10 +231,10 @@ function drawCombo(souceData,gadgetID) {
 	data.setCell(2,0,'MIN');
 	
 	var colIndex = 1;
-	for(i=0 ; souceData[i]!=null ; i++){
-		data.setCell(0,colIndex,parseFloat(String(souceData[i]['AVG'])));
-		data.setCell(1,colIndex,parseFloat(String(souceData[i]['MAX'])));
-		data.setCell(2,colIndex,parseFloat(String(souceData[i]['MIN'])));
+	for(i=0 ; souceData['content'][i]!=null ; i++){
+		data.setCell(0,colIndex,parseFloat(String(souceData['content'][i]['AVG'])));
+		data.setCell(1,colIndex,parseFloat(String(souceData['content'][i]['MAX'])));
+		data.setCell(2,colIndex,parseFloat(String(souceData['content'][i]['MIN'])));
 		colIndex++;
 	}
 	var options={

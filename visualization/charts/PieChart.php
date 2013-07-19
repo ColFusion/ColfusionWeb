@@ -9,15 +9,25 @@ class PieChart extends Chart {
         include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
         if($_datainfo == null){
             $_datainfo = $this->datainfo;
+            $temp;
+            foreach($_datainfo as $key => $value){
+                $temp->$key = $value;
+            }
+            $_datainfo = $temp;
         }else{
+            $temp;
+            foreach($_datainfo as $key => $value){
+                $temp->$key = $value;
+            }
+            $_datainfo = $temp;
             $this->datainfo = $_datainfo;
         }
-        $sid = $_datainfo['sid'];
-        $table = $_datainfo['table'];
-        $pieColumnCat = $_datainfo['pieColumnCat'];
-        $pieColumnAgg = $_datainfo['pieColumnAgg'];
-        $pieAggType = $_datainfo['pieAggType'];
-        $where = $_datainfo['where'];
+        $sid = $_datainfo->sid;
+        $table = $_datainfo->table;
+        $pieColumnCat = $_datainfo->pieColumnCat;
+        $pieColumnAgg = $_datainfo->pieColumnAgg;
+        $pieAggType = $_datainfo->pieAggType;
+        $where = $_datainfo->where;
         $select = "SELECT `" . $pieColumnCat . "` AS 'Category', ";
         switch($pieAggType) {
 		case "Count":

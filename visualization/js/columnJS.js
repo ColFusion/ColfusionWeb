@@ -159,7 +159,7 @@ function createNewColumnGadget() {
 	var gadgetID = d.getTime() + ranNum + "";
 	
 	var gadget = "<div name='columnDivs' id='"+gadgetID+"' class='gadget' style='top: 50px; left:0px; width:500px; height:400px' type='column'>";
-	gadget += "<div class='gadget-header'>column chart " + gadgetID;
+	gadget += "<div class='gadget-header'><div class='gadget-title'>column chart " + gadgetID+"<>";
 	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>";
 	gadget += "<div class='gadget-edit edit-column edit-new-column'><i class='icon-edit'></i></div></div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />";

@@ -360,3 +360,6 @@ body {
 .table-list{
 	width: 150px;
 }
+	.blueDecoration{
+		text-shadow:0 0 5px #3300CC
+	}

@@ -57,7 +57,6 @@ class Canvas{
         $sql = "select * from colfusion_charts where vid = ".$id;
         $rst = $db->get_results($sql);
         $chartArr = array();
-        
         foreach($rst as $obj){
             $datainfo = str_replace('\"','"',$obj->datainfo);
             $da = json_decode($datainfo);
