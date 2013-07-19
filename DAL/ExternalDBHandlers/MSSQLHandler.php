@@ -110,7 +110,29 @@ EOQ;
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
-    	 
+    	 $pdo = $this->GetConnection();
+        
+        $query = $select . " from " . $from . " ";
+        
+        if (isset($where))
+            $query .= ' ' . $where . ' ';
+         
+        if (isset($groupby))
+            $query .= ' '. $groupby . ' ';
+        
+        if (isset($perPage) && isset($pageNo)) {
+             
+            $startPoint = ($pageNo - 1) * $perPage;
+            $query .= " LIMIT " . $startPoint . "," . $perPage;
+        }
+                        
+        $res = $pdo->query($query);
+        $result = array();
+        while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
+            $result[] = $row;
+        }
+        
+        return $result;
     }
 
 }
