@@ -9,7 +9,7 @@ class MSSQLHandler extends DatabaseHandler {
     }
 
     public function getConnection() {
-        $pdo = new PDO("sqlsrv:Server=$this->host;Database=$this->database", $this->user, $this->password);
+        $pdo = new PDO("dblib:dbname=$this->database;host=$this->host:$this->port", $this->user, $this->password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec('SET QUOTED_IDENTIFIER ON');
         $pdo->exec('SET ANSI_WARNINGS ON');
