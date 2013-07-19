@@ -5,18 +5,18 @@ include_once('../'.mnminclude.'link.php');
 include_once('../'.mnminclude.'tags.php');
 include_once('../'.mnminclude.'user.php');
 include_once('../'.mnminclude.'smartyvariables.php');
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 
 require_once("Chart.php");
 require_once("Canvas.php");
 
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
 
 require_once('charts/ColumnChart.php');
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 
 require_once("charts/PieChart.php");
 require_once("charts/TableChart.php");
@@ -28,7 +28,7 @@ require_once("charts/MapChart.php");
 
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
 
 global $current_user;
 
