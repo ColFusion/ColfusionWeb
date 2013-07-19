@@ -54,20 +54,11 @@ ko.bindingHandlers.searchDatasetTypeahead = {
                 $(this).parent().next('button').prop("disabled", true);
             }
         }).typeahead({
-            name: 'datasets',           
+            name: 'datasets',               
             prefetch: {
                 url: 'datasetController/findDataset.php',
                 ttl: 10 * 60 * 1000 // cache 10 mins
-            },
-            remote: {
-                url: 'datasetController/findDataset.php',
-                maxParallelRequests: 2,
-                beforeSend: function(jqXhr, settings) {
-                    console.log('Typeahead before send');
-                    console.log(settings);
-                    settings.url += '?searchTerm=' + $(element).val();
-                }
-            },
+            },           
             valueKey: 'source_key',
             template: search_typeahead_tpl,
             engine: Hogan

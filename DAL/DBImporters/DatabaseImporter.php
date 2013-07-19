@@ -25,6 +25,7 @@ abstract class DatabaseImporter {
         $sql_query = $this->split_sql_file($sql_query, $sqlDelimiter);
 
         foreach ($sql_query as $sql) {
+            $sql = str_replace('\n', '');
             $sql = trim($sql);
             if (!empty($sql)) {
                 $pdo->exec($sql);
