@@ -82,12 +82,26 @@ EOQ;
 
     public function getTotalNumberTuplesInTable($table_name) {
         $pdo = $this->GetConnection();
-        $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM [$table_name]");
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_BOTH);
-        $tupleNum = (int) $row[0];
-        $stmt->closeCursor();
-        return $tupleNum;
+
+
+        $sql = "SELECT COUNT(*) as ct FROM $table_name ";
+        $res = $pdo->query($sql);
+
+        foreach ($res as $row) {
+            if (isset($row))
+                return $row["ct"];
+            else
+            //TODO: throw error here
+                die('Table not found');
+        }
+
+
+     //   $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM [$table_name]");
+     //   $stmt->execute();
+     //   $row = $stmt->fetch(PDO::FETCH_BOTH);
+     //   $tupleNum = (int) $row[0];
+     //   $stmt->closeCursor();
+     //   return $tupleNum;
     }
     
     // select - valid sql select part
