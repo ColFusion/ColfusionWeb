@@ -58,7 +58,7 @@ foreach ($filenames as $filename) {
     $commands[] = $command;
     $ret = exec($command, $outA, $returnVar);
 
-    if (strpos($ret, 'ended successfully') === false) {
+    if ($returnVar != 0) {
         $num = 0;
         $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=0, ErrorMessage='" . mysql_real_escape_string(implode("\n", $outA)) . "', RecordsProcessed='" . $num . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
         $rs = $db->query($sql);
@@ -106,26 +106,7 @@ foreach ($filenames as $filename) {
 	   <span id="btn_all" class="button_max" style="display:block" onclick="show_detail()">Show Detailed Error</span>
        <span id="btn_hide" class="button_max" style="display:none" onclick="hide_detail()">Hide Detailed Error</span>
     </center>';
-
-
-        //TODO: fix this
-        $jsCode = "<script type='text/javascript'>
-	function show_detail()
-		{		
-				document.getElementById('btn_show').style.display='none';
-				document.getElementById('btn_hide').style.display='block';
-				document.getElementById('details').style.display='block';													
-		}
-		
-    function hide_detail()
-		{		
-				document.getElementById('btn_show').style.display='block';
-				document.getElementById('btn_hide').style.display='none';
-				document.getElementById('details').style.display='none';													
-		}
-    
-    </script>";
-
+     
         $result = new stdClass;
         $result->isSuccessful = false;
         $result->message = $msg . $jsCode;

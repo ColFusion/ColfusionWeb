@@ -100,7 +100,7 @@ class PostgreSQLHandler extends DatabaseHandler {
     	$res = $pdo->query($query);
     	$result = array();
     	
-    	foreach ($res->fetchAll() as $row) {
+    	foreach ($res->fetchAll(PDO::FETCH_ASSOC) as $row) {
     		$result[] = $row;
     	}
     	return $result;

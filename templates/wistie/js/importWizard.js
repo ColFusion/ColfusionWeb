@@ -338,11 +338,8 @@ var importWizard = (function() {
 
                     $('#fromDataSetWrapper').find('.sidInput').val('New Dataset');
                 } else {
-                    triggerError();
+                    $("#exe").html(resultJson.message);
                 }
-            }).error(function(jqXHR, textStatus, errorThrown) {
-                var resultJson = {isSuccessful: false, message: errorThrown};
-                $("#exe").html(resultJson.message);
             });
         });
 
@@ -399,8 +396,7 @@ var importWizard = (function() {
                 });
             };
 
-            return $.when(wizardFromFile.excuteFromFile())
-                    .then(callExecuteKtr, callExecuteKtr);
+            return $.when(wizardFromFile.excuteFromFile()).then(callExecuteKtr);
         }
     }
 
@@ -502,6 +498,7 @@ var importWizard = (function() {
     }
 
     function triggerError() {
+        console.log('error is triggered');
         wizard.trigger("error");
         wizard._submitting = false;
         wizard.showSubmitCard("error");

@@ -234,7 +234,7 @@ function NewRelationshipViewModel() {
             success: function(data) {
                 self.isAddingRelationship(false);
                 self.isAddingSuccessful(true);
-                dataPreviewViewModel.mineRelationships(10, 1);
+                relationshipViewModel.mineRelationships(10, 1);
                 setTimeout(function() {
 
                     reset();

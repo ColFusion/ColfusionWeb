@@ -146,8 +146,7 @@ var wizardFromFile = (function() {
 
         return $.ajax({type: 'POST',
             url: my_pligg_base + '/DataImportWizard/generate_ktr.php',
-            data: dataToSend,
-            dataType: 'json'
+            data: dataToSend
         });
     };
 

@@ -21,7 +21,7 @@ include_once 'NothingFilter.php';
 include_once 'FileUtil.php';
 include_once 'KTRManager.php';
 
-// error_reporting(E_ALL ^ E_STRICT);
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 
 if (isset($_POST["phase"]) && is_numeric($_POST["phase"]))
     $phase = $_POST["phase"];
@@ -308,7 +308,7 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
         $fileUrls[] = $fileUrl;
         $ktrManager->createTemplate($fileUrls, $sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputsForATable);
     }
-
+    
     UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $_POST["schemaMatchingUserInputs"]);
     UtilsForWizard::processDataMatchingUserInputsWithTableNameStoreDB($sid, $_POST["dataMatchingUserInputs"]);
 }

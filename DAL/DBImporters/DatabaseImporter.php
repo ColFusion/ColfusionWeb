@@ -20,13 +20,16 @@ abstract class DatabaseImporter {
 
     protected function execImportQuery($filePath, $pdo, $sqlDelimiter = "/;/") {
         $sql_query = @fread(@fopen($filePath, 'r'), @filesize($filePath));
-        $sql_query = $this->remove_comments($sql_query);
-        $sql_query = $this->remove_remarks($sql_query);
         $sql_query = $this->split_sql_file($sql_query, $sqlDelimiter);
-
+        
         foreach ($sql_query as $sql) {
-            $sql = str_replace('\n', '', $sql);
-            $sql = trim($sql);
+            $sql .= ';';
+            $sql = trim(preg_replace('/\n/', '', $sql));
+
+            $pattern = '/(CREATE TABLE .*;)|(INSERT INTO .*;)/i';
+            preg_match($pattern, $sql, $matches);
+            $sql = count($matches) > 0 ? $matches[0] : '';
+
             if (!empty($sql)) {
                 $pdo->exec($sql);
             }
@@ -95,9 +98,6 @@ abstract class DatabaseImporter {
 // this is faster than calling count($oktens) every time thru the loop.
         $token_count = count($tokens);
         for ($i = 0; $i < $token_count; $i++) {
-
-// Remove create database script.           
-            $tokens[$i] = preg_replace('/(CREATE DATABASE .*)|(USE .*)?/i', '', $tokens[$i]);
 
 // Don't wanna add an empty string as the last thing in the array.
             if (($i != ($token_count - 1)) || (strlen($tokens[$i] > 0))) {
