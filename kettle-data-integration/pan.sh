@@ -13,6 +13,7 @@ cd - > /dev/null
 
 setPentahoEnv
 
+KETTLE_HOME=$BASEDIR
 CLASSPATH=$BASEDIR
 CLASSPATH=$CLASSPATH:$BASEDIR/lib/kettle-core.jar
 CLASSPATH=$CLASSPATH:$BASEDIR/lib/kettle-db.jar
