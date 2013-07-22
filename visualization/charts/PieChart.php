@@ -10,15 +10,15 @@ class PieChart extends Chart {
     }
     function query($_datainfo){
         
-        if($_datainfo == null){
+        if(is_null($_datainfo)){
             $_datainfo = $this->datainfo;
-            $temp;
+            $temp = new stdClass;
             foreach($_datainfo as $key => $value){
                 $temp->$key = $value;
             }
             $_datainfo = $temp;
         }else{
-            $temp;
+            $temp = new stdClass;
             foreach($_datainfo as $key => $value){
                 $temp->$key = $value;
             }

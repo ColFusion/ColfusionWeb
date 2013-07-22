@@ -7,7 +7,7 @@ include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
 class TableChart extends Chart{
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
-        $this->query(null);
+        $this->query($this->datainfo);
     }
 
     function query($_datainfo){
@@ -15,15 +15,15 @@ class TableChart extends Chart{
          * Here implement the query code;
          */
 	
-	if($_datainfo == null){
+	if(is_null($_datainfo)){
             $_datainfo = $this->datainfo;
-            $temp;
+            $temp = new stdClass;
             foreach($_datainfo as $key => $value){
                 $temp->$key = $value;
             }
             $_datainfo = $temp;
         }else{
-            $temp;
+            $temp = new stdClass;
             foreach($_datainfo as $key => $value){
                 $temp->$key = $value;
             }

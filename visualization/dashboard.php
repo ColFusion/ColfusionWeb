@@ -997,8 +997,8 @@ $chart_columns[] = "Location";
             <input type="hidden" id="note" value=""/>
             <div class="chart-area">
 
-            </div>
-
+            </div>	
+	</div>
             <!-- Success Alert -->
             <div class="alert alert-success" id="success-alert" style="display: none">
 

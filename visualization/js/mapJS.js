@@ -192,7 +192,7 @@ function drawMap(souceData,gadgetID){
 	data.addColumn('number', 'latitude');
 	data.addColumn('number', 'longitude');
 	data.addColumn('string', 'Tooltip');
-	var mapTooltip = souceData['mapToolTip'];
+	var mapTooltip = souceData['mapTooltip'];
 	for(i=0 ; souceData['content'][i]!=null ; i++){
 		data.addRow();
 		data.setCell(i, 0, parseFloat(String(souceData['content'][i]["latitude"])));
@@ -200,7 +200,7 @@ function drawMap(souceData,gadgetID){
 		var tips = "";
 		
 		for(var temp in mapTooltip){
-			tips += temp + ": " + String(souceData['content'][i][mapTooltip[temp]]);
+			tips += "<b>"+mapTooltip[temp]+"</b>" + ": " + String(souceData['content'][i][mapTooltip[temp]])+"<br>";
 			
 		}
 		data.setCell(i, 2, tips);
@@ -217,7 +217,7 @@ function drawMap(souceData,gadgetID){
 }
 
 //refresh chart without loading new data.
-function refreshMap(sourceData,gadgetID) {
+function refreshMap(data,sourceData,gadgetID){
     	var options = {
 		showTip: true, 
 		mapType: 'normal', 
@@ -235,7 +235,7 @@ function generateMap(a){
 	    enableScrollWheel: true,
 	    useMapTypeControl: true
     };
-	var map = new google.visualization.Map(document.getElementById('mapResult' + a));
+    var map = new google.visualization.Map(document.getElementById('mapResult' + a));
     map.draw(mapdata, options);
 
 }
@@ -269,7 +269,12 @@ function createNewMapGadget(){
 		CANVAS.selectedChart = cid;
 	});
     	$("div[name='mapDivs']").resize(function() {
-	    $("#mapResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height()-20);
+	   
+	    var cid = $(this).find('.chartID').val();
+	    var gadgetID = $(this).attr('id');
+	    var chart = CHARTS[cid];
+	     $("#mapResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height()-20);
+		refreshMap(chart.chartData,chart.queryResult,"mapResult"+gadgetID);
 	});
     //edit geo chart
     $('.edit-map').click(function() {

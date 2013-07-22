@@ -360,6 +360,10 @@ body {
 .table-list{
 	width: 150px;
 }
-	.blueDecoration{
-		text-shadow:0 0 5px #3300CC
-	}
+.blueDecoration{
+	text-shadow:0 0 5px #3300CC
+}
+
+div[name="mapDivs"] img{
+	max-width:inherit;
+}
