@@ -38,16 +38,10 @@ foreach ($ktrManagers as $filename => $ktrManager) {
     $ktrFilePath = $ktrManager->getKtrFilePath();
 
     $sql = 'INSERT INTO ' . table_prefix . 'executeinfo (Sid ,Userid ,TimeStart)VALUES (' . $sid . ' , ' . $author . ',CURRENT_TIMESTAMP);';
-//print($sql);
     $rs = $db->query($sql);
-    if ($rs) {
-        //get eid returned from the insert
-        $logID = mysql_insert_id();
-        //print $logID;
-    } else {
-        print (mysql_error());
-        return;
-    }
+    //get eid returned from the insert
+    $logID = mysql_insert_id();
+    
 
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
         $locationOfPan = mnmpath . 'kettle-data-integration\\Pan_WHDV.bat';
@@ -64,14 +58,8 @@ foreach ($ktrManagers as $filename => $ktrManager) {
         $num = 0;
         $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=0, ErrorMessage='" . mysql_real_escape_string(implode("\n", $outA)) . "', RecordsProcessed='" . $num . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
         $rs = $db->query($sql);
-        if (!$rs) {
-            print (mysql_error());
-            //rollback();
-            die;
-        }
 
         $error = implode("<br />", $outA);
-        //print($error);
 
         $errora = array();
         $errorb = array();
@@ -113,6 +101,7 @@ foreach ($ktrManagers as $filename => $ktrManager) {
         $result->isSuccessful = false;
         $result->message = $msg . $jsCode;
         $result->pentaho_cmd = $commands;
+        $result->exeCode = $returnVar;
         echo json_encode($result);
 
         exit;
@@ -124,21 +113,13 @@ foreach ($ktrManagers as $filename => $ktrManager) {
         $numProcessed = $m[1];
 
         $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=1, RecordsProcessed='" . $numProcessed . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
-        //print($sql);
         $rs = $db->query($sql);
-        if (!$rs) {
-            print (mysql_error());
-            //rollback();
-            die;
-        }
 
         $sid = getSid();
 
         $dnamelistquery = "SELECT DISTINCT Dname FROM " . table_prefix . "temporary WHERE Sid = $sid";
         $dnamelist = $db->get_results($dnamelistquery);
         $num = count($dnamelist);
-        //echo $num.'<br>';
-        //print_r( $dnamelist);
 
         $query = "UPDATE `colfusion_temporary` AS t, 
        (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
