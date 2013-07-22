@@ -21,6 +21,10 @@
                                 <select name="fileType" id="uploadFileType">
                                     <option value="dataFile">CSV, Excel File</option>
                                     <option value="dbDump">Database Dump File</option>
+                                </select>                              
+                                <select name="excelFileMode" id="excelFileMode">
+                                    <option value="append">Append data into one table</option>
+                                    <option value="join">View each file as a table</option>
                                 </select>
                                 <select name="dbType" id="dbType" style="display:none;">
                                     <option value="MySQL">MySQL</option>

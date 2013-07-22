@@ -20,20 +20,22 @@ include(mnminclude . 'smartyvariables.php');
 include(mnminclude . 'smartyvariables.php');
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/UtilsForWizard.php");
+require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
 
-// error_reporting(E_ALL ^ E_STRICT);
+error_reporting(E_ALL);
+ini_set("error_display", 1);
 
 global $current_user, $db, $dblang;
 
 $author = $current_user->user_id;
 
 $sid = getSid();
-$filenames = $_SESSION["ktrArguments_$sid"]["filenames"];
-unset($_SESSION["ktrArguments_$sid"]);
+$ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
+//unset($_SESSION["ktrArguments_$sid"]);
 
-foreach ($filenames as $filename) {
+foreach ($ktrManagers as $filename => $ktrManager) {
 
-    $ktrFilePath = mnmpath . "temp/$sid/$filename.ktr";
+    $ktrFilePath = $ktrManager->getKtrFilePath();
 
     $sql = 'INSERT INTO ' . table_prefix . 'executeinfo (Sid ,Userid ,TimeStart)VALUES (' . $sid . ' , ' . $author . ',CURRENT_TIMESTAMP);';
 //print($sql);
@@ -54,7 +56,7 @@ foreach ($filenames as $filename) {
         $locationOfPan = mnmpath . 'kettle-data-integration/pan.sh';
         $command = 'sh ' . $locationOfPan . ' -file="' . $ktrFilePath . '" ' . '-param:Sid=' . $sid . ' -param:Eid=' . $logID;
     }
-    
+
     $commands[] = $command;
     $ret = exec($command, $outA, $returnVar);
 
@@ -106,13 +108,13 @@ foreach ($filenames as $filename) {
 	   <span id="btn_all" class="button_max" style="display:block" onclick="show_detail()">Show Detailed Error</span>
        <span id="btn_hide" class="button_max" style="display:none" onclick="hide_detail()">Hide Detailed Error</span>
     </center>';
-     
+
         $result = new stdClass;
         $result->isSuccessful = false;
         $result->message = $msg . $jsCode;
         $result->pentaho_cmd = $commands;
         echo json_encode($result);
-        
+
         exit;
     } else {
         //TODO parse msg to get num inserted
@@ -155,7 +157,7 @@ WHERE t.`Tid` = r.`Tid`";
 SET t.`columnnum` = r.rownumN % $num + 1
 WHERE t.`Tid` = r.`Tid`";
         $db->query($query);
-        
+
         UtilsForWizard::insertCidToNewData($sid, $filename);
     }
 }

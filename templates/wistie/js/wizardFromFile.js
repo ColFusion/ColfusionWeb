@@ -163,6 +163,7 @@ var wizardFromFile = (function() {
                 .add('#dbServerUserName')
                 .add('#dbServerPassword')
                 .add('#dbServerDatabase')
+                .add('#excelFileMode')
                 .add('#uploadFileType')
                 .add('#dbType').prop('disabled', false);
         $('input[name="place"]').prop('disabled', false);
@@ -230,8 +231,10 @@ var wizardFileUpload = (function() {
         $(form).find('#uploadFileType').change(function() {          
             if ($(this).val() == 'dbDump') {
                 $('#dbType').show();
+                $('#excelFileMode').hide();
             } else {
                 $('#dbType').hide();
+                $('#excelFileMode').show();
             }
         });
 

@@ -35,89 +35,61 @@
                             <tbody>
                                 <tr>
                                     <td class="profileHeader">Name:</td>
-                                    <td data-bind="text: name" class="profileContent">Ccode</td>
-                                    <td data-bind="visible: isOwned()" rowspan="2" style="display: none;"><button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn deleteRelBtn">Delete</button></td>
+                                    <td data-bind="text: name() || 'empty'" class="profileContent">Ccode</td>
                                 </tr>                            
                                 <tr>
-                                    <td class="profileHeader">Description:</td><td data-bind="text: description" class="profileContent">This description is long enough. This description is long enough. This description is long enough.</td>
+                                    <td class="profileHeader">Description:</td><td data-bind="text: description() || 'empty'" class="profileContent">This description is long enough. This description is long enough. This description is long enough.</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="span4">
-                        <div data-bind="template: { name: 'linkProfile-template', data: fromDataset }" class="fromProfile linkProfile">          
-                            <table class="linkProfileTable">
-                                <tbody><tr>
-                                        <td data-bind="text: ($data == $parent.fromDataset()) ? 'From:' : 'To:'" style="font-weight: bold;">From Dataset:</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="linkProfileHeader">Dataset:</td>
-                                        <td class="linkProfileContent">
-                                            <a data-bind="text: name, attr: {href: '/Colfusion/story.php?title=' + sid()}" href="/Colfusion/story.php?title=1777">Test Data PReview</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="linkProfileHeader">Table:</td>
-                                        <td class="linkProfileContent" data-bind="text: currentTable">small.xlsx</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div data-bind="template: { name: 'linkProfile-template', data: fromDataset }" class="fromProfile linkProfile">
                         </div>
                     </div>
                     <div class="span4">
-                        <div data-bind="template: { name: 'linkProfile-template', data: toDataset }" class="toProfile linkProfile">          
-                            <table class="linkProfileTable">
-                                <tbody><tr>
-                                        <td data-bind="text: ($data == $parent.fromDataset()) ? 'From:' : 'To:'" style="font-weight: bold;">To Dataset:</td>
-                                    </tr>
-                                    <tr>
-                                        <td class="linkProfileHeader">Dataset:</td>
-                                        <td class="linkProfileContent">
-                                            <a data-bind="text: name, attr: {href: '/Colfusion/story.php?title=' + sid()}" href="/Colfusion/story.php?title=1776">abc</a>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="linkProfileHeader">Table:</td>
-                                        <td class="linkProfileContent" data-bind="text: currentTable">small.xls</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div data-bind="template: { name: 'linkProfile-template', data: toDataset }" class="toProfile linkProfile">
                         </div>
                     </div>
                 </div>
             </div>
+            <script id="linkProfile-template" type="text/html">
+                <table class="linkProfileTable">
+                <tbody>
+                <tr>
+                <td data-bind="text: ($data == $parent.fromDataset()) ? 'From:' : 'To:'" style="font-weight: bold; width: 50px;"></td>
+                </tr>
+                <tr>
+                <td class="linkProfileHeader">Dataset:</td>
+                <td class="linkProfileContent">
+                <a data-bind="text: name, attr: {href: '{/literal}{$appRootPath}{literal}/story.php?title=' + sid}">abc</a>
+                </td>
+                </tr>
+                <tr>
+                <td class="linkProfileHeader">Table:</td>
+                <td class="linkProfileContent" data-bind="text: chosenTableName">small.xls</td>
+                </tr>
+                </tbody>
+                </table>
+            </script>
         {/literal}
         <div id="navListContainer">
-            <ul class="nav nav-list" style="padding: 0">
+            <ul data-bind="foreach: links" class="nav nav-list" style="padding: 0">
+                <!-- ko if: $index() == 0 -->
                 <li class="nav-header"><span style="margin-left: 15px;">Links</span></li>
-                <li class="selected linkLi">
+                <!-- /ko -->               
+                <li class="linkLi">
                     <a>
                         <table class="link">
                             <tr>
-                                <td class="fromPart linkPart linkPartText">
-                                    Ccode
+                                <td data-bind="text: fromLinkPart.transInput" class="fromPart linkPart linkPartText">
                                 </td>
-                                <td class="toPart linkPart linkPartText">
-                                    Ccode
+                                <td data-bind="text: toLinkPart.transInput" class="toPart linkPart linkPartText">
                                 </td>
                             </tr>
                         </table>
                     </a>
-                </li>
-                <li class="linkLi"> 
-                    <a>
-                        <table class="link">
-                            <tr>
-                                <td class="fromPart linkPart linkPartText">
-                                    StateNme
-                                </td>
-                                <td class="toPart linkPart linkPartText">
-                                    StateNme
-                                </td>
-                            </tr>
-                        </table>
-                    </a>
-                </li>
+                </li>            
             </ul>
         </div>
         <div id="tableContainer">
@@ -141,24 +113,7 @@
                         </div>
                         <div id="diffDataCollapse" class="accordion-body collapse in">
                             <div class="accordion-inner">
-                                <div class="linkDataContainer">
-                                    <table class="linkDataTable">
-                                        <thead>
-                                            <tr><th>FromColumnName</th><th>ToColumnName</th></tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr><td>FromData1</td><td>ToData1</td></tr>
-                                            <tr><td>FromData2</td><td>ToData2</td></tr>
-                                            <tr><td>FromData3</td><td>ToData3</td></tr>
-                                            <tr><td>FromData4</td><td>ToData4</td></tr>
-                                            <tr><td>FromData5</td><td>ToData5</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                        </tbody>
-                                    </table>
+                                <div data-bind="jqueryEditable: differentValueTable" class="linkDataContainer">                                
                                 </div>
                             </div>
                         </div>
@@ -175,24 +130,7 @@
                         </div>
                         <div id="sameDataCollapse" class="accordion-body collapse in">
                             <div class="accordion-inner">
-                                <div class="linkDataContainer">
-                                    <table class="linkDataTable">
-                                        <thead>
-                                            <tr><th>FromColumnName</th><th>ToColumnName</th></tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr><td>FromData1</td><td>ToData1</td></tr>
-                                            <tr><td>FromData2</td><td>ToData2</td></tr>
-                                            <tr><td>FromData3</td><td>ToData3</td></tr>
-                                            <tr><td>FromData4</td><td>ToData4</td></tr>
-                                            <tr><td>FromData5</td><td>ToData5</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                        </tbody>
-                                    </table>
+                                <div  data-bind="jqueryEditable: sameValueTable" class="linkDataContainer">                               
                                 </div>
                             </div>
                         </div>
@@ -209,24 +147,7 @@
                         </div>
                         <div id="partlyDataCollapse" class="accordion-body collapse in">
                             <div class="accordion-inner">
-                                <div class="linkDataContainer">
-                                    <table class="linkDataTable">
-                                        <thead>
-                                            <tr><th>FromColumnName</th><th>ToColumnName</th></tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr><td>FromData1</td><td>ToData1</td></tr>
-                                            <tr><td>FromData2</td><td>ToData2</td></tr>
-                                            <tr><td>FromData3</td><td>ToData3</td></tr>
-                                            <tr><td>FromData4</td><td>ToData4</td></tr>
-                                            <tr><td>FromData5</td><td>ToData5</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                            <tr><td>FromData</td><td>ToData</td></tr>
-                                        </tbody>
-                                    </table>
+                                <div  data-bind="jqueryEditable: partlyValueTable" class="linkDataContainer">                               
                                 </div>
                             </div>
                         </div>

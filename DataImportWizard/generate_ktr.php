@@ -33,11 +33,12 @@ else
 $sid = getSid();
 $dataSource_dir = "upload_raw_data/$sid/";
 $dataSource_dirPath = mnmpath . $dataSource_dir;
+$excelFileMode = $_SESSION["excelFileMode_$sid"];
 
 switch ($phase) {
     case 0:
 // When submit btn in step1 is clicked, the function executes.
-        createTemplate($sid, $dataSource_dir, $dataSource_dirPath);
+        createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode);
         break;
     case 1:
 // when jump to step 3, this function is called.
@@ -89,7 +90,7 @@ function getSid() {
     return $sid;
 }
 
-function createTemplate($sid, $dataSource_dir, $dataSource_dirPath) {
+function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode) {
 
     $template = 'excel-to-target_schema.ktr';
     $newDir = mnmpath . "temp/$sid";
@@ -97,14 +98,30 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath) {
         mkdir($newDir);
     }
 
-    foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
-        if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
-            $filenames[] = $dataSource_filename;
-            $filePaths[] = $dataSource_dirPath . $dataSource_filename;
-            $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
-            $ktrFilePath = "$newDir/$dataSource_filename.ktr";
-            copy($template, $ktrFilePath);
-            $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath);
+    if ($excelFileMode == 'append') {
+        $ktrFilePath = "$newDir/$sid.ktr";
+        copy($template, $ktrFilePath);
+
+        foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
+            if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
+                $filenames[] = $dataSource_filename;
+                $filePaths[] = $dataSource_dirPath . $dataSource_filename;
+                $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
+            }
+        }
+
+        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths);
+    } else {
+        foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
+            if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
+                $filenames[] = $dataSource_filename;
+                $filePath = $dataSource_dirPath . $dataSource_filename;
+                $filePaths[] = $filePath;
+                $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
+                $ktrFilePath = "$newDir/$dataSource_filename.ktr";
+                copy($template, $ktrFilePath);
+                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath));
+            }
         }
     }
 
@@ -114,17 +131,19 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath) {
     $_SESSION["ktrArguments_$sid"]["fileUrls"] = $fileURLs;
 }
 
-function getFileSources($sid, $dataSource_dir, $dataSource_dirPath) {
+function getFileSources($sid) {
 
-    $filePaths = $_SESSION["ktrArguments_$sid"]["filePaths"];
-    if (isset($filePaths)) {
+    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
+    if (isset($ktrManagers)) {
         $json["isSuccessful"] = true;
-        foreach ($filePaths as $filePath) {
-            $json["data"][] = getSheets($filePath);
+        foreach ($ktrManagers as $ktrManager) {
+            $paths = $ktrManager->getFilePaths();
+            $json["data"][] = getSheets($paths[0]);
         }
     } else {
         $json["isSuccessful"] = false;
     }
+    
     echo json_encode($json);
 }
 
@@ -293,7 +312,6 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
     }
 
     foreach ($ktrManagers as $filename => $ktrManager) {
-        $fileUrl = $dataSource_dirPath . $filename;
         $baseHeader = $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'];
         $sheetNamesRowsColumns = $_SESSION["ktrArguments_$sid"][$filename]["sheetNamesRowsColumns"];
 
@@ -305,10 +323,9 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
             }
         }
 
-        $fileUrls[] = $fileUrl;
-        $ktrManager->createTemplate($fileUrls, $sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputsForATable);
+        $ktrManager->createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputsForATable);
     }
-    
+
     UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $_POST["schemaMatchingUserInputs"]);
     UtilsForWizard::processDataMatchingUserInputsWithTableNameStoreDB($sid, $_POST["dataMatchingUserInputs"]);
 }

@@ -259,6 +259,8 @@ function NewRelationshipViewModel() {
     self.checkDataMatching = function() {
         console.log(self.links());
         console.log(JSON.stringify(self.links()));
+        
+        self.fromDataSet().name($('#fromDataSet').find('input.sidInput').val());
         self.persistStore.set('checkDataMatching_' + self.fromDataSet().sid() + '_' + self.fromDataSet().chosenTableName()
                 + '_' + self.toDataSet().sid() + '_' + self.toDataSet().chosenTableName(), ko.toJSON(self));
 

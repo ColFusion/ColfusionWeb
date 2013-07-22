@@ -19,11 +19,9 @@ include(mnminclude . 'smartyvariables.php');
 
 // error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 // ini_set('display_errors', 1);
-
 // module system hook
 $vars = '';
 check_actions('submit_post_authentication', $vars);
-
 
 // determine which step of the submit process we are on
 if (isset($_POST["phase"]) && is_numeric($_POST["phase"]))
@@ -43,10 +41,8 @@ switch ($phase) {
 }
 
 function upload_0() {
-    global $db, $current_user;
     $sid = getSid();
-
-    $author = $current_user->user_id;
+    $_SESSION["excelFileMode_$sid"] = $_POST["excelFileMode"];
 
     // check file type
     $extension = end(explode(".", $_FILES["upload_file"]["name"]));
@@ -76,7 +72,7 @@ function upload_0() {
             // Delete former files if user upload more than one time.
             $uploadTimestamp = $_POST['uploadTimestamp'];
             if (isset($_SESSION["uploadTimestamp_$sid"]) && $_SESSION["uploadTimestamp_$sid"] != $uploadTimestamp) {
-                emptyDir($dirPath);
+                emptyDir($upload_dir);
             }
             $_SESSION["uploadTimestamp_$sid"] = $uploadTimestamp;
 
@@ -84,9 +80,6 @@ function upload_0() {
             $file_tmp = $_FILES['upload_file']['tmp_name'];
             $raw_file_name = $_FILES['upload_file']['name'];
             $ext = pathinfo($raw_file_name, PATHINFO_EXTENSION);
-
-            $sql2 = "UPDATE " . table_prefix . "sourceinfo SET raw_data_path='$file_name' WHERE Sid=$sid;";
-            $db->query($sql2);
 
             $upload_path = $upload_dir . $raw_file_name;
 
@@ -104,7 +97,6 @@ function upload_0() {
                     $xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
                     $raw_file_name = $xlsxFileName;
                     unlink($csvFilePath);
-                    
                 } else if (strtolower($ext) == 'zip') {
 
                     // If a zip file is provided, unzip all files.
@@ -134,18 +126,6 @@ function upload_0() {
                         }
                         unlink($filePath);
                     }
-
-                    $dirFilesAfterTrans = scandir($upload_dir, SCANDIR_SORT_DESCENDING);
-                    foreach ($dirFilesAfterTrans as $filename) {
-                        if (FileUtil::isXLSXFile($filename) || FileUtil::isXLSFile($filename)) {
-                            $raw_file_name = $filename;
-                        }
-                    }
-
-                    if (!isset($raw_file_name)) {
-                        $error = "ERROR: No valid file is included.";
-                        $_SESSION["upload_file_$sid"]['error'] = $error;
-                    }
                 } else if (strtolower($ext) == 'sql') {
                     $dbType = trim(strtolower($_POST['dbType']));
                     try {
@@ -156,7 +136,6 @@ function upload_0() {
                     }
                 }
 
-                $_SESSION["raw_file_name_$sid"] = $raw_file_name;
                 $loc_msg = "uploaded successfully";
                 $_SESSION["upload_file_$sid"]['loc'] = $loc_msg;
             }

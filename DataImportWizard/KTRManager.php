@@ -7,20 +7,22 @@ class KTRManager {
     private $ktrXml;
     private $addedConstants;
     private $updatedColAndStreamNames;
+    private $filePaths;
 
-    public function __construct($ktrTemplatePath, $ktrFilePath) {
+    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths) {
         $this->ktrTemplatePath = $ktrTemplatePath;
         $this->ktrFilePath = $ktrFilePath;
+        $this->filePaths = $filePaths;
     }
 
-    public function createTemplate($fileURLs, $sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs) {
+    public function createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs) {
 
         copy($this->ktrTemplatePath, $this->ktrFilePath);
         $this->ktrXml = simplexml_load_file($this->ktrFilePath);
 
         $this->changeConnection();
         $this->changeSheetType();
-        $this->addUrls($fileURLs);
+        $this->addUrls($this->filePaths);
         $this->addSheets($sheetNamesRowsColumns);
         $this->clearConstantAndTarget();
         $this->addSampleTarget();
@@ -51,14 +53,14 @@ class KTRManager {
         $sheetTypeNodes[0] = "POI";
     }
 
-    private function addUrls($fileURLs) {
+    private function addUrls($filePaths) {
 
         $xmldoc = $this->ktrXml;
         $fileNodes = $xmldoc->xpath('//step/file');
         $fileNode = $fileNodes[0];
 
-        foreach ($fileURLs as $fileURL) {
-            $fileNode->addChild('name', $fileURL);
+        foreach ($filePaths as $filePath) {
+            $fileNode->addChild('name', $filePath);
             $fileNode->addChild('filemask');
             $fileNode->addChild('exclude_filemask');
             $fileNode->addChild('file_required', 'N');
@@ -159,7 +161,7 @@ class KTRManager {
 
         foreach ($steps as $step) {
             $name = $step->name;
-            if ($name == 'Excel Input File') {                             
+            if ($name == 'Excel Input File') {
                 foreach ($baseHeader as $item) {
                     $fields = $step->fields;
 
@@ -233,6 +235,17 @@ class KTRManager {
         }
     }
 
+    public function getFilePaths() {
+        return $this->filePaths;
+    }
+
+    public function getFirstFilename() {
+        return pathinfo($this->filePaths[0], PATHINFO_BASENAME);
+    }
+    
+    public function getKtrFilePath(){
+        return $this->ktrFilePath;
+    }
 }
 
 ?>

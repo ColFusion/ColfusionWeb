@@ -1,6 +1,6 @@
 $(function() {
     var dataMatchCheckerViewModel = prepareDataMatchCheckerViewModel();
-    initEditable();
+    ko.applyBindings(dataMatchCheckerViewModel);
     initNavListStyleEvent();
 });
 
@@ -28,10 +28,6 @@ function createDataMatchCheckerViewModel(newRelationModel) {
     dataMatchCheckerViewModel.toDataset(newRelationModel.toDataSet);
     dataMatchCheckerViewModel.links(newRelationModel.links);
     return dataMatchCheckerViewModel;
-}
-
-function initEditable() {
-    $('.linkDataTable').dataTable().makeEditable();
 }
 
 function initNavListStyleEvent() {

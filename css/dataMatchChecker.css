@@ -16,8 +16,8 @@
     width: 90%;
     margin-left: auto;
     margin-right: auto;
-    height: 100px;
-    overflow-y: auto;
+    min-height: 60px;
+    overflow: auto;
 }
 
 #relInfoContainer table{
@@ -41,6 +41,14 @@
 .linkProfile {
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.linkProfileTable{
+    word-break: break-all;
+}
+
+.linkProfileTable td{
+    vertical-align: top;
 }
 
 #navListContainer {
@@ -103,7 +111,7 @@
 
 #tableContainer {
     float: right;
-    width: 74.92%;
+    width: 74.9%;
     border-left: solid 1px #dbdbdb;
 }
 
