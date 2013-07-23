@@ -175,6 +175,8 @@ class QueryEngine {
     		$query .= " LIMIT " . $startPoint . "," . $perPage;
     	}
       	
+//echo $query;
+
     	return $this->runQuerySingleSidTableFromFile($query, $from->sid, $from->tableName);
     }
     
@@ -182,6 +184,7 @@ class QueryEngine {
     	global $db; 	
     	$doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
     	
+ //       echo $doJoinQuery;
         
     	$res = $db->query($doJoinQuery);
     	$rst = $db->get_results($query);

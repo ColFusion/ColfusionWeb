@@ -1,9 +1,8 @@
--- --------------------------------------------------------------------------------
--- Routine DDL
--- Note: comments before and after the routine body will not be stored by the server
--- --------------------------------------------------------------------------------
-DELIMITER $$
+USE `colfusion`;
+DROP procedure IF EXISTS `doJoinWithTime`;
 
+DELIMITER $$
+USE `colfusion`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `doJoinWithTime`(IN `sidParam` VARCHAR(200), IN `tableNameParam` VARCHAR(200))
     READS SQL DATA
 BEGIN
@@ -36,7 +35,7 @@ BEGIN
 				and colfusion_columnTableInfo.tableName = @tableName 
 				and sid = @sid;
 				
-			SET @sql = CONCAT('CREATE TEMPORARY TABLE resultDoJoin SELECT * FROM (SELECT rownum, ', @sql, ' FROM colfusion_temporary, colfusion_columnTableInfo where colfusion_temporary.cid = colfusion_columnTableInfo.cid and colfusion_columnTableInfo.tableName = \'', @tableName, '\' and sid = ', @sid,' GROUP BY rownum) as t1 natural join (select distinct Spd, Drd, Location, AggrType, Start, End, rownum from colfusion_temporary, colfusion_columnTableInfo where colfusion_temporary.cid = colfusion_columnTableInfo.cid and colfusion_columnTableInfo.tableName = \'', @tableName, '\' and sid = ', @sid, ') as t2');
+			SET @sql = CONCAT('CREATE TEMPORARY TABLE resultDoJoin SELECT * FROM (SELECT rownum, ', @sql, ' FROM colfusion_temporary, colfusion_columnTableInfo where colfusion_temporary.cid = colfusion_columnTableInfo.cid and colfusion_columnTableInfo.tableName = \'', @tableName, '\' and sid = ', @sid,' GROUP BY rownum) as t1' );
 
 			PREPARE stmt FROM @sql;
 			EXECUTE stmt;
@@ -44,4 +43,8 @@ BEGIN
 
 	END IF;
 
-END
+END$$
+
+DELIMITER ;
+
+

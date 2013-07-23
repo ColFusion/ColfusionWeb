@@ -35,33 +35,54 @@ class MotionChart extends Chart {
 	$otherColumns = $_datainfo->otherColumns;
 	$where = $_datainfo->where; 	
 	$valueColumns = "";
-        if(empty($otherColumns)){
+    $valueColumnsArray = array();
+
+    if(empty($otherColumns)){
 	    echo("Please select the columns!");
-        }else{
+    }
+    else{
 	    for($i=0; $i < count($otherColumns); $i++){
-		$valueColumns .= "`" . $otherColumns[$i] . "` as 'valueColumn" . $i . "'";
-		if(!empty($otherColumns[$i+1])){
+		  $valueColumns .= "`" . $otherColumns[$i] . "` as 'valueColumn" . $i . "'";
+          array_push($valueColumnsArray, "valueColumn" . $i);
+
+		  if(!empty($otherColumns[$i+1])){
 			$valueColumns .= ", ";
-		}
+		  }
 	    }
 	}
+
 	$select = "SELECT `" . $firstColumn . "` as 'firstColumn', `" . $dateColumn . "` as 'dateColumn', ";
 	$select .= $valueColumns;
 	if (!empty($where))
         $select .= $where;
-        $from = (object) array('sid' => $sid, 'tableName' => $table);
-        $fromArray = array($from);
+
+    $from = (object) array('sid' => $sid, 'tableName' => $table);
+    $fromArray = array($from);
 	$queryEngine = new QueryEngine();
-        $rst = array();
-	$rst['firstColumn'] = 'disease';
-	$rst['dateColumn'] = 'date';
-	$rst['otherColumns'] = array('numberofCase','precipitation','state');
-	foreach($otherColumns as $value){
-	    array_push($rst['otherColumns'],$value);
-	}
-        $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
-	$rst['content'] = json_decode('[{"disease":"flu","year":"2000","month":"10","numberOfCases":"123","precipitation":"13","state":"PA"},{"disease":"phthisis","year":"2000","month":"10","numberOfCases":"126","precipitation":"15","state":"CA"},{"disease":"anemia","year":"2000","month":"10","numberOfCases":"128","precipitation":"17","state":"NY"}]');        
-        $this->queryResult = $rst;
-        return $rst;
+
+//TODO: Return date as three separate values: year, month, day
+
+    $rst = array();
+    $rst['firstColumn'] = $firstColumn;
+    $rst['dateColumn'] = $dateColumn;
+    $rst['originalOtherColumns'] = $otherColumns;
+    $rst['otherColumns'] = $valueColumnsArray;//array('numberofCase','precipitation','state');
+
+    $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
+
+//    foreach($valueColumns as $value){
+//       array_push($rst['otherColumns'], $value);
+//    }
+      
+    $this->queryResult = $rst;
+    return $rst;
+
+   // $rst = array();
+	//$rst['firstColumn'] = 'disease';
+	//$rst['dateColumn'] = 'date';
+	//$rst['otherColumns'] = array('numberofCase','precipitation','state');
+	  
+	//$rst['content'] = json_decode('[{"disease":"flu","year":"2000","month":"10","numberOfCases":"123","precipitation":"13","state":"PA"},{"disease":"phthisis","year":"2000","month":"10","numberOfCases":"126","precipitation":"15","state":"CA"},{"disease":"anemia","year":"2000","month":"10","numberOfCases":"128","precipitation":"17","state":"NY"}]');        
+       
     }
 }

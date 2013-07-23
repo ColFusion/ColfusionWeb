@@ -216,21 +216,22 @@ function clearMotionEditForm() {
 	})
 }
 function drawMotion(sourceData,gadgetID) {
+	var originalOtherColumns = sourceData['originalOtherColumns'];
 	var otherColumns = sourceData['otherColumns'];
 	var firstColumn = sourceData['firstColumn'];
 	var dateColumn = sourceData['dateColumn'];
 	var data = new google.visualization.DataTable();
 	data.addColumn('string', firstColumn);
   	data.addColumn('date', dateColumn);
-	for (var i = 0;i<otherColumns.length;i++) {
-		data.addColumn('string', otherColumns[i]);
+	for (var i = 0;i<originalOtherColumns.length;i++) {
+		data.addColumn('number', originalOtherColumns[i]);
 	}
 	for(i=0; sourceData['content'][i]!=null; i++) {
 		data.addRow();
 		data.setCell(i, 0, String(sourceData['content'][i]["firstColumn"]));
-		data.setCell(i, 1, new Date(sourceData['content'][i]["year"], sourceData['content'][i]["month"], 1));
+		data.setCell(i, 1, new Date(sourceData['content'][i]["dateColumn"]));
 		for (var j=0;j<otherColumns.length;j++) {
-			data.setCell(i, j+2, sourceData['content'][otherColumns[j]]);
+			data.setCell(i, j+2, parseFloat(sourceData['content'][i][otherColumns[j]]));
 		}
 		/*data.setCell(i, 2, parseInt(sourceData['content'][i]["numberOfCases"]));
 		data.setCell(i, 3, parseInt(sourceData[i]["precipitation"]));

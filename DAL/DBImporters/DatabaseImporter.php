@@ -1,5 +1,7 @@
 <?php
 
+include_once(dirname(__FILE__) . '/../MSSQLWithLinkedServersCredentials.php');
+
 abstract class DatabaseImporter {
 
     protected $host;
@@ -34,6 +36,12 @@ abstract class DatabaseImporter {
                 $pdo->exec($sql);
             }
         }
+
+        $this->addLinkedServer();
+    }
+
+    private function addLinkedServer() {
+
     }
 
     private function remove_comments(&$output) {
