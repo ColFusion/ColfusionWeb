@@ -7,6 +7,15 @@ body{
     font-size: 12px;
     margin: 0;
 }
+
+.wizard-cards .tab-pane {
+    color: #707070;
+}
+
+body .nav.nav-tabs {
+    margin-bottom: 0;
+}
+
 #raws{
     width: 60px;
 }

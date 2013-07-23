@@ -37,13 +37,14 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/dataSourceUtil.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.2.1.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.3.0.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Utils.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/dataTableModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/WizardExcelPreviewViewModel.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/importWizard.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/wizardFromFile.js"></script>

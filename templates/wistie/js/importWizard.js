@@ -300,6 +300,7 @@ var importWizard = (function() {
             wizard.getCard(this).toggleAlert(null, noOption);
         });
 
+        // steps
         wizard.cards["UploadOptionStepCard"].on("validated", function(card) {
             var hostname = card.el.find("#new-server-fqdn").val();
         });
@@ -376,7 +377,7 @@ var importWizard = (function() {
             wizard.enableNextButton();
         });
     }
-  
+
     function finishSubmittingData() {
         dataPreviewViewModel.getTablesList();
         relationshipViewModel.mineRelationships(10, 1);
@@ -432,12 +433,18 @@ var importWizard = (function() {
                  wizard.enableNextButton();
                  */
 
-                // For joining
-                wizardFromFile.getFileSources().done(function() {
+                wizardFromFile.getFileSources().done(function(jsonResponse) {
+                    var filenames = [];
+                    for (var i = 0; i < jsonResponse.data.length; i++) {
+                        var fileSource = jsonResponse.data[i];
+                        filenames.push(fileSource.filename);                       
+                    }
+                    wizardFromFile.showExcelFile(filenames);
+                }).done(function() {
                     $('#loadingProgressContainer').hide();
                     $("#displayOptoinsStepCardFromFile").show();
                     wizard.enableNextButton();
-                });
+                });               
             }).fail(function() {
                 $('#loadingProgressContainer').hide();
             });

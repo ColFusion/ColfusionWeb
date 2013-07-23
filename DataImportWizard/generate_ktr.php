@@ -68,11 +68,13 @@ switch ($phase) {
         break;
     case 8:
         getFileSources($sid, $dataSource_dir, $dataSource_dirPath);
-        // loadExcelPreview($sid, $dataSource_dir, $dataSource_dirPath);
-        // getExcelPreview($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 9:
-        estimateTotalLoadingProgress($sid);
+        $filename = $_POST["filename"];
+        echo estimateLoadingProgress($dataSource_dirPath . $filename);
+        break;
+    case 10:
+        getExcelPreview($sid, $dataSource_dirPath);
         break;
 }
 exit;
@@ -143,28 +145,31 @@ function getFileSources($sid) {
     } else {
         $json["isSuccessful"] = false;
     }
-    
+
     echo json_encode($json);
 }
 
-function loadExcelPreview($sid, $dataSource_filePath) {
+function getExcelPreview($sid, $dataSource_dirPath) {
+        $filename = $_POST['filename'];
+        $filePath = $dataSource_dirPath . $filename;
+        $previewRowsPerPage = $_POST['previewRowsPerPage'];
+        $previewPage = $_POST['previewPage'];
+        loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage);
+        echo json_encode(getSingleExcelPreview($sid, $filename));
+}
 
-    $filename = pathinfo($dataSource_filePath, PATHINFO_BASENAME);
-    $previewRowsPerPage = $_POST['previewRowsPerPage'];
-    $previewPage = $_POST['previewPage'];
-
-    $PHPExcel = new PreviewExcelProcessor($dataSource_filePath, $previewPage, $previewRowsPerPage);
+function loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage) {
+    $filename = pathinfo($filePath, PATHINFO_BASENAME);
+    $PHPExcel = new PreviewExcelProcessor($filePath, $previewPage, $previewRowsPerPage);
     $_SESSION["excelPreviewPage_$sid"][$filename] = $previewPage;
     $_SESSION["excelPreviewRowsPerPage_$sid"][$filename] = $previewRowsPerPage;
     $_SESSION["excelPreview_$sid"][$filename] = serialize($PHPExcel);
+    return $PHPExcel;
 }
 
-function getExcelPreview($sid) {
-    foreach ($_SESSION["excelPreview_$sid"] as $filename => $serializedData) {
-        $PHPExcel = unserialize($_SESSION["excelPreview_$sid"][$filename]);
-        $previews[$filename] = $PHPExcel;
-    }
-    echo json_encode($previews);
+function getSingleExcelPreview($sid, $filename) {
+    $PHPExcel = unserialize($_SESSION["excelPreview_$sid"][$filename]);
+    return $PHPExcel->getCellData();
 }
 
 function getSheets($filePath) {
@@ -205,7 +210,7 @@ function addSheetSettings($sheetsRange, $dataSource_filePath, $sid) {
     if (isReloadNeeded($arr_start_row)) {
         $process = new MatchSchemaExcelProcessor($dataSource_filePath, $sheetsRange);
     } else {
-        $process = unserialize($_SESSION["excelPreview_$sid"]);
+        $process = unserialize($_SESSION["excelPreview_$sid"][pathinfo($dataSource_filePath, PATHINFO_BASENAME)]);
     }
 
     $base_sheetNameNumber = Process_excel::getSheetNameIndex($dataSource_filePath, $sheets[0][0]);
@@ -343,14 +348,6 @@ function isReloadNeeded($headerRows) {
     } else {
         return true;
     }
-}
-
-function estimateTotalLoadingProgress($sid) {
-    $totalSeconds = 0;
-    foreach ($_SESSION["ktrArguments_$sid"]["filePaths"] as $dataSource_filePath) {
-        $totalSeconds += estimateLoadingProgress($dataSource_filePath);
-    }
-    echo $totalSeconds;
 }
 
 function estimateLoadingProgress($dataSource_filePath) {

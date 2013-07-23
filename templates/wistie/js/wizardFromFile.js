@@ -18,15 +18,12 @@ var wizardFromFile = (function() {
         // bind form using 'ajaxForm' 
         wizardFileUpload.initFileUploadForm($('#upload_form'));
 
-        /*
-         wizardExcelPreviewViewModel = new WizardExcelPreviewViewModel($('#sid').val());
-         var secondNode = document.getElementById('second');
-         ko.cleanNode(secondNode);
-         ko.applyBindings(wizardExcelPreviewViewModel, secondNode);
-         */
+        wizardExcelPreviewViewModel = new WizardExcelPreviewViewModel($('#sid').val());
+        var previewNode = document.getElementById('dataPreviewTabContent');
+        ko.applyBindings(wizardExcelPreviewViewModel, previewNode);
 
         sourceWorksheetSettingsViewModel = new SourceWorksheetSettingsViewModel();
-        var viewModelDom = document.getElementById('displayOptoinsStepCardFromFile');
+        var viewModelDom = document.getElementById('dataRangeSettingsTabContent');
         ko.applyBindings(sourceWorksheetSettingsViewModel, viewModelDom);
     };
 
@@ -55,8 +52,8 @@ var wizardFromFile = (function() {
         });
     };
 
-    wizardFromFile.showExcelFile = function() {
-        wizardExcelPreviewViewModel.initFilePreview($('#sid').val());
+    wizardFromFile.showExcelFile = function(filenames) {
+        wizardExcelPreviewViewModel.initFilePreview($('#sid').val(), filenames);
     };
 
     wizardFromFile.getLoadingTime = function() {
@@ -226,9 +223,9 @@ var wizardFileUpload = (function() {
     var fileListViewModel;
 
     wizardFileUpload.initFileUploadForm = function(form) {
-        
+
         $('#dbType').hide();
-        $(form).find('#uploadFileType').change(function() {          
+        $(form).find('#uploadFileType').change(function() {
             if ($(this).val() == 'dbDump') {
                 $('#dbType').show();
                 $('#excelFileMode').hide();
