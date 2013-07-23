@@ -17,7 +17,7 @@ include(mnminclude . 'user.php');
 include_once(mnminclude . 'utils.php');
 include(mnminclude . 'smartyvariables.php');
 
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+error_reporting(E_ALL);
 ini_set('display_errors', 1);
 // module system hook
 $vars = '';
@@ -129,7 +129,7 @@ function upload_0() {
                 } else if (strtolower($ext) == 'sql') {
                     $dbType = trim(strtolower($_POST['dbType']));
                     try {
-                        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid);
+                        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid, my_pligg_base);
                         $dbImporter->importSqlFile($upload_path);
                     } catch (Exception $e) {
                         $_SESSION["upload_file_$sid"]['error'] = $e->getMessage();
