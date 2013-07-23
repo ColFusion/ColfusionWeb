@@ -166,16 +166,12 @@ EOQ;
 
         $pdo = $this->GetConnection();
 
-echo 'connected\n';
+//echo 'connected\n';
 
-        $query = "exec sp_addlinkedserver
-@server = N'$database',
-@srvproduct = N'$srvproduct',
-@provider = N'$provider',
-@provstr =N'$provstr';"; 
+        $query = "exec sp_addlinkedserver @server = N'$database', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr';"; 
 
 
-echo $query;
+//echo $query;
 
     try {
 
@@ -188,17 +184,16 @@ echo $query;
         var_dump($e);
     }
 
-    echo 'res ' . $res;
+   // echo 'res ' . $res;
 
         if ($res !== false) {
 
-        $query = "exec sp_addlinkedsrvlogin
-@rmtsrvname = N'$database',
-@locallogin = N'remoteUserTest',
-@rmtuser = N'$user',
-@rmtpassword = N'$password';";
+        $query = "exec sp_addlinkedsrvlogin @rmtsrvname = N'$database', @locallogin = N'remoteUserTest', @rmtuser = N'$user', @rmtpassword = N'$password';";
 
-            if ($pdo->exec($query)  === false) {
+            $stmt = $pdo->prepare($query);
+            $res = $stmt->execute();
+
+            if ($res === false) {
                 throw new Exception($pdo->errorInfo());
             }
 

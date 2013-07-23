@@ -4,8 +4,8 @@ include_once(dirname(__FILE__) . '/../ExternalDBHandlers/MSSQLHandler.php');
 
 include_once(dirname(__FILE__) . '/../MSSQLWithLinkedServersCredentials.php');
 
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
 
 
 abstract class DatabaseImporter {
