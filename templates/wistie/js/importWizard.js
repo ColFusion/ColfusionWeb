@@ -424,15 +424,7 @@ var importWizard = (function() {
             wizard.disableNextButton();
 
             $('#loadingProgressContainer').show();
-            wizardFromFile.createKtrFiles().done(function() {
-                /* For appending           
-                 wizardFromFile.showExcelFile();
-                 $('#sheetParent').sheet({editable: false});
-                 $('#sheetParent').height($('#sheetExcel').height() * 0.6);
-                 $('#sheetParent').width($('#sheetExcel').width() * 0.9);
-                 wizard.enableNextButton();
-                 */
-
+            wizardFromFile.createKtrFiles().done(function() {            
                 wizardFromFile.getFileSources().done(function(jsonResponse) {
                     var filenames = [];
                     for (var i = 0; i < jsonResponse.data.length; i++) {

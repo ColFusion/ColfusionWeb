@@ -124,113 +124,126 @@
 
     <div class='wizard-card' data-cardname='displayOptionsStepCard' style='overflow: hidden;' id='opt'>
         <h3 style="display: inline-block; margin-bottom: 0;">Source Selection</h3> 
+        <a href='#' id='help2' style="display: inline;margin-left: 10px;">Click here for help</a>
+        <div id='h2'>Step 2 help:
+            <br/>
+            <p class='hlp'> Select the number of sheets you need to get their headers.<br/> Then, for each sheet, provide the sheet name, the row and column where the header starts.</p>
+            <a href='#' id='hd2' style='color:green;'>hide help</a>
+        </div>
         <span style="margin-left: 10px;" id="loadingProgressContainer">
             <img src="images/ajax-loader.gif"/>
             <span class="loadingText">Loading...</span>
         </span>
-        <div id="displayOptoinsStepCardFromFile">
-            <a href='#' id='help2'>Click here for help</a>
-            <div id='h2'>Step 2 help:
-                <br/>
-                <p class='hlp'> Select the number of sheets you need to get their headers.<br/> Then, for each sheet, provide the sheet name, the row and column where the header starts.</p>
-                <a href='#' id='hd2' style='color:green;'>hide help</a>
-            </div>
+        <div id="displayOptoinsStepCardFromFile">          
+
+            <!--
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#dataRangeSettingsTabContent" data-toggle="tab">Data Range Settings</a></li>
                 <li><a href="#dataPreviewTabContent" data-toggle="tab">Data Preview</a></li>              
             </ul>
+            -->
+            <div>
+                <ul id="sourceSettingNavList" class="nav nav-list">
+                    <li title="Data Range Settings" onclick="wizardFromFile.toggleSourceSelectionPanel(this, '#dataRangeSettingsTabContent')">
+                        <i class="icon-caret-right"></i>
+                        <i class="icon-wrench"></i>
+                    </li>
+                    <li  title="Data Preview" onclick="wizardFromFile.toggleSourceSelectionPanel(this, '#dataPreviewTabContent')">
+                        <i class="icon-caret-right" style="visibility: hidden;"></i>
+                        <i class="icon-table"></i>
+                    </li>
+                </ul>
 
-            <div class="tab-content">
-                <div class="tab-pane active" id="dataRangeSettingsTabContent">
-                    <form data-bind="visible: isPreviewLoadingComplete()" id="displayOptoinsStepCardFromFileForm">
-                        <div data-bind="foreach: sourceWorksheetSettings" id="sourceSelectionWrapper">
-                            <div class="sourceWorksheetSettingsWrapper">
-                                <p data-bind="text: sourceName" class="sourceName"></p>
-                                <div>
-                                    <p style="margin-bottom: 0;">How many table sheets you want?
-                                        <span id='star'>*</span>
-                                        <select data-bind="
-                                                options: numOfWorksheetsOptions, 
-                                                optionsCaption: 'Number of worksheets', 
-                                                value: numOfWorksheets,
-                                                event: { change: chooseNumOfWorsheets}" 
-                                                data-required="true"
-                                                id ='selectNumberOfSheets' name='customers'>               
-                                        </select>
-                                    </p>
-                                </div>
-                                <div id='sheetRowColumnsTable'>
-                                    <table border="1" style="table">             
-                                        <tr data-bind="visible: worksheetSettings().length > 0">
-                                            <th>sheet name</th>
-                                            <th>header row</th>
-                                            <th>start column</th>
-                                        </tr>
-                                        <tbody data-bind="foreach: worksheetSettings">
-                                            <tr style="height:40px;">
-                                                <td>
-                                                    <select data-bind="
-                                                            options: $parent.worksheets, 
-                                                            optionsCaption: 'Select a worksheet', 
-                                                            value: sheetName"
-                                                            data-required="true"
-                                                            class='sheetNameSelect'
-                                                            style="margin-bottom: 0;"> 
-                                                    </select>             
-                                                </td>
-                                                <td>
-                                                    <input data-bind="value: startRow" data-required="true" data-min="1" style="width: 100px; margin: 0 10px 0 10px;"/>
-                                                </td>
-                                                <td>
-                                                    <input data-bind="value: startColumn" data-required="true" data-excelcol="true" style="width: 100px; margin: 0 10px 0 10px;"/>
-                                                </td>
+                <div id="sourceSelectionNavContents">
+                    <div class="nav-content" id="dataRangeSettingsTabContent">
+                        <form data-bind="visible: isPreviewLoadingComplete()" id="displayOptoinsStepCardFromFileForm">
+                            <div data-bind="foreach: sourceWorksheetSettings" id="sourceSelectionWrapper">
+                                <div class="sourceWorksheetSettingsWrapper">
+                                    <p data-bind="text: sourceName" class="sourceName"></p>
+                                    <div>
+                                        <p style="margin-bottom: 0;">How many table sheets you want?
+                                            <span id='star'>*</span>
+                                            <select data-bind="
+                                                    options: numOfWorksheetsOptions, 
+                                                    optionsCaption: 'Number of worksheets', 
+                                                    value: numOfWorksheets,
+                                                    event: { change: chooseNumOfWorsheets}" 
+                                                    data-required="true"
+                                                    id ='selectNumberOfSheets' name='customers'>               
+                                            </select>
+                                        </p>
+                                    </div>
+                                    <div id='sheetRowColumnsTable'>
+                                        <table border="1" style="table">             
+                                            <tr data-bind="visible: worksheetSettings().length > 0">
+                                                <th>sheet name</th>
+                                                <th>header row</th>
+                                                <th>start column</th>
                                             </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>              
-                    </form>                            
-                </div>
-
-                <div class="tab-pane" id="dataPreviewTabContent">   
-
-                    <div data-bind="foreach: previewFiles">
-                        <div class="previewFileContainer">
-                            <div data-bind="visible: !isPreviewLoadingComplete()" id ="loadingProgressContainer">
-                                <div class="loadingTextWrapper" style="margin-top: 60px;">
-                                    <span class="loadingText">Preview is loading...</span>
-                                    <span data-bind="text: loadingProgressPercent() + '%'" style="float: right;" class='percentText'></span>
-                                </div>
-                                <div class="progress" id="previewProgressBar">
-                                    <div data-bind="style: {width: loadingProgressPercent() + '%'}" class="bar"></div>
-                                </div>                  
-                            </div>
-                            <div data-bind="visible: isPreviewLoadingComplete()" id="sheetExcelWrapper">
-                                <div id ='sheetExcel'>
-                                    <ul data-bind="foreach: worksheetPreviewTables" class="nav nav-tabs">
-                                        <li data-bind="attr: { class: $index() == 0 ? 'active' : '' }">
-                                            <a data-bind="attr: { href: '#' + sheetName() }, 
-                                               text: sheetName"  href="#Sheet1" data-toggle="tab">Sheet1</a>
-                                        </li>
-                                    </ul>
-                                    <div data-bind="foreach: worksheetPreviewTables" class="tab-content previewTables">
-                                        <div data-bind="previewTable: cells,                                       
-                                             attr: { id: sheetName(), class: $index() == 0 ? 'tab-pane active' : 'tab-pane' }"
-                                             class="previewTable">
-
-                                        </div>
+                                            <tbody data-bind="foreach: worksheetSettings">
+                                                <tr style="height:40px;">
+                                                    <td>
+                                                        <select data-bind="
+                                                                options: $parent.worksheets, 
+                                                                optionsCaption: 'Select a worksheet', 
+                                                                value: sheetName"
+                                                                data-required="true"
+                                                                class='sheetNameSelect'
+                                                                style="margin-bottom: 0;"> 
+                                                        </select>             
+                                                    </td>
+                                                    <td>
+                                                        <input data-bind="value: startRow" data-required="true" data-min="1" style="width: 100px; margin: 0 10px 0 10px;"/>
+                                                    </td>
+                                                    <td>
+                                                        <input data-bind="value: startColumn" data-required="true" data-excelcol="true" style="width: 100px; margin: 0 10px 0 10px;"/>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
-                                <i class="icon-arrow-left previewNavBtn" id="prevBtn" data-bind="visible: previewPage() > 1, click: loadPreviewPreviousPage" title="Previous Page"></i>
-                                <i class="icon-arrow-right previewNavBtn" id="nextBtn" data-bind="visible: hasMoreData(), click: loadPreviewNextPage" title="Next Page" style="margin-left: 5px;"></i>
-                            </div>
-                        </div>
+                            </div>              
+                        </form>                            
                     </div>
 
-                </div>            
-            </div>
+                    <div class="nav-content" id="dataPreviewTabContent">   
 
+                        <div data-bind="foreach: previewFiles" id="previewFiles">
+                            <p data-bind="text: filename" class="sourceName" style="margin-top: 10px;"></p>
+                            <div class="previewFileContainer">
+                                <div data-bind="visible: !isPreviewLoadingComplete()" id ="loadingProgressContainer">
+                                    <div class="loadingTextWrapper" style="margin-top: 60px;">
+                                        <span class="loadingText">Preview is loading...</span>
+                                        <span data-bind="text: loadingProgressPercent() + '%'" style="float: right;" class='percentText'></span>
+                                    </div>
+                                    <div class="progress" id="previewProgressBar">
+                                        <div data-bind="style: {width: loadingProgressPercent() + '%'}" class="bar"></div>
+                                    </div>                  
+                                </div>
+                                <div data-bind="visible: isPreviewLoadingComplete()" id="sheetExcelWrapper">
+                                    <div id ='sheetExcel'>
+                                        <ul data-bind="foreach: worksheetPreviewTables" class="nav nav-tabs">
+                                            <li data-bind="attr: { class: $index() == 0 ? 'active' : '' }">
+                                                <a data-bind="attr: { href: '#' + sheetName() }, 
+                                                   text: sheetName"  href="#Sheet1" data-toggle="tab">Sheet1</a>
+                                            </li>
+                                        </ul>
+                                        <div data-bind="foreach: worksheetPreviewTables" class="tab-content previewTables">
+                                            <div data-bind="previewTable: cells,                                       
+                                                 attr: { id: sheetName(), class: $index() == 0 ? 'tab-pane active previewTable' : 'tab-pane previewTable' }">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <i class="icon-arrow-left previewNavBtn" id="prevBtn" data-bind="visible: previewPage() > 1, click: loadPreviewPreviousPage" title="Previous Page"></i>
+                                    <i class="icon-arrow-right previewNavBtn" id="nextBtn" data-bind="visible: hasMoreData(), click: loadPreviewNextPage" title="Next Page" style="margin-left: 5px;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>            
+                </div>
+            </div>
         </div>
         <div id="displayOptoinsStepCardFromDB" style="height: 100%;">
         </div>
