@@ -166,11 +166,16 @@ EOQ;
 
         $pdo = $this->GetConnection();
 
+echo 'connected\n';
+
         $query = "exec sp_addlinkedserver
 @server = N'$database',
 @srvproduct = N'$srvproduct',
 @provider = N'$provider',
 @provstr =N'$provstr';"; 
+
+
+echo $query;
 
         if ($pdo->exec($query) !== false) {
 
