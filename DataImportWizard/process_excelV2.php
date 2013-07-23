@@ -1,9 +1,8 @@
 <?php
 
 /** Error reporting */
-error_reporting(E_ALL ^ E_STRICT);
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 ini_set('display_errors', TRUE);
-ini_set('display_startup_errors', TRUE);
 
 define('EOL', (PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 

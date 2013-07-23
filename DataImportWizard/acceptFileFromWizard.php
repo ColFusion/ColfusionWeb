@@ -3,22 +3,21 @@
 session_start();
 set_time_limit(0);
 
+include_once(realpath(dirname(__FILE__) . '/../config.php'));
+include_once(mnminclude . 'html1.php');
+include_once(mnminclude . 'link.php');
+include_once(mnminclude . 'tags.php');
+include_once(mnminclude . 'user.php');
+include_once(mnminclude . 'utils.php');
+
 include_once('../Smarty.class.php');
 include_once('../Classes/CSVToExcelConverter.php');
 include_once('FileUtil.php');
 include_once(realpath(dirname(__FILE__) . "/../DAL/DBImporters/DatabaseImporterFactory.php"));
-$main_smarty = new Smarty;
 
-include('../config.php');
-include(mnminclude . 'html1.php');
-include(mnminclude . 'link.php');
-include(mnminclude . 'tags.php');
-include(mnminclude . 'user.php');
-include_once(mnminclude . 'utils.php');
-include(mnminclude . 'smartyvariables.php');
-
-error_reporting(E_ALL);
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE ^ E_WARNING);
 ini_set('display_errors', 1);
+
 // module system hook
 $vars = '';
 check_actions('submit_post_authentication', $vars);

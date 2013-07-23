@@ -1,5 +1,7 @@
 <?php
 
+require_once(realpath(dirname(__FILE__)) . '/../Classes/PHPExcel.php');
+
 class KTRManager {
 
     private $ktrTemplatePath;
@@ -91,8 +93,8 @@ class KTRManager {
                 for ($i = 0; $i < count($sheetNamesRowsColumns[0]); $i++) {
                     $sheet = $sheets->addChild('sheet');
                     $sheet->addChild('name', $sheetNamesRowsColumns[0][$i]);
-                    $sheet->addChild('startrow', $sheetNamesRowsColumns[1][$i]);
-                    $sheet->addChild('startcol', $sheetNamesRowsColumns[2][$i]);
+                    $sheet->addChild('startrow', $sheetNamesRowsColumns[1][$i] - 1);
+                    $sheet->addChild('startcol', PHPExcel_Cell::columnIndexFromString($sheetNamesRowsColumns[2][$i]) - 1);
                 }
             }
         }

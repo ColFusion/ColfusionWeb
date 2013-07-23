@@ -22,7 +22,7 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/UtilsForWizard.php");
 require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
 
-error_reporting(E_ALL);
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 ini_set("error_display", 1);
 
 $pentaho_err_code = array(
