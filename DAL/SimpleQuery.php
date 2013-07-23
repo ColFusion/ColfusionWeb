@@ -1,5 +1,10 @@
 <?php
 
+
+include_once(dirname(__FILE__) . '/../DAL/ExternalDBHandlers/MSSQLHandler.php');
+
+include_once(dirname(__FILE__) . '/../DAL/MSSQLWithLinkedServersCredentials.php');
+
 class SimpleQuery {
 
     public function getNewSid($author, $state) {
@@ -96,6 +101,29 @@ class SimpleQuery {
         $sql = "INSERT INTO %ssourceinfo_DB (sid, server_address, port, user_name, password, source_database, driver) VALUES (%d, '%s', %d, '%s', '%s', '%s', '%s')";
         $sql = sprintf($sql, table_prefix, $sid, $server, $port, $user, $password, $database, $driver);
         $db->query($sql);
+
+        $this->addLinkedServer($server, $port, $user, $password, $database, $driver);
+    }
+
+
+    private function addLinkedServer($server, $port, $user, $password, $database, $driver) {
+
+        // TODO make it work defined in other class, I tried to put it in the MSSQLWIthLInkedServersCredentials, but didn't work
+        define("MSSQLWLS_DB_USER", 'remoteUserTest');
+        define("MSSQLWLS_DB_PASSWORD", 'LkzRjkam.;y20!#');
+        define("MSSQLWLS_DB_NAME", 'Tycho_0920');
+        define("MSSQLWLS_DB_HOST", 'tycho.exp.sis.pitt.edu');
+        define("MSSQLWLS_DB_PORT", '1433');
+
+
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+
+        if ($server == "localhost")
+            $host = "colfusion.exp.sis.pitt.edu"; //TODO move it to some settings or somewhere else file
+        else
+            $host = $server;
+        
+        $MSSQLHandler->AddLinkedServer($driver, $host, $port, $database, $user, $password);
     }
 
 // Store metadata about column.
