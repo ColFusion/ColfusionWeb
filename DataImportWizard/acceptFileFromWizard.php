@@ -44,7 +44,8 @@ function upload_0() {
     $_SESSION["excelFileMode_$sid"] = $_POST["excelFileMode"];
 
     // check file type
-    $extension = end(explode(".", $_FILES["upload_file"]["name"]));
+    $explodeRes = explode(".", $_FILES["upload_file"]["name"]);
+    $extension = end($explodeRes);
     $mimes = array('xls', 'xlsx', 'csv', 'sql', 'zip');
     if (count($_FILES) <= 0) {
         $error = "ERROR: No file was uploaded.";
