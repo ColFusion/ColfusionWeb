@@ -35,8 +35,8 @@
                                 <label for='upload_file'>
                                     <b>Select file:</b>
                                 </label>
-                                <input name='upload_file' type='file' size='15' multiple/>
-                                <span id='uploadWidgetCover'>No file chosen</span>                         
+                                <input name='upload_file' type='file' size='15' style="color:white;" multiple/>
+                                <!--<span id='uploadWidgetCover'>No file chosen</span> -->                        
                             </p>
                             <div id="filenameListContainer">
                                 <table data-bind="foreach: fileInfos" class="filenameList">                                   

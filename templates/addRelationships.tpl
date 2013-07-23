@@ -47,12 +47,16 @@
                     <table class="dataSetDesTable">
                     <tr>
                     <td class="dataSetDesTitle">Dataset: </td>                       
-                    <td>
-                    <div class="input-append" style="margin-top: -10px;">
+                    <td class="datasetSearchInput">
+                    <div class="input-append" style="margin-top: -10px;margin-bottom: 0;">
                     <input type="text" class="sidInput" data-bind="searchDatasetTypeahead: $data"/>
                     <button class="btn add-on searchDatasetBtn" data-bind="click: loadTableList" style="margin-top: 10px;">Search</button>
                     </div>
                     </td>
+                    <td class="datasetSearchLoadingNotification" style="display: none;">
+                    <img class="datasetSearchLoadingIcon" src="images/ajax-loader.gif"/>
+                    <span class="datasetSearchLoadingText">Searching...</span>
+                    </td>                 
                     </tr>
                     <tr data-bind="style:{ visibility: tableList().length > 1 ? 'visible' : 'hidden'}">
                     <td class="dataSetDesTitle">Table: </td>
@@ -60,7 +64,7 @@
                     <select data-bind='options: tableList, 
                     optionsCaption: "Select a table", 
                     value: chosenTableName'
-                    style="width: 290px;">                                                     
+                    style="width: 290px;margin-bottom: 0;">                                                     
                     </select>
                     </td>
                     </tr>
@@ -142,11 +146,11 @@
                                 <td style="text-align: right">Confident</td>
                             </tr>
                         </table>
-                        <div id="confidenceSlider" data-bind="slider: confidenceValue, sliderOptions: {min: -1, max: 1, step: 0.1}"></div>
+                        <div id="confidenceSlider" data-bind="slider: confidenceValue, sliderOptions: {min: 0, max: 1, step: 0.1}"></div>
                         <table class="confidenceDesTable">
                             <tr>
-                                <td>-1</td>
-                                <td style="text-align: center">0</td>
+                                <td>0</td>
+                                <td style="text-align: center">0.5</td>
                                 <td style="text-align: right">1</td>
                             </tr>
                         </table>

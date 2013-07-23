@@ -25,6 +25,17 @@ require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
 error_reporting(E_ALL);
 ini_set("error_display", 1);
 
+$pentaho_err_code = array(
+    0 => 'The transformation ran without a problem',
+    1 => "Errors occurred during processing",
+    2 => "An unexpected error occurred during loading / running of the transformation",
+    3 => "Unable to prepare and initialize this transformation",
+    7 => "The transformation couldn't be loaded from XML or the Repository",
+    8 => "Error loading steps or plugins (error in loading one of the plugins mostly)",
+    9 => "Command line usage printing",
+    10 => "Errors occur when storing source information"
+);
+
 global $current_user, $db, $dblang;
 
 $author = $current_user->user_id;
@@ -37,11 +48,16 @@ foreach ($ktrManagers as $filename => $ktrManager) {
 
     $ktrFilePath = $ktrManager->getKtrFilePath();
 
+    $returnVar = 0;
     $sql = 'INSERT INTO ' . table_prefix . 'executeinfo (Sid ,Userid ,TimeStart)VALUES (' . $sid . ' , ' . $author . ',CURRENT_TIMESTAMP);';
     $rs = $db->query($sql);
+    if (!rs) {
+        $returnVar = 10;
+    }
+
     //get eid returned from the insert
     $logID = mysql_insert_id();
-    
+
 
     if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
         $locationOfPan = mnmpath . 'kettle-data-integration\\Pan_WHDV.bat';
@@ -52,11 +68,13 @@ foreach ($ktrManagers as $filename => $ktrManager) {
     }
 
     $commands[] = $command;
-    $ret = exec($command, $outA, $returnVar);
+    if ($returnVar == 0) {
+        $ret = exec($command, $outA, $returnVar);
+    }
 
     if ($returnVar != 0) {
         $num = 0;
-        $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=0, ErrorMessage='" . mysql_real_escape_string(implode("\n", $outA)) . "', RecordsProcessed='" . $num . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
+        $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=$returnVar, ErrorMessage='" . mysql_real_escape_string(implode("\n", $outA)) . "', RecordsProcessed='" . $num . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
         $rs = $db->query($sql);
 
         $error = implode("<br />", $outA);
@@ -87,26 +105,19 @@ foreach ($ktrManagers as $filename => $ktrManager) {
                 array_push($errorb, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $outA[$o]);
             }
         }
-
-        $mysql_error = implode("<br />", $errora);
-        $mysql_errordetail = implode("<br />", $errorb);
-
-        $msg = '<p class="error">Error Message:<br />' . $mysql_error . '</p><div id="details" style="display:none">' . $mysql_errordetail . '</div>
-	<center>
-	   <span id="btn_all" class="button_max" style="display:block" onclick="show_detail()">Show Detailed Error</span>
-       <span id="btn_hide" class="button_max" style="display:none" onclick="hide_detail()">Hide Detailed Error</span>
-    </center>';
+     
+        $msg = '<p class="error">Error Message:<br />' . $pentaho_err_code[$returnVar] . '</p>';
 
         $result = new stdClass;
         $result->isSuccessful = false;
-        $result->message = $msg . $jsCode;
+        $result->message = $msg;
         $result->pentaho_cmd = $commands;
         $result->exeCode = $returnVar;
         echo json_encode($result);
 
         exit;
     } else {
-        //TODO parse msg to get num inserted
+//TODO parse msg to get num inserted
         $lastLine = $outA[count($outA) - 1];
         preg_match("/d+\s{1}[0-9]+\s{1}l+/", $lastLine, $matches);
         $m = explode(' ', $matches[0]);
@@ -152,7 +163,7 @@ echo json_encode($result);
 exit;
 
 function getSid() {
-    // determine which step of the submit process we are on
+// determine which step of the submit process we are on
     if (isset($_POST["sid"]))
         $sid = $_POST["sid"];
     else if (isset($_GET["sid"]))

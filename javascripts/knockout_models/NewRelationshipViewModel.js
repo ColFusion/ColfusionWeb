@@ -52,13 +52,22 @@ ko.bindingHandlers.searchDatasetTypeahead = {
             var code = event.keyCode || event.which;
             if (code != 13) { //Enter keycode
                 $(this).parent().next('button').prop("disabled", true);
+                $(element).parents('.dataSetDesTable').find('.datasetSearchLoadingNotification').show();
             }
         }).typeahead({
-            name: 'datasets',               
-            prefetch: {
-                url: 'datasetController/findDataset.php',
-                ttl: 10 * 60 * 1000 // cache 10 mins
-            },           
+            name: 'datasets',
+            remote: {
+                url: 'datasetController/findDataset.php?searchTerm=%QUERY',
+                cache: true,
+                maxParallelRequests: 2,
+                filter: function(data) {                   
+                    $('.datasetSearchLoadingNotification').hide();
+                    if(data === null){
+                        return [];
+                    }
+                    return data;
+                }
+            },
             valueKey: 'source_key',
             template: search_typeahead_tpl,
             engine: Hogan
@@ -66,6 +75,8 @@ ko.bindingHandlers.searchDatasetTypeahead = {
             dataSet.sid(datum.sid);
             dataSet.name(datum.title);
             $(this).parent().next('button').prop("disabled", false);
+        }).bind('typeahead:opened', function() {
+            $(element).parents('.dataSetDesTable').find('.datasetSearchLoadingNotification').hide();
         });
     },
     update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -259,7 +270,7 @@ function NewRelationshipViewModel() {
     self.checkDataMatching = function() {
         console.log(self.links());
         console.log(JSON.stringify(self.links()));
-        
+
         self.fromDataSet().name($('#fromDataSet').find('input.sidInput').val());
         self.persistStore.set('checkDataMatching_' + self.fromDataSet().sid() + '_' + self.fromDataSet().chosenTableName()
                 + '_' + self.toDataSet().sid() + '_' + self.toDataSet().chosenTableName(), ko.toJSON(self));

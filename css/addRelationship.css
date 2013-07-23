@@ -44,6 +44,10 @@
     padding: 10px;
 }
 
+.dataSetDesTable td {
+    height: 35px;
+}
+
 .sidInput {
     width: 220px !important;
 }
@@ -56,8 +60,12 @@
     width: 248px;
 }
 
+.dataSetDesTable {
+    margin-bottom: 10px;
+}
+
 .dataSetDesTitle{
-    width: 70px; 
+    width: 60px; 
 }
 
 #dataSetMatchContainer {
@@ -81,6 +89,10 @@
 .tableInfoTable td{
     border: solid 1px;
     border-width: 0 0 1px 0;
+}
+
+.datasetSearchLoadingText {
+    font-size: 10px;
 }
 
 /* Typeahead style for relationship page */
