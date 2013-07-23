@@ -184,34 +184,15 @@ class QueryEngine {
     	global $db; 	
     	$doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
     	
- //       echo $doJoinQuery;
-        
     	$res = $db->query($doJoinQuery);
     	$rst = $db->get_results($query);
-        
-        
+             
     	return $rst;
     }
     
     function GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo) {
-//        if (strlen(strstr(my_base_url, 'localhost')) > 0) {
-	
-    	$from = (object) array('sid' => $sid, 'tableName' => $table_name);
-    	
-    	return $this->prepareAndRunQueryFromFile("SELECT *", $from, null, null, $perPage, $pageNo);
-    	
-//     	global $db;
-
-//             $res = $db->query("call doJoinWithTime('" . $sid . "." . $table_name . "')");
-
-//             $sql = "SELECT * FROM resultDoJoin ";
-            
-
-//             $rst = $db->get_results($sql);
-//             return $rst;
-//        } else {
-//            return ExternalMSSQL::GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo);
-//        }
+    	$from = (object) array('sid' => $sid, 'tableName' => $table_name);    	
+    	return $this->prepareAndRunQueryFromFile("SELECT * ", $from, null, null, $perPage, $pageNo);    	
     }
 
     public function GetTotalNumberTuplesInTableBySidAndName($sid, $table_name) {

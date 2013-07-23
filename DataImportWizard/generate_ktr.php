@@ -342,7 +342,7 @@ function isReloadNeeded($headerRows) {
         $perPage = $_SESSION["excelPreviewRowsPerPage_$sid"];
         $isReloadNeeded = false;
         foreach ($headerRows as $headerRow) {
-            $isReloadNeeded = $isReloadNeeded || !($headerRow > ($loadedPage - 1) * $perPage && $headerRow <= $loadedPage * $perPage);
+            $isReloadNeeded = $isReloadNeeded || !(((int)$headerRow > ((int)$loadedPage - 1) * (int)$perPage) && ((int)$headerRow <= (int)$loadedPage * (int)$perPage));
         }
         return $isReloadNeeded;
     } else {

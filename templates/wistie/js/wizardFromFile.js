@@ -91,11 +91,9 @@ var wizardFromFile = (function() {
     };
 
     wizardFromFile.passSheetInfoFromDisplayOptionStep = function() {
-
-        console.log('passSheetInfoFromDisplayOptionStep');
+    
         var sheetsRanges = sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
-        console.log(sheetsRanges);
-
+    
         return $.ajax({type: 'POST',
             url: my_pligg_base + '/DataImportWizard/generate_ktr.php',
             dataType: 'html',

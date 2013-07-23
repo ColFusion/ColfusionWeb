@@ -17,8 +17,8 @@ include(mnminclude . 'user.php');
 include_once(mnminclude . 'utils.php');
 include(mnminclude . 'smartyvariables.php');
 
-// error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-// ini_set('display_errors', 1);
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+ini_set('display_errors', 1);
 // module system hook
 $vars = '';
 check_actions('submit_post_authentication', $vars);

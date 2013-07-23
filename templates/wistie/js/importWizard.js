@@ -151,11 +151,8 @@ var importWizard = (function() {
         }
     };
 
-    importWizard.checkToEnableNextButtonOnSchemaMatchinStep = function() {
-        if ((document.getElementById('Spd').value != -1) && (document.getElementById('Drd').value != -1) && (document.getElementById('Location').value != -1) &&
-                (document.getElementById('AggrType').value != -1) && (document.getElementById('Start').value != -1) && (document.getElementById('End').value != -1)) {
-            wizard.enableNextButton();
-        }
+    importWizard.checkToEnableNextButtonOnSchemaMatchinStep = function() {       
+            wizard.enableNextButton();        
     };
 
     importWizard.getSchemaMatchingUserInputs = function() {

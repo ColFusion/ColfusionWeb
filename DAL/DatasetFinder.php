@@ -9,7 +9,7 @@ class DatasetFinder {
         sid, title, entryDate, lastUpdated, userId, user_login , link_content as description 
         from colfusion_sourceinfo sinfo 
         inner join colfusion_users users on sinfo.UserId = users.user_id 
-        inner join colfusion_links cl on cl.link_id = sid ";
+        left join colfusion_links cl on cl.link_id = sid ";
     private $ezSql;
 
     public function __construct() {

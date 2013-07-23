@@ -134,14 +134,7 @@
             <img src="images/ajax-loader.gif"/>
             <span class="loadingText">Loading...</span>
         </span>
-        <div id="displayOptoinsStepCardFromFile">          
-
-            <!--
-            <ul class="nav nav-tabs">
-                <li class="active"><a href="#dataRangeSettingsTabContent" data-toggle="tab">Data Range Settings</a></li>
-                <li><a href="#dataPreviewTabContent" data-toggle="tab">Data Preview</a></li>              
-            </ul>
-            -->
+        <div id="displayOptoinsStepCardFromFile">                    
             <div>
                 <ul id="sourceSettingNavList" class="nav nav-list">
                     <li title="Data Range Settings" onclick="wizardFromFile.toggleSourceSelectionPanel(this, '#dataRangeSettingsTabContent')">
@@ -207,7 +200,7 @@
                         </form>                            
                     </div>
 
-                    <div class="nav-content" id="dataPreviewTabContent">   
+                    <div class="nav-content" id="dataPreviewTabContent" style="display:none;">   
 
                         <div data-bind="foreach: previewFiles" id="previewFiles">
                             <p data-bind="text: filename" class="sourceName" style="margin-top: 10px;"></p>

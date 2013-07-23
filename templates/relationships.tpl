@@ -66,7 +66,7 @@
                                                 <tr>
                                                 <td class="linkProfileHeader">Dataset:</td>
                                                 <td class="linkProfileContent">
-                                                <a data-bind="text: name, attr: {href: '{/literal}{$my_pligg_base}{literal}/story.php?title=' + sid()}"></a>
+                                                <a data-bind="text: name() || 'New Dataset', attr: {href: name()? '{/literal}{$my_pligg_base}{literal}/story.php?title=' + sid() : '#'}"></a>
                                                 </td>
                                                 </tr>
                                                 <tr>
