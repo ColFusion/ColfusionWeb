@@ -65,7 +65,7 @@ define("MSSQLWLS_DB_PORT", '1433');
         else
             $host = $this->host;
         
-        $MSSQLHandler->AddLinkedServer($this->engine, $host, $port, $database, $user, $password);
+        $MSSQLHandler->AddLinkedServer($this->engine, $host, $this->port, $this->database, $this->user, $this->password);
     }
 
     private function remove_comments(&$output) {
