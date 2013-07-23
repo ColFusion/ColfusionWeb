@@ -177,9 +177,16 @@ echo 'connected\n';
 
 echo $query;
 
+    try {
 
-    $stmt = $pdo->prepare($query);
-    $res = $stmt->execute();
+        $stmt = $pdo->prepare($query);
+        $res = $stmt->execute();
+
+    }
+    catch (Exception $e) 
+    {
+        var_dump($e);
+    }
 
     echo 'res ' . $res;
 
