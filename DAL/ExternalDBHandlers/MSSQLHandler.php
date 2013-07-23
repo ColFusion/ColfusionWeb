@@ -177,7 +177,13 @@ echo 'connected\n';
 
 echo $query;
 
-        if ($pdo->exec($query) !== false) {
+
+    $stmt = $pdo->prepare($query);
+    $res = $stmt->execute();
+
+    echo 'res ' . $res;
+
+        if ($res !== false) {
 
         $query = "exec sp_addlinkedsrvlogin
 @rmtsrvname = N'$database',
