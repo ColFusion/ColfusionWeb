@@ -23,17 +23,17 @@ class DatabaseImporterFactory {
         
         switch (strtolower($engine)) {
             case 'mysql':
-                return new MySQLImporter($user, $password, $database, $host, $port);
+                return new MySQLImporter($user, $password, $database, $host, $port, strtolower($engine));
                 break;
             case 'mssql':
             case 'sql server':
-                return new MSSQLImporter($user, $password, $database, $host, $port);
+                return new MSSQLImporter($user, $password, $database, $host, $port, strtolower($engine));
                 break;
             case 'postgresql':
-                return new PostgreSQLImporter($user, $password, $database, $host, $port);
+                return new PostgreSQLImporter($user, $password, $database, $host, $port, strtolower($engine));
                 break;
             case 'oracle':
-                return new OracleImporter($user, $password, $database, $host, $port);
+                return new OracleImporter($user, $password, $database, $host, $port, strtolower($engine));
                 break;
             default:
                 throw new Exception('Invalid DBMS');

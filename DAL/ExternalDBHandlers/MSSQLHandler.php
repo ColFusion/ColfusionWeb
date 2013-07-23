@@ -110,7 +110,7 @@ EOQ;
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
-    	 $pdo = $this->GetConnection();
+    	$pdo = $this->GetConnection();
         
         $query = $select . " from " . $from . " ";
         
@@ -133,6 +133,65 @@ EOQ;
         }
         
         return $result;
+    }
+
+// *******************************************************************
+// ADD LINKED SERVER
+// *******************************************************************
+
+    public function AddLinkedServer($engine, $server, $port, $database, $user, $password){
+        switch (strtolower($engine)) {
+            case 'mysql': {
+                $srvproduct = "MySQL";
+                $provider = "MSDASQL";
+                $provstr = "DRIVER={MySQL ODBC 5.2 Unicode Driver}; SERVER=$server;PORT=$port;DATABASE=$database;USER=$user;PASSWORD=$password;OPTION=3;";
+                
+                break;
+            }
+            case 'mssql':
+            case 'sql server':
+                
+                break;
+            case 'postgresql':
+                
+                break;
+            case 'oracle':
+                
+                break;
+            default:
+                throw new Exception('Invalid DBMS in AddLinkedServer');
+                break;
+        }
+
+
+        $pdo = $this->GetConnection();
+
+        $query = "exec sp_addlinkedserver
+@server = N'$database',
+@srvproduct = N'$srvproduct',
+@provider = N'$provider',
+@provstr =N'$provstr';"; 
+
+        if ($pdo->exec($query) !== false) {
+
+        $query = "exec sp_addlinkedsrvlogin
+@rmtsrvname = N'$database',
+@locallogin = N'remoteUserTest',
+@rmtuser = N'$user',
+@rmtpassword = N'$password';";
+
+            if ($pdo->exec($query)  === false) {
+                throw new Exception($pdo->errorInfo());
+            }
+
+        }
+        else {
+            throw new Exception($pdo->errorInfo());
+        }
+
+
+        
+
     }
 
 }

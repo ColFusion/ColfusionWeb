@@ -1,6 +1,12 @@
 <?php
 
+include_once(dirname(__FILE__) . '/../ExternalDBHandlers/MSSQLHandler.php');
+
 include_once(dirname(__FILE__) . '/../MSSQLWithLinkedServersCredentials.php');
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 
 abstract class DatabaseImporter {
 
@@ -9,13 +15,15 @@ abstract class DatabaseImporter {
     protected $user;
     protected $password;
     protected $database;
+    protected $engine;
 
-    public function __construct($user, $password, $database, $host, $port) {
+    public function __construct($user, $password, $database, $host, $port, $engine) {
         $this->host = $host;
         $this->port = $port;
         $this->user = $user;
         $this->database = $database;
         $this->password = $password;
+        $this->engine = $engine;
     }
 
     abstract public function importSqlFile($filePath);
@@ -42,6 +50,22 @@ abstract class DatabaseImporter {
 
     private function addLinkedServer() {
 
+// TODO make it work defined in other class, I tried to put it in the MSSQLWIthLInkedServersCredentials, but didn't work
+define("MSSQLWLS_DB_USER", 'remoteUserTest');
+define("MSSQLWLS_DB_PASSWORD", 'LkzRjkam.;y20!#');
+define("MSSQLWLS_DB_NAME", 'Tycho_0920');
+define("MSSQLWLS_DB_HOST", 'tycho.exp.sis.pitt.edu');
+define("MSSQLWLS_DB_PORT", '1433');
+
+
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+
+        if ($this->host == "localhost")
+            $host = "colfusion.exp.sis.pitt.edu"; //TODO move it to some settings or somewhere else file
+        else
+            $host = $this->host;
+        
+        $MSSQLHandler->AddLinkedServer($this->engine, $host, $port, $database, $user, $password);
     }
 
     private function remove_comments(&$output) {
