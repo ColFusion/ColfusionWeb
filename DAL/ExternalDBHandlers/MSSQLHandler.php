@@ -153,9 +153,9 @@ EOQ;
                 
                 break;
             case 'postgresql': {
-                $srvproduct = "N'PostgreSQL";
+                $srvproduct = "PostgreSQL";
                 $provider = "MSDASQL";
-                $provstr = N'DRIVER={PostgreSQL Unicode(x64)}; SERVER=$server;PORT=$port;DATABASE=$database;Uid=$user;Pwd=$password;';
+                $provstr = "DRIVER={PostgreSQL Unicode(x64)}; SERVER=$server;PORT=$port;DATABASE=$database;Uid=$user;Pwd=$password;";
 
                 
                 break;
