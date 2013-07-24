@@ -3,7 +3,13 @@
 
 include_once(dirname(__FILE__) . '/../DAL/ExternalDBHandlers/MSSQLHandler.php');
 
-include_once(dirname(__FILE__) . '/../DAL/MSSQLWithLinkedServersCredentials.php');
+include(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
+
+
+//error_reporting(E_ALL);
+//ini_set('display_errors', 1);
+
+//echo MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT;
 
 class SimpleQuery {
 
@@ -109,17 +115,19 @@ class SimpleQuery {
     private function addLinkedServer($server, $port, $user, $password, $database, $driver) {
 
         // TODO make it work defined in other class, I tried to put it in the MSSQLWIthLInkedServersCredentials, but didn't work
-        define("MSSQLWLS_DB_USER", 'remoteUserTest');
-        define("MSSQLWLS_DB_PASSWORD", 'LkzRjkam.;y20!#');
-        define("MSSQLWLS_DB_NAME", 'Tycho_0920');
-        define("MSSQLWLS_DB_HOST", 'tycho.exp.sis.pitt.edu');
-        define("MSSQLWLS_DB_PORT", '1433');
+     //   define("MSSQLWLS_DB_USER", 'remoteUserTest');
+     //   define("MSSQLWLS_DB_PASSWORD", 'LkzRjkam.;y20!#');
+     //   define("MSSQLWLS_DB_NAME", 'Tycho_0920');
+     //   define("MSSQLWLS_DB_HOST", 'tycho.exp.sis.pitt.edu');
+     //   define("MSSQLWLS_DB_PORT", '1433');
+     //   define("COLFUSION_HOST", 'colfusion.exp.sis.pitt.edu');
+
 
 
         $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
 
         if ($server == "localhost")
-            $host = "colfusion.exp.sis.pitt.edu"; //TODO move it to some settings or somewhere else file
+            $host = COLFUSION_HOST; //TODO move it to some settings or somewhere else file
         else
             $host = $server;
         
