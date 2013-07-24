@@ -85,6 +85,9 @@ if ($my_base_url == ''){
 	define('my_pligg_base', $my_pligg_base);
 }
 
+$pathWithoutSlash = substr($my_pligg_base, 1);
+define('my_pligg_base_no_slash', $pathWithoutSlash);
+
 define('urlmethod', $URLMethod);
 
 if(isset($_COOKIE['template'])){

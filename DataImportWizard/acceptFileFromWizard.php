@@ -129,7 +129,7 @@ function upload_0() {
                 } else if (strtolower($ext) == 'sql') {
                     $dbType = trim(strtolower($_POST['dbType']));
                     try {
-                        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid, my_pligg_base);
+                        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid, my_pligg_base_no_slash);
                         $dbImporter->importSqlFile($upload_path);
                     } catch (Exception $e) {
                         $_SESSION["upload_file_$sid"]['error'] = $e->getMessage();
