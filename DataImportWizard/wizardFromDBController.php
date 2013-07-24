@@ -30,7 +30,7 @@ function TestConnection($sid) {
         $importSettings = DatabaseImporterFactory::$importSettings[$driver];
 
         $serverName = 'localhost';
-        $database = "colfusion_external_$sid";
+        $database = my_pligg_base . "_external_$sid";
         $userName = $importSettings['user'];
         $password = $importSettings['password']; // controls how many tuples shown on each page
         $port = $importSettings['port'];
