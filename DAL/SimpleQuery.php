@@ -3,7 +3,7 @@
 
 include_once(dirname(__FILE__) . '/../DAL/ExternalDBHandlers/MSSQLHandler.php');
 
-include(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
+include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 
 
 //error_reporting(E_ALL);
