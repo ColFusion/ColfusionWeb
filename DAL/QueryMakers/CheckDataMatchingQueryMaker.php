@@ -83,7 +83,7 @@ class CheckdataMatchingQueryMaker {
     }
 
     // source has sid, links (array of cids) and table name.
-    function GetColumnsFromSource($source) {
+    public function GetColumnsFromSource($source) {
         // get string names of columns which are involved in the links
    
         $transHandler = new TransformationHandler();
@@ -93,6 +93,7 @@ class CheckdataMatchingQueryMaker {
         $cidsArray = array();
         $columnNamesArray = array();
         $columnNameAndAliasArray = array();
+        $columnAliasArray = array();
 
         foreach ($source->links as $key=>$link) {
             //TODO: fix, currently only one column, no transformation is supported.
@@ -107,12 +108,15 @@ class CheckdataMatchingQueryMaker {
                 $columnNameAndAliasArray[] = "[" . $columnName . "] as '" . $columnAlias . "'";
             else
                 $columnNameAndAliasArray[] = "[" . $columnName . "]";
+
+            $columnAliasArray[] = $columnAlias;
         }
 
         $result = new stdClass;
         $result->cids = implode(",", array_values($cidsArray));
         $result->columnNames = implode(",", array_values($columnNamesArray));
         $result->columnNameAndAlias = implode(",", array_values($columnNameAndAliasArray));
+        $result->columnAliases = implode(",", array_values($columnAliasArray));
 
         return $result; 
     }
