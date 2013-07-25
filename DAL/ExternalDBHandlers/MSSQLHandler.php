@@ -130,13 +130,32 @@ EOQ;
     public function ExecuteQuery($query) {
         $pdo = $this->GetConnection();
 
-        $res = $pdo->query($query);
-        $result = array();
-        while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
-            $result[] = $row;
+
+        try {
+
+            $mssql->setAttribute(pdo::ATTR_ERRMODE, pdo:: ERRMODE_EXCEPTION);
+
+            $stmt = $mssql->prepare($query);
+
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+            $stmt->execute();
+
+            $arrValues = $stmt->fetchAll();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            exit;
         }
+
+
+
+    //    $res = $pdo->query($query);
+    //    $result = array();
+    //    while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
+    //        $result[] = $row;
+    //    }
         
-        return $result;
+        return $arrValues;
     }
 
 // *******************************************************************
