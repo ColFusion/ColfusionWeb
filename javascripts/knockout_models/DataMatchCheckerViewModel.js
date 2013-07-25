@@ -125,7 +125,12 @@ function DataMatchCheckerViewModel() {
             }
             newCells.push(row);
         });
-
+        
+        var headerNames = [];
+        headerNames = $.map(oldTable.headers(), function(i, headerObj){
+            headerNames.push();
+        });
+        
         return new DataPreviewViewModelProperties.Table(oldTable.tableName, oldTable.headers(), newCells);
     }
 }

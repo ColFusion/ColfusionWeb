@@ -18,18 +18,17 @@ var DataPreviewViewModelProperties = {
         self.totalPage = ko.observable(totalPage);
         self.currentPage = ko.observable(currentPage);
         self.perPage = ko.observable(perPage);
-        self.headers = ko.observableArray($.map(cols, function(header) {
-            console.log();
+        self.headers = ko.observableArray($.map(cols, function(header) {           
             return new DataPreviewViewModelProperties.Header(header);
         }));
-        
+
         self.rows = ko.observableArray($.map(rows, function(row) {
             return new DataPreviewViewModelProperties.Row(row);
         }));
-        
+
         self.getCells = function() {
             var cells = [];
-            $.each(self.rows(), function(index, row) {              
+            $.each(self.rows(), function(index, row) {
                 cells.push(row.cells());
             });
             return cells;

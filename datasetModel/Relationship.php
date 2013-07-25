@@ -1,6 +1,6 @@
 <?php
 
-include_once (realpath(dirname(__FILE__)) . '/Link.php');
+include_once (realpath(dirname(__FILE__)) . '/ColfusionLink.php');
 include_once (realpath(dirname(__FILE__)) . '/Comment.php');
 
 class Relationship{
