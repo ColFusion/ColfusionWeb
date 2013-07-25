@@ -19,11 +19,21 @@ var DataPreviewViewModelProperties = {
         self.currentPage = ko.observable(currentPage);
         self.perPage = ko.observable(perPage);
         self.headers = ko.observableArray($.map(cols, function(header) {
+            console.log();
             return new DataPreviewViewModelProperties.Header(header);
         }));
+        
         self.rows = ko.observableArray($.map(rows, function(row) {
             return new DataPreviewViewModelProperties.Row(row);
         }));
+        
+        self.getCells = function() {
+            var cells = [];
+            $.each(self.rows(), function(index, row) {              
+                cells.push(row.cells());
+            });
+            return cells;
+        };
         self.rawData = ko.observableArray(rawData);
     }
 };
@@ -71,7 +81,7 @@ function DataPreviewViewModel(sid) {
             self.isLoading(false);
         });
     };
-   
+
     self.chooseTable = function(tableListItem) {
         // Unchoose all list items.
         $(self.tableList()).each(function(index, tableListItem) {

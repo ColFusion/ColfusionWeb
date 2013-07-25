@@ -16,7 +16,6 @@ function getRelationshipInfo() {
     var toTable = $('#toTableInput').val();
     var store = new Persist.Store('NewRelationshipViewModel');
     var newRelationModel = JSON.parse(store.get('checkDataMatching_' + fromSid + '_' + fromTable + '_' + toSid + '_' + toTable));
-    console.log(newRelationModel);
     return newRelationModel;
 }
 

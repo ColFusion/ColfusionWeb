@@ -3,13 +3,17 @@ ko.bindingHandlers.jqueryEditable = {
     },
     update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
         var dataTable = valueAccessor()();
-        console.log(dataTable);
+ 
+        if (!dataTable) {
+            return;
+        }
 
         var tableDom = $('<table class="linkDataTable"><thead></thead><tbody></tbody></table>');
         $(tableDom).children('thead').append('<tr>');
 
-        $.each(dataTable.headers(), function(index, header) {
+        $.each(dataTable.headers(), function(index, header) {           
             var col = header.name();
+            console.log(col);
             $(tableDom).find('tr').append('<th>' + col + '</th>');
         });
 
@@ -26,7 +30,7 @@ ko.bindingHandlers.jqueryEditable = {
         $(element).children('table').dataTable({
             "bLengthChange": false,
             "bSort": false,
-            "iDisplayLength" : 20
+            "iDisplayLength": 20
         }).makeEditable();
     }
 };
@@ -40,20 +44,25 @@ function DataMatchCheckerViewModel() {
     self.toDataset = ko.observable();
     self.links = ko.observableArray();
 
+    self.isLoadingData = ko.observable(false);
     self.currentLink = ko.observable();
-    self.differentValueFromTable = ko.observable(getStaticDataTable());
-    self.differentValueToTable = ko.observable(getStaticDataTable());
-    self.sameValueTable = ko.observable(getStaticDataTable());
-    self.partlyValueTable = ko.observable(getStaticDataTable());
+    self.differentValueFromTable = ko.observable();
+    self.differentValueToTable = ko.observable();
+    self.sameValueTable = ko.observable();
+    self.partlyValueTable = ko.observable();
 
-    self.synFrom = ko.observable();
-    self.synTo = ko.observable();
+    self.synFrom = ko.observable('fromData1');
+    self.synTo = ko.observable('toData1');
     self.isAddingSynonym = ko.observable(false);
     self.addingSynonymMessage = ko.observable();
 
     self.loadLinkData = function() {
-        console.log(this);
+        // this = Link
         self.currentLink(this);
+        self.differentValueFromTable(getStaticDataTable());
+        self.differentValueToTable(getStaticDataTable());
+        self.sameValueTable(getStaticDataTable());
+        self.partlyValueTable(getStaticDataTable());
     };
 
     self.saveSynonym = function() {
@@ -70,32 +79,54 @@ function DataMatchCheckerViewModel() {
 
         self.isAddingSynonym(true);
         self.addingSynonymMessage('');
-        $.ajax({
-            url: 'addSynonym.php',
-            type: 'post',
-            dataType: 'json',
-            data: data,
-            success: function(jsonResponse) {
-                if (jsonResponse.isSuccessful) {
-                    updateTables(self.synFrom(), self.synTo());
-                    self.synFrom('');
-                    self.synTo('');
-                } else {
-                    self.addingSynonymMessage('Some errors occur when adding the values');
-                }
-            }
-        }).error(function() {
-            self.addingSynonymMessage('Some errors occur when adding the values');
-        }).always(function() {
-            self.isAddingSynonym(false);
-        });
 
-        console.log(data);
+        updateTables(self.synFrom(), self.synTo());
+        //self.synFrom('');
+        //self.synTo('');
+
+        /*
+         $.ajax({
+         url: 'addSynonym.php',
+         type: 'post',
+         dataType: 'json',
+         data: data,
+         success: function(jsonResponse) {
+         if (jsonResponse.isSuccessful) {
+         updateTables(self.synFrom(), self.synTo());
+         self.synFrom('');
+         self.synTo('');
+         } else {
+         self.addingSynonymMessage('Some errors occur when adding the values');
+         }
+         }
+         }).error(function() {
+         self.addingSynonymMessage('Some errors occur when adding the values');
+         }).always(function() {
+         self.isAddingSynonym(false);
+         });*/
     };
 
     // TODO: remove values on diff table and add values to smae table.
-    function updateTables() {
+    function updateTables(synFrom, synTo) {
+        var oldFromTable = self.differentValueFromTable();
+        var oldToTable = self.differentValueToTable();
+        self.differentValueFromTable(removeValueInTable(oldFromTable, synFrom));
+        self.differentValueToTable(removeValueInTable(oldToTable, synTo, 1));
+    }
 
+    // DataPreviewViewModelProperties.Table
+    function removeValueInTable(oldTable, value, replaceColIndex) {
+        replaceColIndex = replaceColIndex === undefined ? 0 : replaceColIndex;
+        var newCells = [];
+
+        $.each(oldTable.getCells(), function(i, row) {
+            if (row[replaceColIndex] == value) {
+                return;
+            }
+            newCells.push(row);
+        });
+
+        return new DataPreviewViewModelProperties.Table(oldTable.tableName, oldTable.headers(), newCells);
     }
 }
 

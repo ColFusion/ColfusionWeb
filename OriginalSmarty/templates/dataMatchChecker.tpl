@@ -93,70 +93,78 @@
             </ul>
         </div>
         <div id="tableContainer">
-            <div class="addSynonymPanel">
-                <div class="addSynonymInputWrapper">
-                    Value 
-                    <input data-bind="value: synFrom" type="text" class="synonymInput fromSynonymInput"/>
-                    in <span style="font-weight: bold;">From</span> part is equal to value 
-                    <input data-bind="value: synTo" type="text" class="synonymInput toSynonymInput"/>
-                    in <span style="font-weight: bold;">To</span> part.
-                    <button data-bind="click: saveSynonym" class="btn addSynonymBtn">Add</button>
-                    <img data-bind="visible: isAddingSynonym" src="../images/ajax-loader.gif" style="margin: -8px 0 0 5px;"/>
-                    <span data-bind="text: addingSynonymMessage" style="color:red; display: inline-block;"></span>
+            <div data-bind="visible: !currentLink()" style="color: grey;font-weight: bold; font-size: 20px;margin-top: 20%;margin-left: 29%;padding-bottom: 20%;">
+                Please Choose a Link To View Data
+            </div>
+            <div data-bind="visible: isLoadingData()">
+                <img src="../images/ajax-loader.gif" style="margin-top: 20%;margin-left: 45%;"/>
+            </div>
+            <div data-bind="visible: currentLink() && !isLoadingData()" id="dataTableWrapper">
+                <div class="addSynonymPanel">
+                    <div class="addSynonymInputWrapper">
+                        Value 
+                        <input data-bind="value: synFrom" type="text" class="synonymInput fromSynonymInput"/>
+                        in <span style="font-weight: bold;">From</span> part is equal to value 
+                        <input data-bind="value: synTo" type="text" class="synonymInput toSynonymInput"/>
+                        in <span style="font-weight: bold;">To</span> part.
+                        <button data-bind="click: saveSynonym" class="btn addSynonymBtn">Add</button>
+                        <img data-bind="visible: isAddingSynonym" src="../images/ajax-loader.gif" style="margin: -8px 0 0 5px;"/>
+                        <span data-bind="text: addingSynonymMessage" style="color:red; display: inline-block;"></span>
+                    </div>
                 </div>
-            </div>
-            <div class="accordionWrapper">
-                <div class="accordion" id="diffDataAccordion">
-                    <div class="accordion-group">
-                        <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#diffDataAccordion" href="#diffDataCollapse">
-                                Table of Different Values
-                            </a>
-                        </div>
-                        <div id="diffDataCollapse" class="accordion-body collapse in">
-                            <div class="accordion-inner">
-                                <div data-bind="jqueryEditable: differentValueFromTable" style="float:left; width: 45%;" class="linkDataContainer">                                
-                                </div>
-                                <div data-bind="jqueryEditable: differentValueToTable" style="float:right; width: 45%;" class="linkDataContainer">                                
+                <div class="accordionWrapper">
+                    <div class="accordion" id="diffDataAccordion">
+                        <div class="accordion-group">
+                            <div class="accordion-heading">
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#diffDataAccordion" href="#diffDataCollapse">
+                                    Table of Different Values
+                                </a>
+                            </div>
+                            <div id="diffDataCollapse" class="accordion-body collapse in">
+                                <div class="accordion-inner">
+                                    <div data-bind="jqueryEditable: differentValueFromTable" style="float:left; width: 45%;" class="linkDataContainer">                                
+                                    </div>
+                                    <div data-bind="jqueryEditable: differentValueToTable" style="float:right; width: 45%;" class="linkDataContainer">                                
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>                
-            </div>  
-            <div class="accordionWrapper">
-                <div class="accordion" id="sameDataAccordion">
-                    <div class="accordion-group">
-                        <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#sameDataAccordion" href="#sameDataCollapse">
-                                Table of Same Values
-                            </a>
-                        </div>
-                        <div id="sameDataCollapse" class="accordion-body collapse in">
-                            <div class="accordion-inner">
-                                <div  data-bind="jqueryEditable: sameValueTable" class="linkDataContainer">                               
+                    </div>                
+                </div>  
+                <div class="accordionWrapper">
+                    <div class="accordion" id="sameDataAccordion">
+                        <div class="accordion-group">
+                            <div class="accordion-heading">
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#sameDataAccordion" href="#sameDataCollapse">
+                                    Table of Same Values
+                                </a>
+                            </div>
+                            <div id="sameDataCollapse" class="accordion-body collapse in">
+                                <div class="accordion-inner">
+                                    <div  data-bind="jqueryEditable: sameValueTable" class="linkDataContainer">                               
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>                
-            </div>
-            <div class="accordionWrapper">
-                <div class="accordion" id="partlyDataAccordion">
-                    <div class="accordion-group">
-                        <div class="accordion-heading">
-                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#partlyDataAccordion" href="#partlyDataCollapse">
-                                Table of Partly Same Values
-                            </a>
-                        </div>
-                        <div id="partlyDataCollapse" class="accordion-body collapse in">
-                            <div class="accordion-inner">
-                                <div  data-bind="jqueryEditable: partlyValueTable" class="linkDataContainer">                               
+                    </div>                
+                </div>
+                <div class="accordionWrapper">
+                    <div class="accordion" id="partlyDataAccordion">
+                        <div class="accordion-group">
+                            <div class="accordion-heading">
+                                <a class="accordion-toggle" data-toggle="collapse" data-parent="#partlyDataAccordion" href="#partlyDataCollapse">
+                                    Table of Partly Same Values
+                                </a>
+                            </div>
+                            <div id="partlyDataCollapse" class="accordion-body collapse in">
+                                <div class="accordion-inner">
+                                    <div  data-bind="jqueryEditable: partlyValueTable" class="linkDataContainer">                               
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>                
+                    </div>                
+                </div>
             </div>
         </div>        
     </body>

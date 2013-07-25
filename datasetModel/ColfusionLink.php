@@ -1,5 +1,5 @@
 <?php
-    class Link{
+    class ColfusionLink{
         public $fromPart;
         public $toPart;
     }

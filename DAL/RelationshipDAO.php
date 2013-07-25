@@ -3,7 +3,7 @@
 require_once realpath(dirname(__FILE__)) . '/../config.php';
 require_once realpath(dirname(__FILE__)) . '/DatasetFinder.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Relationship.php';
-require_once realpath(dirname(__FILE__)) . '/../datasetModel/Link.php';
+require_once realpath(dirname(__FILE__)) . '/../datasetModel/ColfusionLink.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Comment.php';
 require_once realpath(dirname(__FILE__)) . '/TransformationHandler.php';
 
@@ -52,7 +52,7 @@ class RelationshipDAO {
         
         $transHandler = new TransformationHandler();
         foreach ($linkInfos as $linkInfo) {
-            $link = new Link();
+            $link = new ColfusionLink();
             $link->fromPart = $transHandler->decodeTransformationInput($linkInfo->cl_from);
             $link->toPart = $transHandler->decodeTransformationInput($linkInfo->cl_to);
             $relationship->links[] = $link;
