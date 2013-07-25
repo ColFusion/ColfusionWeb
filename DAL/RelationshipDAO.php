@@ -5,6 +5,7 @@ require_once realpath(dirname(__FILE__)) . '/DatasetFinder.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Relationship.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Link.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Comment.php';
+include_once realpath(dirname(__FILE__)) . '/DALUtils.php';
 
 class RelationshipDAO {
 
@@ -48,12 +49,12 @@ class RelationshipDAO {
             $rawLinkParts[] = $linkInfo->cl_from;
             $rawLinkParts[] = $linkInfo->cl_to;
         }
-        $usedColumnNames = $this->getUsedColumnNames($rawLinkParts);
+        $usedColumnNames = DALUtils::getUsedColumnNames($rawLinkParts);
 
         foreach ($linkInfos as $linkInfo) {
             $link = new Link();
-            $link->fromPart = $this->decodeLinkPart($linkInfo->cl_from, $usedColumnNames);
-            $link->toPart = $this->decodeLinkPart($linkInfo->cl_to, $usedColumnNames);
+            $link->fromPart = DALUtils::decodeLinkPart($linkInfo->cl_from, $usedColumnNames);
+            $link->toPart = DALUtils::decodeLinkPart($linkInfo->cl_to, $usedColumnNames);
             $relationship->links[] = $link;
         }
 
@@ -73,6 +74,7 @@ class RelationshipDAO {
         $this->ezSql->query($delSql);
     }
 
+    // MOVED TO DALUtils, need to delete from here.
     // Decode cid(xxx) in link parts and return an array of used column names.
     private function getUsedColumnNames(array $linkParts) {
         foreach ($linkParts as $linkPart) {
@@ -97,6 +99,7 @@ class RelationshipDAO {
         return $colNames;
     }
 
+    // MOVED TO DALUtils, need to delete from here.
     private function decodeLinkPart($linkPart, $usedColumnNames) {
         preg_match_all('/cid\([0-9]+\)/', $linkPart, $matches);
         foreach ($matches[0] as $match) {

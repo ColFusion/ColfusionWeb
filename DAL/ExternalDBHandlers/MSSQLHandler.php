@@ -110,9 +110,7 @@ EOQ;
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
-    	$pdo = $this->GetConnection();
-        
-        $query = $select . " from " . $from . " ";
+    	$query = $select . " from " . $from . " ";
         
         if (isset($where))
             $query .= ' ' . $where . ' ';
@@ -124,8 +122,14 @@ EOQ;
              
             $startPoint = ($pageNo - 1) * $perPage;
             $query .= " LIMIT " . $startPoint . "," . $perPage;
-        }
-                        
+        }                       
+       
+       return $this->ExecuteQuery($query);
+    }
+
+    public function ExecuteQuery($query) {
+        $pdo = $this->GetConnection();
+
         $res = $pdo->query($query);
         $result = array();
         while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
@@ -149,9 +153,14 @@ EOQ;
                 break;
             }
             case 'mssql':
-            case 'sql server':
-                
+            case 'sql server': {
+                   
+                 //TODO IMplement, should work for tycho now.  
+
+                return;
+
                 break;
+            }
             case 'postgresql': {
                 $srvproduct = "PostgreSQL";
                 $provider = "MSDASQL";

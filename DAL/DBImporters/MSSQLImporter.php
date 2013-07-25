@@ -8,6 +8,7 @@ class MSSQLImporter extends DatabaseImporter {
         parent::__construct($user, $password, $database, $host, $port, $engine);
     }
 
+//TODO: look into this
     public function importSqlFile($filePath) {
         $dbh = new PDO("sqlsrv:Server=$this->host;Database=master", $this->user, $this->password);
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);

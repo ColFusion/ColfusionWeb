@@ -1,9 +1,18 @@
 <?php
 
+
 //include_once('../config.php');
 include_once(realpath(dirname(__FILE__)) . "/../config.php");
 include_once('SimpleQuery.php');
 include_once('ExternalDBHandlers/ExternalDBs.php');
+
+include_once(realpath(dirname(__FILE__)) . '/QueryMakers/CheckDataMatchingQueryMaker.php');
+include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
+include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
+
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+ini_set('display_errors', 1);
+
 
 class QueryEngine {
 
@@ -223,44 +232,15 @@ class QueryEngine {
     }
 
     function GetExternalDBCredentialsBySid($sid) {
-        global $db;
-
-        $sql = "SELECT * FROM colfusion_sourceinfo_DB where sid = $sid";
-        $res = $db->get_results($sql);
-
-        if (isset($res))
-            return $res[0];
-        else
-        //TODO: throw error here
-            die('Data source not found.');
+        return DALUtils::GetExternalDBCredentialsBySid($sid);
     }
 
     function GetSourceType($sid) {
-        global $db;
-
-        $sql = "select source_type from colfusion_sourceinfo where sid = $sid";
-
-        $res = $db->get_results($sql);
-
-        if (isset($res))
-            return $res[0]->source_type;
-        else
-        //TODO: throw error here
-            die('Source not found GetSourceType');
+        return DALUtils::GetSourceType($sid);
     }
 
     function GetFileNameBySid($sid) {
-        global $db;
-
-        $sql = "SELECT raw_data_path FROM colfusion_sourceinfo where sid = $sid";
-
-        $res = $db->get_results($sql);
-
-        if (isset($res))
-            return array($res[0]->raw_data_path);
-        else
-        //TODO: throw error here
-            die('Source not found GetFileNameBySid');
+        return DALUtils::GetFileNameBySid($sid);
     }
 
     //TODO: look at timeout issue which might appear here when the realtionshp mining store procedure might take long time.
@@ -329,20 +309,28 @@ EOQ;
     public function CheckDataMatching($from, $to) {
         global $db;
 
-        if ($this->GetSourceType($from["sid"]) == "database") {
-            $externalDBCredentials = $this->GetExternalDBCredentialsBySid($sid);
+        $checkDataMatchingQueryMaker = new CheckdataMatchingQueryMaker($from, $to);
 
-            //TODO: implement
-            $resultFrom = ExternalDBs::GetTotalNumberTuplesInTableBySidAndName($table_name, $externalDBCredentials);
-        } else {
-            $resultFrom = $this->GetDistinctValueForGivenColumnsFromFromFile($sid, $columns);
-        }
+        $queryToExecute = $checkDataMatchingQueryMaker->getIntersectionQuery();
 
-        if ($this->GetSourceType($to["sid"]) == "database") {
-            $resultTo = $this->GetDistinctValueForGivenColumnsFromExternalDB($sid, $columns);
-        } else {
-            $resultTo = $this->GetDistinctValueForGivenColumnsFromFromFile($sid, $columns);
-        }
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+        
+        echo json_encode($MSSQLHandler->ExecuteQuery($queryToExecute));
+
+//        if ($this->GetSourceType($from["sid"]) == "database") {
+//            $externalDBCredentials = $this->GetExternalDBCredentialsBySid($sid);
+
+//            //TODO: implement
+//            $resultFrom = ExternalDBs::GetTotalNumberTuplesInTableBySidAndName($table_name, $externalDBCredentials);
+//        } else {
+//            $resultFrom = $this->GetDistinctValueForGivenColumnsFromFromFile($sid, $columns);
+//        }
+
+//        if ($this->GetSourceType($to["sid"]) == "database") {
+//            $resultTo = $this->GetDistinctValueForGivenColumnsFromExternalDB($sid, $columns);
+//        } else {
+//            $resultTo = $this->GetDistinctValueForGivenColumnsFromFromFile($sid, $columns);
+//        }
     }
 
 }
