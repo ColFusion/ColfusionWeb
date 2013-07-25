@@ -15,12 +15,15 @@ class TransformationHandler {
     }
 
     // TansInput includes link part and synonym in links.
-    public function decodeTransformationInput($transInput) {
+    public function decodeTransformationInput($transInput, $needOriginal = false) {
         preg_match_all('/cid\([0-9]+\)/', $transInput, $matches);
         foreach ($matches[0] as $match) {
             $cid = substr($match, 4, strlen($match) - 5);
             if (!isset($this->columnDict[$cid])) {
-                $this->columnDict[$cid] = $this->relationshipDao->getColumnInfo($cid)->dname_chosen;
+                if ($needOriginal)
+                    $this->columnDict[$cid] = $this->relationshipDao->getColumnInfo($cid)->dname_original_name;
+                else
+                    $this->columnDict[$cid] = $this->relationshipDao->getColumnInfo($cid)->dname_chosen;
             }
 
             $transInput = str_replace("cid($cid)", $this->columnDict[$cid], $transInput);

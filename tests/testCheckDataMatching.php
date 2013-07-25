@@ -8,9 +8,9 @@
 
 
 	$from = new stdClass;
-    $from->sid = 840;
+    $from->sid = 756;
     $from->tableName = "tableNameFrom";
-    $from->links = array("cid(890)", "cid(891)"); // size of this array should be equal to the size of array in To
+    $from->links = array("cid(632)", "cid(633)"); // size of this array should be equal to the size of array in To
 	
     $to = new stdClass;
     $to->sid = 840;

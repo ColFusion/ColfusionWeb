@@ -45,7 +45,7 @@ class FromFileQueryMaker {
         $linkedServerName = my_pligg_base_no_slash;
 
         $query = <<<EOQ
-    select $columnNameAndAlias
+    select distinct $columnNameAndAlias
 		from
 		(
 			select *

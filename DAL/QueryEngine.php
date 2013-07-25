@@ -314,13 +314,23 @@ EOQ;
 
         $checkDataMatchingQueryMaker = new CheckdataMatchingQueryMaker($from, $to);
 
-        $queryToExecute = $checkDataMatchingQueryMaker->getIntersectionQuery();
+        $notMatchedInFrom = $checkDataMatchingQueryMaker->getNotMachedInFromQuery();
+        $notMatchedInTo = $checkDataMatchingQueryMaker->getNotMachedInToQuery();
+        $countOfMached = $checkDataMatchingQueryMaker->getCountOfMached();
+        $countOfTotalDistinct = $checkDataMatchingQueryMaker->getCountOfTotalDistinct();
 
         $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
         
         $result = new stdClass;
-        $result->query = $queryToExecute;
-        $result->data = $MSSQLHandler->ExecuteQuery($queryToExecute);
+        $result->notMatchedInFrom = $notMatchedInFrom;
+        $result->notMatchedInTo = $notMatchedInTo;
+        $result->countOfMached = $countOfMached;
+        $result->countOfTotalDistinct = $countOfTotalDistinct;
+
+        $result->notMatchedInFromData = $MSSQLHandler->ExecuteQuery($notMatchedInFrom);
+        $result->notMatchedInToData = $MSSQLHandler->ExecuteQuery($notMatchedInTo);
+        $result->countOfMachedData = $MSSQLHandler->ExecuteQuery($countOfMached);
+        $result->countOfTotalDistinctData = $MSSQLHandler->ExecuteQuery($countOfTotalDistinct);
 
         return $result;
 

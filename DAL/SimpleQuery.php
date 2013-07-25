@@ -111,6 +111,14 @@ class SimpleQuery {
         $this->addLinkedServer($server, $port, $user, $password, $database, $driver);
     }
 
+    public function getSourceDBInfo($sid) {
+        global $db;
+
+        $query = "select * from colfusion_sourceinfo_DB where sid = $sid";
+
+        return $db->get_row($sql); 
+    }
+
 
     private function addLinkedServer($server, $port, $user, $password, $database, $driver) {
 

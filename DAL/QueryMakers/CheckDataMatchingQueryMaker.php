@@ -2,6 +2,7 @@
 
 
 include_once(realpath(dirname(__FILE__)) . "/FromFileQueryMaker.php");
+include_once(realpath(dirname(__FILE__)) . "/FromLinkedServerQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
 require_once realpath(dirname(__FILE__)) . '/../TransformationHandler.php';
 
@@ -35,7 +36,7 @@ class CheckdataMatchingQueryMaker {
 
         if (DALUtils::GetSourceType($source->sid) == "database"){
 
-            return "select from database";
+            return FromLinkedServerQueryMaker::MakeQueryOneTable($source, $columns);
         }
         else {
 
@@ -43,14 +44,42 @@ class CheckdataMatchingQueryMaker {
         }
     }
 
-    public function getIntersectionQuery($forseUpdate = false) {
+    public function MakeOrUpdateFromAndToQuery($forseUpdate = false) {
         if (!isset($this->fromQuery) || $forseUpdate)
             $this->prepareOneQuery($this->from);
 
         if (!isset($this->toQuery) || $forseUpdate)
             $this->prepareOneQuery($this->to);
+    }
+
+    public function getIntersectionQuery($forseUpdate = false) {
+        $this->MakeOrUpdateFromAndToQuery($forseUpdate);
 
         return $this->fromQuery . " intersect " . $this->toQuery;
+    }
+
+    public function getNotMachedInFromQuery($forseUpdate = false) {
+        $this->MakeOrUpdateFromAndToQuery($forseUpdate);
+
+        return $this->fromQuery . " except " . $this->toQuery;
+    }
+
+    public function getNotMachedInToQuery($forseUpdate = false) {
+         $this->MakeOrUpdateFromAndToQuery($forseUpdate);
+
+        return $this->toQuery . " except " . $this->fromQuery;
+    }
+
+    public function getCountOfMached($forseUpdate = false) {
+         $this->MakeOrUpdateFromAndToQuery($forseUpdate);
+
+        return "select count(*) from (" . $this->toQuery . " intersect " . $this->fromQuery . ") as t";
+    }
+
+    public function getCountOfTotalDistinct($forseUpdate = false) {
+        $this->MakeOrUpdateFromAndToQuery($forseUpdate);
+
+        return "select count(*) from (" . $this->toQuery . " union " . $this->fromQuery . ") as t";
     }
 
     // source has sid, links (array of cids) and table name.
@@ -72,6 +101,7 @@ class CheckdataMatchingQueryMaker {
             $columnName = $transHandler->decodeTransformationInput($link); // DALUtils::decodeLinkPart($link, $usedColumnNames);
             $columnNamesArray[] = "[" . $columnName . "]";
             $columnAlias = "column$i";
+            $i += 1;
 
             if (isset($columnAlias))
                 $columnNameAndAliasArray[] = "[" . $columnName . "] as '" . $columnAlias . "'";
