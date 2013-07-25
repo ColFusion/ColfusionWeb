@@ -16,6 +16,8 @@ class MSSQLHandler extends DatabaseHandler {
         $pdo->exec('SET ANSI_PADDING ON');
         $pdo->exec('SET ANSI_NULLS ON');
         $pdo->exec('SET CONCAT_NULL_YIELDS_NULL ON');
+
+
         return $pdo;
     }
 
@@ -133,7 +135,7 @@ EOQ;
 
         try {
 
-            $pdo->setAttribute(pdo::ATTR_ERRMODE, pdo:: ERRMODE_EXCEPTION);
+            //$pdo->setAttribute(pdo::ATTR_ERRMODE, pdo:: ERRMODE_EXCEPTION);
 
             $stmt = $pdo->prepare($query);
 
@@ -201,7 +203,7 @@ EOQ;
 
 //echo 'connected\n';
 
-        $query = "exec sp_addlinkedserver @server = N'$database', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr';"; 
+        $query = "exec sp_addlinkedserver @server = N'$database', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr', @useself = N'False';"; 
 
 
 //echo $query;

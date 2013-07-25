@@ -73,13 +73,13 @@ class CheckdataMatchingQueryMaker {
     public function getCountOfMached($forseUpdate = false) {
          $this->MakeOrUpdateFromAndToQuery($forseUpdate);
 
-        return "select count(*) from (" . $this->toQuery . " intersect " . $this->fromQuery . ") as t";
+        return "select count(*) as ct from (" . $this->toQuery . " intersect " . $this->fromQuery . ") as t";
     }
 
     public function getCountOfTotalDistinct($forseUpdate = false) {
         $this->MakeOrUpdateFromAndToQuery($forseUpdate);
 
-        return "select count(*) from (" . $this->toQuery . " union " . $this->fromQuery . ") as t";
+        return "select count(*) as ct from (" . $this->toQuery . " union " . $this->fromQuery . ") as t";
     }
 
     // source has sid, links (array of cids) and table name.
