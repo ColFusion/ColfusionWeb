@@ -5,6 +5,7 @@ require_once realpath(dirname(__FILE__)) . '/DatasetFinder.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Relationship.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Link.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Comment.php';
+require_once realpath(dirname(__FILE__)) . '/TransformationHandler.php';
 include_once realpath(dirname(__FILE__)) . '/DALUtils.php';
 
 class RelationshipDAO {
@@ -49,12 +50,12 @@ class RelationshipDAO {
             $rawLinkParts[] = $linkInfo->cl_from;
             $rawLinkParts[] = $linkInfo->cl_to;
         }
-        $usedColumnNames = DALUtils::getUsedColumnNames($rawLinkParts);
-
+        
+        $transHandler = new TransformationHandler();
         foreach ($linkInfos as $linkInfo) {
             $link = new Link();
-            $link->fromPart = DALUtils::decodeLinkPart($linkInfo->cl_from, $usedColumnNames);
-            $link->toPart = DALUtils::decodeLinkPart($linkInfo->cl_to, $usedColumnNames);
+            $link->fromPart = $transHandler->decodeTransformationInput($linkInfo->cl_from);
+            $link->toPart = $transHandler->decodeTransformationInput($linkInfo->cl_to);
             $relationship->links[] = $link;
         }
 
@@ -74,42 +75,11 @@ class RelationshipDAO {
         $this->ezSql->query($delSql);
     }
 
-    // MOVED TO DALUtils, need to delete from here.
-    // Decode cid(xxx) in link parts and return an array of used column names.
-    private function getUsedColumnNames(array $linkParts) {
-        foreach ($linkParts as $linkPart) {
-            preg_match_all('/cid\([0-9]+\)/', $linkPart, $matches);
-            foreach ($matches[0] as $match) {
-                $encodedCols[$match] = $match;
-            }
-        }
-        $encodedCols = array_keys($encodedCols);
-
-        $sql = "select cid, dname_chosen from `colfusion_dnameinfo` where 1=2";
-        foreach ($encodedCols as $encodedCol) {
-            $cid = substr($encodedCol, 4, strlen($encodedCol) - 5);
-            $sql .= " OR cid=$cid";
-        }
-
-        $colNameRows = $this->ezSql->get_results($sql);
-        foreach ($colNameRows as $colNameRow) {
-            $colNames[$colNameRow->cid] = $colNameRow->dname_chosen;
-        }
-
-        return $colNames;
+    public function getColumnInfo($cid){
+        $sql = "select * from `colfusion_dnameinfo` where cid = $cid";   
+        return $this->ezSql->get_row($sql);       
     }
-
-    // MOVED TO DALUtils, need to delete from here.
-    private function decodeLinkPart($linkPart, $usedColumnNames) {
-        preg_match_all('/cid\([0-9]+\)/', $linkPart, $matches);
-        foreach ($matches[0] as $match) {
-            $cid = substr($match, 4, strlen($match) - 5);
-            $linkPart = str_replace("cid($cid)", "$usedColumnNames[$cid]", $linkPart);
-        }
-
-        return $linkPart;
-    }
-
+      
     public function getComments($relId) {
         $sql = "SELECT confidence, comment, `when`, user_login, user_email, URV.user_id, rel_id 
             FROM  `colfusion_user_relationship_verdict` URV INNER JOIN  `colfusion_users` U ON URV.user_id = U.user_id 

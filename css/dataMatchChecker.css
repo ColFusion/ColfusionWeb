@@ -151,6 +151,13 @@
     margin-bottom: 40px;
 }
 
+/* Search input */
+.linkDataContainer label input{
+    width: 150px;
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+}
+
 .linkDataTable td, .linkDataTable th {
     border: solid 1px black;
 }

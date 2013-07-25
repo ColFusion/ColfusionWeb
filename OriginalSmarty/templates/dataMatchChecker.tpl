@@ -79,7 +79,7 @@
                 <li class="nav-header"><span style="margin-left: 15px;">Links</span></li>
                 <!-- /ko -->               
                 <li class="linkLi">
-                    <a>
+                    <a data-bind="click: $root.loadLinkData">
                         <table class="link">
                             <tr>
                                 <td data-bind="text: fromLinkPart.transInput" class="fromPart linkPart linkPartText">
@@ -96,11 +96,13 @@
             <div class="addSynonymPanel">
                 <div class="addSynonymInputWrapper">
                     Value 
-                    <input type="text" class="synonymInput fromSynonymInput"/>
+                    <input data-bind="value: synFrom" type="text" class="synonymInput fromSynonymInput"/>
                     in <span style="font-weight: bold;">From</span> part is equal to value 
-                    <input type="text" class="synonymInput toSynonymInput"/>
+                    <input data-bind="value: synTo" type="text" class="synonymInput toSynonymInput"/>
                     in <span style="font-weight: bold;">To</span> part.
-                    <button class="btn addSynonymBtn">Add</button>
+                    <button data-bind="click: saveSynonym" class="btn addSynonymBtn">Add</button>
+                    <img data-bind="visible: isAddingSynonym" src="../images/ajax-loader.gif" style="margin: -8px 0 0 5px;"/>
+                    <span data-bind="text: addingSynonymMessage" style="color:red; display: inline-block;"></span>
                 </div>
             </div>
             <div class="accordionWrapper">
@@ -113,7 +115,9 @@
                         </div>
                         <div id="diffDataCollapse" class="accordion-body collapse in">
                             <div class="accordion-inner">
-                                <div data-bind="jqueryEditable: differentValueTable" class="linkDataContainer">                                
+                                <div data-bind="jqueryEditable: differentValueFromTable" style="float:left; width: 45%;" class="linkDataContainer">                                
+                                </div>
+                                <div data-bind="jqueryEditable: differentValueToTable" style="float:right; width: 45%;" class="linkDataContainer">                                
                                 </div>
                             </div>
                         </div>

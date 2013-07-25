@@ -23,7 +23,11 @@ ko.bindingHandlers.jqueryEditable = {
         });
 
         $(element).empty().append(tableDom);
-        $(element).children('table').dataTable().makeEditable();
+        $(element).children('table').dataTable({
+            "bLengthChange": false,
+            "bSort": false,
+            "iDisplayLength" : 20
+        }).makeEditable();
     }
 };
 
@@ -36,20 +40,70 @@ function DataMatchCheckerViewModel() {
     self.toDataset = ko.observable();
     self.links = ko.observableArray();
 
-    self.differentValueTable = ko.observable(getStaticDataTable());
+    self.currentLink = ko.observable();
+    self.differentValueFromTable = ko.observable(getStaticDataTable());
+    self.differentValueToTable = ko.observable(getStaticDataTable());
     self.sameValueTable = ko.observable(getStaticDataTable());
     self.partlyValueTable = ko.observable(getStaticDataTable());
 
-    self.loadLinkData = function() {
+    self.synFrom = ko.observable();
+    self.synTo = ko.observable();
+    self.isAddingSynonym = ko.observable(false);
+    self.addingSynonymMessage = ko.observable();
 
+    self.loadLinkData = function() {
+        console.log(this);
+        self.currentLink(this);
     };
+
+    self.saveSynonym = function() {
+        var data = {
+            fromTransInput: self.currentLink().fromLinkPart.transInput,
+            toTransInput: self.currentLink().toLinkPart.transInput,
+            synFrom: self.synFrom(),
+            synTo: self.synTo(),
+            sidFrom: self.fromDataset().sid,
+            sidTo: self.toDataset().sid,
+            tableFrom: self.fromDataset().chosenTableName,
+            tableTo: self.toDataset().chosenTableName
+        };
+
+        self.isAddingSynonym(true);
+        self.addingSynonymMessage('');
+        $.ajax({
+            url: 'addSynonym.php',
+            type: 'post',
+            dataType: 'json',
+            data: data,
+            success: function(jsonResponse) {
+                if (jsonResponse.isSuccessful) {
+                    updateTables(self.synFrom(), self.synTo());
+                    self.synFrom('');
+                    self.synTo('');
+                } else {
+                    self.addingSynonymMessage('Some errors occur when adding the values');
+                }
+            }
+        }).error(function() {
+            self.addingSynonymMessage('Some errors occur when adding the values');
+        }).always(function() {
+            self.isAddingSynonym(false);
+        });
+
+        console.log(data);
+    };
+
+    // TODO: remove values on diff table and add values to smae table.
+    function updateTables() {
+
+    }
 }
 
 function getStaticDataTable() {
     var tableName = "Static table data";
     var cols = ["fromColumnData", "toColumnData"];
     var rows = [];
-    for (var i = 1; i <= 10; i++) {
+    for (var i = 1; i <= 50; i++) {
         rows.push(["fromData" + i, "toData" + i]);
     }
 
