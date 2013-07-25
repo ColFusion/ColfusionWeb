@@ -1,7 +1,13 @@
 <?php
 
+
 include_once(realpath(dirname(__FILE__)) . "/FromFileQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
+require_once realpath(dirname(__FILE__)) . '/../TransformationHandler.php';
+
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+ini_set('display_errors', 1);
+
 
 class CheckdataMatchingQueryMaker {
 
@@ -24,24 +30,14 @@ class CheckdataMatchingQueryMaker {
     }
 
     function prepareOneQuery($source) {
-        if (DALUtils::GetSourceType($source->sid) == "database")
+
+        $columns = $this->GetColumnsFromSource($source);
+
+        if (DALUtils::GetSourceType($source->sid) == "database"){
+
             return "select from database";
+        }
         else {
-
-
-            $usedColumnNames = DALUtils::getUsedColumnNames($source->links);
-
-            $columns = array();
-
-            foreach ($source->links as $key=>$link) {
-                $column = new stdClass;
-                //TODO: fix, currently only one column, no transformation is supported.
-                $ar = array("cid(", ")");                
-                $column->cid = str_replace($ar, "", $link);
-                $column->columnName = DALUtils::decodeLinkPart($link, $usedColumnNames);
-
-                $columns[] = $column;
-            }
 
             return FromFileQueryMaker::MakeQueryToRotateTable($columns);            
         }
@@ -57,6 +53,39 @@ class CheckdataMatchingQueryMaker {
         return $this->fromQuery . " intersect " . $this->toQuery;
     }
 
+    // source has sid, links (array of cids) and table name.
+    function GetColumnsFromSource($source) {
+        // get string names of columns which are involved in the links
+   
+        $transHandler = new TransformationHandler();
+
+        $i = 0;
+
+        $cidsArray = array();
+        $columnNamesArray = array();
+        $columnNameAndAliasArray = array();
+
+        foreach ($source->links as $key=>$link) {
+            //TODO: fix, currently only one column, no transformation is supported.
+            $ar = array("cid(", ")");                
+            $cidsArray[] = str_replace($ar, "", $link);
+            $columnName = $transHandler->decodeTransformationInput($link); // DALUtils::decodeLinkPart($link, $usedColumnNames);
+            $columnNamesArray[] = "[" . $columnName . "]";
+            $columnAlias = "column$i";
+
+            if (isset($columnAlias))
+                $columnNameAndAliasArray[] = "[" . $columnName . "] as '" . $columnAlias . "'";
+            else
+                $columnNameAndAliasArray[] = "[" . $columnName . "]";
+        }
+
+        $result = new stdClass;
+        $result->cids = implode(",", array_values($cidsArray));
+        $result->columnNames = implode(",", array_values($columnNamesArray));
+        $result->columnNameAndAlias = implode(",", array_values($columnNameAndAliasArray));
+
+        return $result; 
+    }
 
 
 /*

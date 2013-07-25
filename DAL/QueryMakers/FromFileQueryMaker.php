@@ -2,6 +2,10 @@
 
 include_once(realpath(dirname(__FILE__)) . "/../../config.php");
 
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+ini_set('display_errors', 1);
+
+
 class FromFileQueryMaker {
 
     
@@ -34,24 +38,9 @@ class FromFileQueryMaker {
     // columnsToSelect - array of following objects {cid: cid,columnName: columnName, columnAlias: columnAlias}
     public static function MakeQueryToRotateTable($columnsToSelect) {
 
-        $cidsArray = array();
-        $columnNamesArray = array();
-        $columnNameAndAliasArray = array();
-
-        foreach ($columnsToSelect as $key => $value) { 
-            $cidsArray[] = $value->cid;
-            $columnNamesArray[] = "[" . $value->columnName . "]";
-
-            if (isset($value->columnAlias))
-                $columnNameAndAliasArray[] = "[" . $value->columnName . "] as '" . $value->columnAlias . "'";
-            else
-                $columnNameAndAliasArray[] = "[" . $value->columnName . "]";
-        }
-
-        $cids = implode(",", array_values($cidsArray));
-        $columnNames = implode(",", array_values($columnNamesArray));
-        $columnNameAndAlias = implode(",", array_values($columnNameAndAliasArray));
-
+        $cids = $columnsToSelect->cids;
+        $columnNameAndAlias = $columnsToSelect->columnNameAndAlias;
+        $columnNames = $columnsToSelect->columnNames;
 
         $linkedServerName = my_pligg_base_no_slash;
 

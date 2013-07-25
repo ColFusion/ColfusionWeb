@@ -46,42 +46,7 @@ class DALUtils {
     }
 
 
-    // Decode cid(xxx) in link parts and return an array of used column names.
-    public static function  getUsedColumnNames(array $linkParts) {
-        global $db;
-
-        foreach ($linkParts as $linkPart) {
-            preg_match_all('/cid\([0-9]+\)/', $linkPart, $matches);
-            foreach ($matches[0] as $match) {
-                $encodedCols[$match] = $match;
-            }
-        }
-        $encodedCols = array_keys($encodedCols);
-
-        $sql = "select cid, dname_chosen from `colfusion_dnameinfo` where 1=2";
-        foreach ($encodedCols as $encodedCol) {
-            $cid = substr($encodedCol, 4, strlen($encodedCol) - 5);
-            $sql .= " OR cid=$cid";
-        }
-
-        
-        $colNameRows = $db->get_results($sql);
-        foreach ($colNameRows as $colNameRow) {
-            $colNames[$colNameRow->cid] = $colNameRow->dname_chosen;
-        }
-
-        return $colNames;
-    }
-
-    public static function decodeLinkPart($linkPart, $usedColumnNames) {
-        preg_match_all('/cid\([0-9]+\)/', $linkPart, $matches);
-        foreach ($matches[0] as $match) {
-            $cid = substr($match, 4, strlen($match) - 5);
-            $linkPart = str_replace("cid($cid)", "$usedColumnNames[$cid]", $linkPart);
-        }
-
-        return $linkPart;
-    }
+   
 }
 
 ?>

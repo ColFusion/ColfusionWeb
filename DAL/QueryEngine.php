@@ -1,12 +1,15 @@
 <?php
 
 
+
+
 //include_once('../config.php');
 include_once(realpath(dirname(__FILE__)) . "/../config.php");
 include_once('SimpleQuery.php');
 include_once('ExternalDBHandlers/ExternalDBs.php');
 
 include_once(realpath(dirname(__FILE__)) . '/QueryMakers/CheckDataMatchingQueryMaker.php');
+
 include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 
@@ -313,24 +316,14 @@ EOQ;
 
         $queryToExecute = $checkDataMatchingQueryMaker->getIntersectionQuery();
 
-        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+   //     $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
         
-        echo json_encode($MSSQLHandler->ExecuteQuery($queryToExecute));
+        $result = new stdClass;
+        $result->query = $queryToExecute;
+   //     $result->data = $MSSQLHandler->ExecuteQuery($queryToExecute);
 
-//        if ($this->GetSourceType($from["sid"]) == "database") {
-//            $externalDBCredentials = $this->GetExternalDBCredentialsBySid($sid);
+        return $result;
 
-//            //TODO: implement
-//            $resultFrom = ExternalDBs::GetTotalNumberTuplesInTableBySidAndName($table_name, $externalDBCredentials);
-//        } else {
-//            $resultFrom = $this->GetDistinctValueForGivenColumnsFromFromFile($sid, $columns);
-//        }
-
-//        if ($this->GetSourceType($to["sid"]) == "database") {
-//            $resultTo = $this->GetDistinctValueForGivenColumnsFromExternalDB($sid, $columns);
-//        } else {
-//            $resultTo = $this->GetDistinctValueForGivenColumnsFromFromFile($sid, $columns);
-//        }
     }
 
 }

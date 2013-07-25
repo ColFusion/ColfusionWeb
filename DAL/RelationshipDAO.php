@@ -6,7 +6,6 @@ require_once realpath(dirname(__FILE__)) . '/../datasetModel/Relationship.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Link.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Comment.php';
 require_once realpath(dirname(__FILE__)) . '/TransformationHandler.php';
-include_once realpath(dirname(__FILE__)) . '/DALUtils.php';
 
 class RelationshipDAO {
 
