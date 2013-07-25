@@ -20,8 +20,7 @@ class FromLinkedServerQueryMaker {
         $cids = $columnsToSelect->cids;
         $columnNameAndAlias = $columnsToSelect->columnNameAndAlias;
         $columnNames = $columnsToSelect->columnNames;
-
-        $linkedServerName = my_pligg_base_no_slash;
+        
         $tableName = $source->tableName;
 
         $query = <<<EOQ
