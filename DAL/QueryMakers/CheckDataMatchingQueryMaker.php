@@ -4,7 +4,7 @@
 include_once(realpath(dirname(__FILE__)) . "/FromFileQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/FromLinkedServerQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
-require_once realpath(dirname(__FILE__)) . '/../TransformationHandler.php';
+include_once(realpath(dirname(__FILE__)) . '/../TransformationHandler.php');
 
 error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 ini_set('display_errors', 1);
