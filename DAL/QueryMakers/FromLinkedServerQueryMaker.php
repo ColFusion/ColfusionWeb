@@ -15,7 +15,7 @@ class FromLinkedServerQueryMaker {
 
         $query = "select * from colfusion_sourceinfo_DB where sid = " . $source->sid;
 
-        $linkedServerName = $db->get_row($sql)->source_database;
+        $linkedServerName = $db->get_row($query)->source_database;
 
         $cids = $columnsToSelect->cids;
         $columnNameAndAlias = $columnsToSelect->columnNameAndAlias;
@@ -25,8 +25,7 @@ class FromLinkedServerQueryMaker {
 
         $query = <<<EOQ
         select distinct $columnNameAndAlias
-		from [$linkedServerName]...$tableName
-		
+		from [$linkedServerName]...$tableName		
 EOQ;
 
         return $query;
