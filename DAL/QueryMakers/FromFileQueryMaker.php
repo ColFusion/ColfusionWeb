@@ -61,7 +61,7 @@ class FromFileQueryMaker {
 		(
 			select *
 			from
-    			(select rownum, Dname, Value from [$linkedServerName]...colfusion_temporary where cid in ($cids) as T
+    			(select rownum, Dname, Value from [$linkedServerName]...colfusion_temporary where cid in ($cids)) as T
 				 pivot
 				(
 					max(T.VALUE)
