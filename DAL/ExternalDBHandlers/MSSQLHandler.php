@@ -133,9 +133,9 @@ EOQ;
 
         try {
 
-            $mssql->setAttribute(pdo::ATTR_ERRMODE, pdo:: ERRMODE_EXCEPTION);
+            $pdo->setAttribute(pdo::ATTR_ERRMODE, pdo:: ERRMODE_EXCEPTION);
 
-            $stmt = $mssql->prepare($query);
+            $stmt = $pdo->prepare($query);
 
             $stmt->setFetchMode(PDO::FETCH_ASSOC);
 
