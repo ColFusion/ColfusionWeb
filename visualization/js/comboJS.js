@@ -321,11 +321,10 @@ function addComboChart() {
 		success: function(JSON_Response){
 			JSON_Response = jQuery.parseJSON(JSON_Response);
 			var queryResult = JSON_Response['queryResult'];
-			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"comboResult" + gadgetID)
-
-			CHARTS[JSON_Response['cid']].chartData = drawCombo(queryResult,'comboResult'+gadgetID);
+			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"comboResult" + gadgetID);
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+			CHARTS[JSON_Response['cid']].chartData = drawCombo(queryResult,'comboResult'+gadgetID);
 			$('#addCombo').modal('hide');
 		}
 		})
@@ -335,9 +334,10 @@ function loadComboChart(sourceData) {
 	var gadgetID = createNewComboGadget();
 	var queryResult = sourceData['queryResult'];
 	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"comboResult" + gadgetID)
+	$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 	CHARTS[sourceData['cid']].chartData =  drawCombo(queryResult,'comboResult'+ gadgetID);
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
-	$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
+	
 }
 //Update the chart
 function updateComboResult(cid) {

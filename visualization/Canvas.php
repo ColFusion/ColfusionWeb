@@ -11,6 +11,7 @@ class Canvas{
     //public $version;
     public $charts = array();
     public $statusCode;
+    private $isSave = false;
     
     function __construct($_vid, $_name, $_owner, $_note, $_mdate, $_cdate, $_privilege, $_authorization, $_charts){
         $this->vid = $_vid;
@@ -22,6 +23,12 @@ class Canvas{
         $this->privilege = $_privilege;
         $this->authorization = $_authorization;
         $this->charts = $_charts;
+    }
+    public function setIsSave($b){
+        $this->isSave = $b;
+    }
+    public function getIsSave(){
+        return $this->isSave;
     }
     public static function createNewCanvas($_name, $_owner, $_note, $_privilege){
         require_once('../config.php');
@@ -62,7 +69,9 @@ class Canvas{
             $da = json_decode($datainfo);
             $chartArr[$obj->cid] = ChartFactory::openChart($obj->cid,$obj->name,$obj->vid,$obj->type,$obj->left, $obj->top,$obj->depth,$obj->height,$obj->width,$da,$obj->note);
         }
-        return new Canvas($id, $_canvas->name, $_canvas->user_id, $_canvas->note, $_canvas->mdate, $_canvas->cdate, $_canvas->privilege, $_authorization, $chartArr);
+        $can =new Canvas($id, $_canvas->name, $_canvas->user_id, $_canvas->note, $_canvas->mdate, $_canvas->cdate, $_canvas->privilege, $_authorization, $chartArr);
+        $can->setIsSave(true);
+        return $can;
     }
     function _createFromDbStr($dbStr){
         
@@ -109,8 +118,8 @@ class Canvas{
         global $current_user;
         global $db;
         if($this->authorization==1){
-            echo 'can not access to save.';
-            return;
+            //echo 'can not access to save.';
+            return null;
         }
         if(substr($this->vid,0,10)=='TempCanvas'){
             $sql = "insert into colfusion_canvases(`name`,`user_id`,`note`,`privilege`) values('".$this->name."',".$current_user->user_id.",'".$this->note."',".$this->privilege.")";
@@ -158,6 +167,7 @@ class Canvas{
                 }
             }
         }
+        $this->setIsSave(true);
         return $rst;
     }
     function dropCanvas(){
@@ -182,22 +192,33 @@ class Canvas{
         
     }
     function shareCanvas($shareTo,$authorization){
-        if($this->authorization!=0){
+        if($this->authorization!=0 || $authorization == '0'){
             return null;
         }else{
             require_once('../config.php');
             global $db;
-            $sql = "select * from cofulsion_shares where vid =".$this->vid." user_id = ".$shareTo;
+            $sql = "select * from colfusion_shares where vid =".$this->vid." AND user_id = ".$shareTo;
             $rst = $db->get_row($sql);
             if($rst == null){
-                $sql = 'insert into colfusion_shares(vid, user_id,) values('.$this->vid.','.$shareTo.','.$authorization.')';
-                $db->query($sql);
+                $sql = 'insert into colfusion_shares(vid, user_id,privilege) values('.$this->vid.','.$shareTo.','.$authorization.')';
+                return $db->query($sql);
             }else{
                 if($rst->privilege == 0){
-                    return 'You cannot share ownnership';
+                    return null;
                 }else{
-                    $sql = 'update colfusion_shares where vid ='.$this->vid.' user_id = '.$shareTo.' set privilege = '.$authorization;
-                    $db->query($sql);
+                    $privilege = $rst->privilege;
+                    if($privilege == $authorization){
+                        return 1;
+                    }else{
+                        $sql = 'update colfusion_shares set privilege = '.$authorization.' where vid ='.$this->vid.' AND user_id = '.$shareTo;
+                        if($db->query($sql)){
+                            return 1;
+                        }
+                        else{
+                            return null;
+                        }
+                    }
+                   
                 }
             }
         }

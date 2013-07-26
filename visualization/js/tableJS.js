@@ -326,7 +326,7 @@ function createNewTableGadget(){
 		var gadgetID = $(this).attr('id');
 		var chart = CHARTS[cid];
 		$("#tableResult" + gadgetID).height($("#" + gadgetID).height() - 100);
-		refreshTable(chart.chartData,chart.queryResult,"pieResult"+gadgetID);
+		refreshTable(chart.chartData,chart.queryResult,"tableResult"+gadgetID);
 	})
 	var dropdown = "<li class='view' id='view" + gadgetID + "'><a href='#' data-toggle='modal'>'table' "+gadgetID+"</a></li>";
 	$("#chartview").append(dropdown);
@@ -387,11 +387,11 @@ function refreshTable(data, sourceData,gadgetID) {
 	var googleTable = {
 	    'headerRow': 'header-row',
 	    'tableRow': 'table-row',
-	    'oddTableRow': 'odd-table-row-' + color,
-	    'selectedTableRow': 'selected-table-row-' + color,
+	    'oddTableRow': 'odd-table-row-' + sourceData['color'],
+	    'selectedTableRow': 'selected-table-row-' + sourceData['color'],
 	    'hoverTableRow': 'hover-table-row',
-	    'headerCell': 'header-cell-' + color,
-	    'tableCell': 'table-cell-' + color,
+	    'headerCell': 'header-cell-' + sourceData['color'],
+	    'tableCell': 'table-cell-' + sourceData['color'],
 	    'rowNumberCell': 'row-number-cell'};
 	var options = {'showRowNumber': false, 'allowHtml': true, 'cssClassNames': googleTable};
 	var table = new google.visualization.Table(document.getElementById(gadgetID));

@@ -112,7 +112,7 @@ $chart_columns[] = "Location";
         <link rel="stylesheet" href="<?php echo $my_pligg_base; ?>/css/typeahead.js-bootstrap.css">
         <link rel="stylesheet" href="<?php echo $my_pligg_base; ?>/css/addRelationship.css">
 
-        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript" src="js/jsapi"></script>
         <script type="text/javascript" src="js/tableJS.js"></script>
 
         <!-- styles and functions for geo chart -->
@@ -257,23 +257,45 @@ $chart_columns[] = "Location";
             <div class="modal-body">
                 <table>
                     <tr><td>Name : </td><td><input type="text" class="span2" id="createCanvasName"></td></tr>
+		        <tr><td>Comment: </td><td><textarea rows="4" style="width: 400px"></textarea></td></tr>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" id='motionedit-close' aria-hidden="true">Close</button>
+                <button class="btn btn-primary" id="new-canvas-btn" onclick="createNewCanvas()">Create</button>
+            </div>
+        </div>
+
+	
+	<!--Canvas Setting-->
+	<div id="canvas-setting" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="motionAddModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+                <h3 id="motionAddModalLabel">Canvas Setting</h3>
+            </div>
+            <div class="modal-body">
+                <table>
+                    <tr><td>Name : </td><td><input type="text" class="span2" id="canvas-setting-name"></td></tr>
+		    <tr id="access-filed1"><td>Access: </td><td><p><input type="radio" value="public" name="access-type" style="margin-right: 10px"/>Public<input type="radio" style="margin-left: 30px;margin-right: 10px"value="public" name="access-type"/>Private</p></td></tr>
+		    <tr id="access-field2"><td></td><td><input type="text" id="access-link" style="margin-right: 15px;width: 300px"/><button class="btn" id="copy-link" >Copy</button></td></tr>
                     <tr><td>Comment: </td><td><textarea rows="4" style="width: 400px"></textarea></td></tr>
                 </table>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" id='motionedit-close' aria-hidden="true">Close</button>
-                <button class="btn btn-primary" id="addMotionSave" onclick="createNewCanvas()">Create</button>
+                <button class="btn btn-primary" id="canvas-setting-btn" onclick="">Save</button>
             </div>
         </div>
-
-
-
-        <div id="shareWith" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
-            <div class="modal-header">
+		
+	</div>
+	<!--Share Canvas-->
+        <div id="shareWith" class="modal hide fade " tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
+            <input type="hidden" id="forShare"/>
+	    <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
                 <h3 id="tableAddModalLabel">Share Current Canvas : </h3>
             </div>
-            <div class="modal-body">
+            <div class="modal-body info-modal">
                 <div class="seachArea1"> 
                     <label class = "tabContentTitle" style = "float:left">Enter The Person By Name Or By Email:</label>
                     <input id = "NameEmail" type="text"  name="searchText" style = "width:auto"></input>
@@ -281,24 +303,20 @@ $chart_columns[] = "Location";
                 <div class="seachArea2"> 
                     <label class = "tabContentTitle" style = "float:left">Set The Authorization:</label>
                     <select id = "autSele">
-                        <option>Readable</option>
-                        <option>Modifiable</option>
+                        <option value="1">Readable</option>
+                        <option value="2">Modifiable</option>
                     </select>
                 </div>
-
-
-            </div>
-
-            <div class="tab-pane" id="Chart">
-
-
-            </div>
-            <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                <button class="btn btn-primary" id="ShareCanvasBut" onclick="shareCanvases()">Save changes</button>
-            </div>
+		<div class="modal-info" id="share-info"><p></p></div>
+		</div>
+        <div class="tab-pane" id="Chart">
         </div>
-
+        <div class="modal-footer">
+	        <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                <button class="btn btn-primary" id="ShareCanvasBut" onclick="shareCanvas()">Share</button>
+        </div>
+        </div>
+	
 
         <!-- Chart Display Modal-->
         <div id="openchart" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">

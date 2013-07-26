@@ -90,6 +90,7 @@ function openCanvas(vid){
 				
 				var _data = jQuery.parseJSON(data);
 				CANVAS = new Canvas(_data['vid'],_data['name'],_data['privilege'],_data['authorization'],_data['mdate'],_data['cdate'],_data['note']);
+				CANVAS.isSave = true;
 				$('#chart-dropdown').hide();
 				for (var i in _data['charts']){
 					

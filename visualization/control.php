@@ -7,7 +7,6 @@ include_once('../'.mnminclude.'user.php');
 include_once('../'.mnminclude.'smartyvariables.php');
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
-
 require_once("Chart.php");
 require_once("Canvas.php");
 
@@ -23,7 +22,6 @@ require_once("charts/TableChart.php");
 require_once("charts/ComboChart.php");
 require_once("charts/MotionChart.php");
 require_once("charts/MapChart.php");
-
 
 
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
@@ -105,6 +103,7 @@ function openCanvas(){
     $rst['mdate'] = $canvas->mdate;
     $rst['cdate'] = $canvas->cdate;
     $rst['note'] = $canvas->note;
+    $rst['isSave'] = $canvas->getIsSave();
     echo json_encode($rst);
     //var_dump($canvas);
     
@@ -178,6 +177,7 @@ function createNewCanvas(){
     require_once("Canvas.php");
     require_once("Chart.php");
     global $current_user;
+    
     $canvas = Canvas::createNewCanvas($_REQUEST['name'], $userid = $current_user->user_id, $_REQUEST['note'] ,0);
     $_SESSION['Canvases'][$canvas->vid] = serialize($canvas);
     $rst = array();
@@ -200,6 +200,7 @@ function createNewCanvas(){
     $rst['mdate'] = $canvas->mdate;
     $rst['cdate'] = $canvas->cdate;
     $rst['note'] = $canvas->note;
+    $rst['isSave'] = $canvas->getIsSave();
     echo json_encode($rst);
 }
 function deleteCanvas(){
@@ -226,18 +227,47 @@ function deleteCanvas(){
     echo json_encode($rst);
 }
 function shareCanvas(){
+    global $db;
     $rst = array();
     $vid = $_REQUEST['vid'];
-    if($_SESSION['Canvases'][$vid] !=null){
-        $canvas = unserialize($_SESSION['Canvases'][$_REQUEST['vid']]);
-        $rst = $canvas->shareCanvas($_REQUEST['shareTo'],$_REQUEST['authorization']);
+    $shareTo = $_REQUEST['shareTo'];
+    $sql = "";
+    if(substr_count($shareTo,"@")==0){
+        $sql = "select user_id from colfusion_users where user_login ='".$shareTo."'";
     }else{
-        $canvas = Canvas::openCanvas($_REQUEST['vid']);
-        if($canvas==null){$rst['status'] = 'fail';$rst['result'] = 'No permit or no file exist.'; return;}
+        $sql = "select user_id from colfusion_users where user_email ='".$shareTo."'";
+    }
+    $r = $db->get_row($sql);
+    $user_id;
+    if(is_null($r)){
+        $rst['status'] = 0;
+        $rst['msg'] = "Can't find the user.";
+    }else{
+        $user_id = $r->user_id;
+        $canvas;
+        if($_SESSION['Canvases'][$vid] !=null){
+            $canvas = unserialize($_SESSION['Canvases'][$_REQUEST['vid']]);
+            //$rst = $canvas->shareCanvas($user_id,$_REQUEST['authorization']);
+        }else{
+            $canvas = Canvas::openCanvas($_REQUEST['vid']);
+            
+        }
+        if($canvas==null){$rst['status'] = '0';$rst['msg'] = 'No permit or no canvas exists.';}
         else{
-            $canvas->shareCanvas($_REQUEST['shareTo'],$_REQUEST['authorization']);
+            if(is_null($canvas->shareCanvas($user_id,$_REQUEST['authorization']))){
+                $rst['status'] = 0;
+                $rst['msg'] = 'Unable to share this canvas to '.$shareTo;
+            }
+            else{
+                $rst['status'] = 1;
+            }
         }
     }
+    echo json_encode($rst);
+}
+//share multiple canvases at one time.
+function shareCanvases(){
+
 }
 function updateChartResult(){
     $canvas = unserialize($_SESSION['Canvases'][$_REQUEST['vid']]);

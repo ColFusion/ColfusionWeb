@@ -367,3 +367,21 @@ body {
 div[name="mapDivs"] img{
 	max-width:inherit;
 }
+.disabled-btn{
+	background-color: rgb(110, 176, 110);
+}
+.modal-info{
+	height: 20px;
+}
+.info-modal{
+	padding-bottom: 0px;
+}
+.info-err{
+	color:red;
+}
+.info-warning{
+	color:yellow;
+}
+.info-success{
+	color:green;
+}

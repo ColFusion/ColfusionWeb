@@ -20,6 +20,7 @@ function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
 	this.note = note;
 	this.selectedChart = null;
 	this.stories = new Array();
+	this.isSave = false;
 }
 //use sid to get story name and tables in the story
 Canvas.prototype.addStory = function(sid,sname,callback) {
@@ -255,10 +256,34 @@ function CurCanId(id){
 	$("#shareWith").attr("name",id);
 }
 
-function shareCanvases(){
-	var vid = $("#shareWith").attr("name");
+function openShareModal(vid) {
+	$("#forShare").val(vid);
+	$('#shareWith').modal("show");
+}
+function shareCanvas(){
+	var vid = $("#forShare").val();
 	var authorization = $("#autSele").val();
 	var NameEmail = $("#NameEmail").val();
+	$.ajax({
+		type: 'POST',
+		url: 'control.php',
+		data: {
+			action: 'shareCanvas',
+			vid: vid,
+			authorization: authorization,
+			shareTo:NameEmail
+		},
+		success:function(JSON_Response) {
+			JSON_Response = jQuery.parseJSON(JSON_Response);
+			if (JSON_Response['status'] == '0') {
+				$('#share-info').text(JSON_Response['msg']);
+				$('#share-info').addClass('info-err');
+			}else{
+				$("#shareWith").modal('hide');
+			}
+			
+		}
+		})
 
 }
 function showChart(type){
@@ -734,6 +759,17 @@ $(document).ready(function() {
 			}
 			$(this).find('.story-list').change();
 		}
+	})
+	//When canvas setting modal show
+	$("#canvas-setting").on("show",function(){
+		$("#canvas-setting-name").val(CANVAS.sname);	
+		
+	})
+	//When share modal shows
+	$('#shareWith').on('hide',function(e) {
+		$('#NameEmail').val("");
+		$("#forShare").val("");
+		$("#share-info").text('');
 	})
 	$('.story-list').change(function() {
 		var sid = $(this).val();

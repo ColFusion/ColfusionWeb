@@ -8,6 +8,7 @@ include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
 
+
 class ColumnChart extends Chart{
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);

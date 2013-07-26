@@ -125,6 +125,7 @@ function saveCanvas() {
                     }
                 }
             })
+            CANVAS.isSave = true;
             }
         })
 }

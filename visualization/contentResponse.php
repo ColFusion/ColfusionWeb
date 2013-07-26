@@ -83,7 +83,7 @@ echo '
 for ($id = 0;$id<count($result);$id++){
 	
 	$row=$result[$id];
-	echo '<tr name = "'.$row->name.'" style="color:#0088CC" id = "'.$row->vid.'**'.$row->mdate.'" class = "turnBlue authorizationLevel'.$row->privilege.'"><td  class="tableadjust gridEffect" >'.$row->name.'</td><td class="tableadjust gridEffect">'.$row->user_login.'</td><td class="tableadjust gridEffect">'.$privilege[$row->privilege].$insertIcon.'</td><td class="tableadjust">'.$row->mdate.'</td><td><input name="deleteItem" type="checkbox"></td></tr>';
+	echo '<tr name = "'.$row->name.'" style="color:#0088CC" id = "'.$row->vid.'**'.$row->mdate.'" class = "turnBlue authorizationLevel'.$row->privilege.'"><td  class="tableadjust gridEffect" >'.$row->name.'</td><td class="tableadjust gridEffect">'.$row->user_login.'</td><td class="tableadjust gridEffect">'.$privilege[$row->privilege].$insertIcon.'<i class="icon-share" style="margin-left:20px" onclick="openShareModal('.$row->vid.')"></i></td><td class="tableadjust">'.$row->mdate.'</td><td><input name="deleteItem" type="checkbox"></td></tr>';
 }
 echo '</tbody></table>';
 mysql_close($con);
