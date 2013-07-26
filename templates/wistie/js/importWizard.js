@@ -1,17 +1,7 @@
 var importWizard = (function() {
     var importWizard = {};
 
-    /* Variables */
-
-    var sourceType = "";
-
     importWizard.loadingGif = "";
-
-    /*************/
-
-    /* Functions */
-
-
     importWizard.Init = function() {
         wizardFromFile.Init();
 
@@ -99,10 +89,8 @@ var importWizard = (function() {
             $('#h4').hide();
         });
 
-        $("#toggleAllColumns").click(function() {
-            $('#toggleAllColumns').change(function() {
-                $('input[name="columns[]"]').prop('checked', this.checked);
-            });
+        $('#toggleAllColumns').change(function() {
+            $('input[name="columns[]"]').prop('checked', this.checked);
         });
 
         $("#done").click(function() {
@@ -151,8 +139,8 @@ var importWizard = (function() {
         }
     };
 
-    importWizard.checkToEnableNextButtonOnSchemaMatchinStep = function() {       
-            wizard.enableNextButton();        
+    importWizard.checkToEnableNextButtonOnSchemaMatchinStep = function() {
+        wizard.enableNextButton();
     };
 
     importWizard.getSchemaMatchingUserInputs = function() {
@@ -421,19 +409,19 @@ var importWizard = (function() {
             wizard.disableNextButton();
 
             $('#loadingProgressContainer').show();
-            wizardFromFile.createKtrFiles().done(function() {            
+            wizardFromFile.createKtrFiles().done(function() {
                 wizardFromFile.getFileSources().done(function(jsonResponse) {
                     var filenames = [];
                     for (var i = 0; i < jsonResponse.data.length; i++) {
                         var fileSource = jsonResponse.data[i];
-                        filenames.push(fileSource.filename);                       
+                        filenames.push(fileSource.filename);
                     }
                     wizardFromFile.showExcelFile(filenames);
                 }).done(function() {
                     $('#loadingProgressContainer').hide();
                     $("#displayOptoinsStepCardFromFile").show();
                     wizard.enableNextButton();
-                });               
+                });
             }).fail(function() {
                 $('#loadingProgressContainer').hide();
             });

@@ -207,7 +207,7 @@ function addSheetSettings($sheetsRange, $dataSource_filePath, $sid) {
     $sheets = array($arr_sheet_name, $arr_start_row, $arr_start_column);
 
     //check the headers from different sheets
-    if (isReloadNeeded($arr_start_row)) {
+    if (isReloadNeeded($filename, $arr_start_row)) {
         $process = new MatchSchemaExcelProcessor($dataSource_filePath, $sheetsRange);
     } else {
         $process = unserialize($_SESSION["excelPreview_$sid"][pathinfo($dataSource_filePath, PATHINFO_BASENAME)]);
@@ -335,11 +335,11 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
     UtilsForWizard::processDataMatchingUserInputsWithTableNameStoreDB($sid, $_POST["dataMatchingUserInputs"]);
 }
 
-function isReloadNeeded($headerRows) {
+function isReloadNeeded($filename, $headerRows) {
     global $sid;
-    if (isset($_SESSION["excelPreviewPage_$sid"], $_SESSION["excelPreviewRowsPerPage_$sid"])) {
-        $loadedPage = $_SESSION["excelPreviewPage_$sid"];
-        $perPage = $_SESSION["excelPreviewRowsPerPage_$sid"];
+    if (isset($_SESSION["excelPreviewPage_$sid"][$filename], $_SESSION["excelPreviewRowsPerPage_$sid"][$filename])) {
+        $loadedPage = $_SESSION["excelPreviewPage_$sid"][$filename];
+        $perPage = $_SESSION["excelPreviewRowsPerPage_$sid"][$filename];
         $isReloadNeeded = false;
         foreach ($headerRows as $headerRow) {
             $isReloadNeeded = $isReloadNeeded || !(((int)$headerRow > ((int)$loadedPage - 1) * (int)$perPage) && ((int)$headerRow <= (int)$loadedPage * (int)$perPage));

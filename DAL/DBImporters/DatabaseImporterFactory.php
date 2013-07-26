@@ -1,6 +1,7 @@
 <?php
 
 require_once realpath(dirname(__FILE__)) . '/MySQLImporter.php';
+require_once realpath(dirname(__FILE__)) . '/MSSQLImporter.php';
 require_once realpath(dirname(__FILE__)) . '/PostgreSQLImporter.php';
 require_once realpath(dirname(__FILE__)) . '/OracleImporter.php';
 

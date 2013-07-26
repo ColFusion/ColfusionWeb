@@ -10,6 +10,7 @@
             </li>
         </ul>         
         <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
+        <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
         <div data-bind="with: currentTable">
             <div id="dataPreviewTableWrapper" data-bind="makeHorizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
                 <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
@@ -26,7 +27,7 @@
             <div id="previewTableNavigations">  
                 <div style="display: inline-block;margin-right: 4px;" id="dataPreviewLoadingIcon">
                     <img data-bind="visible: $root.isLoading" src="images/ajax-loader.gif"/>
-                </div>
+                </div>               
                 <i class="icon-arrow-left" id="prevBtn" data-bind="visible: currentPage() > 1, click: $root.goToPreviousPage" title="Previous Page"></i>
                 <i class="icon-arrow-right" id="nextBtn" data-bind="visible: currentPage() < totalPage(), click: $root.goToNextPage" title="Next Page"></i>              
             </div>            

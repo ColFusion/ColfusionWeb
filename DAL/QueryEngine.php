@@ -1,8 +1,5 @@
 <?php
 
-
-
-
 //include_once('../config.php');
 include_once(realpath(dirname(__FILE__)) . "/../config.php");
 include_once('SimpleQuery.php');
@@ -15,8 +12,7 @@ include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 include_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
 
 error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-ini_set('display_errors', 1);
-
+ini_set('display_errors', 'OFF');
 
 class QueryEngine {
 
@@ -32,18 +28,13 @@ class QueryEngine {
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function doQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
-    	
-    	if (count($from) == 1) { // then we don't need to do any joins.
-    		   		    		
-    		return $this->prepareAndRunQuery($select, $from[0], $where, $groupby, $perPage, $pageNo);
-    			
-    	}
-    	else { // need to do joins
-    		// TODO: implement
-    		
-    	}
-    }
 
+        if (count($from) == 1) { // then we don't need to do any joins.
+            return $this->prepareAndRunQuery($select, $from[0], $where, $groupby, $perPage, $pageNo);
+        } else { // need to do joins
+            // TODO: implement
+        }
+    }
 
     // $from is excepcted to be sid here.
     public function doQueryOld($select, $from, $where, $groupby, $limit) {
@@ -113,7 +104,7 @@ class QueryEngine {
             }
         }
 
-        return $result;     
+        return $result;
     }
 
     public function GetTablesInfo($sid) {
@@ -155,57 +146,57 @@ class QueryEngine {
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
-    	if ($this->GetSourceType($from->sid) == "database") {
+        if ($this->GetSourceType($from->sid) == "database") {
             $externalDBCredentials = $this->GetExternalDBCredentialsBySid($from->sid);
-            
+
             $tableName = $from->tableName;
-            
+
             if (isset($from->alias))
-            	$tableName .= ' as ' . $from->alias;
-            
-    		ExternalDBs::PrepareAndRunQuery($select, $tableName, $where, $groupby, $perPage, $pageNo, $externalDBCredentials);
-    	} else {
-    		return $this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $perPage, $pageNo);
-    	}
+                $tableName .= ' as ' . $from->alias;
+
+            ExternalDBs::PrepareAndRunQuery($select, $tableName, $where, $groupby, $perPage, $pageNo, $externalDBCredentials);
+        } else {
+            return $this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $perPage, $pageNo);
+        }
     }
-    
+
     function prepareAndRunQueryFromFile($select, $from, $where, $groupby, $perPage, $pageNo) {
         $query = $select;
-    	$query .= ' from resultDoJoin ';
+        $query .= ' from resultDoJoin ';
 
         if (isset($from->alias))
             $query .= ' as ' . $from->alias . ' ';
 
-    	if (isset($where))
-    		$query .= ' ' . $where . ' ';
-    	
-    	if (isset($groupby))
-    		$query .= ' '. $groupby . ' ';
-    	 
-    	if (isset($perPage) && isset($pageNo)) {
-    	
-    		$startPoint = ($pageNo - 1) * $perPage;
-    		$query .= " LIMIT " . $startPoint . "," . $perPage;
-    	}
-      	
+        if (isset($where))
+            $query .= ' ' . $where . ' ';
+
+        if (isset($groupby))
+            $query .= ' ' . $groupby . ' ';
+
+        if (isset($perPage) && isset($pageNo)) {
+
+            $startPoint = ($pageNo - 1) * $perPage;
+            $query .= " LIMIT " . $startPoint . "," . $perPage;
+        }
+
 //echo $query;
 
-    	return $this->runQuerySingleSidTableFromFile($query, $from->sid, $from->tableName);
+        return $this->runQuerySingleSidTableFromFile($query, $from->sid, $from->tableName);
     }
-    
+
     function runQuerySingleSidTableFromFile($query, $sid, $tableName) {
-    	global $db; 	
-    	$doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
-    	
-    	$res = $db->query($doJoinQuery);
-    	$rst = $db->get_results($query);
-             
-    	return $rst;
+        global $db;
+        $doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
+
+        $res = $db->query($doJoinQuery);
+        $rst = $db->get_results($query);
+
+        return $rst;
     }
-    
+
     function GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo) {
-    	$from = (object) array('sid' => $sid, 'tableName' => $table_name);    	
-    	return $this->prepareAndRunQueryFromFile("SELECT * ", $from, null, null, $perPage, $pageNo);    	
+        $from = (object) array('sid' => $sid, 'tableName' => $table_name);
+        return $this->prepareAndRunQueryFromFile("SELECT * ", $from, null, null, $perPage, $pageNo);
     }
 
     public function GetTotalNumberTuplesInTableBySidAndName($sid, $table_name) {
@@ -318,14 +309,15 @@ EOQ;
         $notMatchedInTo = $checkDataMatchingQueryMaker->getNotMachedInToQuery();
         $countOfMached = $checkDataMatchingQueryMaker->getCountOfMached();
         $countOfTotalDistinct = $checkDataMatchingQueryMaker->getCountOfTotalDistinct();
-
-        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
         
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+
         $result = new stdClass;
-     //   $result->notMatchedInFrom = $notMatchedInFrom;
-     //   $result->notMatchedInTo = $notMatchedInTo;
-     //   $result->countOfMached = $countOfMached;
-     //   $result->countOfTotalDistinct = $countOfTotalDistinct;
+
+        $result->notMatchedInFrom = $notMatchedInFrom;
+        $result->notMatchedInTo = $notMatchedInTo;
+        $result->countOfMached = $countOfMached;
+        $result->countOfTotalDistinct = $countOfTotalDistinct;
 
 
         $columnsFrom = $checkDataMatchingQueryMaker->GetColumnsFromSource($from);
@@ -333,22 +325,22 @@ EOQ;
 
         $result->notMatchedInFromData = new stdClass;
 
-        $ar = array("[", "]");                
-        $columnNames = str_replace($ar, "",  $columnsFrom->columnNames);
-        
+        $ar = array("[", "]");
+        $columnNames = str_replace($ar, "", $columnsFrom->columnNames);
+
 
         $result->notMatchedInFromData->columns = explode(",", $columnNames);
         $result->notMatchedInFromData->columnsAliases = explode(",", $columnsFrom->columnAliases);
         $result->notMatchedInFromData->rows = $MSSQLHandler->ExecuteQuery($notMatchedInFrom);
 
-        $columnNames = str_replace($ar, "",  $columnsTo->columnNames);
+        $columnNames = str_replace($ar, "", $columnsTo->columnNames);
 
 
         $result->notMatchedInToData = new stdClass;
         $result->notMatchedInToData->columns = explode(",", $columnNames);
         $result->notMatchedInToData->columnsAliases = explode(",", $columnsTo->columnAliases);
         $result->notMatchedInToData->rows = $MSSQLHandler->ExecuteQuery($notMatchedInTo);
-        
+
         $result->countOfMachedData = new stdClass;
         $result->countOfMachedData->columns = array("ct");
         $result->countOfMachedData->rows = $MSSQLHandler->ExecuteQuery($countOfMached);
@@ -356,7 +348,7 @@ EOQ;
         $result->countOfTotalDistinctData = new stdClass;
         $result->countOfTotalDistinctData->columns = array("ct");
         $result->countOfTotalDistinctData->rows = $MSSQLHandler->ExecuteQuery($countOfTotalDistinct);
-        
+
         return $result;
     }
 

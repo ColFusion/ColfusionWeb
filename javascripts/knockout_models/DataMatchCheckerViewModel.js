@@ -54,7 +54,7 @@ function DataMatchCheckerViewModel() {
     self.matchPercent = ko.computed(function() {
         var percent = self.countOfMatchedData() / self.countOfTotalDistinctData();
         percent = isNaN(percent) ? 0 : percent;
-        return percent.toFixed(4);
+        return Number(percent * 100).toFixed(2);
     });
 
     self.synFrom = ko.observable('fromData1');
@@ -69,7 +69,7 @@ function DataMatchCheckerViewModel() {
         self.isLoadingData(true);
 
         $.ajax({
-            url: '../tests/testCheckDataMatching.php',
+            url: '../dataMatchChecker/getDataTables.php',
             type: 'post',
             dataType: 'json',
             data: {

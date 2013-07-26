@@ -12,7 +12,6 @@ class MSSQLHandler extends DatabaseHandler {
 
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $conn_str = "sqlsrv:Server=$this->host,$this->port;Database=$this->database";
-            var_dump($conn_str);
         } else {
             $conn_str = "dblib:dbname=$this->database;host=$this->host:$this->port";
         }
@@ -100,10 +99,8 @@ EOQ;
             if (isset($row))
                 return $row["ct"];
             else
-            //TODO: throw error here
-                die('Table not found');
+                throw new Exception('Table not found');
         }
-
 
         //   $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM [$table_name]");
         //   $stmt->execute();
