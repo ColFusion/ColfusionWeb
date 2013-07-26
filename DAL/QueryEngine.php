@@ -329,17 +329,32 @@ EOQ;
 
 
         $columnsFrom = $checkDataMatchingQueryMaker->GetColumnsFromSource($from);
-        $columnsTo = $checkDataMatchingQueryMaker->GetColumnsFromSource($from);
+        $columnsTo = $checkDataMatchingQueryMaker->GetColumnsFromSource($to);
 
         $result->notMatchedInFromData = new stdClass;
-        $result->notMatchedInFromData->columns = explode(",", $columnsFrom->columnNames);
+
+        $ar = array("[", "]");                
+        $columnNames = str_replace($ar, "",  $columnsFrom->columnNames);
+        
+
+        $result->notMatchedInFromData->columns = explode(",", $columnNames);
+        $result->notMatchedInFromData->columnsAliases = explode(",", $columnsFrom->columnAliases);
         $result->notMatchedInFromData->rows = $MSSQLHandler->ExecuteQuery($notMatchedInFrom);
-        $result->notMatchedInToData = $MSSQLHandler->ExecuteQuery($notMatchedInTo);
-        $result->countOfMachedData = $MSSQLHandler->ExecuteQuery($countOfMached);
-        $result->countOfTotalDistinctData = $MSSQLHandler->ExecuteQuery($countOfTotalDistinct);
 
+        $columnNames = str_replace($ar, "",  $columnsTo->columnNames);
+
+        $result->notMatchedInToData->columns = explode(",", $columnNames);
+        $result->notMatchedInToData->columnsAliases = explode(",", $columnsTo->columnAliases);
+        $result->notMatchedInToData->rows = $MSSQLHandler->ExecuteQuery($notMatchedInTo);
+        
+        
+        $result->countOfMachedData->columns = array("ct");
+        $result->countOfMachedData->rows = $MSSQLHandler->ExecuteQuery($countOfMached);
+
+        $result->countOfTotalDistinctData->columns = array("ct");
+        $result->countOfTotalDistinctData->rows = $MSSQLHandler->ExecuteQuery($countOfTotalDistinct);
+        
         return $result;
-
     }
 
 }

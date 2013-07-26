@@ -101,7 +101,7 @@ class CheckdataMatchingQueryMaker {
             $cidsArray[] = str_replace($ar, "", $link);
             $columnName = $transHandler->decodeTransformationInput($link); // DALUtils::decodeLinkPart($link, $usedColumnNames);
             $columnNamesArray[] = "[" . $columnName . "]";
-            $columnAlias = "column$i";
+           // $columnAlias = "column$i";
             $i += 1;
 
             if (isset($columnAlias))
