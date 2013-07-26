@@ -91,6 +91,28 @@ Canvas.prototype.getTableRelatedCharts = function(sid,table) {
 Canvas.prototype.getColumns = function(sid,table){
 	
 }
+Canvas.prototype.save = function(name, privilege, note){
+	this.name = name;
+	this.privilege = privilege;
+	this.note = note;
+	$('#canvasName').val(name);
+	$('#privilege').val(privilege);
+	$('#note').val(note);
+	if (CANVAS.authorization == 2) {
+		$("#brand").text(name+" (Read-Write)");
+	}else if(CANVAS.authorization == 0){
+		$("#brand").text(name);
+		
+	}else{
+		$("#brand").text(name+" (Read-Only)");
+	}
+	
+	this.isSave = true;
+}
+Canvas.prototype.setVid = function(vid){
+	this.vid = vid;
+	$('#vid').val(vid);
+}
 var CANVAS = new Canvas();
 var CHARTS ={};
 function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResult,gadgetID) {
@@ -115,6 +137,7 @@ Chart.prototype.getSid = function() {
 Chart.prototype.getTable = function() {
 	return this.datainfo.table;
 }
+
 Chart.prototype.getSname = function() {
 	return this.datainfo.sname;
 }
@@ -165,7 +188,6 @@ function showNote(refresh){
 	
 	$("#selector_part").html('<li class="nav-header">CHARTS SELECTOR:</li>'+ noteStr);
 }
-
 
 function showRelatedTables(sid){
 	if ($("#"+sid+"storiesTable").hasClass("unfold")){
@@ -223,7 +245,6 @@ function StoryHighlight(sid){
 	}
 }
 
-
 function TableHighlight(sid,tablename){
 	
 	$("#focus_recorder").val(sid+"&"+tablename);
@@ -257,6 +278,9 @@ function CurCanId(id){
 }
 
 function openShareModal(vid) {
+	if (vid == null) {
+		vid = CANVAS.vid;
+	}
 	$("#forShare").val(vid);
 	$('#shareWith').modal("show");
 }
@@ -610,7 +634,7 @@ $(document).ready(function() {
 			$('#excelStyleColumns').show(200);	
 		}
 	});	
-
+	
 	$('input[name="displayEdit"]').click(function() {
 		if($(this).val() == 'sqlStyle') {
 			$('#sqlStyleColumnsEdit').show(200);
@@ -762,9 +786,54 @@ $(document).ready(function() {
 	})
 	//When canvas setting modal show
 	$("#canvas-setting").on("show",function(){
-		$("#canvas-setting-name").val(CANVAS.sname);	
-		
+		$("#canvas-setting-name").val(CANVAS.name);
+		if (CANVAS.authorization != 0) {
+			$("#canvas-setting-name").attr('disabled','disabled');
+		}else{
+			$("#canvas-setting-name").removeAttr('disabled');
+		}
+		$("#canvas-setting-note").val(CANVAS.note);
+		$('input:radio[name="access-type"]').each(function() {
+			$(this).removeAttr("checked")
+			})
+		if (CANVAS.isSave&&CANVAS.authorization == 0) {
+			$("#canvas-setting-tip").hide();
+			$('input:radio[name="access-type"]').each(function() {
+				$(this).removeAttr('disabled');
+				});
+			$("#access-link").removeAttr('disabled');
+			$('#copy-link').removeAttr("disabled");
+			$('input:radio[name="access-type"][value="'+CANVAS.privilege+'"]').prop('checked',true);
+			$('input:radio[name="access-type"][value="'+CANVAS.privilege+'"]').change();
+			$("#access-link").val("http://localhost/Colfusion/visualization/dashboard.php?vid="+CANVAS.vid);
+			$('#access-filed1').css('color','black');
+			$('#access-filed2').css('color','black');
+			
+		}else{
+			if (CANVAS.authorization == 0) {
+				$("#canvas-setting-tip").show();
+			}else{
+				$("#canvas-setting-tip").hide();
+			}
+			$('#access-field1').css('color','rgb(180,180,180)');
+			$('#access-field2').css('color','rgb(180,180,180)');
+			$("#access-link").val("");
+			$('input:radio[name="access-type"]').each(function() {
+				$(this).attr('disabled','disabled');
+				});
+			$("#access-link").attr('disabled','disabled');
+			$('#copy-link').attr("disabled",'disabled');
+		}
 	})
+	$('input:radio[name="access-type"]').change(function() {
+		var privilege = $('input:radio[name="access-type"]:checked').val();
+		if (privilege == '1') {
+			$("#access-link").removeAttr('disabled');
+		}else{
+			$("#access-link").attr('disabled','disabled');
+		}
+		
+		});
 	//When share modal shows
 	$('#shareWith').on('hide',function(e) {
 		$('#NameEmail').val("");
@@ -802,6 +871,14 @@ $(document).ready(function() {
 			}
 			})
 	})
+	
+	$("#file-dropdown").click(function() {
+		if (CANVAS.isSave&&(CANVAS.authorization == 0)) {
+			$("#file-dropdown-share").show();
+		}else{
+			$("#file-dropdown-share").hide();
+		}
+		})
 });
 function resetEditFormSidTable(editSID,editTable) {
 	$('.edit-chart .story-list').html('');
@@ -819,4 +896,11 @@ function resetEditFormSidTable(editSID,editTable) {
 	}
 	$('#'+editSID).change();
 }
-
+//Save convas setting and save canvas;
+function saveCanvasSetting() {
+	var name = $("#canvas-setting-name").val();
+	var note = $("#canvas-setting-note").val();
+	var privilege = $('input:radio[name="access-type"]:checked').val();
+	saveCanvas(name,privilege,note);
+	$("#canvas-setting").modal('hide');
+}

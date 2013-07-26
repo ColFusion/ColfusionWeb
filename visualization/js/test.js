@@ -40,10 +40,13 @@ function saveTest() {
         }
         })
 }
-function createNewCanvas(_name) {
+function createNewCanvas(_name,note) {
     $("#file_manager").hide();
     if (_name==null) {
         _name = $("#createCanvasName").val();
+    }
+    if (note == null) {
+        note = $("#create-canvas-note").val();
     }
     
     $.ajax({
@@ -53,7 +56,7 @@ function createNewCanvas(_name) {
         data: {
             action: 'createNewCanvas',
             name: _name,
-            note: 'dfdf'
+            note: note
         },
         async:false,
         success:function(JSON_Response){
@@ -79,11 +82,23 @@ function createNewCanvas(_name) {
         
     })
 }
-function saveCanvas() {
-    var _vid = $('#vid').val();
-    var canvasName = $('#canvasName').val();
-    var privilege = $('#privilege').val();
-    var authorization = $('#authorization').val();
+function saveCanvas(canvasName,privilege,note) {
+    //var vid = $('#vid').val();
+    //var canvasName = $('#canvasName').val();
+    //var privilege = $('#privilege').val();
+    //var authorization = $('#authorization').val();
+    //var note = $(")
+    var vid = CANVAS.vid;
+    if (canvasName ==null) {
+        canvasName = CANVAS.name;
+    }
+    if (privilege == null) {
+        privilege =CANVAS.privilege;
+    }
+    if (note == null) {
+        CANVAS.note;
+    }
+    var authorization = CANVAS.authorization;
     var charts = new Array();
     $('.gadget').each(function(){ //get informaton about each chart from browser;
         var cid = $(this).find('.chartID').val();
@@ -107,8 +122,9 @@ function saveCanvas() {
         url: 'control.php',
         data: {
             action: 'saveCanvas',
-            vid: _vid,
+            vid: vid,
             name: canvasName,
+            note: note,
             privilege: privilege,
             authorization: authorization,
             charts: charts
@@ -125,7 +141,8 @@ function saveCanvas() {
                     }
                 }
             })
-            CANVAS.isSave = true;
+            CANVAS.save(JSONResponse['name'],JSONResponse['privilege'], JSONResponse['note']);
+            CANVAS.setVid(JSONResponse['vid']);
             }
         })
 }

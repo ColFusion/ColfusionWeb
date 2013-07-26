@@ -10,7 +10,7 @@ include_once('../'.mnminclude.'smartyvariables.php');
 require_once("Chart.php");
 require_once("Canvas.php");
 
-//error_reporting(E_ALL);
+//
 
 require_once('charts/ColumnChart.php');
 
@@ -98,12 +98,13 @@ function openCanvas(){
     }
     $rst['vid'] = $canvas->vid;
     $rst['name'] = $canvas->name;
-    $rst['privilige'] = $canvas->privilege;
+    $rst['privilege'] = $canvas->privilege;
     $rst['authorization'] = $canvas->authorization;
     $rst['mdate'] = $canvas->mdate;
     $rst['cdate'] = $canvas->cdate;
     $rst['note'] = $canvas->note;
     $rst['isSave'] = $canvas->getIsSave();
+    //error_reporting(E_ALL);
     echo json_encode($rst);
     //var_dump($canvas);
     
@@ -154,15 +155,28 @@ function saveCanvas(){
     require_once('charts/PieChart.php');
     require_once('charts/ColumnChart.php');    
     $canvas = unserialize($_SESSION['Canvases'][$_REQUEST['vid']]);
-    $name = $_REQUEST['canvasName'];
+    $name = $_REQUEST['name'];
+    $note = "";
+    if(isset($_REQUEST['note'])){
+        $note = $_REQUEST['note'];
+    }
     $note = $_REQUEST['note'];
     $privilege = $_REQUEST['privilege'];
-    $charts = $_REQUEST['charts'];
+    $charts = array();
+    if(isset($_REQUEST['charts'])){
+        $charts = $_REQUEST['charts'];
+    }
     $newOldChartId = $canvas->save($name, $note, $privilege, $charts);
     $rst = array();
     $rst['newOldChartId'] = $newOldChartId;
+    $rst['vid'] = $canvas->vid;
+    $rst['note'] = $canvas->note;
+    $rst['privilege'] = $canvas->privilege;
+    $rst['name'] = $canvas->name;
     echo(json_encode($rst));
     $_SESSION['Canvases'][$_REQUEST['vid']] = serialize($canvas);
+    $_SESSION['Canvases'][$canvas->vid] = serialize($canvas);
+    //error_reporting(E_ALL);
 }
 
 /*
@@ -195,13 +209,14 @@ function createNewCanvas(){
 
     $rst['vid'] = $canvas->vid;
     $rst['name'] = $canvas->name;
-    $rst['privilige'] = $canvas->privilege;
+    $rst['privilege'] = $canvas->privilege;
     $rst['authorization'] = $canvas->authorization;
     $rst['mdate'] = $canvas->mdate;
     $rst['cdate'] = $canvas->cdate;
     $rst['note'] = $canvas->note;
     $rst['isSave'] = $canvas->getIsSave();
     echo json_encode($rst);
+    //error_reporting(E_ALL);
 }
 function deleteCanvas(){
     $vids = $_REQUEST['vids'];
@@ -225,6 +240,7 @@ function deleteCanvas(){
     }
     $rst['status'] = 'success';
     echo json_encode($rst);
+    //error_reporting(E_ALL);
 }
 function shareCanvas(){
     global $db;
@@ -264,6 +280,7 @@ function shareCanvas(){
         }
     }
     echo json_encode($rst);
+    //error_reporting(E_ALL);
 }
 //share multiple canvases at one time.
 function shareCanvases(){
@@ -276,6 +293,7 @@ function updateChartResult(){
     $rst['cid'] = $_REQUEST['cid'];
     echo json_encode($rst);
     $_SESSION['Canvases'][$canvas->vid] = serialize($canvas);
+    //error_reporting(E_ALL);
 }
 //use sid to get story name and related tables
 function getStory(){
@@ -303,8 +321,9 @@ function getStory(){
         $rst['status'] = 'failed';
         $rst['message'] = 'Cannot find story '.$sid.'.';
     }
-
-    echo json_encode($rst);/*
+    echo json_encode($rst);
+    //error_reporting(E_ALL);
+    /*
     $rst = array();
     if($sid == '100'){
         $rst['status'] = 'success';
@@ -422,7 +441,6 @@ function GetTableInfo(){
     $tableName = $_REQUEST["table_name"];
     
     $result = $queryEngine->GetTablesInfo($sid);
-   
     echo json_encode($result[$tableName]);
 }
 function GetTablesInfo(){

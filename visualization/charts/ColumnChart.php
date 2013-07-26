@@ -59,7 +59,7 @@ class ColumnChart extends Chart{
     }
         $from = (object) array('sid' => $sid, 'tableName' => $table);
         $fromArray = array($from);
-        $groupby .= " GROUP BY `" . $columnCat . "` ";
+        $groupby = " GROUP BY `" . $columnCat . "` ";
         //$queryResult = json_decode('{"cat":"aaa","agg":"bbb","content":[["Year", "Sales"],["2004",15],["2005",12],["2006",16],["2007",18]]}');
         $queryEngine = new QueryEngine();
         $rst = array();

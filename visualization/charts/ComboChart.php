@@ -39,7 +39,7 @@ class ComboChart extends Chart{
 	$select .= "MAX(`" . $comboColumnAgg . "`) AS 'MAX', ";
 	$select .= "AVG(`" . $comboColumnAgg . "`) AS 'AVG', ";
 	$select .= "MIN(`" . $comboColumnAgg . "`) AS 'MIN' ";			
-	$groupby .= " GROUP BY `" . $comboColumnCat . "` ";
+	$groupby = " GROUP BY `" . $comboColumnCat . "` ";
         $queryEngine = new QueryEngine();
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
         //rst['content'] =  json_decode('[{"Category":"aaa","AVG":"13","MAX":"18","MIN":"12"},{"Category":"bbb","AVG":"14","MAX":"16","MIN":"11"},{"Category":"ccc","AVG":"10","MAX":"14","MIN":"6"},{"Category":"ddd","AVG":"43","MAX":"45","MIN":"14"}]');

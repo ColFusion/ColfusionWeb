@@ -6,7 +6,7 @@ class Canvas{
     public $note;
     public $mdate;
     public $cdate;
-    public $privilege; //Canvas accessibility of the chart itself to anyone that shareed with this canvas, 0: read-only, 1: read & write
+    public $privilege; //Canvas public or private, 0: private, 1: public(readonly); 
     public $authorization; //Accessibility to this special current user, 0: owner, 1: read-only, 2: read & write
     //public $version;
     public $charts = array();
@@ -22,7 +22,12 @@ class Canvas{
         $this->cdate = $_cdate;
         $this->privilege = $_privilege;
         $this->authorization = $_authorization;
-        $this->charts = $_charts;
+        if(is_null($_charts)){
+            $this->charts = array();
+        }else{
+            $this->charts = $_charts;
+        }
+        
     }
     public function setIsSave($b){
         $this->isSave = $b;
@@ -43,15 +48,7 @@ class Canvas{
         require_once('ChartFactory.php');
         global $db;
         global $current_user;
-       
-        //Authorize the current user, if current user has the accesibility then get the canvas, else return null;
-        $sql = "select * from colfusion_shares where vid = ".$id." and user_id = ".$current_user->user_id;
-        $rst = $db->get_row($sql);
-        if($rst == null){
-            return null;
-        }
-        $_authorization = $rst->privilege;
-        //select the canvas
+        $_authorization;
         $sql = "Select * from colfusion_canvases where vid =".$id;
         $rst = $db->get_results($sql);
         $rows = array();
@@ -59,11 +56,34 @@ class Canvas{
             $rows[] = $r;
         }
         $_canvas = $rows[0];
+        $sql = "select * from colfusion_shares where vid = ".$id." and user_id = ".$current_user->user_id;
+        $rst = $db->get_row($sql);
+        if($_canvas->privilege == '1'){
+            if(is_null($rst)){
+                $_authorization = 3;
+            }else{
+                $_authorization = $rst->privilege;
+            }
+        }else{
+            if(is_null($rst)){
+                return null;
+            }else{
+                $_authorization = $rst->privilege;
+            }
+        }
+        //Authorize the current user, if current user has the accesibility then get the canvas, else return null;
+       
+        
+        //select the canvas
+
         
         //select chart in the canvas
         $sql = "select * from colfusion_charts where vid = ".$id;
         $rst = $db->get_results($sql);
         $chartArr = array();
+        if(is_null($rst)){
+            $rst = array();
+        }
         foreach($rst as $obj){
             $datainfo = str_replace('\"','"',$obj->datainfo);
             $da = json_decode($datainfo);
@@ -127,11 +147,35 @@ class Canvas{
             $_vid = mysql_insert_id();
             $this->vid = $_vid;
             $sql = "insert into colfusion_shares(`vid`,`user_id`,`privilege`)values(".$this->vid.",".$current_user->user_id.",0)";
-            $db->query($sql);
+            if($db->query($sql)){
+                
+            }else{
+                return null;
+            }
            
         }
-        $sql = "udpate 'colfusion_canvas' set 'name' = ".$_name." 'note' = ".$_note." 'privilege' = ".$_privilege." 'mdate' = ".time();
+        if($_name != $this->name){
+            $sql = 'update colfusion_canvases set name ="'.$_name.'" where vid = '.$this->vid;
+            if($db->query($sql)){
+                $this->name = $_name;
+            }
+        }
+        if($_note != $this->note){
+            $sql = 'update colfusion_canvases set note ="'.$_note.'" where vid = '.$this->vid;
+            if($db->query($sql)){
+                $this->note = $_note;
+            }
+        }
+        if($_privilege != $this->privilege){
+            $sql = 'update colfusion_canvases set privilege ="'.$_privilege.'" where vid = '.$this->vid;
+            if($db->query($sql)){
+                $this->privilege = $_privilege;
+            }
+        }
         $charts = $_charts;
+        if(is_null($charts)){
+            $charts = array();
+        }
         foreach($this->charts as $cid => $chart){
             $flag = true;
             foreach($charts as $chart1){

@@ -24,7 +24,7 @@ $title = $_POST['title'];
 $where = $_GET['where'];
 $sid = $_POST['sid'];
 $tname = $_POST['tableName'];
-
+$vid = $_GET['vid'];
 $userid = $current_user->user_id;
 $sqlVis = "SELECT * FROM colfusion_visualization WHERE userid = '" . $userid . "' ";
 if ($titleNum) {
@@ -165,7 +165,9 @@ $chart_columns[] = "Location";
                                     <li><a href="#newCanvas" data-toggle="modal">New</a></li>
 				    <li><a href="#addStory" data-toggle="modal">Add Story</a></li>
                                     <!-- 								<li><a href="#open" data-toggle="modal">Open</a></li> -->
-                                    <li><a href="#share" data-toggle="modal">Share</a></li>
+                                    <li id="file-dropdown-share"><a onclick="openShareModal()" disable>Share</a></li>
+				    
+				    <li id="file-dropdown-canvas-setting"><a href="#canvas-setting" data-toggle="modal">Canvas Setting</a></li>
 
                                 </ul>
                             </li>
@@ -185,7 +187,7 @@ $chart_columns[] = "Location";
                             </li>
                         </ul>
                         <!--<button class="btn" name="save" id="save">Save</button>-->
-                        <button style="display:none" class="btn topBarr" name="testSave" id="testSave" onclick="saveCanvas()">Save</button>
+                        <button style="display:none" class="btn topBarr" name="testSave" id="testSave" onclick="saveCanvas(null,null,null)">Save</button>
                         <!--<button class="btn" name="testSave" id="testDelete" onclick="testDelete()">TestDelete</button>-->
                         <!--<button class="btn" name="testShare" id="testShare" onclick="testShare()">TestShare</button>-->
                         <input type="hidden" id="titleNo" value="<?php echo $titleNum ?>"/>
@@ -235,7 +237,7 @@ $chart_columns[] = "Location";
             </div>
         </div>
 
-        <div id = "note_section" class = 'round' >
+        <div id = "note_section" class = 'round' style = "z-index:10000">
             <input type = "hidden" id = "focus_recorder" value = "">
             <div id = "selector_part">
             </div>
@@ -257,7 +259,7 @@ $chart_columns[] = "Location";
             <div class="modal-body">
                 <table>
                     <tr><td>Name : </td><td><input type="text" class="span2" id="createCanvasName"></td></tr>
-		        <tr><td>Comment: </td><td><textarea rows="4" style="width: 400px"></textarea></td></tr>
+		        <tr><td>Comment: </td><td><textarea rows="4" style="width: 400px" id="create-canvas-note"></textarea></td></tr>
                 </table>
             </div>
             <div class="modal-footer">
@@ -276,14 +278,14 @@ $chart_columns[] = "Location";
             <div class="modal-body">
                 <table>
                     <tr><td>Name : </td><td><input type="text" class="span2" id="canvas-setting-name"></td></tr>
-		    <tr id="access-filed1"><td>Access: </td><td><p><input type="radio" value="public" name="access-type" style="margin-right: 10px"/>Public<input type="radio" style="margin-left: 30px;margin-right: 10px"value="public" name="access-type"/>Private</p></td></tr>
-		    <tr id="access-field2"><td></td><td><input type="text" id="access-link" style="margin-right: 15px;width: 300px"/><button class="btn" id="copy-link" >Copy</button></td></tr>
-                    <tr><td>Comment: </td><td><textarea rows="4" style="width: 400px"></textarea></td></tr>
+		    <tr id="access-field1"><td>Access: </td><td><p><input type="radio" value="0" name="access-type" style="margin-right: 10px"/>Private<input type="radio" style="margin-left: 30px;margin-right: 10px"value="1" name="access-type"/>Public<b id="canvas-setting-tip" style="margin-left: 20px;color:black">(Please save first)</b></b></p></td></tr>
+		    <tr id="access-field2"><td>Link: </td><td><input type="text" id="access-link" style="margin-right: 15px;width: 400px"/><button class="btn" id="copy-link" style="display: none">Copy</button></td></tr>
+                    <tr><td>Comment: </td><td><textarea rows="4" style="width: 400px" id="canvas-setting-note"></textarea></td></tr>
                 </table>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" id='motionedit-close' aria-hidden="true">Close</button>
-                <button class="btn btn-primary" id="canvas-setting-btn" onclick="">Save</button>
+                <button class="btn btn-primary" id="canvas-setting-btn" onclick="saveCanvasSetting()">Save Canvas and Canvas Setting</button>
             </div>
         </div>
 		
@@ -1041,7 +1043,13 @@ $chart_columns[] = "Location";
 		$(this).prop('checked','checked');
 		})
 	    addTableChart();
-	    
+        })
+    </script>
+    <?php }?>
+    <?php if($vid!=null){?>
+    <script type="text/javascript">
+        $(document).ready(function() {
+		openCanvas("<?php echo $vid?>");
         })
     </script>
     <?php }?>

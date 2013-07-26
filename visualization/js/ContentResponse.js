@@ -118,9 +118,21 @@ function openCanvas(vid){
 						break;
 					}
 				}
-				$('#testSave').show();
 				$('#file-dropdown').show();
 				$('#view-dropdown').show();
+				if (CANVAS.authorization == 0 || CANVAS.authorization == 2) {
+					$('#testSave').show();
+					if (CANVAS.authorization == 2) {
+						$('#file-dropdown-share').hide();
+					}else{
+						$('#file-dropdown-share').show();
+					}
+					$("file-dropdown-canvas-setting").show();
+				}else{
+					$('#testSave').hide();
+					$('#file-dropdown-share').hide();
+					$("#file-dropdown-canvas-setting").hide();
+				}
 				$('#newCanvas').modal('hide');
 				$('#vid').val(_data['vid']);
 				$('#canvasName').val(_data['name']);
@@ -129,7 +141,14 @@ function openCanvas(vid){
 				$('#mdate').val(_data['mdate']);
 				$('#cdate').val(_data['cdate']);
 				$('#note').val(_data['note']);
-				$('#brand').text(_data['name']);
+				if (CANVAS.authorization == 0) {
+					$('#brand').text(_data['name']);
+				}else if (CANVAS.authorization == 2) {
+					$('#brand').text(_data['name']+" (Read-Write)");
+				}
+				else{
+					$('#brand').text(_data['name']+" (Read-Only)");
+				}
 				
 			}	 
 		});
