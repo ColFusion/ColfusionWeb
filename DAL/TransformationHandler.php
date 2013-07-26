@@ -40,6 +40,15 @@ class TransformationHandler {
         
         return $transInput;
     }
+    
+    public function getWrappedCids($decodedInput){
+        preg_match_all('/cid\([0-9]+\)/', $decodedInput, $matches);
+        foreach ($matches[0] as $match) {
+            $wrappedCids[] = $match;
+        }
+        
+        return $wrappedCids;
+    }
 }
 
 ?>

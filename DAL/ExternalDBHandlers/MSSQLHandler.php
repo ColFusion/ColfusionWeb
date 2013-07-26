@@ -9,14 +9,21 @@ class MSSQLHandler extends DatabaseHandler {
     }
 
     public function getConnection() {
-        $pdo = new PDO("dblib:dbname=$this->database;host=$this->host:$this->port", $this->user, $this->password);
+
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $conn_str = "sqlsrv:Server=$this->host,$this->port;Database=$this->database";
+            var_dump($conn_str);
+        } else {
+            $conn_str = "dblib:dbname=$this->database;host=$this->host:$this->port";
+        }
+
+        $pdo = new PDO($conn_str, $this->user, $this->password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec('SET QUOTED_IDENTIFIER ON');
         $pdo->exec('SET ANSI_WARNINGS ON');
         $pdo->exec('SET ANSI_PADDING ON');
         $pdo->exec('SET ANSI_NULLS ON');
         $pdo->exec('SET CONCAT_NULL_YIELDS_NULL ON');
-
 
         return $pdo;
     }
@@ -98,35 +105,35 @@ EOQ;
         }
 
 
-     //   $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM [$table_name]");
-     //   $stmt->execute();
-     //   $row = $stmt->fetch(PDO::FETCH_BOTH);
-     //   $tupleNum = (int) $row[0];
-     //   $stmt->closeCursor();
-     //   return $tupleNum;
+        //   $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM [$table_name]");
+        //   $stmt->execute();
+        //   $row = $stmt->fetch(PDO::FETCH_BOTH);
+        //   $tupleNum = (int) $row[0];
+        //   $stmt->closeCursor();
+        //   return $tupleNum;
     }
-    
+
     // select - valid sql select part
     // from - tableName with alias if specified
     // where - valid SQL where part
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
-    	$query = $select . " from " . $from . " ";
-        
+        $query = $select . " from " . $from . " ";
+
         if (isset($where))
             $query .= ' ' . $where . ' ';
-         
+
         if (isset($groupby))
-            $query .= ' '. $groupby . ' ';
-        
+            $query .= ' ' . $groupby . ' ';
+
         if (isset($perPage) && isset($pageNo)) {
-             
+
             $startPoint = ($pageNo - 1) * $perPage;
             $query .= " LIMIT " . $startPoint . "," . $perPage;
-        }                       
-       
-       return $this->ExecuteQuery($query);
+        }
+
+        return $this->ExecuteQuery($query);
     }
 
     public function ExecuteQuery($query) {
@@ -151,12 +158,12 @@ EOQ;
 
 
 
-    //    $res = $pdo->query($query);
-    //    $result = array();
-    //    while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
-    //        $result[] = $row;
-    //    }
-        
+        //    $res = $pdo->query($query);
+        //    $result = array();
+        //    while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
+        //        $result[] = $row;
+        //    }
+
         return $arrValues;
     }
 
@@ -164,34 +171,34 @@ EOQ;
 // ADD LINKED SERVER
 // *******************************************************************
 
-    public function AddLinkedServer($engine, $server, $port, $database, $user, $password){
+    public function AddLinkedServer($engine, $server, $port, $database, $user, $password) {
         switch (strtolower($engine)) {
             case 'mysql': {
-                $srvproduct = "MySQL";
-                $provider = "MSDASQL";
-                $provstr = "DRIVER={MySQL ODBC 5.2 Unicode Driver}; SERVER=$server;PORT=$port;DATABASE=$database;USER=$user;PASSWORD=$password;OPTION=3;";
-                
-                break;
-            }
+                    $srvproduct = "MySQL";
+                    $provider = "MSDASQL";
+                    $provstr = "DRIVER={MySQL ODBC 5.2 Unicode Driver}; SERVER=$server;PORT=$port;DATABASE=$database;USER=$user;PASSWORD=$password;OPTION=3;";
+
+                    break;
+                }
             case 'mssql':
             case 'sql server': {
-                   
-                 //TODO IMplement, should work for tycho now.  
 
-                return;
+                    //TODO IMplement, should work for tycho now.  
 
-                break;
-            }
+                    return;
+
+                    break;
+                }
             case 'postgresql': {
-                $srvproduct = "PostgreSQL";
-                $provider = "MSDASQL";
-                $provstr = "DRIVER={PostgreSQL Unicode(x64)}; SERVER=$server;PORT=$port;DATABASE=$database;Uid=$user;Pwd=$password;";
+                    $srvproduct = "PostgreSQL";
+                    $provider = "MSDASQL";
+                    $provstr = "DRIVER={PostgreSQL Unicode(x64)}; SERVER=$server;PORT=$port;DATABASE=$database;Uid=$user;Pwd=$password;";
 
-                
-                break;
-            }
+
+                    break;
+                }
             case 'oracle':
-                
+
                 break;
             default:
                 throw new Exception('Invalid DBMS in AddLinkedServer');
@@ -203,27 +210,24 @@ EOQ;
 
 //echo 'connected\n';
 
-        $query = "exec sp_addlinkedserver @server = N'$database', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr', @useself = N'False';"; 
+        $query = "exec sp_addlinkedserver @server = N'$database', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr', @useself = N'False';";
 
 
 //echo $query;
 
-    try {
+        try {
 
-        $stmt = $pdo->prepare($query);
-        $res = $stmt->execute();
+            $stmt = $pdo->prepare($query);
+            $res = $stmt->execute();
+        } catch (Exception $e) {
+            var_dump($e);
+        }
 
-    }
-    catch (Exception $e) 
-    {
-        var_dump($e);
-    }
-
-   // echo 'res ' . $res;
+        // echo 'res ' . $res;
 
         if ($res !== false) {
 
-        $query = "exec sp_addlinkedsrvlogin @rmtsrvname = N'$database', @locallogin = N'remoteUserTest', @rmtuser = N'$user', @rmtpassword = N'$password';";
+            $query = "exec sp_addlinkedsrvlogin @rmtsrvname = N'$database', @locallogin = N'remoteUserTest', @rmtuser = N'$user', @rmtpassword = N'$password';";
 
             $stmt = $pdo->prepare($query);
             $res = $stmt->execute();
@@ -231,15 +235,9 @@ EOQ;
             if ($res === false) {
                 throw new Exception($pdo->errorInfo());
             }
-
-        }
-        else {
+        } else {
             throw new Exception($pdo->errorInfo());
         }
-
-
-        
-
     }
 
 }

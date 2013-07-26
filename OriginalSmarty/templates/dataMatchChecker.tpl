@@ -122,6 +122,7 @@
                             </div>
                             <div id="diffDataCollapse" class="accordion-body collapse in">
                                 <div class="accordion-inner">
+                                    <div class="matchPercent">Proportion of matched value: <span data-bind="text: matchPercent" class="matchPercentText"></span>%</div>
                                     <div data-bind="jqueryEditable: differentValueFromTable" style="float:left; width: 45%;" class="linkDataContainer">                                
                                     </div>
                                     <div data-bind="jqueryEditable: differentValueToTable" style="float:right; width: 45%;" class="linkDataContainer">                                
@@ -148,6 +149,7 @@
                         </div>
                     </div>                
                 </div>
+                <!--
                 <div class="accordionWrapper">
                     <div class="accordion" id="partlyDataAccordion">
                         <div class="accordion-group">
@@ -165,6 +167,7 @@
                         </div>
                     </div>                
                 </div>
+                -->
             </div>
         </div>        
     </body>

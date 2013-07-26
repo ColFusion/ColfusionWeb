@@ -158,6 +158,10 @@
     -moz-border-radius: 0;
 }
 
+.linkDataTable thead{
+    background-color: #dddddd;
+}
+
 .linkDataTable td, .linkDataTable th {
     border: solid 1px black;
 }
