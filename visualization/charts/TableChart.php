@@ -37,8 +37,9 @@ class TableChart extends Chart{
 	$perPage = $_datainfo->perPage; // controls how many tuples shown on each page
 	$pageNo = $_datainfo->currentPage; // controls which page to show, got from JS function
 	$where = $_datainfo->where;
+
 	$from = (object) array('sid' => $sid, 'tableName' => $table);
-        $fromArray = array($from);
+    $fromArray = array($from);
 	
 	$queryEngine = new QueryEngine();
 	$totalTuple = $queryEngine->doQuery("SELECT COUNT(*)", $fromArray, null, null, null, null, null);

@@ -12,6 +12,7 @@ include_once(realpath(dirname(__FILE__)) . '/QueryMakers/CheckDataMatchingQueryM
 
 include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
+include_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
 
 error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 ini_set('display_errors', 1);
@@ -359,6 +360,31 @@ EOQ;
         return $result;
     }
 
+    // source is an object {sid:, tableName, links:[]}
+    // links are columns or transformations
+    public function GetDistinctForColumns($source, $perPage, $pageNo) {
+   
+        $from = (object) array('sid' => $source->sid, 'tableName' => $source->tableName);
+        $fromArray = array($from);
+    
+        $transHandler = new TransformationHandler();       
+
+        $columnName = array();
+
+        foreach ($source->links as $key=>$link) {
+           
+            $columnName[] = $transHandler->decodeTransformationInput($link);           
+        }
+ 
+        $columns = implode(",", array_values($columnName));
+       
+        $result = new stdClass;
+        $result->columns = explode(",", $columns);
+        $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, null, null, null, $perPage, $pageNo);     
+        $result->totalRows = $this->doQuery("SELECT COUNT(*) as ct", $fromArray, null, null, null, $perPage, $pageNo); 
+
+        return $result;
+    }
 }
 
 ?>
