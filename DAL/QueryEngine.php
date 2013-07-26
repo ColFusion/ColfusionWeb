@@ -343,14 +343,17 @@ EOQ;
 
         $columnNames = str_replace($ar, "",  $columnsTo->columnNames);
 
+
+        $result->notMatchedInToData = new stdClass;
         $result->notMatchedInToData->columns = explode(",", $columnNames);
         $result->notMatchedInToData->columnsAliases = explode(",", $columnsTo->columnAliases);
         $result->notMatchedInToData->rows = $MSSQLHandler->ExecuteQuery($notMatchedInTo);
         
-        
+        $result->countOfMachedData = new stdClass;
         $result->countOfMachedData->columns = array("ct");
         $result->countOfMachedData->rows = $MSSQLHandler->ExecuteQuery($countOfMached);
 
+        $result->countOfTotalDistinctData = new stdClass;
         $result->countOfTotalDistinctData->columns = array("ct");
         $result->countOfTotalDistinctData->rows = $MSSQLHandler->ExecuteQuery($countOfTotalDistinct);
         
