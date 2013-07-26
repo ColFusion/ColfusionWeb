@@ -210,7 +210,7 @@ EOQ;
 
 //echo 'connected\n';
 
-        $query = "exec sp_addlinkedserver @server = N'$database', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr', @useself = N'False';";
+        $query = "exec sp_addlinkedserver @server = N'$database', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr';";
 
 
 //echo $query;
@@ -227,7 +227,7 @@ EOQ;
 
         if ($res !== false) {
 
-            $query = "exec sp_addlinkedsrvlogin @rmtsrvname = N'$database', @locallogin = N'remoteUserTest', @rmtuser = N'$user', @rmtpassword = N'$password';";
+            $query = "exec sp_addlinkedsrvlogin @rmtsrvname = N'$database', @locallogin = N'remoteUserTest', @rmtuser = N'$user', @rmtpassword = N'$password', @useself = N'False';";
 
             $stmt = $pdo->prepare($query);
             $res = $stmt->execute();
