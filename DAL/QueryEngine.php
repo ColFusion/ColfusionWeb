@@ -310,8 +310,7 @@ EOQ;
     }
 
     public function CheckDataMatching($from, $to) {
-        global $db;
-
+        
         $checkDataMatchingQueryMaker = new CheckdataMatchingQueryMaker($from, $to);
 
         $notMatchedInFrom = $checkDataMatchingQueryMaker->getNotMachedInFromQuery();

@@ -44,7 +44,7 @@ class MySQLHandler extends DatabaseHandler {
 
     public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
         
-    	return $this->prepareAndRunQuery("select * ", "`$table_name`", null, null, null, $perPage, $pageNo);
+    	return $this->prepareAndRunQuery("select * ", "`$table_name`", null, null, $perPage, $pageNo);
     	
     	
 //     	$pdo = $this->GetConnection();
