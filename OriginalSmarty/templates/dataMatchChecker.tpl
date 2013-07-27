@@ -122,10 +122,21 @@
                             </div>
                             <div id="diffDataCollapse" class="accordion-body collapse in">
                                 <div class="accordion-inner">
-                                    <div class="matchPercent">Proportion of matched value: <span data-bind="text: matchPercent" class="matchPercentText"></span>%</div>
-                                    <div data-bind="jqueryEditable: differentValueFromTable" style="float:left; width: 45%;" class="linkDataContainer">                                
+                                    <div>
+                                        <span class="matchPercent">Proportion of matched value: <span data-bind="text: matchPercent" class="matchPercentText"></span>%</span>
+                                        <span style="float:right;"><input data-bind="checked: isDistinctTablesShown" type="checkbox" style="margin: 0 5px 0 0;" /><span>Show all distinct values</span></span>
+                                    </div>                                 
+                                    <div data-bind="visible: isDistinctTablesShown()" id="distinctTableWrapper">
+                                        <div data-bind="jqueryPagedEditable: distinctFromTableParams" style="float:left; width: 45%;" class="linkDataContainer">                                
+                                        </div>
+                                        <div data-bind="jqueryPagedEditable: distinctToTableParams" style="float:right; width: 45%;" class="linkDataContainer">                                
+                                        </div>
                                     </div>
-                                    <div data-bind="jqueryEditable: differentValueToTable" style="float:right; width: 45%;" class="linkDataContainer">                                
+                                    <div data-bind="visible: !isDistinctTablesShown()" id="valueTableWrapper">
+                                        <div data-bind="jqueryEditable: differentValueFromTable" style="float:left; width: 45%;" class="linkDataContainer">                                
+                                        </div>
+                                        <div data-bind="jqueryEditable: differentValueToTable" style="float:right; width: 45%;" class="linkDataContainer">                                
+                                        </div>
                                     </div>
                                 </div>
                             </div>

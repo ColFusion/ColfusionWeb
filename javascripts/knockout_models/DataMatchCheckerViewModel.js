@@ -1,3 +1,48 @@
+ko.bindingHandlers.jqueryPagedEditable = {
+    init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+    },
+    update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+        var tableParams = valueAccessor()();
+        if (!tableParams) {
+            return;
+        }
+
+        var tableDom = $('<table><thead></thead><tbody></tbody></table>');
+        $(element).empty().append(tableDom);
+        $(tableDom).dataTable({
+            "sEcho": 3,
+            "iDisplayLength": tableParams.pageLength,
+            "bLengthChange": false,
+            "bSort": false,
+            "bProcessing": true,
+            "bServerSide": true,
+            "sAjaxSource": "../dataMatchChecker/getDataTables.php",
+            "aaSorting": [],
+            "fnServerData": function(sSource, aoData, fnCallback) {
+                for (var key in tableParams) {
+                    aoData.push({"name": key, "value": tableParams[key]});
+                }
+                $.ajax({
+                    url: sSource,
+                    data: aoData,
+                    type: 'post',
+                    dataType: 'json',
+                    success: function(json) {
+                        /* Do whatever additional processing you want on the callback, then tell DataTables */
+                        fnCallback(json);
+                    }
+                });
+            },
+            "aoColumnDefs": [
+                {"sClass":"distinctTableColumn", "aTargets": ['_all']}
+            ],
+            "aoColumns": [
+                {"sTitle": "StateNme"}
+            ]
+        }).makeEditable();
+    }
+};
+
 ko.bindingHandlers.jqueryEditable = {
     init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
     },
@@ -45,10 +90,17 @@ function DataMatchCheckerViewModel() {
 
     self.isLoadingData = ko.observable(false);
     self.currentLink = ko.observable();
+
+    self.isDistinctTablesShown = ko.observable(false);
+
+    self.distinctFromTableParams = ko.observable();
+    self.distinctToTableParams = ko.observable();
+
     self.differentValueFromTable = ko.observable();
     self.differentValueToTable = ko.observable();
     self.sameValueTable = ko.observable();
     self.partlyValueTable = ko.observable();
+
     self.countOfMatchedData = ko.observable(0);
     self.countOfTotalDistinctData = ko.observable(0);
     self.matchPercent = ko.computed(function() {
@@ -57,8 +109,8 @@ function DataMatchCheckerViewModel() {
         return Number(percent * 100).toFixed(2);
     });
 
-    self.synFrom = ko.observable('fromData1');
-    self.synTo = ko.observable('toData1');
+    self.synFrom = ko.observable();
+    self.synTo = ko.observable();
     self.isAddingSynonym = ko.observable(false);
     self.addingSynonymMessage = ko.observable();
 
@@ -66,20 +118,57 @@ function DataMatchCheckerViewModel() {
 
         // this = Link
         self.currentLink(this);
-        self.isLoadingData(true);
+        setDistinctTableParams();
 
-        $.ajax({
+        self.isLoadingData(true);
+        $.when(loadValueTables()).then(function() {
+            self.isLoadingData(false);
+        }, function() {
+            self.isLoadingData(false);
+        });
+    };
+
+    function setDistinctTableParams() {
+        var fromTableParams = getDataTableParam();
+        fromTableParams.action = 'getDistinctFromTable';
+        fromTableParams.pageLength = 20;
+        self.distinctFromTableParams(fromTableParams);
+
+        var toTableParams = getDataTableParam();
+        toTableParams.action = 'getDistinctToTable';
+        toTableParams.pageLength = 20;
+        self.distinctToTableParams(toTableParams);
+    }
+
+    // Distinct table shows values from DB and does not update with synonyms.
+    function loadDistinctTables() {
+        var params = getDataTableParam();
+        params.action = 'getDistinctValueTable';
+
+        return  $.ajax({
             url: '../dataMatchChecker/getDataTables.php',
             type: 'post',
             dataType: 'json',
-            data: {
-                fromSid: self.fromDataset().sid,
-                fromTable: self.fromDataset().chosenTableName,
-                toSid: self.toDataset().sid,
-                toTable: self.toDataset().chosenTableName,
-                fromTransInput: self.currentLink().fromLinkPart.transInput,
-                toTransInput: self.currentLink().toLinkPart.transInput
-            },
+            data: params,
+            success: function(data) {
+                self.distinctFromTable(createDataTable(data.distinctFromTable));
+                self.distinctToTable(createDataTable(data.distinctToTable));
+            }
+        }).always(function() {
+            self.isLoadingData(false);
+        });
+    }
+
+    // Value tables updates when adding synonyms.
+    function loadValueTables() {
+        var params = getDataTableParam();
+        params.action = 'getDifferentAndSameValueTables';
+
+        return  $.ajax({
+            url: '../dataMatchChecker/getDataTables.php',
+            type: 'post',
+            dataType: 'json',
+            data: params,
             success: function(data) {
                 self.differentValueFromTable(createDataTable(data.notMatchedInFromData));
                 self.differentValueToTable(createDataTable(data.notMatchedInToData));
@@ -90,8 +179,20 @@ function DataMatchCheckerViewModel() {
         }).always(function() {
             self.isLoadingData(false);
         });
-        // self.partlyValueTable(getStaticDataTable());
-    };
+    }
+
+    function getDataTableParam() {
+        var params = {
+            fromSid: self.fromDataset().sid,
+            fromTable: self.fromDataset().chosenTableName,
+            toSid: self.toDataset().sid,
+            toTable: self.toDataset().chosenTableName,
+            fromTransInput: self.currentLink().fromLinkPart.transInput,
+            toTransInput: self.currentLink().toLinkPart.transInput
+        };
+
+        return params;
+    }
 
     self.saveSynonym = function() {
         var data = {
@@ -108,10 +209,10 @@ function DataMatchCheckerViewModel() {
         self.isAddingSynonym(true);
         self.addingSynonymMessage('');
         /*
-        updateTables(self.synFrom(), self.synTo());
-        self.synFrom('');
-        self.synTo('');
-        */
+         updateTables(self.synFrom(), self.synTo());
+         self.synFrom('');
+         self.synTo('');
+         */
         $.ajax({
             url: 'addSynonym.php',
             type: 'post',
@@ -169,8 +270,6 @@ function DataMatchCheckerViewModel() {
 
     // Handle json sent from server and creates DataTable object.
     function createDataTable(tableJson) {
-        console.log(tableJson);
-
         var columns = tableJson.columns;
         var rows = [];
         $.each(tableJson.rows, function(i, rowObj) {

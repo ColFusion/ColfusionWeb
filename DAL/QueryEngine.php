@@ -391,7 +391,7 @@ EOQ;
         $result = new stdClass;
         $result->columns = explode(",", $columns);
         $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, $where, null, null, $perPage, $pageNo);     
-        $result->totalRows = $this->doQuery("SELECT COUNT(*) as ct", $fromArray, $where, null, null, $perPage, $pageNo); 
+        $result->totalRows = $this->doQuery("SELECT COUNT(*) as ct", $fromArray, $where, null, null, null, null); 
 
         return $result;
     }
