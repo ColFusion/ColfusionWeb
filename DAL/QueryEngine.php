@@ -12,7 +12,7 @@ include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 include_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
 
 error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-ini_set('display_errors', 'OFF');
+ini_set('display_errors', 'ON');
 
 class QueryEngine {
 
@@ -354,26 +354,44 @@ EOQ;
 
     // source is an object {sid:, tableName, links:[]}
     // links are columns or transformations
-    public function GetDistinctForColumns($source, $perPage, $pageNo) {
+    // $searchTerms is an associated array where keys are the links and values are search terms for associated links.
+    public function GetDistinctForColumns($source, $perPage, $pageNo, $searchTerms = null) {
    
         $from = (object) array('sid' => $source->sid, 'tableName' => $source->tableName);
         $fromArray = array($from);
     
         $transHandler = new TransformationHandler();       
 
-        $columnName = array();
+        $columnNames = array();
+
+        $whereArray = array();
 
         foreach ($source->links as $key=>$link) {
            
-            $columnName[] = $transHandler->decodeTransformationInput($link);           
+            $column = $transHandler->decodeTransformationInput($link);
+            $columnNames[] = $column;
+
+            if (isset($searchTerms)) {
+                if (isset($searchTerms[$link])) {
+                    $whereArray[] = " $column like '%" . $searchTerms[$link] . "%' ";
+                }
+            }
         }
  
-        $columns = implode(",", array_values($columnName));
+        $columns = implode(",", array_values($columnNames));
        
+        
+        $where = null;
+
+        if (count($whereArray) > 0)
+            $where = "where " . implode(" and ", array_values($whereArray));
+
+        echo $where;
+
         $result = new stdClass;
         $result->columns = explode(",", $columns);
-        $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, null, null, null, $perPage, $pageNo);     
-        $result->totalRows = $this->doQuery("SELECT COUNT(*) as ct", $fromArray, null, null, null, $perPage, $pageNo); 
+        $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, $where, null, null, $perPage, $pageNo);     
+        $result->totalRows = $this->doQuery("SELECT COUNT(*) as ct", $fromArray, $where, null, null, $perPage, $pageNo); 
 
         return $result;
     }
