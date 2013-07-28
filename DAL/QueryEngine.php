@@ -386,8 +386,6 @@ EOQ;
         if (count($whereArray) > 0)
             $where = "where " . implode(" and ", array_values($whereArray));
 
-        echo $where;
-
         $result = new stdClass;
         $result->columns = explode(",", $columns);
         $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, $where, null, null, $perPage, $pageNo);     

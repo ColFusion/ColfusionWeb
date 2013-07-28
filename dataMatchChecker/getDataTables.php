@@ -45,13 +45,6 @@ function getDifferentAndSameValueTables($from, $to) {
     echo json_encode($queryEngine->CheckDataMatching($from, $to));
 }
 
-function getDistinctValueTable($from, $to, $page = 1, $pageLength = 10) {
-    $queryEngine = new QueryEngine();
-    $jsonResult["distinctFromTable"] = $queryEngine->GetDistinctForColumns($from, $pageLength, $page);
-    $jsonResult["distinctToTable"] = $queryEngine->GetDistinctForColumns($to, $pageLength, $page);
-    echo json_encode($jsonResult);
-}
-
 function getDistinctFromTable($from) {
     getDistinctTable($from);
 }
@@ -63,24 +56,32 @@ function getDistinctToTable($to) {
 function getDistinctTable($tableParams) {
     $pageLength = $_POST['iDisplayLength'];
     $page = ($_POST['iDisplayStart'] / $pageLength) + 1;
+    $searchTerm = $_POST['sSearch'];
+
+    foreach ($tableParams->links as $link) {
+        $cidSearchTerm[$link] = $searchTerm;
+    }
 
     $queryEngine = new QueryEngine();
-    $distinctTable = $queryEngine->GetDistinctForColumns($tableParams, $pageLength, $page);
+    $distinctTable = $queryEngine->GetDistinctForColumns($tableParams, $pageLength, $page, $cidSearchTerm);
 
-    foreach ($distinctTable->rows as $rowObj) {
-        $tableRow = array();
-        foreach ($distinctTable->columns as $column) {
-            $tableRow[] = $rowObj->$column;
+    if ($distinctTable->rows != null) {
+        foreach ($distinctTable->rows as $rowObj) {
+            $tableRow = array();
+            foreach ($distinctTable->columns as $column) {
+                $tableRow[] = $rowObj->$column;
+            }
+            $tableRows[] = $tableRow;
         }
-        $tableRows[] = $tableRow;
+    } else {
+        $tableRows = [];
     }
-    
+
     $jsonResult['aaData'] = $tableRows;
     $jsonResult['aoColumns'] = $distinctTable->columns;
     // $jsonResult['mData'] = $distinctTable->rows;
     $jsonResult["iTotalRecords"] = $distinctTable->totalRows[0]->ct;
     $jsonResult["iTotalDisplayRecords"] = $distinctTable->totalRows[0]->ct;
-    $jsonResult["er"] = $distinctTable->totalRows;
 
     echo json_encode($jsonResult);
 }

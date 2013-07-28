@@ -7,7 +7,7 @@ ko.bindingHandlers.jqueryPagedEditable = {
             return;
         }
 
-        var tableDom = $('<table><thead></thead><tbody></tbody></table>');
+        var tableDom = $('<table class="linkDataTable"><thead></thead><tbody></tbody></table>');
         $(element).empty().append(tableDom);
         $(tableDom).dataTable({
             "sEcho": 3,
@@ -29,6 +29,12 @@ ko.bindingHandlers.jqueryPagedEditable = {
                     dataType: 'json',
                     success: function(json) {
                         /* Do whatever additional processing you want on the callback, then tell DataTables */
+                        var columns = json.aoColumns;
+                        var colDoms = $(tableDom).find('.distinctTableColumn');
+                        for(var i=0 ; i<columns.length && i<colDoms.length ; i++){
+                            $(colDoms).eq(i).text(columns[i]);
+                        }
+                        
                         fnCallback(json);
                     }
                 });
@@ -37,7 +43,7 @@ ko.bindingHandlers.jqueryPagedEditable = {
                 {"sClass":"distinctTableColumn", "aTargets": ['_all']}
             ],
             "aoColumns": [
-                {"sTitle": "StateNme"}
+                {"sTitle": "Column1"}
             ]
         }).makeEditable();
     }
