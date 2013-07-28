@@ -146,25 +146,6 @@ function DataMatchCheckerViewModel() {
         self.distinctToTableParams(toTableParams);
     }
 
-    // Distinct table shows values from DB and does not update with synonyms.
-    function loadDistinctTables() {
-        var params = getDataTableParam();
-        params.action = 'getDistinctValueTable';
-
-        return  $.ajax({
-            url: '../dataMatchChecker/getDataTables.php',
-            type: 'post',
-            dataType: 'json',
-            data: params,
-            success: function(data) {
-                self.distinctFromTable(createDataTable(data.distinctFromTable));
-                self.distinctToTable(createDataTable(data.distinctToTable));
-            }
-        }).always(function() {
-            self.isLoadingData(false);
-        });
-    }
-
     // Value tables updates when adding synonyms.
     function loadValueTables() {
         var params = getDataTableParam();
