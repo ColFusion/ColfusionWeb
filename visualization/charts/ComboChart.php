@@ -6,7 +6,6 @@ include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
 class ComboChart extends Chart{
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
-        $this->query(null);
     }
     function query($_datainfo){
         /*
@@ -35,13 +34,19 @@ class ComboChart extends Chart{
         $comboAggType = $_datainfo->comboAggType;
         $from = (object) array('sid' => $sid, 'tableName' => $table);
         $fromArray = array($from);	
-	$select = "SELECT `" . $comboColumnCat . "` AS 'Category', ";
-	$select .= "MAX(`" . $comboColumnAgg . "`) AS 'MAX', ";
+	$select = "SELECT `" . $comboColumnCat . "` AS 'Category' ";
+        for($i = 0; $i < sizeof($comboAggType); $i++){
+            $select .= ", ".$comboAggType[$i]."(`" . $comboColumnAgg . "`) AS '".$comboAggType[$i]."' ";
+        }
+	/*$select .= "MAX(`" . $comboColumnAgg . "`) AS 'MAX', ";
 	$select .= "AVG(`" . $comboColumnAgg . "`) AS 'AVG', ";
-	$select .= "MIN(`" . $comboColumnAgg . "`) AS 'MIN' ";			
+	$select .= "MIN(`" . $comboColumnAgg . "`) AS 'MIN' ";	*/		
 	$groupby = " GROUP BY `" . $comboColumnCat . "` ";
         $queryEngine = new QueryEngine();
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
+        $rst['comboAggType'] = $comboAggType;
+        $rst['comboColumnCat'] = $comboColumnCat;
+        $rst['comboColumnAgg'] = $comboColumnAgg;
         //rst['content'] =  json_decode('[{"Category":"aaa","AVG":"13","MAX":"18","MIN":"12"},{"Category":"bbb","AVG":"14","MAX":"16","MIN":"11"},{"Category":"ccc","AVG":"10","MAX":"14","MIN":"6"},{"Category":"ddd","AVG":"43","MAX":"45","MIN":"14"}]');
         $this->queryResult = $rst;
         return $rst;

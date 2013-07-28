@@ -44,6 +44,7 @@ Canvas.prototype.addStory = function(sid,sname,callback) {
 				var story = JSON_Response['story'];
 				var sid = story.sid;
 				CANVAS.stories[sid] = story;
+				showSuccess("Successfully add story");
 			}else{
 				
 			}
@@ -304,6 +305,7 @@ function shareCanvas(){
 				$('#share-info').addClass('info-err');
 			}else{
 				$("#shareWith").modal('hide');
+				showSuccess("Successfully share to "+NameEmail);
 			}
 			
 		}
@@ -860,14 +862,21 @@ $(document).ready(function() {
 		var columns = story['tables'][tname]['columns'];
 		$(this).parent().parent().find('select.table-column').each(function() {
 			$(this).html('');
-			for (var i = 0;i<columns.length;i++) {
+			/*for (var i = 0;i<columns.length;i++) {
 				$(this).append('<option value="'+columns[i]+'">'+columns[i]+'</option>');
+			}*/
+			for (columnName in columns ) {
+				$(this).append('<option value="'+columnName+'">'+columnName+'</option>');
 			}
 			})
 		$(this).parent().parent().find('.columnSelection').each(function() {
 			$(this).html('');
-			for (var i = 0;i<columns.length;i++) {
+			/*for (var i = 0;i<columns.length;i++) {
 				$(this).append('<p><lable class="checkbox table-column" style="padding: 0px;"><input value="'+columns[i]+'" type="checkbox" class="check-columns">'+columns[i])+'</lable></p>';
+			}*/
+			for (columnName in columns ) {
+				$(this).append('<p><lable class="checkbox table-column" style="padding: 0px;"><input value="'+columnName+'" type="checkbox" class="check-columns">'+columnName)+'</lable></p>';
+				$(this).append('<option value="'+columnName+'">'+columnName+'</option>');
 			}
 			})
 	})
@@ -879,6 +888,7 @@ $(document).ready(function() {
 			$("#file-dropdown-share").hide();
 		}
 		})
+	
 });
 function resetEditFormSidTable(editSID,editTable) {
 	$('.edit-chart .story-list').html('');
@@ -904,3 +914,33 @@ function saveCanvasSetting() {
 	saveCanvas(name,privilege,note);
 	$("#canvas-setting").modal('hide');
 }
+//Show error in canvas
+function showError(msg) {
+	$("#canvas-alert").fadeIn(500);
+	$("#canvas-alert").text(msg);
+	$("#canvas-alert").removeClass("alert-info");
+	$("#canvas-alert").removeClass("alert-success");
+	$("#canvas-alert").removeClass("alert-error");
+	$("#canvas-alert").addClass("alert-error");
+}
+//Show warning in canvas
+function showWarning(msg) {
+	$("#canvas-alert").fadeIn(500);
+	$("#canvas-alert").text(msg);
+	$("#canvas-alert").removeClass("alert-info");
+	$("#canvas-alert").removeClass("alert-success");
+	$("#canvas-alert").removeClass("alert-error");
+	$("#canvas-alert").addClass("alert-waring");
+	window.setTimeout(function() {$("#canvas-alert").fadeOut(500)},3000);
+}
+//Show successful messae in canvas
+function showSuccess(msg) {
+	$("#canvas-alert").fadeIn(500);
+	$("#canvas-alert").text(msg);
+	$("#canvas-alert").removeClass("alert-info");
+	$("#canvas-alert").removeClass("alert-success");
+	$("#canvas-alert").removeClass("alert-error");
+	$("#canvas-alert").addClass("alert-success");
+	window.setTimeout(function() {$("#canvas-alert").fadeOut(500)},3000);
+}
+

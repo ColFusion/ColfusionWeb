@@ -385,3 +385,9 @@ div[name="mapDivs"] img{
 .info-success{
 	color:green;
 }
+.gadget-title{
+	width: 220px;
+	overflow: hidden;
+	height: 20px;
+	display: inline-block;
+}

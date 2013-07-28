@@ -143,6 +143,7 @@ function saveCanvas(canvasName,privilege,note) {
             })
             CANVAS.save(JSONResponse['name'],JSONResponse['privilege'], JSONResponse['note']);
             CANVAS.setVid(JSONResponse['vid']);
+            showSuccess("Canvas saved");
             }
         })
 }

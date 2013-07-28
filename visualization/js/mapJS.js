@@ -246,7 +246,7 @@ function createNewMapGadget(){
     var gadgetID = d.getTime() + ranNum + "";
     
     var gadget = "<div name='mapDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:400px; height: 300px' type='map'>"
-            + "<div class='gadget-header'>Map " + gadgetID
+            + "<div class='gadget-header'><div class='gadget-title'>Map chart " + gadgetID+"</div>";
             + "<div class='gadget-close'><i class='icon-remove'></i></div>"
             + "<div class='gadget-edit edit-map'><i class='icon-edit'></i></div> </div>"
             + "<input type='hidden' id='setting" + gadgetID + "' value='' />"
@@ -306,6 +306,7 @@ function addMapChart() {
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#mapResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height()-20);
 			CHARTS[JSON_Response['cid']].chartData = drawMap(queryResult,'mapResult' + gadgetID);
+			$("#"+gadgetID).find('.gadget-title').text("Map chart in "+CHARTS[JSON_Response['cid']].getSname() + ":" + CHARTS[JSON_Response['cid']].getTable());
 			$('#addMap').modal('hide');
 		}
 		})
@@ -319,6 +320,7 @@ function loadMapChart(sourceData) {
 	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"mapResult" + gadgetID)
 	$("#mapResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height()-20);
 	CHARTS[sourceData['cid']].chartData = drawMap(queryResult,'mapResult' + gadgetID);
+	$("#"+gadgetID).find('.gadget-title').text("Map chart in "+CHARTS[sourceData['cid']].getSname() + ":" + CHARTS[sourceData['cid']].getTable());
 }
 //update the chart
 function updateMapResult(cid) {

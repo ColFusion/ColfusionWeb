@@ -217,8 +217,11 @@ function generateCombo(a){
 //draw the combo chart in the gadget
 function drawCombo(souceData,gadgetID) {
 	var data = new google.visualization.DataTable();
-	data.addColumn('string','Type');
-	for(i=0; souceData['content'][i]!=null ; i++)
+	data.addColumn('string','Category');
+	for (var i = 0; i < souceData['comboAggType'].length; i++) {
+		data.addColumn('number',souceData['comboAggType'][i]);
+	}
+	/*for(i=0; souceData['content'][i]!=null ; i++)
 	{
 		data.addColumn('number',String(souceData['content'][i]['Category']));
 	}
@@ -226,21 +229,24 @@ function drawCombo(souceData,gadgetID) {
 	for(i=0 ; i<3; i++){
 		data.addRow();
 	}
-	data.setCell(0,0,'AVG');
-	data.setCell(1,0,'MAX');
-	data.setCell(2,0,'MIN');
-	
-	var colIndex = 1;
+	for (var i = 0; i < souceData['comboAggType'].length; i++) {
+		data.setCell(0,0,souceData['comboAggType'][i]);
+	}*/
+	var colIndex = 0;
 	for(i=0 ; souceData['content'][i]!=null ; i++){
-		data.setCell(0,colIndex,parseFloat(String(souceData['content'][i]['AVG'])));
-		data.setCell(1,colIndex,parseFloat(String(souceData['content'][i]['MAX'])));
-		data.setCell(2,colIndex,parseFloat(String(souceData['content'][i]['MIN'])));
+		data.addRow();
+		data.setCell(colIndex,0,String(souceData['content'][i]['Category']));
+		for (var j = 0; j < souceData['comboAggType'].length;j++) {
+			data.setCell(colIndex,j+1,parseFloat(String(souceData['content'][i][souceData['comboAggType'][j]])));
+		}
+		/*data.setCell(1,colIndex,parseFloat(String(souceData['content'][i][souceData['comboAggType'][i]])));
+		data.setCell(2,colIndex,parseFloat(String(souceData['content'][i][souceData['comboAggType'][i]])));*/
 		colIndex++;
 	}
 	var options={
-		title: 'Combo Chart for '+ comboColumnCat,
-		vAxis: {title : comboColumnAgg + " value"},
-		hAxis: {title : "Aggregation Type"},
+		title: 'Combo Chart for '+ souceData['comboColumnCat'],
+		vAxis: {title : souceData['comboColumnAgg'] + " value"},
+		hAxis: {title : souceData['comboColumnCat']},
 		height: $("#"+gadgetID).height(),
 		seriesType: "bars"
 	};
@@ -269,7 +275,7 @@ function createNewComboGadget(){
 	var gadgetID = d.getTime() + ranNum + "";
 
 	var gadget = "<div name='comboDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:400px; height: 300px' type='combo'>";
-	gadget +=  "<div class='gadget-header'>Combo Chart" + gadgetID;
+	gadget +=  "<div class='gadget-header'><div class='gadget-title'>Combo chart " + gadgetID+"</div>";
 	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
 	gadget += "<div class='gadget-edit edit-combo'><i class='icon-edit'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />"; 	
@@ -325,6 +331,7 @@ function addComboChart() {
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 			CHARTS[JSON_Response['cid']].chartData = drawCombo(queryResult,'comboResult'+gadgetID);
+			$("#"+gadgetID).find('.gadget-title').text("Combo chart in "+CHARTS[JSON_Response['cid']].getSname() + ":" + CHARTS[JSON_Response['cid']].getTable());
 			$('#addCombo').modal('hide');
 		}
 		})
@@ -337,7 +344,7 @@ function loadComboChart(sourceData) {
 	$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 	CHARTS[sourceData['cid']].chartData =  drawCombo(queryResult,'comboResult'+ gadgetID);
 	gadgetProcess(gadgetID,sourceData['cid'],sourceData['name'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['type'],sourceData['note'],'datainfo');
-	
+	$("#"+gadgetID).find('.gadget-title').text("Combo chart in "+CHARTS[sourceData['cid']].getSname() + ":" + CHARTS[sourceData['cid']].getTable());
 }
 //Update the chart
 function updateComboResult(cid) {

@@ -112,7 +112,7 @@ $chart_columns[] = "Location";
         <link rel="stylesheet" href="<?php echo $my_pligg_base; ?>/css/typeahead.js-bootstrap.css">
         <link rel="stylesheet" href="<?php echo $my_pligg_base; ?>/css/addRelationship.css">
 
-        <script type="text/javascript" src="js/jsapi"></script>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
         <script type="text/javascript" src="js/tableJS.js"></script>
 
         <!-- styles and functions for geo chart -->
@@ -198,6 +198,9 @@ $chart_columns[] = "Location";
                     </div><!--/.nav-collapse -->
                 </div>
             </div>
+	    	<div id="canvas-alert" class="alert" style="padding-top: 2px;z-index:100000;width: 80%;margin-left: auto;margin-right: auto;margin-top: 3px;height: 14px;display: none;text-align: center">
+		
+	    </div>
         </div>
 
         <div id="file_manager" >
@@ -938,11 +941,11 @@ $chart_columns[] = "Location";
 
                     <div class="tab-pane" id="combotype">
                         <label class="tabContentTitle">Select from following aggregation types</label>
-                        <label class="checkbox"><input type="checkbox" value="Count" name="comboAggType">Count</label>
-                        <label class="checkbox"><input type="checkbox" value="Sum" name="comboAggType" /> Sum</label>
-                        <label class="checkbox"><input type="checkbox" value="Avg" name="comboAggType" /> Avg</label>
-                        <label class="checkbox"><input type="checkbox" value="Min" name="comboAggType" /> Min</label>
-                        <label class="checkbox"><input type="checkbox" value="Max" name="comboAggType" /> Max</label>
+                        <label class="checkbox"><input type="checkbox" value="COUNT" name="comboAggType">Count</label>
+                        <label class="checkbox"><input type="checkbox" value="SUM" name="comboAggType" /> Sum</label>
+                        <label class="checkbox"><input type="checkbox" value="AVG" name="comboAggType" /> Avg</label>
+                        <label class="checkbox"><input type="checkbox" value="MIN" name="comboAggType" /> Min</label>
+                        <label class="checkbox"><input type="checkbox" value="MAX" name="comboAggType" /> Max</label>
                     </div>
                 </div>					
             </div>
@@ -1028,6 +1031,10 @@ $chart_columns[] = "Location";
             <div class="alert alert-error" id="error-alert" style="display: none">
 
             </div>
+	    <!--Alert-->
+
+		
+	    </div>
 
         </div> <!-- /container -->
 

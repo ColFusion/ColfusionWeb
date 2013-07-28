@@ -26,9 +26,11 @@ require_once("charts/MapChart.php");
 
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
-//error_reporting(E_ALL);
+error_reporting(E_ALL);
 
 global $current_user;
+global $RST;
+$RST = array();
 
 
 
@@ -74,9 +76,9 @@ if (in_array($action, array('openCanvas','saveCanvas','createNewCanvas', 'addCha
 function addChart(){
     $canvas = unserialize($_SESSION['Canvases'][$_REQUEST['vid']]);
     $chart = $canvas->addChart($_REQUEST['name'], $_REQUEST['type'], $_REQUEST['left'], $_REQUEST['top'], $_REQUEST['depth'], $_REQUEST['height'], $_REQUEST['width'], $_REQUEST['datainfo'], $_REQUEST['note']);
-    $rst = array();
-    $rst = $chart->printToArray();
-    echo json_encode($rst);
+    //$rst = array();
+    $RST = $chart->printToArray();
+    echo json_encode($RST);
     $_SESSION['Canvases'][$_REQUEST['vid']] = serialize($canvas);
 }
 /* Open canvas, request data type:
@@ -91,21 +93,21 @@ function openCanvas(){
     $canvas = Canvas::openCanvas($_REQUEST['vid']);
     if($canvas==null){echo 'not permit to open.';return;}
     $_SESSION['Canvases'][$_REQUEST['vid']] = serialize($canvas);
-    $rst = array();
-    $rst['charts'] = array();
+    //$rst = array();
+    $RST['charts'] = array();
     foreach($canvas->charts as $chart){
-        array_push($rst['charts'],$chart->printToArray());
+        array_push($RST['charts'],$chart->printToArray());
     }
-    $rst['vid'] = $canvas->vid;
-    $rst['name'] = $canvas->name;
-    $rst['privilege'] = $canvas->privilege;
-    $rst['authorization'] = $canvas->authorization;
-    $rst['mdate'] = $canvas->mdate;
-    $rst['cdate'] = $canvas->cdate;
-    $rst['note'] = $canvas->note;
-    $rst['isSave'] = $canvas->getIsSave();
-    //error_reporting(E_ALL);
-    echo json_encode($rst);
+    $RST['vid'] = $canvas->vid;
+    $RST['name'] = $canvas->name;
+    $RST['privilege'] = $canvas->privilege;
+    $RST['authorization'] = $canvas->authorization;
+    $RST['mdate'] = $canvas->mdate;
+    $RST['cdate'] = $canvas->cdate;
+    $RST['note'] = $canvas->note;
+    $RST['isSave'] = $canvas->getIsSave();
+    error_reporting(E_ALL);
+    echo json_encode($RST);
     //var_dump($canvas);
     
 }
@@ -167,16 +169,16 @@ function saveCanvas(){
         $charts = $_REQUEST['charts'];
     }
     $newOldChartId = $canvas->save($name, $note, $privilege, $charts);
-    $rst = array();
-    $rst['newOldChartId'] = $newOldChartId;
-    $rst['vid'] = $canvas->vid;
-    $rst['note'] = $canvas->note;
-    $rst['privilege'] = $canvas->privilege;
-    $rst['name'] = $canvas->name;
-    echo(json_encode($rst));
+    //$rst = array();
+    $RST['newOldChartId'] = $newOldChartId;
+    $RST['vid'] = $canvas->vid;
+    $RST['note'] = $canvas->note;
+    $RST['privilege'] = $canvas->privilege;
+    $RST['name'] = $canvas->name;
+    echo(json_encode($RST));
     $_SESSION['Canvases'][$_REQUEST['vid']] = serialize($canvas);
     $_SESSION['Canvases'][$canvas->vid] = serialize($canvas);
-    //error_reporting(E_ALL);
+    error_reporting(E_ALL);
 }
 
 /*
@@ -194,33 +196,33 @@ function createNewCanvas(){
     
     $canvas = Canvas::createNewCanvas($_REQUEST['name'], $userid = $current_user->user_id, $_REQUEST['note'] ,0);
     $_SESSION['Canvases'][$canvas->vid] = serialize($canvas);
-    $rst = array();
-    $rst['charts'] = array();
+    //$rst = array();
+    $RST['charts'] = array();
 
     //var_dump($canvas->charts );
 
     if (isset($canvas->charts)) {
 
         foreach($canvas->charts as $chart){
-            array_push($rst['charts'],$chart->printToArray());
+            array_push($RST['charts'],$chart->printToArray());
         }
 
     }
 
-    $rst['vid'] = $canvas->vid;
-    $rst['name'] = $canvas->name;
-    $rst['privilege'] = $canvas->privilege;
-    $rst['authorization'] = $canvas->authorization;
-    $rst['mdate'] = $canvas->mdate;
-    $rst['cdate'] = $canvas->cdate;
-    $rst['note'] = $canvas->note;
-    $rst['isSave'] = $canvas->getIsSave();
-    echo json_encode($rst);
-    //error_reporting(E_ALL);
+    $RST['vid'] = $canvas->vid;
+    $RST['name'] = $canvas->name;
+    $RST['privilege'] = $canvas->privilege;
+    $RST['authorization'] = $canvas->authorization;
+    $RST['mdate'] = $canvas->mdate;
+    $RST['cdate'] = $canvas->cdate;
+    $RST['note'] = $canvas->note;
+    $RST['isSave'] = $canvas->getIsSave();
+    echo json_encode($RST);
+    error_reporting(E_ALL);
 }
 function deleteCanvas(){
     $vids = $_REQUEST['vids'];
-    $rst = array();
+    //$rst = array();
     foreach($vids as $vid){
         if($_SESSION['Canvases'][$vid]!=null){
             unset($_SESSION['Canvases'][$vid]);
@@ -233,18 +235,18 @@ function deleteCanvas(){
         $sql = "delete from colfusion_canvases where vid =".$vid;
         $r = $db->query($sql);
         if($r==0){
-            $rst['result'] = 'No Canvas Delete';
+            $RST['result'] = 'No Canvas Delete';
         }else{
-            $rst['result'] = 'One Canvas Delete';
+            $RST['result'] = 'One Canvas Delete';
         }
     }
-    $rst['status'] = 'success';
-    echo json_encode($rst);
-    //error_reporting(E_ALL);
+    $RST['status'] = 'success';
+    echo json_encode($RST);
+    error_reporting(E_ALL);
 }
 function shareCanvas(){
     global $db;
-    $rst = array();
+    //$rst = array();
     $vid = $_REQUEST['vid'];
     $shareTo = $_REQUEST['shareTo'];
     $sql = "";
@@ -256,8 +258,8 @@ function shareCanvas(){
     $r = $db->get_row($sql);
     $user_id;
     if(is_null($r)){
-        $rst['status'] = 0;
-        $rst['msg'] = "Can't find the user.";
+        $RST['status'] = 0;
+        $RST['msg'] = "Can't find the user.";
     }else{
         $user_id = $r->user_id;
         $canvas;
@@ -268,19 +270,19 @@ function shareCanvas(){
             $canvas = Canvas::openCanvas($_REQUEST['vid']);
             
         }
-        if($canvas==null){$rst['status'] = '0';$rst['msg'] = 'No permit or no canvas exists.';}
+        if($canvas==null){$RST['status'] = '0';$RST['msg'] = 'No permit or no canvas exists.';}
         else{
             if(is_null($canvas->shareCanvas($user_id,$_REQUEST['authorization']))){
-                $rst['status'] = 0;
-                $rst['msg'] = 'Unable to share this canvas to '.$shareTo;
+                $RST['status'] = 0;
+                $RST['msg'] = 'Unable to share this canvas to '.$shareTo;
             }
             else{
-                $rst['status'] = 1;
+                $RST['status'] = 1;
             }
         }
     }
-    echo json_encode($rst);
-    //error_reporting(E_ALL);
+    echo json_encode($RST);
+    error_reporting(E_ALL);
 }
 //share multiple canvases at one time.
 function shareCanvases(){
@@ -289,11 +291,11 @@ function shareCanvases(){
 function updateChartResult(){
     $canvas = unserialize($_SESSION['Canvases'][$_REQUEST['vid']]);
     $queryResult = $canvas->updateChartResult($_REQUEST['cid'],$_REQUEST['datainfo']);
-    $rst['queryResult'] = $queryResult;
-    $rst['cid'] = $_REQUEST['cid'];
-    echo json_encode($rst);
+    $RST['queryResult'] = $queryResult;
+    $RST['cid'] = $_REQUEST['cid'];
+    echo json_encode($RST);
     $_SESSION['Canvases'][$canvas->vid] = serialize($canvas);
-    //error_reporting(E_ALL);
+    error_reporting(E_ALL);
 }
 //use sid to get story name and related tables
 function getStory(){
@@ -302,26 +304,28 @@ function getStory(){
     $sid = $_REQUEST['sid'];
     $sname = $_REQUEST['sname'];
     $result = $queryEngine->GetTablesInfo($sid);
-    $rst = array();
+    //$rst = array();
+    //var_dump($result);
     if($result!=null){
-        $rst['status'] = 'success';
+        $RST['status'] = 'success';
         $tables = array();
         foreach($result as $tname => $table){
             $columns = array();
             foreach($table as $column){
-                array_push($columns,$column->dname_chosen);
+                //array_push($columns,$column->dname_chosen);
+                $columns[$column->dname_chosen] = $column->dname_value_type;
             }
             $tables[$tname]['table'] = $tname;
             $tables[$tname]['columns'] = $columns;
         }
-        $rst['story']['sid'] = $_REQUEST['sid'];
-        $rst['story']['sname'] = $sname;
-        $rst['story']['tables'] = $tables;
+        $RST['story']['sid'] = $_REQUEST['sid'];
+        $RST['story']['sname'] = $sname;
+        $RST['story']['tables'] = $tables;
     }else{
-        $rst['status'] = 'failed';
-        $rst['message'] = 'Cannot find story '.$sid.'.';
+        $RST['status'] = 'failed';
+        $RST['message'] = 'Cannot find story '.$sid.'.';
     }
-    echo json_encode($rst);
+    echo json_encode($RST);
     //error_reporting(E_ALL);
     /*
     $rst = array();

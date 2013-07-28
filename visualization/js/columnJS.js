@@ -159,7 +159,7 @@ function createNewColumnGadget() {
 	var gadgetID = d.getTime() + ranNum + "";
 	
 	var gadget = "<div name='columnDivs' id='"+gadgetID+"' class='gadget' style='top: 50px; left:0px; width:500px; height:400px' type='column'>";
-	gadget += "<div class='gadget-header'><div class='gadget-title'>column chart " + gadgetID+"<>";
+	gadget += "<div class='gadget-header'><div class='gadget-title'>column chart " + gadgetID+"</div>";
 	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>";
 	gadget += "<div class='gadget-edit edit-column edit-new-column'><i class='icon-edit'></i></div></div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />";
@@ -255,6 +255,7 @@ function addColumnChart() {
 			CHARTS[JSON_Response['cid']] = new Chart(JSON_Response['cid'],JSON_Response['name'],JSON_Response['type'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['note'],JSON_Response['datainfo'],JSON_Response['queryResult'],"columnResult" + gadgetID)
 			$("#columnResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 			CHARTS[JSON_Response['cid']].chartData = drawColumn(queryResult,'columnResult'+gadgetID);
+			$("#"+gadgetID).find('.gadget-title').text("Column chart in "+CHARTS[JSON_Response['cid']].getSname() + ":" + CHARTS[JSON_Response['cid']].getTable());
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$('#addColumn').modal('hide');
 		}
@@ -269,6 +270,7 @@ function loadColumnChart(sourceData) {
 	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"columnResult" + gadgetID)
 	$("#columnResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 	CHARTS[sourceData['cid']].chartData = drawColumn(queryResult,'columnResult'+gadgetID);
+	$("#"+gadgetID).find('.gadget-title').text("Column chart in "+CHARTS[sourceData['cid']].getSname() + ":" + CHARTS[sourceData['cid']].getTable());
 
 }
 //update the chart

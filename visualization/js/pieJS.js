@@ -181,7 +181,7 @@ function createNewPieGadget(){
 	var gadgetID = d.getTime() + ranNum + "";
 
 	var gadget = "<div name='pieDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:400px; height: 300px' type='pie'>";
-	gadget +=  "<div class='gadget-header'>Pie Chart" + gadgetID;
+	gadget +=  "<div class='gadget-header'><div class='gadget-title'>Pie Chart</div>";
 	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
 	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />";  
@@ -241,6 +241,7 @@ function addPieChart() {
 		gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 		$("#pieResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 		CHARTS[JSON_Response['cid']].chartData = drawPie(queryResult,"pieResult"+gadgetID);
+		$("#"+gadgetID).find('.gadget-title').text("Pie chart in "+CHARTS[JSON_Response['cid']].getSname() + ":" + CHARTS[JSON_Response['cid']].getTable());
 		$('#addPie').modal('hide');
 	    }
 	})
@@ -260,7 +261,7 @@ function drawPie(sourceData,gadgetID) {
 		data.setCell(i, 1 ,parseFloat(String(q[i]["AggValue"])));
 	}
 	var options = {
-    	      'title':'Pie Chart for ' + sourceData['string'] + ' based on ' + sourceData['number']
+    	      'title':'Pie Chart for ' + sourceData['pieColumnCat'] + ' based on ' + sourceData['pieAggType']
     	};
 	var chart = new google.visualization.PieChart(document.getElementById(gadgetID));
 	chart.draw(data, options);
@@ -281,6 +282,7 @@ function loadPieChart(sourceData) {
 	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"pieResult" + gadgetID)
 	$("#pieResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 	CHARTS[sourceData['cid']].chartData = drawPie(queryResult,'pieResult'+gadgetID);
+	$("#"+gadgetID).find('.gadget-title').text("Pie chart in "+CHARTS[sourceData['cid']].getSname() + ":" + CHARTS[sourceData['cid']].getTable());
 }
 //Update the chart
 function updatePieResult(cid) {

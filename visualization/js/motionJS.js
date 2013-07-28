@@ -253,7 +253,7 @@ function createNewMotionGadget() {
 	var gadgetID = d.getTime() + ranNum + "";
 
 	var gadget = "<div name='motionDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:500px; height:320px' type='motion'>";
-	gadget += "<div class='gadget-header'>Motion Chart " + gadgetID;
+	gadget += "<div class='gadget-header'><div class='gadget-title'>Motion chart " + gadgetID+"</div>";
 	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>"
 	gadget += "<div class='gadget-edit edit-motion'><i class='icon-edit'></i></div></div>";
 	gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";
@@ -310,6 +310,7 @@ function addMotionChart() {
 			gadgetProcess(gadgetID,JSON_Response['cid'],JSON_Response['name'],JSON_Response['top'],JSON_Response['left'],JSON_Response['height'],JSON_Response['width'],JSON_Response['depth'],JSON_Response['type'],JSON_Response['note'],'datainfo');
 			$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 			CHARTS[JSON_Response['cid']].chartData = drawMotion(queryResult,'motionResult'+gadgetID);
+			$("#"+gadgetID).find('.gadget-title').text("Motion chart in "+CHARTS[JSON_Response['cid']].getSname() + ":" + CHARTS[JSON_Response['cid']].getTable());
 			$('#addMotion').modal('hide');
 		}
 		})
@@ -322,7 +323,7 @@ function loadMotionChart(sourceData) {
 	CHARTS[sourceData['cid']] = new Chart(sourceData['cid'],sourceData['name'],sourceData['type'],sourceData['top'],sourceData['left'],sourceData['height'],sourceData['width'],sourceData['depth'],sourceData['note'],sourceData['datainfo'],sourceData['queryResult'],"motionResult" + gadgetID)
 	$("#motionResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 	CHARTS[sourceData['cid']].chartData = drawMotion(queryResult,'motionResult'+gadgetID);
-		
+	$("#"+gadgetID).find('.gadget-title').text("Motion chart in "+CHARTS[sourceData['cid']].getSname() + ":" + CHARTS[sourceData['cid']].getTable());	
 }
 //update the chart
 function updateMotionResult(cid) {
