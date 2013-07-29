@@ -11,6 +11,8 @@ include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 include_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
 
+require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+
 error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 
 class QueryEngine {
@@ -241,7 +243,8 @@ class QueryEngine {
     public function MineRelationships($sid) {
         global $db;
 
-        $res = $db->query("call doRelationshipMining('" . $sid . "')");
+    //TODO: disable rel mining for now, need to think how to add them to neo4j
+    //        $res = $db->query("call doRelationshipMining('" . $sid . "')");
 
 
         $query = <<< EOQ
@@ -298,6 +301,30 @@ EOQ;
         $sql = "INSERT INTO %suser_relationship_verdict (rel_id, user_id, confidence, comment, `when`) VALUES (%d, %d, %f, '%s', CURRENT_TIMESTAMP)";
         $sql = sprintf($sql, table_prefix, $rel_id, $user_id, $confidence, $comment);
         $rs = $db->query($sql);
+
+
+
+        // Connecting to the default port 7474 on localhost
+        $client = new Everyman\Neo4j\Client();
+
+        $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
+        
+
+        $sourceFrom = $client->makeNode();
+        $sourceFrom->setProperty('name', $from["sid"])->save();
+        // Index the ship on one of its properties
+        $sourceIndex->add($sourceFrom, 'name', $sourceFrom->getProperty('name'));
+        $sourceIndex->save();
+
+        $sourceTo = $client->makeNode();
+        $sourceTo->setProperty('name', $to["sid"])->save();
+        $sourceIndex->add($sourceTo, 'name', $sourceTo->getProperty('name'));
+        $sourceIndex->save();
+
+        $sourceFrom->relateTo($sourceTo, 'RELATED_TO')
+                    ->setProperty('rel_id', $rel_id)
+                    ->setProperty('confidence', $confidence)
+                    ->save();
     }
 
     public function CheckDataMatching($from, $to) {
