@@ -18,8 +18,7 @@ include(mnminclude.'tags.php');
 include(mnminclude.'user.php');
 include(mnminclude.'smartyvariables.php');
 
-include('DAL/QueryEngine.php');
-
+include_once('DAL/QueryEngine.php');
 
 if (!$_COOKIE['referrer'])
 	check_referrer();

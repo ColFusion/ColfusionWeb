@@ -139,8 +139,9 @@ var importWizard = (function() {
         }
     };
 
-    importWizard.checkToEnableNextButtonOnSchemaMatchinStep = function() {
+    importWizard.skipSchemaMatchingStep = function() {
         wizard.enableNextButton();
+        $('.wizard-next').click();
     };
 
     importWizard.getSchemaMatchingUserInputs = function() {
@@ -222,8 +223,7 @@ var importWizard = (function() {
 
         $('#schemaMatchinStepInProgressWrapper').hide();
         $("#schemaMatchinTable").html(data);
-        importWizard.checkToEnableNextButtonOnSchemaMatchinStep();
-
+        
         var datePickerOption = {
             changeMonth: true,
             changeYear: true,
@@ -235,6 +235,8 @@ var importWizard = (function() {
         $("#Drd2").datepicker(datePickerOption);
         $("#Start2").datepicker(datePickerOption);
         $("#End2").datepicker(datePickerOption);
+        
+        importWizard.skipSchemaMatchingStep();
     };
 
     importWizard.passSchemaMatchinInfo = function() {
