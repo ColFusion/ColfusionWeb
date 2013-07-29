@@ -20,7 +20,7 @@
                     <tbody data-bind="foreach: rawData">                            
                         <tr data-bind="attr: { 'id' : 'relationship_' + rel_id}" class="relationshipInfoRow">
                             <td>
-                                <div style="display: inline;"><a data-bind='attr: { href: "story.php?title=" + sidFrom }, text: titleFrom' > </a></div>.
+                                <div style="display: inline;"><a data-bind='attr: { href: titleFrom ? "story.php?title=" + sidFrom : ""}, text: titleFrom ? titleFrom : "this"' > </a></div>.
                                 <div style="display: inline;"><span data-bind='text: tableNameFrom'/></div>
                             </td>
                             <td>
@@ -47,12 +47,13 @@
                                             <tr>
                                                 <td class="profileHeader">Name:</td>
                                                 <td data-bind='text: name' class="profileContent"></td>
-                                                <td data-bind="visible: isOwned()" rowspan="2"><button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn deleteRelBtn">Delete</button></td>
+                                                <td rowspan="2"><button data-bind="click: checkDataMatching" class="btn" style="width: 180px;">Check Data Matching</button></td>
+                                                <td data-bind="visible: isOwned()" rowspan="2"><button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn btn-danger deleteRelBtn">Delete</button></td>
                                             </tr>           
                                             <tr><td class="profileHeader">Creator:</td><td data-bind='text: creator' class="profileContent"></td></tr>
                                             <tr><td class="profileHeader">CreatedTime:</td><td data-bind='text: createdTime' class="profileContent"></td></tr>
                                             <tr><td class="profileHeader">Description:</td><td data-bind='text: description' class="profileContent"></td></tr>
-                                        </table>           
+                                        </table>                                                 
                                         <div class="linkProfileContainer">                                       
                                             <div data-bind="template: { name: 'linkProfile-template', data: fromDataset }" class="fromProfile linkProfile">
                                             </div>
@@ -71,7 +72,7 @@
                                                 </tr>
                                                 <tr>
                                                 <td class="linkProfileHeader">Table:</td>
-                                                <td class="linkProfileContent" data-bind='text: currentTable'></td>
+                                                <td class="linkProfileContent" data-bind='text: chosenTableName'></td>
                                                 </tr>
                                                 </table>
                                             </script>

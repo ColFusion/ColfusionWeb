@@ -31,21 +31,33 @@ ko.bindingHandlers.jqueryPagedEditable = {
                         /* Do whatever additional processing you want on the callback, then tell DataTables */
                         var columns = json.aoColumns;
                         var colDoms = $(tableDom).find('.distinctTableColumn');
-                        for(var i=0 ; i<columns.length && i<colDoms.length ; i++){
+                        for (var i = 0; i < columns.length && i < colDoms.length; i++) {
                             $(colDoms).eq(i).text(columns[i]);
                         }
-                        
+
                         fnCallback(json);
                     }
                 });
             },
             "aoColumnDefs": [
-                {"sClass":"distinctTableColumn", "aTargets": ['_all']}
+                {"sClass": "distinctTableColumn", "aTargets": ['_all']}
             ],
             "aoColumns": [
                 {"sTitle": "Column1"}
             ]
-        }).makeEditable();
+        }).makeEditable({
+            sUpdateURL: "UpdateData.php",
+            fnOnEditing: function(jInput, oEditableSettings, sOriginalText, id)
+            {
+                return true;
+            },
+            fnOnEdited: function(status)
+            {
+                if (status == "success") {
+
+                }
+            }
+        });
     }
 };
 
@@ -81,7 +93,19 @@ ko.bindingHandlers.jqueryEditable = {
             "bLengthChange": false,
             "bSort": false,
             "iDisplayLength": 20
-        }).makeEditable();
+        }).makeEditable({
+            sUpdateURL: "UpdateData.php",
+            fnOnEditing: function(jInput, oEditableSettings, sOriginalText, id)
+            {
+                return true;
+            },
+            fnOnEdited: function(status)
+            {
+                if (status == "success") {
+
+                }
+            }
+        });
     }
 };
 
@@ -221,12 +245,13 @@ function DataMatchCheckerViewModel() {
         });
     };
 
-    // TODO: remove values on diff table and add values to smae table.
     function updateTables(synFrom, synTo) {
         var oldFromTable = self.differentValueFromTable();
         var oldToTable = self.differentValueToTable();
         self.differentValueFromTable(removeValueInTable(oldFromTable, synFrom));
-        self.differentValueToTable(removeValueInTable(oldToTable, synTo, 1));
+        self.differentValueToTable(removeValueInTable(oldToTable, synTo));
+        addValueToTable(self.sameValueTable(), synFrom, synTo);
+        self.countOfMatchedData(Number(self.countOfMatchedData()) + 1);
     }
 
     // DataPreviewViewModelProperties.Table

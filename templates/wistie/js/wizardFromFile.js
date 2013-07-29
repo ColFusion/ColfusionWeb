@@ -57,15 +57,11 @@ var wizardFromFile = (function() {
     };
 
     wizardFromFile.getLoadingTime = function() {
-        sourceWorksheetSettingsViewModel.isPreviewLoadingComplete(false);
         return $.ajax({
             url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=9",
             type: 'post',
             success: function(estimatedSeconds) {
                 sourceWorksheetSettingsViewModel.setTimeProgress(new Date().getTime(), estimatedSeconds * 1000);
-            },
-            error: function() {
-                sourceWorksheetSettingsViewModel.isPreviewLoadingComplete(true);
             }
         });
     };
@@ -85,8 +81,6 @@ var wizardFromFile = (function() {
                     sourceWorksheetSettingsViewModel.addSource(filename, worksheets);
                 }
             }
-        }).always(function() {
-            sourceWorksheetSettingsViewModel.isPreviewLoadingComplete(true);
         });
     };
 

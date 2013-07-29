@@ -10,7 +10,7 @@ ini_set('include_path', '.');
 
 define('LOG_FILE','cache/log.php');
 error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT ^ E_WARNING);
-ini_set('display_errors', 'OFF');
+ini_set('display_errors', 0);
 ini_set('error_log','cache/log.php');
 
 // experimental caching

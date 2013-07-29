@@ -369,6 +369,7 @@ returns true if plugin should continue with sending AJAX request, false will abo
                         oColumnSettings = $.extend({}, oDefaultEditableSettings, properties.oEditableSettings, properties.aoColumns[iDTEindex]);
                         iDTEindex++;
                         var sUpdateURL = properties.sUpdateURL;
+                        
                         try {
                             if (oColumnSettings.sUpdateURL != null)
                                 sUpdateURL = oColumnSettings.sUpdateURL;
@@ -989,7 +990,7 @@ returns true if plugin should continue with sending AJAX request, false will abo
 
         var defaults = {
 
-            sUpdateURL: "UpdateData",
+            sUpdateURL: "UpdateData.php",
             sAddURL: "AddData",
             sDeleteURL: "DeleteData",
             sAddNewRowFormId: "formAddNewRow",
@@ -1033,11 +1034,10 @@ returns true if plugin should continue with sending AJAX request, false will abo
             bUseFormsPlugin: false,
             fnOnActionCompleted: _fnOnActionCompleted,
             sSuccessResponse: "ok",
-        sFailureResponsePrefix: "ERROR",
+            sFailureResponsePrefix: "ERROR",
             oKeyTable: null        //KEYTABLE
-
         };
-
+        
         properties = $.extend(defaults, options);
         oSettings = oTable.fnSettings();
         properties.bUseKeyTable = (properties.oKeyTable != null);

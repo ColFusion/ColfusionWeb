@@ -25,7 +25,9 @@ var RelationshipModel = {
         self.isYourCommentEditing = ko.observable(false);
         self.editingComment = ko.observable();
         self.isSavingYourComment = ko.observable(false);
-
+        
+        self.persistStore = new Persist.Store('NewRelationshipViewModel');
+        
         function createDatasetModel(dsJson, tableName) {
             var dataset = new RelationshipModel.DataSet(dsJson.sid);
             dataset.name(dsJson.title);
@@ -35,7 +37,7 @@ var RelationshipModel = {
             dataset.createdTime(dsJson.entryDate);
             dataset.lastUpdated(dsJson.lastUpdated);
             dataset.sourceType(dsJson.sourceType);
-            dataset.currentTable(tableName);
+            dataset.chosenTableName(tableName);
             return dataset;
         }
 
@@ -83,9 +85,6 @@ var RelationshipModel = {
                 totalConfidence += parseFloat(yourComment.confidence());
             }
 
-            console.log('totalConfidence: ' + totalConfidence);
-            console.log('numOfFeedback: ' + numOfFeedback);
-            console.log(totalConfidence / numOfFeedback);
             var avgConfidence = totalConfidence / numOfFeedback;
             self.avgConfidence(avgConfidence);
 
@@ -200,6 +199,19 @@ var RelationshipModel = {
                     alert(errMessage);
                 }
             });
+        };
+
+        self.checkDataMatching = function() {
+
+            self.fromDataset().name($('#fromDataSet').find('input.sidInput').val());
+            self.persistStore.set('checkDataMatching_' + self.fromDataset().sid() + '_' + self.fromDataset().chosenTableName()
+                    + '_' + self.toDataset().sid() + '_' + self.toDataset().chosenTableName(), ko.toJSON(self));
+
+            $('#dataMatchCheckingForm input[name="fromSid"]').val(self.fromDataset().sid());
+            $('#dataMatchCheckingForm input[name="toSid"]').val(self.toDataset().sid());
+            $('#dataMatchCheckingForm input[name="fromTable"]').val(self.fromDataset().chosenTableName());
+            $('#dataMatchCheckingForm input[name="toTable"]').val(self.toDataset().chosenTableName());
+            $('#dataMatchCheckingForm').submit();
         };
     },
     Comment: function(rid, confidence, comment, userId, userName, userEmail, commentTime, isControlPanelShown) {

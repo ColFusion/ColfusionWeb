@@ -149,7 +149,7 @@
 
                 <div id="sourceSelectionNavContents">
                     <div class="nav-content" id="dataRangeSettingsTabContent">
-                        <form data-bind="visible: isPreviewLoadingComplete()" id="displayOptoinsStepCardFromFileForm">
+                        <form id="displayOptoinsStepCardFromFileForm">
                             <div data-bind="foreach: sourceWorksheetSettings" id="sourceSelectionWrapper">
                                 <div class="sourceWorksheetSettingsWrapper">
                                     <p data-bind="text: sourceName" class="sourceName"></p>

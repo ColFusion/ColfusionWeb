@@ -1,7 +1,6 @@
 function SourceWorksheetSettingsViewModel() {
     var self = this;
     self.sourceWorksheetSettings = ko.observableArray();
-    self.isPreviewLoadingComplete = ko.observable(true);
     self.loadingProgress = ko.observable();
 
     self.addSource = function(sourceName, worksheets) {

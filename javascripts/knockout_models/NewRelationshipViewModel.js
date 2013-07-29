@@ -60,9 +60,9 @@ ko.bindingHandlers.searchDatasetTypeahead = {
                 url: 'datasetController/findDataset.php?searchTerm=%QUERY',
                 cache: true,
                 maxParallelRequests: 2,
-                filter: function(data) {                   
+                filter: function(data) {
                     $('.datasetSearchLoadingNotification').hide();
-                    if(data === null){
+                    if (data === null) {
                         return [];
                     }
                     return data;
@@ -268,7 +268,7 @@ function NewRelationshipViewModel() {
     };
 
     self.checkDataMatching = function() {
-      
+
         self.fromDataSet().name($('#fromDataSet').find('input.sidInput').val());
         self.persistStore.set('checkDataMatching_' + self.fromDataSet().sid() + '_' + self.fromDataSet().chosenTableName()
                 + '_' + self.toDataSet().sid() + '_' + self.toDataSet().chosenTableName(), ko.toJSON(self));
@@ -290,6 +290,8 @@ function NewRelationshipViewModel() {
         resetDatasets();
         resetConfidence();
         resetLinks();
+        self.isAddingSuccessful(false);
+        self.isAddingFailed(false);
     }
 
     function resetRelDescription() {

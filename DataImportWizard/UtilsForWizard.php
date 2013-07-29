@@ -90,7 +90,7 @@ class UtilsForWizard {
 
             $result .= "<tr>";
             $result .= "<td> <div><label style='display: inline;'><input type=\"checkbox\" name=\"columns[]\" value='$oneTableName.$tableColumns[$i]'>$tableColumns[$i]</label><input type='button' value='...' id='more$i' onClick='return $(\"#inDiv$i\").toggle();' /><img src='help.png' width='15' height='15' title='Click here to complete your definition about this dname.'/>";
-            $result .= "<div id='inDiv$i' style='display:none;'><label for='Dtype'>Corresponding value type:<img src='help.png' width='15' height='15' title='Data type of the header.'/></label><select name='dname_value_type'><option value='STRING' selected>STRING</option><option value='INT'>INT</option><option value='DATE'>DATE</option></select>";
+            $result .= "<div id='inDiv$i' style='display:none;'><label for='Dtype'>Corresponding value type:<img src='help.png' width='15' height='15' title='Data type of the header.'/></label><select name='dname_value_type'><option value='STRING' selected>STRING</option><option value='INT'>NUMBER</option><option value='DATE'>DATE</option></select>";
             $result .= "<label>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label><input type='text' name='dname_value_unit'/>";
             $result .= "<label>Description: <img src='help.png' width='15' height='15' title='More description the header.'/></label><input type='text' name='dname_value_description'/></div></div></td>";
             $result .= "<td><div ><input type='text' value='$tableColumns[$i]' id='suggestmatch$i' name=\"Dname\" onClick=''/><input type='hidden' name='dname_value_tableName' value='$oneTableName'>";

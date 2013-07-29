@@ -125,16 +125,16 @@ var WizardExcelPreviewProperties = {
             });
         };
 
-        var getEstimatedLoadingSeconds = function() {
+        function  getEstimatedLoadingSeconds() {
             return $.ajax({
                 url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=9",
                 type: 'post',
                 data: {filename: self.filename()},
                 dataType: 'html'
             });
-        };
+        }
 
-        var updateLoadingProgress = function(startLoadingTimeStamp, estimatedLoadingTimestamp) {
+        function updateLoadingProgress(startLoadingTimeStamp, estimatedLoadingTimestamp) {
             if (!self.isPreviewLoadingComplete()) {
                 var hasLoadedTimestamp = new Date().getTime() - startLoadingTimeStamp;
                 var progressPercent = hasLoadedTimestamp / estimatedLoadingTimestamp * 100;
@@ -144,7 +144,7 @@ var WizardExcelPreviewProperties = {
                     updateLoadingProgress(startLoadingTimeStamp, estimatedLoadingTimestamp);
                 }, 1000);
             }
-        };
+        }
 
         self.loadPreviewNextPage = function() {
             self.previewPage(self.previewPage() + 1);
