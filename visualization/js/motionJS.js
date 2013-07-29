@@ -280,7 +280,7 @@ function createNewMotionGadget() {
 	var gadget = "<div name='motionDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:500px; height:320px' type='motion'>";
 	gadget += "<div class='gadget-header'><div class='gadget-title'>Motion chart " + gadgetID+"</div>";
 	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
-	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div>";
+	gadget += "<div class='gadget-edit edit-motion'><i class='icon-edit'></i></div>";
 	gadget += "<div class='gadget-min' style = 'display:none'><i class='icon-resize-small'></i></div>";
 	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";

@@ -287,7 +287,7 @@ function createNewComboGadget(){
 	var gadget = "<div name='comboDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:400px; height: 300px' type='combo'>";
 	gadget +=  "<div class='gadget-header'><div class='gadget-title'>Combo chart " + gadgetID+"</div>";
 	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
-	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div>";
+	gadget += "<div class='gadget-edit edit-combo'><i class='icon-edit'></i></div>";
 	gadget += "<div class='gadget-min' style = 'display:none'><i class='icon-resize-small'></i></div>";
 	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />"; 	
