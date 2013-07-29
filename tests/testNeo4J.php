@@ -18,10 +18,10 @@
 
 /*    for ($i=1; $i <= 7; $i++) { 
         $source = $client->makeNode();
-        $source->setProperty('name', "s$i")->save();
+        $source->setProperty('sid', "s$i")->save();
 
         // Index the ship on one of its properties
-        $sourceIndex->add($source, 'name', $source->getProperty('name'));
+        $sourceIndex->add($source, 'sid', $source->getProperty('sid'));
     }
 
  
@@ -33,7 +33,7 @@
     echo $sourceId;
 */
     // Returns an array of matching entities
-  //  $matches = $sourceIndex->query('name:*');
+  //  $matches = $sourceIndex->query('sid:*');
 
   //  var_dump($matches);
 
@@ -89,8 +89,8 @@
         while (count($copyOfShortTargetSids) > 0) {
             $node2Sid = array_pop($copyOfShortTargetSids);
 
-            $startNode = $sourceIndex->queryOne("name:{$node1Sid}");
-            $endNode = $sourceIndex->queryOne("name:{$node2Sid}");
+            $startNode = $sourceIndex->queryOne("sid:{$node1Sid}");
+            $endNode = $sourceIndex->queryOne("sid:{$node2Sid}");
 
             $paths = getAllPathsBetweenTwoNodes($startNode,  $endNode);
 
@@ -134,11 +134,11 @@ echo json_encode($allPath);
     for ($i=0; $i < count($targetSids); $i++) { 
 
         for ($j=$i + 1; $j < count($targetSids); $j++) { 
-            echo "name:{$targetSids[$i]}<br/>";
-            echo "name:{$targetSids[$j]}<br/>";
+            echo "sid:{$targetSids[$i]}<br/>";
+            echo "sid:{$targetSids[$j]}<br/>";
            
-            $startNode = $sourceIndex->queryOne("name:{$targetSids[$i]}");
-            $endNode = $sourceIndex->queryOne("name:{$targetSids[$j]}");
+            $startNode = $sourceIndex->queryOne("sid:{$targetSids[$i]}");
+            $endNode = $sourceIndex->queryOne("sid:{$targetSids[$j]}");
 
             $paths = getAllPathsBetweenTwoNodes($startNode,  $endNode);
 
@@ -164,8 +164,8 @@ echo $node;
             $otherNode = array_pop($list);
 echo $otherNode;
 
-            $startNode = $sourceIndex->queryOne("name:{$node}");
-            $endNode = $sourceIndex->queryOne("name:{$otherNode}");
+            $startNode = $sourceIndex->queryOne("sid:{$node}");
+            $endNode = $sourceIndex->queryOne("sid:{$otherNode}");
 
             $paths = getAllPathsBetweenTwoNodes($startNode,  $endNode);
 

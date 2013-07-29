@@ -3,6 +3,8 @@
 include_once("../DataImportWizard/UtilsForWizard.php");
 include_once("../DAL/ExternalDBHandlers/ExternalMSSQL.php");
 
+require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+
 class AdvSearch {
 	
 	private $searchKeyWords;
@@ -51,6 +53,7 @@ class AdvSearch {
 		return $this->whereCondition;
 	}
 	
+
 	public function doSearch() {
 		global $db;
 		
@@ -61,6 +64,8 @@ class AdvSearch {
 		
 		$inCrit = implode("','", $chunks);
 
+
+/*
 		$sql = "
 select distinct CONCAT(cd.sid, '.' , tableName) as sid, sidTo 
 from colfusion_dnameinfo as cd LEFT JOIN
@@ -187,6 +192,8 @@ and cd.cid = cti.cid
 		while (!empty($sidDnames));
 			
 		return $result;
+
+		*/
 	}
 	
 	private function constractOneSearchResult($sids, $searchKeyWords, $allColumns) {

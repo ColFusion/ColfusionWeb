@@ -311,14 +311,14 @@ EOQ;
         
 
         $sourceFrom = $client->makeNode();
-        $sourceFrom->setProperty('name', $from["sid"])->save();
+        $sourceFrom->setProperty('sid', $from["sid"])->save();
         // Index the ship on one of its properties
-        $sourceIndex->add($sourceFrom, 'name', $sourceFrom->getProperty('name'));
+        $sourceIndex->add($sourceFrom, 'sid', $sourceFrom->getProperty('sid'));
         $sourceIndex->save();
 
         $sourceTo = $client->makeNode();
-        $sourceTo->setProperty('name', $to["sid"])->save();
-        $sourceIndex->add($sourceTo, 'name', $sourceTo->getProperty('name'));
+        $sourceTo->setProperty('sid', $to["sid"])->save();
+        $sourceIndex->add($sourceTo, 'sid', $sourceTo->getProperty('sid'));
         $sourceIndex->save();
 
         $sourceFrom->relateTo($sourceTo, 'RELATED_TO')
