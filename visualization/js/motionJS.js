@@ -157,7 +157,7 @@ function motionFormToDatainfo() {
 	$.each($("#addMotion .columnSelection").find("input:checked"), function(){
 		otherColumns.push($(this).val()); // columns to show
 		var a = CANVAS.getColumnType(sid,table,$(this).val());
-		if (CANVAS.getColumnType(sid,table,$(this)) == "NUMBER") {
+		if (CANVAS.getColumnType(sid,table,$(this).val()) == "NUMBER") {
 			oneNum = true;
 		}
 		otherColCount++;
@@ -165,7 +165,7 @@ function motionFormToDatainfo() {
 	if (!oneNum) {
 	    $("#add-motion-info").show().text("Please select at least one numeric column.");
 	    $("#add-motion-info").addClass("alert-error");
-	    //return null;
+	    return null;
 	}
 	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where);
 }

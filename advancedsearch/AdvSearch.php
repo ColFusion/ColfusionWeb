@@ -314,6 +314,7 @@ and cd.cid = cti.cid
 
 
 			if ($value->oneSid) {
+				$oneSearchResult->sid = $value->value;
 				$oneSearchResult->sidTitle = $this->getTitleBySid($value->value);
 				$oneSearchResult->allColumns = $this->getColumnsBySid($value->value);
 			}
@@ -345,8 +346,8 @@ and cd.cid = cti.cid
 						$onePathOneRelation->sidFrom->sidTitle = $this->getTitleBySid($moreInfo->sid1);
 						$onePathOneRelation->sidFrom->allColumns = $this->getColumnsBySid($moreInfo->sid1);
 
-						if (!in_array($moreInfo->tableName1, $onePathSidTitles)) {
-							$onePathSidTitles[] = $moreInfo->tableName1;
+						if (!in_array($moreInfo->sid1, $onePathSidTitles)) {
+							$onePathSidTitles[] = $moreInfo->sid1;
 						}
 
 						$onePathOneRelation->sidTo = new stdClass();
@@ -355,8 +356,8 @@ and cd.cid = cti.cid
 						$onePathOneRelation->sidTo->sidTitle = $this->getTitleBySid($moreInfo->sid2);
 						$onePathOneRelation->sidTo->allColumns = $this->getColumnsBySid($moreInfo->sid2);
 
-						if (!in_array($moreInfo->tableName2, $onePathSidTitles)) {
-							$onePathSidTitles[] = $moreInfo->tableName2;
+						if (!in_array($moreInfo->sid2, $onePathSidTitles)) {
+							$onePathSidTitles[] = $moreInfo->sid2;
 						}
 						
 						$onePathOneRelation->relId = $oneRel->rel_id;

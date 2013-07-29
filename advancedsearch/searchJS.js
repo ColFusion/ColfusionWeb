@@ -41,25 +41,42 @@ function showResult(){
 }
 
 function showSearchResutls(data){
-	JTitle = data;
+
 	var list = document.getElementById("resultDiv");
 	list.innerHTML = "";
 	for(var i=0; i < data.length; i++){
+
+		if (data[i].oneSid) {
+			showSearchResutlsOneSource(list, data[i]);	
+		}
+		else {
+			for (var j = 0; j < data[i].allPaths.length; j++) {
+				showSearchResutlsSeveralSource(list, data[i].allPaths[j]);
+			};
+		}
+	}
+
+	return;
+		
+
 		var listItem = document.createElement("div"); 
 		listItem.className = "stories";
 
 		var hrefts = "";
 
-		for (var j = 0; j < data[i].datasets.length; j++) {
-			hrefts += "<a id='title" + data[i].datasets[j].sid + "' href='../story.php?title=" + 
-			data[i].datasets[j].sid + "'>"
-								+ data[i].datasets[j].link_title + "</a>, "
+		var listItemTitle = document.createElement("h2");
+
+		if (data[i].oneSid) {
+			hrefts += "<a id='title" + data[i].sid + "' href='../story.php?title=" + 
+			data[i].sid + "'>" + data[i].sidTitle + "</a>";
+
+			listItemTitle.innerHTML = "Dataset(s): " + hrefts;
+		}
+		else {
+			listItemTitle.innerHTML = "Paths"
 		}
 
-		hrefts = hrefts.substring(0, hrefts.length - 2);
-
-		var listItemTitle = document.createElement("h2");
-		listItemTitle.innerHTML = "Dataset(s): " + hrefts;
+		
 
 		
 		var listItemContent = document.createElement("p");
@@ -166,7 +183,49 @@ function showSearchResutls(data){
    		}
 
    		$("#searchResultDiv_" + i).append(str);
-	}
+	
+}
+
+function showSearchResutlsOneSource(container, oneSearhResult) {
+	var listItem = document.createElement("div"); 
+		listItem.className = "stories";
+
+		var hrefts = "";
+
+		var listItemTitle = document.createElement("h2");
+
+		hrefts += "<a id='title" + oneSearhResult.sid + "' href='../story.php?title=" + 
+		oneSearhResult.sid + "'>" + oneSearhResult.sidTitle + "</a>";
+
+		listItemTitle.innerHTML = "Dataset: " + hrefts;
+		
+		listItem.appendChild(listItemTitle);
+
+		var pElement = document.createElement("p");
+		pElement.innerHTML = "<p>" + "All Columns: " + oneSearhResult.allColumns.join() + "</p><br/>";
+
+		listItem.appendChild(pElement);
+
+		container.appendChild(listItem);
+}
+
+function showSearchResutlsSeveralSource(container, path){
+	var listItem = document.createElement("div"); 
+		listItem.className = "stories";
+
+		var hrefts = "";
+
+		var listItemTitle = document.createElement("h2");
+
+		listItemTitle.innerHTML = "Datasets: " + path.sidTitles.join();
+		
+		listItem.appendChild(listItemTitle);
+
+		var pElement = document.createElement("p");
+		pElement.innerHTML = "<p>" + "Average confidence: " + oneSearhResult.avgConfidence + "</p><br/>";
+
+		listItem.appendChild(pElement);
+
 }
 
 function resultDetail(titleNo){
