@@ -5,7 +5,7 @@
     ini_set('display_errors', 1);
 
 
-    $searchFor = 'Ccode, WarNum';
+    $searchFor = array('A', 'G', 'X', 'K');
 
 	$avdSearch = new AdvSearch();
     

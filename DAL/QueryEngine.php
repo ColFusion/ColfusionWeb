@@ -309,17 +309,23 @@ EOQ;
 
         $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
         
+        $sourceFrom = $sourceIndex->queryOne("sid:{$from["sid"]}");
 
-        $sourceFrom = $client->makeNode();
-        $sourceFrom->setProperty('sid', $from["sid"])->save();
-        // Index the ship on one of its properties
-        $sourceIndex->add($sourceFrom, 'sid', $sourceFrom->getProperty('sid'));
-        $sourceIndex->save();
+        if (!isset($sourceFrom)) {
+            $sourceFrom = $client->makeNode();
+            $sourceFrom->setProperty('sid', $from["sid"])->save();
+            $sourceIndex->add($sourceFrom, 'sid', $sourceFrom->getProperty('sid'));
+            $sourceIndex->save();
+        }
 
-        $sourceTo = $client->makeNode();
-        $sourceTo->setProperty('sid', $to["sid"])->save();
-        $sourceIndex->add($sourceTo, 'sid', $sourceTo->getProperty('sid'));
-        $sourceIndex->save();
+        $sourceTo = $sourceIndex->queryOne("sid:{$to["sid"]}");
+
+        if (!isset($sourceTo)) {
+            $sourceTo = $client->makeNode();
+            $sourceTo->setProperty('sid', $to["sid"])->save();
+            $sourceIndex->add($sourceTo, 'sid', $sourceTo->getProperty('sid'));
+            $sourceIndex->save();
+        }
 
         $sourceFrom->relateTo($sourceTo, 'RELATED_TO')
                     ->setProperty('rel_id', $rel_id)

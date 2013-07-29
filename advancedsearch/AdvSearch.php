@@ -60,10 +60,13 @@ class AdvSearch {
 		if (!isset($this->searchKeyWords))
 			return "";
 		
-		$chunks = array_map('trim', $this->searchKeyWords);
-		
-		$inCrit = implode("','", $chunks);
+		$sids =  $this->getSidsContainingSearchKeys();
 
+		$result = $this->getRelationshipToJoin($sids);
+
+		$result = $this->getMoreInfoForEachRel($result);
+
+		return $result;
 
 /*
 		$sql = "
@@ -122,8 +125,304 @@ and cd.cid = cti.cid
 		
 		
 		return $res;
+
+*/
+
+	}
+
+	private function getSidsContainingSearchKeys() {
+		global $db;
+
+//var_dump($db);
+
+		$chunks = array_map('trim', $this->searchKeyWords);
+		
+		$inCrit = implode("','", $chunks);
+
+		$sql = "select distinct di.sid from colfusion_dnameinfo di, colfusion_sourceinfo si where dname_chosen in ('$inCrit') or dname_original_name in ('$inCrit') and di.sid = si.sid and si.Status = 'queued';";
+
+//echo $sql;
+
+		$rst = $db->get_results($sql);
+		
+		$result = array();
+
+		foreach ($rst as $key => $value) {
+			$result[] = $value->sid;
+		}
+	
+		return $result;
 	}
 	
+	private function getRelationshipToJoin($sids) {
+//TODO: move to neo4j handler class
+ 		$client = new Everyman\Neo4j\Client();
+    	$sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');	
+
+		$allSearchRes = array();
+    
+	    $targetSidsCopy = $sids;
+	  
+
+
+	    do {
+
+			$node1Sid = array_pop($targetSidsCopy);
+
+	    	$res = $this->rec($sourceIndex, $node1Sid, $targetSidsCopy);
+	    	
+	    	$oneSearchRes = new stdClass();
+	    	
+	    	if (count($res->ar) == 0) {
+	    		$oneSearchRes->oneSid = true;
+	    		$oneSearchRes->value = $node1Sid;
+	    	}
+	    	else {
+	    		$oneSearchRes->oneSid = false;
+	    		$oneSearchRes->value = $res->ar;
+	    	}
+	    	
+	    	//$oneSearchRes->foundSearchKeys = array_diff($targetSidsCopy, $res->needToCheck);
+
+	    	$allSearchRes[] = $oneSearchRes;
+	    	
+	    	$targetSidsCopy = $res->needToCheck;
+	    	
+	    } while (count($targetSidsCopy) > 0);
+
+	    
+	    return $allSearchRes;
+	}
+
+	//TODO: move to other class for neo4j handler
+	private function rec($sourceIndex, $node, $list) {
+///echo "sid:{$node}";
+        $result = new stdClass();
+
+        if (count($list) == 0) {
+            $result->ar = array();
+            $result->needToCheck = array();
+        }
+        else {
+
+            $otherNode = array_pop($list);
+//echo $otherNode;
+
+            $startNode = $sourceIndex->queryOne("sid:{$node}");
+            $endNode = $sourceIndex->queryOne("sid:{$otherNode}");
+
+//var_dump($startNode);
+
+			if (!isset($startNode) || !isset($endNode)) {
+				$paths = new stdClass();
+				$paths->paths = array(); 
+			}
+			else {
+            	$paths = $this->getAllPathsBetweenTwoNodes($startNode,  $endNode);
+        	}
+
+            if (count($paths->paths) == 0) {
+        
+                $res = $this->rec($sourceIndex, $node, $list);
+
+                $result->ar = $res->ar;
+                $result->needToCheck = array_merge($res->needToCheck, array($otherNode));
+            }
+            else {
+                $res = $this->rec($sourceIndex, $otherNode, $list);
+
+                $res2 = array();
+
+                if (count($res->ar) == 0) {
+                    $res2 =$paths->paths;
+                }
+                else {
+
+                    for ($j=0; $j < count($paths->paths); $j++) {
+                        for ($i=0; $i < count($res->ar); $i++) { 
+                            $res2[] = array_merge($paths->paths[$j], $res->ar[$i]);
+                        }
+                    }     
+                }       
+
+                $result->ar = $res2;
+                $result->needToCheck = $res->needToCheck;
+            }
+        }
+
+        return $result;
+    }
+
+    //TODO: move to other class for neo4j handler
+	private function getAllPathsBetweenTwoNodes($node1, $node2){
+
+	    $result = new stdClass;
+
+	    $result->node1 = $node1;
+	    $result->node2 = $node2;
+	    
+	    $paths = $node1->findPathsTo($node2)->setMaxDepth(5)->setAlgorithm(Everyman\Neo4j\PathFinder::AlgoAllSimple)->getPaths();
+
+	    $result->pathsNeo4j = $paths;
+	    $result->paths = array();
+
+	    foreach ($paths as $i => $path) {
+	        $path->setContext(Everyman\Neo4j\Path::ContextRelationship);
+	        $totalConfidence = 0;
+
+	      //  $pathToResult = new stdClass();
+	        $pathSteps = array();
+
+	        foreach ($path as $j => $rel) {
+	            $direction = $rel->getProperty('rel_id');
+	            $confidence = $rel->getProperty('confidence');
+	            
+	            $step = $j+1;
+	            $totalConfidence += $confidence;
+
+	            $pathStep = new stdClass();
+	           // $pathStep->stepIndex = $step;
+	            $pathStep->rel_id = $direction;
+	            $pathStep->confidence = $confidence;
+
+	            $pathSteps[] = $pathStep;           
+	        }
+
+	     //   $avgConfidence = $totalConfidence / $step;
+
+	     //   $pathToResult->pathSteps = $pathSteps;
+	     //   $pathToResult->avgConfidence = $avgConfidence;
+	     //   $pathToResult->numOfSteps = $step;
+
+	        $result->paths[] = $pathSteps;//$pathToResult;
+	    }
+
+	    return $result;
+	}
+
+	private function getMoreInfoForEachRel($searchResults) {
+		global $db;
+
+		$result = array();
+
+		foreach ($searchResults as $key => $value) {
+
+			$oneSearchResult = new stdClass();
+
+			$oneSearchResult->oneSid = $value->oneSid;
+		//	$oneSearchResult->foundSearchKeys = $value->foundSearchKeys;
+
+
+			if ($value->oneSid) {
+				$oneSearchResult->sidTitle = $this->getTitleBySid($value->value);
+				$oneSearchResult->allColumns = $this->getColumnsBySid($value->value);
+			}
+			else {
+
+				$allPaths = array();
+
+				$allPossiblePaths = $value->value;
+				//$value here is one search result which include several possible paths
+				//$value->value is array of all possible paths.
+				foreach ($allPossiblePaths as $key => $onePath) {
+
+					$onePathResult = new stdClass();
+
+					$totalConfidence = 0;
+					$onePathSidTitles = array();
+
+					$onePathRelationships = array();
+
+					foreach ($onePath as $key => $oneRel) {
+
+						$onePathOneRelation = new stdClass();
+						
+
+						$moreInfo = $this->getSidsAndTableNamesByRelId($oneRel->rel_id);
+						$onePathOneRelation->sidFrom = new stdClass();
+						$onePathOneRelation->sidFrom->sid = $moreInfo->sid1;
+						$onePathOneRelation->sidFrom->tableFrom = $moreInfo->tableName1;
+						$onePathOneRelation->sidFrom->sidTitle = $this->getTitleBySid($moreInfo->sid1);
+						$onePathOneRelation->sidFrom->allColumns = $this->getColumnsBySid($moreInfo->sid1);
+
+						if (!in_array($moreInfo->tableName1, $onePathSidTitles)) {
+							$onePathSidTitles[] = $moreInfo->tableName1;
+						}
+
+						$onePathOneRelation->sidTo = new stdClass();
+						$onePathOneRelation->sidTo->sid = $moreInfo->sid2;
+						$onePathOneRelation->sidTo->tableFrom = $moreInfo->tableName2;
+						$onePathOneRelation->sidTo->sidTitle = $this->getTitleBySid($moreInfo->sid2);
+						$onePathOneRelation->sidTo->allColumns = $this->getColumnsBySid($moreInfo->sid2);
+
+						if (!in_array($moreInfo->tableName2, $onePathSidTitles)) {
+							$onePathSidTitles[] = $moreInfo->tableName2;
+						}
+						
+						$onePathOneRelation->relId = $oneRel->rel_id;
+						$onePathOneRelation->relName = $moreInfo->name;
+						$onePathOneRelation->confidence = $oneRel->confidence;
+
+						$onePathRelationships[] = $onePathOneRelation; 
+
+						$totalConfidence += $oneRel->confidence;
+
+					}
+
+					$onePathResult->avgConfidence = $totalConfidence / count($onePath);
+					$onePathResult->relationships = $onePathRelationships;
+					$onePathResult->sidTitles = $onePathSidTitles;
+					
+					$allPaths[] = $onePathResult;	
+				}
+
+				$oneSearchResult->allPaths = $allPaths;
+				
+			}
+
+			$result[] = $oneSearchResult;
+		}
+
+		return $result;
+
+	}
+
+	private function getTitleBySid($sid) {
+		global $db;
+
+		$sql = "select title from colfusion_sourceinfo where sid = $sid";
+
+		return $db->get_row($sql)->title;
+	}
+
+	private function getColumnsBySid($sid) {
+		global $db;
+
+		$sql = "select dname_chosen from colfusion_dnameinfo where sid = $sid and dname_chosen not in ('Spd','Drd','Start','End','Location','Aggrtype')";
+
+		$res = $db->get_results($sql);
+
+		$result = array();
+
+		foreach ($res as $key => $value) {
+			$result[] = $value->dname_chosen;
+		}
+	
+		return $result;
+	}
+
+	private function getSidsAndTableNamesByRelId($rel_id) {
+		global $db;
+
+		$sql = "select sid1, sid2, tableName1, tableName2, name FROM  colfusion_relationships where rel_id = $rel_id";
+
+//echo $sql;
+
+		$res = $db->get_row($sql);
+
+		return $res;
+	}
+
 	private function constructResultArray($sidDnames, $searchKeyWords) {
 		
 		global $db;
@@ -193,7 +492,7 @@ and cd.cid = cti.cid
 			
 		return $result;
 
-		*/
+		
 	}
 	
 	private function constractOneSearchResult($sids, $searchKeyWords, $allColumns) {
