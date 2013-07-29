@@ -47,6 +47,8 @@ class ComboChart extends Chart{
         $rst['comboAggType'] = $comboAggType;
         $rst['comboColumnCat'] = $comboColumnCat;
         $rst['comboColumnAgg'] = $comboColumnAgg;
+        $rst['sid'] = $sid;
+        $rst['table'] = $table;
         //rst['content'] =  json_decode('[{"Category":"aaa","AVG":"13","MAX":"18","MIN":"12"},{"Category":"bbb","AVG":"14","MAX":"16","MIN":"11"},{"Category":"ccc","AVG":"10","MAX":"14","MIN":"6"},{"Category":"ddd","AVG":"43","MAX":"45","MIN":"14"}]');
         $this->queryResult = $rst;
         return $rst;

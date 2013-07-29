@@ -60,6 +60,8 @@ class MapChart extends Chart {
 	//$rst = $db->get_results($sql);
         $rst = array();
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
+        $rst['sid'] = $sid;
+        $rst['table'] = $table;
         if(isset($_datainfo->mapTooltip)){
             $rst['mapTooltip'] = $mapTooltip;
         }

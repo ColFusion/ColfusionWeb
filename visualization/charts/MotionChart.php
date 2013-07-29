@@ -67,7 +67,8 @@ class MotionChart extends Chart {
     $rst['dateColumn'] = $dateColumn;
     $rst['originalOtherColumns'] = $otherColumns;
     $rst['otherColumns'] = $valueColumnsArray;//array('numberofCase','precipitation','state');
-
+    $rst['sid'] = $sid;
+    $rst['table'] = $table;
     $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 
 //    foreach($valueColumns as $value){

@@ -153,10 +153,20 @@ function motionFormToDatainfo() {
 	var dateColumn = $('#motionDate').val();
 	var otherColCount = 0;
 	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
+	var oneNum = false;
 	$.each($("#addMotion .columnSelection").find("input:checked"), function(){
 		otherColumns.push($(this).val()); // columns to show
+		var a = CANVAS.getColumnType(sid,table,$(this).val());
+		if (CANVAS.getColumnType(sid,table,$(this)) == "NUMBER") {
+			oneNum = true;
+		}
 		otherColCount++;
-	});	
+	});
+	if (!oneNum) {
+	    $("#add-motion-info").show().text("Please select at least one numeric column.");
+	    $("#add-motion-info").addClass("alert-error");
+	    //return null;
+	}
 	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where);
 }
 function editMotionFormToDatainfo() {
@@ -168,11 +178,20 @@ function editMotionFormToDatainfo() {
 	var firstColumn = $('#motionFirstColumnEdit').val();
 	var dateColumn = $('#motionDateEdit').val();
 	var otherColCount = 0;
+	var oneNum = false;
 	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
 	$.each($("#editMotion .columnSelection").find("input:checked"), function(){
 		otherColumns.push($(this).val()); // columns to show
+		if (CANVAS.getColumnType(sid,table,$(this).val()) == "NUMBER") {
+			oneNum = true;
+		}
 		otherColCount++;
 	});
+	if (!oneNum) {
+	    $("#edit-motion-info").show().text("Please select at least one numeric column.");
+	    $("#edit-motion-info").addClass("alert-error");
+	    return null;
+	}
 	return new MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where);
 }
 function MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,where) {
@@ -224,14 +243,20 @@ function drawMotion(sourceData,gadgetID) {
 	data.addColumn('string', firstColumn);
   	data.addColumn('date', dateColumn);
 	for (var i = 0;i<originalOtherColumns.length;i++) {
-		data.addColumn('number', originalOtherColumns[i]);
+		data.addColumn(CANVAS.getColumnType(sourceData['sid'],sourceData['table'],originalOtherColumns[i]).toLowerCase(), originalOtherColumns[i]);
 	}
 	for(i=0; sourceData['content'][i]!=null; i++) {
 		data.addRow();
 		data.setCell(i, 0, String(sourceData['content'][i]["firstColumn"]));
 		data.setCell(i, 1, new Date(sourceData['content'][i]["dateColumn"]));
 		for (var j=0;j<otherColumns.length;j++) {
-			data.setCell(i, j+2, parseFloat(sourceData['content'][i][otherColumns[j]]));
+			if (CANVAS.getColumnType(sourceData['sid'],sourceData['table'],originalOtherColumns[j]).toLowerCase() == "number") {
+				data.setCell(i, j+2, parseFloat(sourceData['content'][i][otherColumns[j]]));
+			}
+			if (CANVAS.getColumnType(sourceData['sid'],sourceData['table'],originalOtherColumns[j]).toLowerCase() == "string") {
+				data.setCell(i, j+2, sourceData['content'][i][otherColumns[j]]);
+			}
+			
 		}
 		/*data.setCell(i, 2, parseInt(sourceData['content'][i]["numberOfCases"]));
 		data.setCell(i, 3, parseInt(sourceData[i]["precipitation"]));
@@ -254,8 +279,10 @@ function createNewMotionGadget() {
 
 	var gadget = "<div name='motionDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:500px; height:320px' type='motion'>";
 	gadget += "<div class='gadget-header'><div class='gadget-title'>Motion chart " + gadgetID+"</div>";
-	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>"
-	gadget += "<div class='gadget-edit edit-motion'><i class='icon-edit'></i></div></div>";
+	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
+	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div>";
+	gadget += "<div class='gadget-min' style = 'display:none'><i class='icon-resize-small'></i></div>";
+	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='motionResult" + gadgetID + "' style='width:100%'></div></div></div>";
@@ -267,7 +294,41 @@ function createNewMotionGadget() {
 	
 	$(".gadget-close").click(function() {	
 		$(this).parent().parent().remove();
-	})
+	});
+	$("#"+gadgetID+" .gadget-max").click(function() {
+		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		chart.top = Math.round($("#"+gadgetID).position().top);
+		chart.left = Math.round($("#"+gadgetID).position().left);
+		chart.width = Math.round($("#"+gadgetID).width());
+		chart.height = Math.round($("#"+gadgetID).height());
+		$(this).parent().parent().animate({
+			top: "40px",
+			left:"-80px",
+			width: (parseFloat(window.innerWidth)-20)+"px",
+			height: (parseFloat(window.innerHeight)-60)+"px"
+			},500,null,function() {
+				$("#"+gadgetID).find(".gadget-max").hide();
+				$("#"+gadgetID).find(".gadget-min").show();
+				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
+				})
+		
+		});
+	$("#"+gadgetID+" .gadget-min").click(function() {
+		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		$(this).parent().parent().animate({
+			top: chart.top+"px",
+			left:chart.left+"px",
+			width: chart.width+"px",
+			height: chart.height+"px"
+			},500,null,function() {
+				$("#"+gadgetID).find(".gadget-min").hide();
+				$("#"+gadgetID).find(".gadget-max").show();
+				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
+				})
+		
+		});
 	$("div[name='motionDivs']").resize(function() {
 		var cid = $(this).find('chartID');
 		var gadgetID = $(this).attr('id');
@@ -287,8 +348,11 @@ function createNewMotionGadget() {
 
 }
 function addMotionChart() {
-	var gadgetID = createNewMotionGadget();
 	var datainfo = motionFormToDatainfo();
+	if (datainfo == null) {
+		return;
+	}
+	var gadgetID = createNewMotionGadget();
 	$.ajax({
 		type: 'POST',
 		url: "control.php",
@@ -330,6 +394,9 @@ function updateMotionResult(cid) {
 	var chart = CHARTS[cid];
 	var gadgetID = CHARTS[cid].gadgetID;
 	var datainfo = editMotionFormToDatainfo();
+	if (datainfo == null) {
+		return;
+	}
 	$.ajax({
 		type: 'POST',
 		url: 'control.php',

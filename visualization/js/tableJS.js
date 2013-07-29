@@ -196,7 +196,12 @@ function tableFormToDatainfo() {
 	var tableColumns = new Array();
 	$.each($("#addTable .columnSelection").find("input:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
-	});	
+	});
+	if (tableColumns.length == 0) {
+	    $("#add-table-info").show().text("Please select at least one column.");
+	    $("#add-table-info").addClass("alert-error");
+	    return null;
+	}
 	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where);
 }
 function editTableFormToDatainfo() {
@@ -211,6 +216,11 @@ function editTableFormToDatainfo() {
 	$.each($("#editTable .columnSelection").find("input:checked"), function(){
 		tableColumns.push($(this).val()); // columns to show
 	});
+	if (tableColumns == null) {
+	    $("#edit-table-info").show().text("Please select at least one column.");
+	    $("#edit-table-info").addClass("alert-error");
+	    return null;
+	}
 	return new TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where);
 }
 function TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,where) {
@@ -291,8 +301,10 @@ function createNewTableGadget(){
 	
 	var gadget = "<div name='tableDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:1160px; height: 500px' type='table'>";
 	gadget += "<div class='gadget-header'><div class='gadget-title'>Table" + gadgetID+"</div>";
-	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>";
-	gadget += "<div class='gadget-edit edit-table'><i class='icon-edit'></i></div> </div>";
+	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
+	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div>";
+	gadget += "<div class='gadget-min' style = 'display:none'><i class='icon-resize-small'></i></div>";
+	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting" + gadgetID + "' value='' />";
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='tableControl" + gadgetID + "' style='width:100%; '>";
@@ -310,7 +322,40 @@ function createNewTableGadget(){
 	$(".gadget-close").click(function() {	
 		$(this).parent().parent().remove();
 	})
-	
+	$("#"+gadgetID+" .gadget-max").click(function() {
+		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		chart.top = Math.round($("#"+gadgetID).position().top);
+		chart.left = Math.round($("#"+gadgetID).position().left);
+		chart.width = Math.round($("#"+gadgetID).width());
+		chart.height = Math.round($("#"+gadgetID).height());
+		$(this).parent().parent().animate({
+			top: "40px",
+			left:"-80px",
+			width: (parseFloat(window.innerWidth)-20)+"px",
+			height: (parseFloat(window.innerHeight)-60)+"px"
+			},500,null,function() {
+				$("#"+gadgetID).find(".gadget-max").hide();
+				$("#"+gadgetID).find(".gadget-min").show();
+				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
+				})
+		
+		});
+	$("#"+gadgetID+" .gadget-min").click(function() {
+		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		$(this).parent().parent().animate({
+			top: chart.top+"px",
+			left:chart.left+"px",
+			width: chart.width+"px",
+			height: chart.height+"px"
+			},500,null,function() {
+				$("#"+gadgetID).find(".gadget-min").hide();
+				$("#"+gadgetID).find(".gadget-max").show();
+				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
+				})
+		
+		});
 	
 	
 	$("#"+gadgetID+' .edit-table').click(function(){
@@ -398,8 +443,11 @@ function refreshTable(data, sourceData,gadgetID) {
 	table.draw(data, options);
 }
 function addTableChart() {
-	var gadgetID = createNewTableGadget();
 	var datainfo = tableFormToDatainfo();
+	if (datainfo == null) {
+	    return;
+	}
+	var gadgetID = createNewTableGadget();
 	$.ajax({
 		type: 'POST',
 		url: "control.php",
@@ -444,6 +492,9 @@ function updateTableResult(cid) {
 	var chart = CHARTS[cid];
 	var gadgetID = CHARTS[cid].gadgetID;
 	var datainfo = editTableFormToDatainfo();
+	if (datainfo == null) {
+	    return;
+	}
 	$.ajax({
 		type: 'POST',
 		url: 'control.php',

@@ -24,7 +24,9 @@ function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
 }
 //use sid to get story name and tables in the story
 Canvas.prototype.addStory = function(sid,sname,callback) {
-	
+	if (CANVAS.stories[sid]!=null) {
+		return;
+	}
 	$.ajax({
 		type: 'POST',
 		url: 'control.php',
@@ -44,7 +46,7 @@ Canvas.prototype.addStory = function(sid,sname,callback) {
 				var story = JSON_Response['story'];
 				var sid = story.sid;
 				CANVAS.stories[sid] = story;
-				showSuccess("Successfully add story");
+				showSuccess("Successfully add story "+ story['sname']);
 			}else{
 				
 			}
@@ -59,6 +61,9 @@ Canvas.prototype.addStory = function(sid,sname,callback) {
 //get the story name and tables in the a story
 Canvas.prototype.getStory = function(sid) {
 	return CANVAS.stories[sid];
+}
+Canvas.prototype.getColumnType = function(sid,table,column){
+	return CANVAS.stories[sid].tables[table].columns[column];
 }
 //get all the story names and tables 
 Canvas.prototype.getStories = function() {
@@ -86,7 +91,6 @@ Canvas.prototype.getTableRelatedCharts = function(sid,table) {
 		}
 	}
 	return rst;
-	
 }
 //get the columns in one table in one story
 Canvas.prototype.getColumns = function(sid,table){
@@ -138,7 +142,7 @@ Chart.prototype.getSid = function() {
 Chart.prototype.getTable = function() {
 	return this.datainfo.table;
 }
-
+//get the story name of the chart
 Chart.prototype.getSname = function() {
 	return this.datainfo.sname;
 }
@@ -147,6 +151,8 @@ function addStory() {
 	var sname = datasetSearcher.datasetName;	
 	CANVAS.addStory(sid,sname);
 	showNote("flag");
+	$("#addStory").modal("hide");
+	
 }
 
 function saveConfig(){
@@ -763,6 +769,7 @@ $(document).ready(function() {
 	//make modal active the first table after being hidden;
 	$('.modal').on('hidden', function () {
 		$(this).find('.nav-tabs a:first').tab('show');
+		$(this).find(".alert").hide();
 	});
 	
 	//When open add chart modal

@@ -320,7 +320,7 @@ body {
   filter: alpha(opacity=40);
 }
 
-.gadget-edit {
+.gadget-edit, .gadget-max, .gadget-min {
   float: right;
   font-size: 20px;
   font-weight: bold;
@@ -331,7 +331,7 @@ body {
   filter: alpha(opacity=20);
 }
 .gadget-edit:hover,
-.gadget-edit:focus {
+.gadget-edit:focus, .gadget-max:hover, .gadget-max:focus, .gadget-min:hover, .gadget-min:focus {
   color: #000000;
   text-decoration: none;
   cursor: pointer;
@@ -372,6 +372,7 @@ div[name="mapDivs"] img{
 }
 .modal-info{
 	height: 20px;
+	margin-bottom: 2px;
 }
 .info-modal{
 	padding-bottom: 0px;
@@ -390,4 +391,20 @@ div[name="mapDivs"] img{
 	overflow: hidden;
 	height: 20px;
 	display: inline-block;
+}
+#file-dropdown-open, #file-dropdown-canvas-share{
+	cursor: pointer;
+}
+#file-dropdown-open:hover, #file-dropdown-canvas-share:hover{
+	background-color: rgb(0, 129, 194);
+	color: rgb(255,255,255);
+}
+.canvas-share{
+	opacity: 0.2;
+	filter: alpha(opacity=20);
+}
+.canvas-share:hover{
+	cursor: pointer;
+	opacity: 0.4;
+	filter: alpha(opacity=40);
 }

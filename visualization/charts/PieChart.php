@@ -57,6 +57,8 @@ class PieChart extends Chart {
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
         $rst['pieAggType'] = $pieAggType;
         $rst['pieColumnCat'] = $pieColumnCat;
+        $rst['sid'] = $sid;
+        $rst['table'] = $table;
         //$queryResult = json_decode('{"string":"aaa","number":"bbb","content":[{"Category":" 2.0","AggValue":"1"},{"Category":" 3.0","AggValue":"2"},{"Category":" 4.0","AggValue":"3"}]}');
         $this->queryResult = $rst;
         return $rst;

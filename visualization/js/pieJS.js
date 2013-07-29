@@ -183,7 +183,9 @@ function createNewPieGadget(){
 	var gadget = "<div name='pieDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:400px; height: 300px' type='pie'>";
 	gadget +=  "<div class='gadget-header'><div class='gadget-title'>Pie Chart</div>";
 	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
-	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div> </div>";
+	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div>";
+	gadget += "<div class='gadget-min' style = 'display:none'><i class='icon-resize-small'></i></div>";
+	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />";  
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='pieResult" + gadgetID + "' style='width:100%;'></div></div></div>";
@@ -192,7 +194,41 @@ function createNewPieGadget(){
 	$( ".gadget" ).draggable({ handle: ".gadget-header" }).resizable();
 	$(".gadget-close").click(function() {   
 		    $(this).parent().parent().remove();
-	})
+	});
+	$("#"+gadgetID+" .gadget-max").click(function() {
+		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		chart.top = Math.round($("#"+gadgetID).position().top);
+		chart.left = Math.round($("#"+gadgetID).position().left);
+		chart.width = Math.round($("#"+gadgetID).width());
+		chart.height = Math.round($("#"+gadgetID).height());
+		$(this).parent().parent().animate({
+			top: "40px",
+			left:"-80px",
+			width: (parseFloat(window.innerWidth)-20)+"px",
+			height: (parseFloat(window.innerHeight)-60)+"px"
+			},500,null,function() {
+				$("#"+gadgetID).find(".gadget-max").hide();
+				$("#"+gadgetID).find(".gadget-min").show();
+				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
+				})
+		
+		});
+	$("#"+gadgetID+" .gadget-min").click(function() {
+		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		$(this).parent().parent().animate({
+			top: chart.top+"px",
+			left:chart.left+"px",
+			width: chart.width+"px",
+			height: chart.height+"px"
+			},500,null,function() {
+				$("#"+gadgetID).find(".gadget-min").hide();
+				$("#"+gadgetID).find(".gadget-max").show();
+				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
+				})
+		
+		});
 	$('#'+gadgetID+' .edit-pie').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();
@@ -269,7 +305,7 @@ function drawPie(sourceData,gadgetID) {
 }
 function refreshPie(data,sourceData,gadgetID) {
 	var options = {
-    	      'title':'Pie Chart for ' + sourceData['string'] + ' based on ' + sourceData['number']
+    	      'title':'Pie Chart for ' + sourceData['pieColumnCat'] + ' based on ' + sourceData['pieAggType']
     	};
 	var chart = new google.visualization.PieChart(document.getElementById(gadgetID));
 	chart.draw(data, options);

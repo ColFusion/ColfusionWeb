@@ -67,6 +67,8 @@ class ColumnChart extends Chart{
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
         $rst['columnCat'] = $columnCat;
         $rst['columnAggType'] = $columnAggType;
+        $rst['sid'] = $sid;
+        $rst['table'] = $table;
         //$rst['pieAggType'] = $pieAggType;
         //$rst['$pieColumnCat'] = $pieColumnCat;
         $this->queryResult = $rst;

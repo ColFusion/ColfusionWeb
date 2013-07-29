@@ -161,7 +161,7 @@ $chart_columns[] = "Location";
                             <li class="dropdown" id="file-dropdown" style="display: none">
                                 <a href="#visualization" class="dropdown-toggle" data-toggle="dropdown">File <b class="caret"></b></a>
                                 <ul class="dropdown-menu">
-                                    <li><a onclick="openCanvasManager()">Canvas Manger</a></li>
+                                    <li id = "file-dropdown-open"><a href="#ifSave" data-toggle="modal">Canvas Manger</a></li>
                                     <li><a href="#newCanvas" data-toggle="modal">New</a></li>
 				    <li><a href="#addStory" data-toggle="modal">Add Story</a></li>
                                     <!-- 								<li><a href="#open" data-toggle="modal">Open</a></li> -->
@@ -268,6 +268,22 @@ $chart_columns[] = "Location";
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" id='motionedit-close' aria-hidden="true">Close</button>
                 <button class="btn btn-primary" id="new-canvas-btn" onclick="createNewCanvas()">Create</button>
+            </div>
+        </div>
+	
+	<!--If save -->
+        <div id="ifSave" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="motionAddModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
+                <h3 id="motionAddModalLabel">Save canvas</h3>
+            </div>
+            <div class="modal-body">
+			<p>Do you want save the current canvas? </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn" data-dismiss="modal" id='motionedit-close' aria-hidden="true">Close</button>
+		<button class="btn" data-dismiss="modal" id="ifsave-no" onclick="openCanvasManager(false)" aria-hidden="true">No</button>
+                <button class="btn btn-primary" id="ifsave-yes" onclick="openCanvasManager(true)">Yes</button>
             </div>
         </div>
 
@@ -456,6 +472,7 @@ $chart_columns[] = "Location";
                         </label>
                     </div>
                 </div>
+		<div class="alert modal-info" id="add-table-info" style="display: none"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -520,6 +537,7 @@ $chart_columns[] = "Location";
                         </label><br/>
                     </div>
                 </div>
+		<div class="modal-info alert" id="edit-table-info" style="display: none"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -559,6 +577,7 @@ $chart_columns[] = "Location";
                 <label class="tabContentTitle">Select at least one from the following columns (number)</label>
 		<div class="columnSelection">
                 </div>
+		<div class="modal-info alert" id="add-motion-info" style="display: none"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -602,7 +621,7 @@ $chart_columns[] = "Location";
                         <input type="checkbox" name="motionOtherColumnEdit[]" value=<?php echo $col_name ?>> <?php echo $col_name; ?>
                     </label>
                 <?php } ?>			
-
+		<div class="modal-info alert" id="edit-motion-info" style="display: none"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -947,7 +966,8 @@ $chart_columns[] = "Location";
                         <label class="checkbox"><input type="checkbox" value="MIN" name="comboAggType" /> Min</label>
                         <label class="checkbox"><input type="checkbox" value="MAX" name="comboAggType" /> Max</label>
                     </div>
-                </div>					
+                </div>
+		<div class="alert modal-info" id="add-combo-info" style="display: none"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
@@ -1001,6 +1021,7 @@ $chart_columns[] = "Location";
                         <label class="checkbox"><input type="checkbox" value="Max" name="comboAggTypeEdit" /> Max</label>
                     </div>
                 </div>
+		<div class="alert modal-info" id="edit-combo-info" style="display: none"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>

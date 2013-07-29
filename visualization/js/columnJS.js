@@ -160,8 +160,10 @@ function createNewColumnGadget() {
 	
 	var gadget = "<div name='columnDivs' id='"+gadgetID+"' class='gadget' style='top: 50px; left:0px; width:500px; height:400px' type='column'>";
 	gadget += "<div class='gadget-header'><div class='gadget-title'>column chart " + gadgetID+"</div>";
-	gadget += "<div class='gadget-close'><i class='icon-remove'></i></div>";
-	gadget += "<div class='gadget-edit edit-column edit-new-column'><i class='icon-edit'></i></div></div>";
+	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
+	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div>";
+	gadget += "<div class='gadget-min' style = 'display:none'><i class='icon-resize-small'></i></div>";
+	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />";
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='columnResult"+gadgetID+"' style='width:100%'></div>";
@@ -177,6 +179,40 @@ function createNewColumnGadget() {
 	$(".gadget-close").click(function() {	
 		$(this).parent().parent().remove();
 	})
+	$("#"+gadgetID+" .gadget-max").click(function() {
+		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		chart.top = Math.round($("#"+gadgetID).position().top);
+		chart.left = Math.round($("#"+gadgetID).position().left);
+		chart.width = Math.round($("#"+gadgetID).width());
+		chart.height = Math.round($("#"+gadgetID).height());
+		$(this).parent().parent().animate({
+			top: "40px",
+			left:"-80px",
+			width: (parseFloat(window.innerWidth)-20)+"px",
+			height: (parseFloat(window.innerHeight)-60)+"px"
+			},500,null,function() {
+				$("#"+gadgetID).find(".gadget-max").hide();
+				$("#"+gadgetID).find(".gadget-min").show();
+				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
+				})
+		
+		});
+	$("#"+gadgetID+" .gadget-min").click(function() {
+		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		$(this).parent().parent().animate({
+			top: chart.top+"px",
+			left:chart.left+"px",
+			width: chart.width+"px",
+			height: chart.height+"px"
+			},500,null,function() {
+				$("#"+gadgetID).find(".gadget-min").hide();
+				$("#"+gadgetID).find(".gadget-max").show();
+				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
+				})
+		
+		});
 	$('#'+gadgetID+' .edit-column').click(function(){
 		var editGadgetID = $(this).parent().parent().attr('id');
 		var cid = $("#"+editGadgetID+" .chartID").val();

@@ -131,18 +131,20 @@ function saveCanvas(canvasName,privilege,note) {
         },
         success:function(JSON_Response){
             var JSONResponse = jQuery.parseJSON(JSON_Response);
-            $('.gadget').each(function(){
-                var oldId = $('.chartID ', this).val();
-                for(var i = 0; i<JSONResponse['newOldChartId'].length;i++) {
-                    if (JSONResponse['newOldChartId'][i]['oldId'] == oldId) {
-                        $('.chartID ', this).val(JSONResponse['newOldChartId'][i]['newId']);
-                        CHARTS[JSONResponse['newOldChartId'][i]['newId']] = CHARTS[oldId];
-                        CHARTS[oldId] = null;
+            if (CANVAS != null) {
+                $('.gadget').each(function(){
+                    var oldId = $('.chartID ', this).val();
+                    for(var i = 0; i<JSONResponse['newOldChartId'].length;i++) {
+                        if (JSONResponse['newOldChartId'][i]['oldId'] == oldId) {
+                            $('.chartID ', this).val(JSONResponse['newOldChartId'][i]['newId']);
+                            CHARTS[JSONResponse['newOldChartId'][i]['newId']] = CHARTS[oldId];
+                            CHARTS[oldId] = null;
+                        }
                     }
-                }
-            })
-            CANVAS.save(JSONResponse['name'],JSONResponse['privilege'], JSONResponse['note']);
-            CANVAS.setVid(JSONResponse['vid']);
+                })
+                CANVAS.save(JSONResponse['name'],JSONResponse['privilege'], JSONResponse['note']);
+                CANVAS.setVid(JSONResponse['vid']); 
+            }
             showSuccess("Canvas saved");
             }
         })
@@ -195,6 +197,7 @@ function openAlert(str,type) {
     }
 }
 function closeCanvas(){
+    CANVAS = null;
     clearScreen();
     CHARTS = new Array();
     $('#chart-dropdown').hide();
@@ -209,10 +212,8 @@ function closeCanvas(){
     $('#cdate').val('');
     $('#note').val('');
 }
-function openCanvasManager() {
-	var s = confirm("Save The Current Canvas????");
-	if (s)saveCanvas();
-	
+function openCanvasManager(b) {
+    if (b)saveCanvas(null,null,null);	
     $('#file-dropdown').hide();
     $('#viewChartsNote').hide();
     $("#note_section").css({
@@ -222,4 +223,5 @@ function openCanvasManager() {
     $('#brand').text('Col*Fusion Canvas Manager');
     closeCanvas();
     $('#file_manager').show();
+    $("#ifSave").modal("hide");
 }
