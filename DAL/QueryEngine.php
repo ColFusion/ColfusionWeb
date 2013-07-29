@@ -244,7 +244,7 @@ class QueryEngine {
         global $db;
 
     //TODO: disable rel mining for now, need to think how to add them to neo4j
-    //        $res = $db->query("call doRelationshipMining('" . $sid . "')");
+            $res = $db->query("call doRelationshipMining('" . $sid . "')");
 
 
         $query = <<< EOQ
