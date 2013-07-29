@@ -16,7 +16,6 @@ include_once('FileUtil.php');
 include_once(realpath(dirname(__FILE__) . "/../DAL/DBImporters/DatabaseImporterFactory.php"));
 
 error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE ^ E_WARNING);
-ini_set('display_errors', 1);
 
 // module system hook
 $vars = '';

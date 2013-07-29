@@ -1,15 +1,7 @@
 <?php
 
-
 include_once(dirname(__FILE__) . '/../DAL/ExternalDBHandlers/MSSQLHandler.php');
-
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
-
-
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
-
-//echo MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT;
 
 class SimpleQuery {
 
@@ -116,19 +108,18 @@ class SimpleQuery {
 
         $query = "select * from colfusion_sourceinfo_DB where sid = $sid";
 
-        return $db->get_row($sql); 
+        return $db->get_row($sql);
     }
-
 
     private function addLinkedServer($server, $port, $user, $password, $database, $driver) {
 
         $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
 
         if ($server == "localhost")
-            $host = COLFUSION_HOST; 
+            $host = COLFUSION_HOST;
         else
             $host = $server;
-        
+
         $MSSQLHandler->AddLinkedServer($driver, $host, $port, $database, $user, $password);
     }
 
@@ -195,8 +186,8 @@ class SimpleQuery {
 
     public function addCidToNewData($sid, $tableName) {
         global $db;
-        
-        $tableName = mysql_real_escape_string($tableName);     
+
+        $tableName = mysql_real_escape_string($tableName);
         $query = <<< EOQ
              update colfusion_temporary t1
 set cid =  ( 
@@ -209,9 +200,10 @@ set cid =  (
    )
 where cid is null and sid = $sid;
 EOQ;
-        
+
         $db->query($query);
     }
+
 }
 
 ?>

@@ -5,7 +5,6 @@ include_once(realpath(dirname(__FILE__)) . '/../config.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
 error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-ini_set('display_errors', 1);
 
 header('Content-type: text/html; charset=utf-8');
 $action = $_GET["action"];

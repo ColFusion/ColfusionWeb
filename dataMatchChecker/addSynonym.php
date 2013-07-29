@@ -4,7 +4,6 @@ require_once realpath(dirname(__FILE__)) . '/../config.php';
 require_once realpath(dirname(__FILE__)) . '/../DAL/DataMatchingCheckerDAO.php';
 
 error_reporting(E_ALL);
-ini_set('display_errors', 1);
 
 if (!$current_user->authenticated)
     die('Please login to use this function.');
