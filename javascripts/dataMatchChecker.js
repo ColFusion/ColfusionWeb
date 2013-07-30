@@ -17,18 +17,32 @@ function getRelationshipInfo() {
     var store = new Persist.Store('NewRelationshipViewModel');
     var newRelationModel = JSON.parse(store.get('checkDataMatching_' + fromSid + '_' + fromTable + '_' + toSid + '_' + toTable));
 
-    newRelationModel = makeNewRelationshipModelCompatibleToRelationshipModel(newRelationModel);
+    if (newRelationModel.isContainerShowned === undefined) {
+        newRelationModel = makeNewRelationshipModelCompatibleToRelationshipModel(newRelationModel);
+    }
     console.log(newRelationModel);
     return newRelationModel;
 }
 
-function makeNewRelationshipModelCompatibleToRelationshipModel(newRelationModel) {
-    newRelationModel.fromDataSet = newRelationModel.fromDataSet || newRelationModel.fromDataset;
-    newRelationModel.toDataSet = newRelationModel.toDataSet || newRelationModel.toDataset;
+function makeNewRelationshipModelCompatibleToRelationshipModel(relationModel) {
+    relationModel.fromDataSet = relationModel.fromDataSet || relationModel.fromDataset;
+    relationModel.toDataSet = relationModel.toDataSet || relationModel.toDataset;
+
+    var newLinks = [];
+    $.each(relationModel.links, function(i, link) {
+        var newLink = {
+            fromLinkPart: {
+                transInput: link.fromPart
+            },
+            toLinkPart: {
+                transInput: link.toPart
+            }
+        };
+        newLinks.push(newLink);
+    });
     
-    
-    
-    return newRelationModel;
+    relationModel.links = newLinks;
+    return relationModel;
 }
 
 function createDataMatchCheckerViewModel(newRelationModel) {
@@ -38,6 +52,14 @@ function createDataMatchCheckerViewModel(newRelationModel) {
     dataMatchCheckerViewModel.fromDataset(newRelationModel.fromDataSet);
     dataMatchCheckerViewModel.toDataset(newRelationModel.toDataSet);
     dataMatchCheckerViewModel.links(newRelationModel.links);
+
+    dataMatchCheckerViewModel.links($.map(newRelationModel.links, function(link, i) {
+        console.log(link);
+        if (link.fromLinkPart.transInput && link.toLinkPart.transInput) {
+            return link;
+        }
+    }));
+
     return dataMatchCheckerViewModel;
 }
 
