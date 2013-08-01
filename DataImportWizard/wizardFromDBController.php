@@ -8,8 +8,6 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseH
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporterFactory.php");
 
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-
 $sid = $_POST['sid'];
 if (!isset($sid)) {
     die('Source not specified.');

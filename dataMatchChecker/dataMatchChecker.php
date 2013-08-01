@@ -11,6 +11,7 @@ $fromSid = $_POST['fromSid'];
 $toSid = $_POST['toSid'];
 $fromTable = $_POST['fromTable'];
 $toTable = $_POST['toTable'];
+$relSerializedString = $_POST['relSerializedString'];
 
 if(empty($fromSid) || empty($toSid) || empty($fromTable) || empty($toTable)){
     die("Invalid argument");
@@ -22,6 +23,7 @@ $smarty->assign('fromSid', $fromSid);
 $smarty->assign('toSid', $toSid);
 $smarty->assign('fromTable', $fromTable);
 $smarty->assign('toTable', $toTable);
+$smarty->assign('relSerializedString', $relSerializedString);
 $smarty->display('dataMatchChecker.tpl');
 
 ?>

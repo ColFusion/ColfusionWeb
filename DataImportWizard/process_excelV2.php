@@ -1,8 +1,5 @@
 <?php
 
-/** Error reporting */
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-
 define('EOL', (PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 
 /** Include PHPExcel */

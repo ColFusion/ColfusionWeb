@@ -24,6 +24,7 @@
         <input type="hidden" id="toSidInput" value="{$toSid}" />
         <input type="hidden" id="fromTableInput" value="{$fromTable}" />
         <input type="hidden" id="toTableInput" value="{$toTable}" />
+        <input type="hidden" id="relSerializedString" value='{$relSerializedString}' />
         {literal}
             <div id="relInfoWrapper">
                 <div id="relInfoHeader">
@@ -67,7 +68,7 @@
                 </tr>
                 <tr>
                 <td class="linkProfileHeader">Table:</td>
-                <td class="linkProfileContent" data-bind="text: chosenTableName">small.xls</td>
+                <td class="linkProfileContent" data-bind="text: shownTableName">small.xls</td>
                 </tr>
                 </tbody>
                 </table>

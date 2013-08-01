@@ -1,3 +1,19 @@
+ko.extenders.withPrevious = function(target, option) {
+    // Define new properties for previous value and whether it's changed
+    target.previous = ko.observable();
+    target.changed = ko.computed(function() {
+        return target() !== target.previous();
+    });
+
+    // Subscribe to observable to update previous, before change.
+    target.subscribe(function(v) {
+        target.previous(v);
+    }, null, 'beforeChange');
+
+    // Return modified observable
+    return target;
+}
+
 var RelationshipModel = {
     Relationship: function(relJson) {
         var self = this;
@@ -26,8 +42,6 @@ var RelationshipModel = {
         self.editingComment = ko.observable();
         self.isSavingYourComment = ko.observable(false);
         
-        self.persistStore = new Persist.Store('NewRelationshipViewModel');
-        
         function createDatasetModel(dsJson, tableName) {
             var dataset = new RelationshipModel.DataSet(dsJson.sid);
             dataset.name(dsJson.title);
@@ -37,7 +51,7 @@ var RelationshipModel = {
             dataset.createdTime(dsJson.entryDate);
             dataset.lastUpdated(dsJson.lastUpdated);
             dataset.sourceType(dsJson.sourceType);
-            dataset.chosenTableName(tableName);
+            dataset.shownTableName(tableName);
             return dataset;
         }
 
@@ -202,15 +216,13 @@ var RelationshipModel = {
         };
 
         self.checkDataMatching = function() {
-
             self.fromDataset().name($('#fromDataSet').find('input.sidInput').val());
-            self.persistStore.set('checkDataMatching_' + self.fromDataset().sid() + '_' + self.fromDataset().chosenTableName()
-                    + '_' + self.toDataset().sid() + '_' + self.toDataset().chosenTableName(), ko.toJSON(self));
 
             $('#dataMatchCheckingForm input[name="fromSid"]').val(self.fromDataset().sid());
             $('#dataMatchCheckingForm input[name="toSid"]').val(self.toDataset().sid());
-            $('#dataMatchCheckingForm input[name="fromTable"]').val(self.fromDataset().chosenTableName());
-            $('#dataMatchCheckingForm input[name="toTable"]').val(self.toDataset().chosenTableName());
+            $('#dataMatchCheckingForm input[name="fromTable"]').val(self.fromDataset().shownTableName());
+            $('#dataMatchCheckingForm input[name="toTable"]').val(self.toDataset().shownTableName());
+            $('#dataMatchCheckingForm input[name="relSerializedString"]').val(ko.toJSON(self));
             $('#dataMatchCheckingForm').submit();
         };
     },
@@ -231,7 +243,9 @@ var RelationshipModel = {
         self.sid = ko.observable(sid);
         self.name = ko.observable('');
         self.tableList = ko.observableArray();
-        self.chosenTableName = ko.observable();
+        self.chosenTableName = ko.observable().extend({withPrevious: 'option'});
+        // Does not trigger load table info event.
+        self.shownTableName = ko.observable();
         self.currentTable = ko.observable();
         self.isLoadingTableInfo = ko.observable(false);
 
@@ -270,9 +284,12 @@ var RelationshipModel = {
         };
 
         self.chosenTableName.subscribe(function(newValue) {
-            self.loadTableInfo(self.sid(), newValue);
+            if (self.chosenTableName.changed()) {
+                self.loadTableInfo(self.sid(), newValue);
+            }
         }, self);
 
+        // Table list in adding relationship process.
         self.loadTableList = function() {
             if (self.sid() >= 1) {
                 dataSourceUtil.getTablesList(self.sid()).done(function(data) {
@@ -282,7 +299,6 @@ var RelationshipModel = {
 
                     if (data.length === 1) {
                         self.chosenTableName(data[0]);
-                        self.loadTableInfo();
                     }
                 });
             }

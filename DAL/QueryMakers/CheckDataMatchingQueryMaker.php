@@ -6,8 +6,6 @@ include_once(realpath(dirname(__FILE__)) . "/FromLinkedServerQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
 include_once(realpath(dirname(__FILE__)) . '/../TransformationHandler.php');
 
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-
 class CheckdataMatchingQueryMaker {
 
     private $from;

@@ -2,8 +2,6 @@
 
 include_once(realpath(dirname(__FILE__)) . "/../../config.php");
 
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-
 class FromLinkedServerQueryMaker {
    
     // columnsToSelect - array of following objects {cid: cid,columnName: columnName, columnAlias: columnAlias}

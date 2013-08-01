@@ -15,8 +15,6 @@ include_once('../Classes/CSVToExcelConverter.php');
 include_once('FileUtil.php');
 include_once(realpath(dirname(__FILE__) . "/../DAL/DBImporters/DatabaseImporterFactory.php"));
 
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE ^ E_WARNING);
-
 // module system hook
 $vars = '';
 check_actions('submit_post_authentication', $vars);

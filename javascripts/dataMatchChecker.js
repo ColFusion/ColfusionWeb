@@ -9,14 +9,9 @@ function prepareDataMatchCheckerViewModel() {
     return createDataMatchCheckerViewModel(newRelationModel);
 }
 
-function getRelationshipInfo() {
-    var fromSid = $('#fromSidInput').val();
-    var toSid = $('#toSidInput').val();
-    var fromTable = $('#fromTableInput').val();
-    var toTable = $('#toTableInput').val();
-    var store = new Persist.Store('NewRelationshipViewModel');
-    var newRelationModel = JSON.parse(store.get('checkDataMatching_' + fromSid + '_' + fromTable + '_' + toSid + '_' + toTable));
-
+function getRelationshipInfo() {  
+    var newRelationModel = JSON.parse($('#relSerializedString').val());
+    
     if (newRelationModel.isContainerShowned === undefined) {
         newRelationModel = makeNewRelationshipModelCompatibleToRelationshipModel(newRelationModel);
     }
@@ -40,7 +35,7 @@ function makeNewRelationshipModelCompatibleToRelationshipModel(relationModel) {
         };
         newLinks.push(newLink);
     });
-    
+
     relationModel.links = newLinks;
     return relationModel;
 }

@@ -195,9 +195,9 @@ function DataMatchCheckerViewModel() {
     function getDataTableParam() {
         var params = {
             fromSid: self.fromDataset().sid,
-            fromTable: self.fromDataset().chosenTableName,
+            fromTable: self.fromDataset().shownTableName,
             toSid: self.toDataset().sid,
-            toTable: self.toDataset().chosenTableName,
+            toTable: self.toDataset().shownTableName,
             fromTransInput: self.currentLink().fromLinkPart.transInput,
             toTransInput: self.currentLink().toLinkPart.transInput
         };

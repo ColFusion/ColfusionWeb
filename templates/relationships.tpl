@@ -47,7 +47,9 @@
                                             <tr>
                                                 <td class="profileHeader">Name:</td>
                                                 <td data-bind='text: name' class="profileContent"></td>
-                                                <td rowspan="2"><button data-bind="click: checkDataMatching" class="btn" style="width: 180px;">Check Data Matching</button></td>
+                                                <td rowspan="2">
+                                                    <button data-bind="click: checkDataMatching" class="btn" style="width: 180px;">Check Data Matching</button>                   
+                                                </td>
                                                 <td data-bind="visible: isOwned()" rowspan="2"><button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn btn-danger deleteRelBtn">Delete</button></td>
                                             </tr>           
                                             <tr><td class="profileHeader">Creator:</td><td data-bind='text: creator' class="profileContent"></td></tr>
@@ -72,7 +74,7 @@
                                                 </tr>
                                                 <tr>
                                                 <td class="linkProfileHeader">Table:</td>
-                                                <td class="linkProfileContent" data-bind='text: chosenTableName'></td>
+                                                <td class="linkProfileContent" data-bind='text: shownTableName'></td>
                                                 </tr>
                                                 </table>
                                             </script>
@@ -111,11 +113,11 @@
                                                                 <td style="text-align: right">Correct</td>
                                                             </tr>
                                                         </table>
-                                                        <div id="confidenceSlider" data-bind="slider: confidence, sliderOptions: {min: -1, max: 1, step: 0.1}"></div>
+                                                        <div id="confidenceSlider" data-bind="slider: confidence, sliderOptions: {min: 0, max: 1, step: 0.1}"></div>
                                                         <table class="confidenceDesTable">
                                                             <tr>
-                                                                <td>-1</td>
-                                                                <td style="text-align: center">0</td>
+                                                                <td>0</td>
+                                                                <td style="text-align: center">0.5</td>
                                                                 <td style="text-align: right">1</td>
                                                             </tr>
                                                         </table>

@@ -4,8 +4,6 @@ include_once(realpath(dirname(__FILE__)) . '/../config.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/TransformationHandler.php');
 
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
-
 if (!$current_user->authenticated)
     die('Please login to use this function.');
 

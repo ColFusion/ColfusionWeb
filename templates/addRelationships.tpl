@@ -176,6 +176,7 @@
     <input type="hidden" name="toSid"/>
     <input type="hidden" name="fromTable"/>
     <input type="hidden" name="toTable"/>
+    <input typle="hidden" name="relSerializedString"/>
 </form>
 {literal}
     <script type="text/javascript">
