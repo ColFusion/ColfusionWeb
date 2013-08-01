@@ -78,33 +78,25 @@ var wizardFromDB = (function() {
         };
 
         // alert(JSON.stringify(dataToSend));
-        return $.ajax({type: 'POST',
-            url: my_pligg_base + '/DataImportWizard/wizardFromDBController.php?action=PrintTableForSchemaMatchingStep',
-            data: dataToSend
+        return getTableForDataMatchingStep(dataToSend).done(function(data) {
+            importWizard.showDataMatchingStep(data);
         });
     };
 
-    wizardFromDB.passSchemaMatchinInfo = function(schemaMatchingUserInputs) {
-        var dataToSend = {"schemaMatchingUserInputs": schemaMatchingUserInputs};
-
-        // alert(JSON.stringify(dataToSend));
-        $.ajax({type: 'POST',
+    function getTableForDataMatchingStep(dataToSend) {
+        return $.ajax({type: 'POST',
             url: my_pligg_base + '/DataImportWizard/wizardFromDBController.php?action=PrintTableForDataMatchingStep',
-            data: dataToSend,
-            success: function(data) {
-                importWizard.showDataMatchingStep(data);
-            }
+            data: dataToSend
         });
     }
 
-    wizardFromDB.excuteFromDB = function() {
+    wizardFromDB.executeFromDB = function() {
 
         var dataToSend = {
             'sid': $('#sid').val(),
             'server': wizardFromDB.server, "user": wizardFromDB.user, "password": wizardFromDB.password, 'database': wizardFromDB.database,
             'port': wizardFromDB.port, 'driver': wizardFromDB.driver,
             'selectedTables[]': getSelectedTables(),
-            'schemaMatchingUserInputs': importWizard.getSchemaMatchingUserInputs(),
             'dataMatchingUserInputs': importWizard.getDataMatchingUserInputs(),
             'isImport': wizardFromDB.isImport
         };

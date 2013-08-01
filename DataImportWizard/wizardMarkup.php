@@ -242,25 +242,7 @@
         </div>
     </div>
 
-    <div class='wizard-card' data-cardname='schemaMatchinStepCard'>
-        <h3 style="display: inline;">Schema Matching
-            <img src='help.png' width='15' height='15' title='Either choose a value from the option box or select other to put your own input'/>
-        </h3>
-        <span id="schemaMatchinStepInProgressWrapper">
-            <img id="schemaMatchinStepInProgress"  src="templates/wistie/images/ajax-loader_cp.gif" style="width: 35px; vertical-align: middle;margin-left: 5px;"/>
-            <span style="margin-left: 5px;" id="schemaMatchinStepInProgressText">
-                Loading...
-            </span>
-        </span>
-        <div id='schemaMatchinTable'></div>
-        <a href='#' id='help3'>Click here for help</a>
-        <div id='h3'>Step 3 help:<br/>
-            <p class='hlp'> Either choose a value from the option box or select other to put your own input.<br/>Fields with (*) must have values, so you can go to the next step.</p>
-            <a href='#' id='hd3' style='color:green;'>hide help</a>
-        </div>
-    </div>
-
-
+   
     <div class='wizard-card' data-cardname='dataMatchingStepCard' style=' width:600px; overflow: hidden; '><!--"+//style='width: 720px; overflow: hidden; '>-->
         <h3 style="display: inline;">Data Matching
             <img src='help.png' width='15' height='15' title='Verify the dname or type yours in the proper type box if not correct and then click submit. You can remove undesired dnames by checking the boxes in fornt of them.'/>

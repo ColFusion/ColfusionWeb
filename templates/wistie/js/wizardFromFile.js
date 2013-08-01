@@ -123,16 +123,15 @@ var wizardFromFile = (function() {
         });
     };
 
-    wizardFromFile.excuteFromFile = function() {
+    wizardFromFile.executeFromFile = function() {
         importWizard.getDataMatchingUserInputs();
 
         var dataToSend = {
             'sid': $('#sid').val(),
             'phase': 5,
-            'schemaMatchingUserInputs': importWizard.getSchemaMatchingUserInputs(),
             'dataMatchingUserInputs': importWizard.getDataMatchingUserInputs()
         };
-
+        
         return $.ajax({type: 'POST',
             url: my_pligg_base + '/DataImportWizard/generate_ktr.php',
             data: dataToSend

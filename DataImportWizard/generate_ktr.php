@@ -43,17 +43,15 @@ switch ($phase) {
     case 1:
 // when jump to step 3, this function is called.
         addSheetsSettings($sid, $dataSource_dirPath);
+        match_schema($sid);
         break;
     case 2:
-// when jump to step 4, this function is called.
-        match_schema($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 3:
         // Step 2 - get sheet name.
         printSheet($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 4:
-        // Step 2 - get start column.
         break;
     case 5:
         // When submit btn in step4 is clicked, this is called.
@@ -184,16 +182,11 @@ function getSheets($filePath) {
 }
 
 function addSheetsSettings($sid, $dataSource_dirPath) {
-
     $sheetsRanges = $_POST["sheetsRanges"];
-
     foreach ($sheetsRanges as $filename => $sheetsRange) {
         $fileUrl = $dataSource_dirPath . $filename;
         $baseheader = addSheetSettings($sheetsRange, $fileUrl, $sid);
-        $baseheaders[$filename] = $baseheader;
     }
-
-    echo UtilsForWizard::PrintTableForSchemaMatchingStep($baseheaders);
 }
 
 function addSheetSettings($sheetsRange, $dataSource_filePath, $sid) {
@@ -234,71 +227,8 @@ function addSheetSettings($sheetsRange, $dataSource_filePath, $sid) {
 
 function match_schema($sid) {
 
-    $spd = $_POST["schemaMatchingUserInputs"]["spd"];
-    $spd2 = $_POST["schemaMatchingUserInputs"]["spd2"];
-    $drd = $_POST["schemaMatchingUserInputs"]["drd"];
-    $drd2 = $_POST["schemaMatchingUserInputs"]["drd2"];
-    $start = $_POST["schemaMatchingUserInputs"]["start"];
-    $start2 = $_POST["schemaMatchingUserInputs"]["start2"];
-    $end = $_POST["schemaMatchingUserInputs"]["end"];
-    $end2 = $_POST["schemaMatchingUserInputs"]["end2"];
-    $location = $_POST["schemaMatchingUserInputs"]["location"];
-    $location2 = $_POST["schemaMatchingUserInputs"]["location2"];
-    $aggrtype = $_POST["schemaMatchingUserInputs"]["aggrtype"];
-    $aggrtype2 = $_POST["schemaMatchingUserInputs"]["aggrtype2"];
-
-    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
-
-    foreach ($ktrManagers as $filename => $ktrManager) {
-
-        if ($spd != "" && $spd != "other") {
-            $spd = UtilsForWizard::stripWordUntilFirstDot($spd);
-            $ktrManager->updateColumnAndStreamName('Spd', $spd);
-        } else if ($spd2 != "") {
-            $ktrManager->addConstants('Spd_from_input', $spd2, 'Date', 'yyyy/MM/dd');
-            $ktrManager->updateColumnAndStreamName('Spd', 'Spd_from_input');
-        }
-
-        if ($drd != "" && $drd != "other") {
-            $drd = UtilsForWizard::stripWordUntilFirstDot($drd);
-            $ktrManager->updateColumnAndStreamName('Drd', $drd);
-        } else if ($drd2 != "") {
-            $ktrManager->addConstants('Drd_from_input', $drd2, 'Date', 'yyyy/MM/dd');
-            $ktrManager->updateColumnAndStreamName('Drd', 'Drd_from_input');
-        }
-
-        if ($start != "" && $start != "other") {
-            $start = UtilsForWizard::stripWordUntilFirstDot($start);
-            $ktrManager->updateColumnAndStreamName('Start', $start);
-        } else if ($start2 != "") {
-            $ktrManager->addConstants('Start_from_input', $start2, 'Date', 'yyyy/MM/dd');
-            $ktrManager->updateColumnAndStreamName('Start', 'Start_from_input');
-        }
-
-        if ($end != "" && $end != "other") {
-            $end = UtilsForWizard::stripWordUntilFirstDot($end);
-            $ktrManager->updateColumnAndStreamName('End', $end);
-        } else if ($end2 != "") {
-            $ktrManager->addConstants('End_from_input', $end2, 'Date', 'yyyy/MM/dd');
-            $ktrManager->updateColumnAndStreamName('End', 'End_from_input');
-        }
-
-        if ($location != "" && $location != "other") {
-            $location = UtilsForWizard::stripWordUntilFirstDot($location);
-            $ktrManager->updateColumnAndStreamName('Location', $location);
-        } else if ($location2 != "") {
-            $ktrManager->addConstants('Location_from_input', $location2, 'String', '');
-            $ktrManager->updateColumnAndStreamName('Location', 'Location_from_input');
-        }
-
-        if ($aggrtype != "" && $aggrtype != "other") {
-            $aggrtype = UtilsForWizard::stripWordUntilFirstDot($aggrtype);
-            $ktrManager->updateColumnAndStreamName('AggrType', $aggrtype);
-        } else if ($aggrtype2 != "") {
-            $ktrManager->addConstants('AggrType_from_input', $aggrtype2, 'String', '');
-            $ktrManager->updateColumnAndStreamName('AggrType', 'AggrType_from_input');
-        }
-
+    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);   
+    foreach ($ktrManagers as $filename => $ktrManager) {     
         $filename_baseheaders[$filename] = $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'];
     }
 
@@ -331,7 +261,6 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
         $ktrManager->createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputsForATable);
     }
 
-    UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $_POST["schemaMatchingUserInputs"]);
     UtilsForWizard::processDataMatchingUserInputsWithTableNameStoreDB($sid, $_POST["dataMatchingUserInputs"]);
 }
 

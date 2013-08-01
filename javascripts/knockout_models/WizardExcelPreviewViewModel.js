@@ -91,6 +91,7 @@ var WizardExcelPreviewProperties = {
             self.isPreviewLoadingComplete(false);
             self.loadingProgressPercent(0);
             getEstimatedLoadingSeconds().done(function(estimatedSeconds) {
+                console.log("startGetPreview");
                 var startLoadingTimeStamp = new Date().getTime();
                 var estimatedLoadingTimestamp = estimatedSeconds * 1000;
                 self.estimatedTimestamp(estimatedLoadingTimestamp);
@@ -137,8 +138,11 @@ var WizardExcelPreviewProperties = {
         function updateLoadingProgress(startLoadingTimeStamp, estimatedLoadingTimestamp) {
             if (!self.isPreviewLoadingComplete()) {
                 var hasLoadedTimestamp = new Date().getTime() - startLoadingTimeStamp;
+                console.log("hasLoadedTimestamp: " + hasLoadedTimestamp);
+                console.log("estimatedLoadingTimestamp: " + estimatedLoadingTimestamp);
                 var progressPercent = hasLoadedTimestamp / estimatedLoadingTimestamp * 100;
                 progressPercent = (progressPercent >= 100 || isNaN(progressPercent) || progressPercent == 'Infinity') ? 99 : progressPercent;
+                console.log("progressPercent: " + progressPercent);
                 self.loadingProgressPercent(Math.floor(progressPercent));
                 setTimeout(function() {
                     updateLoadingProgress(startLoadingTimeStamp, estimatedLoadingTimestamp);

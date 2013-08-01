@@ -78,65 +78,10 @@ function LoadDatabaseTables($sid, DatabaseHandler $dbHandler) {
     echo json_encode($json);
 }
 
-function PrintTableForSchemaMatchingStep($sid, DatabaseHandler $dbHandler) {
-
+function PrintTableForDataMatchingStep($sid, DatabaseHandler $dbHandler) {
     $selectedTables = $_POST["selectedTables"];
-    try {
-        $tablesColumns = $dbHandler->getColumnsForSelectedTables($selectedTables);
-        $_SESSION["baseHeader_$sid"] = $tablesColumns;
-
-        echo UtilsForWizard::PrintTableForSchemaMatchingStep($tablesColumns);
-    } catch (Exception $e) {
-        echo "<p style='color:red;'>Errors occur when matching schemas.</p>";
-    }
-}
-
-function PrintTableForDataMatchingStep($sid) {
-    $spd = $_POST["schemaMatchingUserInputs"]["spd"];
-    $drd = $_POST["schemaMatchingUserInputs"]["drd"];
-    $start = $_POST["schemaMatchingUserInputs"]["start"];
-    $end = $_POST["schemaMatchingUserInputs"]["end"];
-    $location = $_POST["schemaMatchingUserInputs"]["location"];
-    $aggrtype = $_POST["schemaMatchingUserInputs"]["aggrtype"];
-
-    $baseHeader = $_SESSION["baseHeader_$sid"];
-
-    if ($spd != "" && $spd != "other") {
-        $tableName = UtilsForWizard::getWordUntilFirstDot($spd);
-        $spd = UtilsForWizard::stripWordUntilFirstDot($spd);
-        $baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($spd));
-    }
-
-    if ($drd != "" && $drd != "other") {
-        $tableName = UtilsForWizard::getWordUntilFirstDot($drd);
-        $drd = UtilsForWizard::stripWordUntilFirstDot($drd);
-        $baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($drd));
-    }
-
-    if ($start != "" && $start != "other") {
-        $tableName = UtilsForWizard::getWordUntilFirstDot($start);
-        $start = UtilsForWizard::stripWordUntilFirstDot($start);
-        $baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($start));
-    }
-
-    if ($end != "" && $end != "other") {
-        $tableName = UtilsForWizard::getWordUntilFirstDot($end);
-        $end = UtilsForWizard::stripWordUntilFirstDot($end);
-        $baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($end));
-    }
-
-    if ($location != "" && $location != "other") {
-        $tableName = UtilsForWizard::getWordUntilFirstDot($location);
-        $location = UtilsForWizard::stripWordUntilFirstDot($location);
-        $baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($location));
-    }
-
-    if ($aggrtype != "" && $aggrtype != "other") {
-        $tableName = UtilsForWizard::getWordUntilFirstDot($aggrtype);
-        $aggrtype = UtilsForWizard::stripWordUntilFirstDot($aggrtype);
-        $baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($aggrtype));
-    }
-
+    $tablesColumns = $dbHandler->getColumnsForSelectedTables($selectedTables);
+    $baseHeader = $tablesColumns;
     $_SESSION['$normalizer_header'] = $baseHeader;
 
     echo UtilsForWizard::PrintTableForDataMatchingStep($baseHeader);
@@ -151,7 +96,6 @@ function Execute($sid, $dbHandler) {
 
     $queryEngine->simpleQuery->addSourceDBInfo($sid, $dbHandler->getHost(), $dbHandler->getPort(), $dbHandler->getUser(), $dbHandler->getPassword(), $dbHandler->getDatabase(), $dbHandler->getDriver());
 
-    UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $inputData["schemaMatchingUserInputs"]);
     UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $inputData["dataMatchingUserInputs"]);
 
     $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');

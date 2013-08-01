@@ -30,7 +30,6 @@ var importWizard = (function() {
             $('#divFromInternet').hide();
         });
 
-
         $('#divFromComputer').hide();
         $('#divFromInternet').hide();
         $('#divFromDatabase').hide();
@@ -101,7 +100,6 @@ var importWizard = (function() {
         $("img").tooltip();
 
         initBootstrapWizard();
-
         importWizard.loadingGif = "<img src='" + my_pligg_base + "/templates/wistie/images/ajax-loader_cp.gif'/>";
     };
 
@@ -110,59 +108,7 @@ var importWizard = (function() {
 
     // is callsed by dropdown change event which coming from generate_ktr.php file
     // Candidate for knowout.js
-    importWizard.checkToEnableInputByUserOnSchemaMatchingStep = function(name) {
-
-        if (document.getElementById(name).value == 'other') {
-            //var input = document.getElementById(name+'2');
-            var input = $('#' + name + '2');
-            input.toggle();
-            //input.disabled = false;
-
-            if (input.id != "Location2" && input.id != "AggrType2" && input.value == "")
-            {
-                var d = new Date();
-
-                var month = d.getMonth() + 1;
-                var day = d.getDate();
-
-                var output = d.getFullYear() + '/' +
-                        (month < 10 ? '0' : '') + month + '/' +
-                        (day < 10 ? '0' : '') + day;
-
-                input.val(output);
-            }
-        }
-        else {
-            $('#' + name + '2').toggle();
-            //document.getElementById(name+'2').disabled = true;
-            document.getElementById(name).focus();
-        }
-    };
-
-    importWizard.skipSchemaMatchingStep = function() {
-        wizard.enableNextButton();
-        $('.wizard-next').click();
-    };
-
-    importWizard.getSchemaMatchingUserInputs = function() {
-        var spd = $('#Spd').val();
-        var drd = $('#Drd').val();
-        var start = $('#Start').val();
-        var end = $('#End').val();
-        var location = $('#Location').val();
-        var aggrtype = $('#AggrType').val();
-
-        var spd2 = $('#Spd2').val();
-        var drd2 = $('#Drd2').val();
-        var start2 = $('#Start2').val();
-        var end2 = $('#End2').val();
-        var location2 = $('#Location2').val();
-        var aggrtype2 = $('#AggrType2').val();
-
-        return {"spd": spd, "spd2": spd2, "drd": drd, "drd2": drd2, "start": start, "end2": end2, "start2": start2, "end": end, "location": location,
-            'location2': location2, 'aggrtype': aggrtype, 'aggrtype2': aggrtype2};
-    };
-
+    
     importWizard.getDataMatchingUserInputs = function() {
         var result = new Array();
 
@@ -206,46 +152,12 @@ var importWizard = (function() {
 
     importWizard.passInfofromDisplayOptionsStep = function() {
         $('#schemaMatchinStepInProgressWrapper').show();
-        $("#schemaMatchinTable").empty();
-        document.getElementById("schemaMatchinTable").innerHTML = '';
+        $('#dataMatchingTable').empty();
         if (getImportSource() == "database") {
             var deferred = wizardFromDB.passSelectedTablesFromDisplayOptionStep();
         }
         else {
             var deferred = wizardFromFile.passSheetInfoFromDisplayOptionStep();
-        }
-        deferred.done(function(data) {
-            importWizard.showSchemaMatchingStep(data);
-        });
-    };
-
-    importWizard.showSchemaMatchingStep = function(data) {
-
-        $('#schemaMatchinStepInProgressWrapper').hide();
-        $("#schemaMatchinTable").html(data);
-        
-        var datePickerOption = {
-            changeMonth: true,
-            changeYear: true,
-            dateFormat: "yy/mm/dd",
-            yearRange: "0:2023"
-        };
-
-        $("#Spd2").datepicker(datePickerOption);
-        $("#Drd2").datepicker(datePickerOption);
-        $("#Start2").datepicker(datePickerOption);
-        $("#End2").datepicker(datePickerOption);
-        
-        importWizard.skipSchemaMatchingStep();
-    };
-
-    importWizard.passSchemaMatchinInfo = function() {
-        $('#dataMatchingTable').empty();
-        if (getImportSource() == "database") {
-            var deferred = wizardFromDB.passSchemaMatchinInfo(importWizard.getSchemaMatchingUserInputs());
-        }
-        else {
-            var deferred = wizardFromFile.passSchemaMatchinInfo(importWizard.getSchemaMatchingUserInputs());
         }
         deferred.done(function(data) {
             importWizard.showDataMatchingStep(data);
@@ -288,30 +200,17 @@ var importWizard = (function() {
         });
 
         // steps
-        wizard.cards["UploadOptionStepCard"].on("validated", function(card) {
-            var hostname = card.el.find("#new-server-fqdn").val();
-        });
+        wizard.cards["UploadOptionStepCard"].on("validated", function(card) {});
 
         wizard.cards["displayOptionsStepCard"].on("selected", displayOptionsStepCardOnLoad);
-
-        wizard.cards["schemaMatchinStepCard"].on("selected", function(card) {
-            wizard.disableNextButton();
-            importWizard.passInfofromDisplayOptionsStep();
-        });
-
+    
         wizard.cards["dataMatchingStepCard"].on("selected", function(card) {
-            importWizard.passSchemaMatchinInfo();
+            importWizard.passInfofromDisplayOptionsStep();
         });
 
         wizard.on("submit", function(wizard) {
             $('#dataMatchingStepInProgress').show();
-
-            var submit = {
-                "hostname": $("#new-server-fqdn").val()
-            };
-
-            var bck_btn = '<button class="btn wizard-back" type="button">Back</button>';
-
+         
             $('button.wizard-close').hide();
             execute().done(function(resultJson) {
                 $('button.wizard-close').show();
@@ -345,11 +244,7 @@ var importWizard = (function() {
         wizard.el.find(".wizard-success .create-another-server").click(function() {
             wizard.reset();
         });
-
-        $(".wizard-group-list").click(function() {
-            alert("Disabled for demo.");
-        });
-
+   
         $("#open-wizard").click(function() {
 
             // set sid for uplod file form. Tried to set it in Init, didn't work, value was empty
@@ -359,10 +254,12 @@ var importWizard = (function() {
             wizard.disableNextButton();
             return false;
         });
-
+        
+        /*
         $('.wizard-back').bind('click', function() {
             wizard.enableNextButton();
         });
+        */
     }
 
     function finishSubmittingData() {
@@ -373,10 +270,11 @@ var importWizard = (function() {
 
     function execute() {
         if (getImportSource() == "database") {
-            return wizardFromDB.excuteFromDB();
+            return wizardFromDB.executeFromDB();
         } else {
-
+         
             var callExecuteKtr = function() {
+                console.log("callExecuteKtr");
                 return $.ajax({
                     url: my_pligg_base + "/DataImportWizard/execute_ktr.php?sid=" + $('#sid').val(),
                     type: 'get',
@@ -384,7 +282,7 @@ var importWizard = (function() {
                 });
             };
 
-            return $.when(wizardFromFile.excuteFromFile()).then(callExecuteKtr);
+            return $.when(wizardFromFile.executeFromFile()).then(callExecuteKtr);
         }
     }
 
