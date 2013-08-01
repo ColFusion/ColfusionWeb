@@ -235,7 +235,7 @@ function DataMatchCheckerViewModel() {
                     self.synFrom('');
                     self.synTo('');
                 } else {
-                    self.addingSynonymMessage('Some errors occur when adding the values');
+                    self.addingSynonymMessage((jsonResponse.message) ? jsonResponse.message : 'Some errors occur when adding the values' );
                 }
             }
         }).error(function() {

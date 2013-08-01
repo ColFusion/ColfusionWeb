@@ -2,6 +2,7 @@
 
 require_once realpath(dirname(__FILE__)) . '/../config.php';
 require_once realpath(dirname(__FILE__)) . '/TransformationHandler.php';
+require_once realpath(dirname(__FILE__)) . '/../Exceptions/SynonymExistedException.php';
 
 class DataMatchingCheckerDAO {
 
@@ -18,6 +19,10 @@ class DataMatchingCheckerDAO {
     }
 
     public function storeSynonym($fromSid, $fromTableName, $fromTransInput, $fromValue, $toSid, $toTableName, $toTransInput, $toValue, $userId) {
+        if ($this->isMappingExisted($userId, $fromSid, $fromTableName, $fromTransInput, $fromValue, $toSid, $toTableName, $toTransInput, $toValue)) {
+            throw new SynonymExistedException("You have already defined this mapping");
+        }
+
         $synId = $this->getNewSynonymId();
         $this->insertSynonymValues($synId, $fromSid, $fromTableName, $fromTransInput, $fromValue, $userId, DataMatchingCheckerDAO::SynFromTable);
         $this->insertSynonymValues($synId, $toSid, $toTableName, $toTransInput, $toValue, $userId, DataMatchingCheckerDAO::SynToTable);
@@ -27,6 +32,33 @@ class DataMatchingCheckerDAO {
         $sql = "select syn_id from colfusion_synonyms_from order by syn_id desc limit 1";
         $objSynId = $this->ezSql->get_row($sql);
         return $objSynId == null ? 0 : $objSynId->syn_id + 1;
+    }
+
+    private function isMappingExisted($userId, $fromSid, $fromTableName, $fromTransInput, $fromValue, $toSid, $toTableName, $toTransInput, $toValue) {
+        $fromMappings = $this->getSynonymValues($fromSid, $fromTableName, $fromTransInput, $fromValue, $userId, DataMatchingCheckerDAO::SynFromTable);
+        $toMappings = $this->getSynonymValues($toSid, $toTableName, $toTransInput, $toValue, $userId, DataMatchingCheckerDAO::SynToTable);
+
+        foreach ($fromMappings as $fromMapping) {
+            $fromSynIds[] = $fromMapping->syn_Id;
+        }
+        
+        foreach ($toMappings as $toMapping) {
+            $toSynIds[] = $toMapping->syn_Id;
+        }
+        
+        $intersect = array_intersect($fromSynIds, $toSynIds);
+        if (count($intersect) != 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function getSynonymValues($sid, $tableName, $transInput, $value, $userId, $synTable) {
+        $transInput = mysql_real_escape_string($this->transformationHandler->encodeTransformationInput($sid, $tableName, $transInput));
+        $value = mysql_real_escape_string($value);
+        $sql = "select * from $synTable where sid=$sid and tableName='$tableName' and transInput='$transInput' and `value`='$value' and userId=$userId";
+        return $this->ezSql->get_results($sql);
     }
 
     private function insertSynonymValues($synId, $sid, $tableName, $transInput, $value, $userId, $synTable) {

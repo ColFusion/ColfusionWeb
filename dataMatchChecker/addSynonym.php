@@ -22,6 +22,9 @@ $dao = new DataMatchingCheckerDAO();
 try {
     $dao->storeSynonym($sidFrom, $tableFrom, $fromTransInput, $synFrom, $sidTo, $tableTo, $toTransInput, $synTo, $userId);
     $jsonResult["isSuccessful"] = true;
+} catch (SynonymExistedException $e) {
+    $jsonResult["isSuccessful"] = false;
+    $jsonResult["message"] = $e->getMessage();
 } catch (Exception $e) {
     $jsonResult["isSuccessful"] = false;
 }
