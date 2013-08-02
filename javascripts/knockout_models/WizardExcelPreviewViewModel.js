@@ -80,7 +80,6 @@ var WizardExcelPreviewProperties = {
         self.isPreviewLoadingComplete = ko.observable(false);
         // Record the estimated loading time so can be reused in step 3 if needed.
         self.estimatedTimestamp = ko.observable(0);
-        self.totalEstimatedTimestamp = ko.observable(0); // For multiple files.
         self.previewRowsPerPage = ko.observable(20);
         self.previewPage = ko.observable(1);
 

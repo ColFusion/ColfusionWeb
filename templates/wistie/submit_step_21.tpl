@@ -46,6 +46,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/WizardExcelPreviewViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/SourceWorksheetSettingsViewModel.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/ProgressBarViewModel.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/importWizard.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/wizardFromFile.js"></script>
