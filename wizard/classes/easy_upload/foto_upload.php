@@ -1,6 +1,6 @@
 <?php
 include ($_SERVER['DOCUMENT_ROOT']."/classes/upload/upload_class.php");
-error_reporting(E_ALL);
+
 ini_set("memory_limit", "64M");
 set_time_limit(60);
 

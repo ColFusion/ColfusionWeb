@@ -25,7 +25,6 @@ class Smarty_Internal_Write_File {
      */
     public static function writeFile($_filepath, $_contents, Smarty $smarty)
     {
-        error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
         if ($smarty->_file_perms !== null) {
             $old_umask = umask(0);
         }
