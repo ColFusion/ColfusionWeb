@@ -59,10 +59,7 @@ var wizardFromFile = (function() {
     wizardFromFile.getLoadingTime = function() {
         return $.ajax({
             url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=9",
-            type: 'post',
-            success: function(estimatedSeconds) {
-                sourceWorksheetSettingsViewModel.setTimeProgress(new Date().getTime(), estimatedSeconds * 1000);
-            }
+            type: 'post'           
         });
     };
 

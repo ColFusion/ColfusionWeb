@@ -76,33 +76,31 @@ var WizardExcelPreviewProperties = {
         self.filename = ko.observable(filename);
         self.worksheetPreviewTables = ko.observableArray([]);
 
-        self.loadingProgressPercent = ko.observable(0);
-        self.isPreviewLoadingComplete = ko.observable(false);
-        // Record the estimated loading time so can be reused in step 3 if needed.
-        self.estimatedTimestamp = ko.observable(0);
+        self.progressBarViewModel = ko.observable(new ProgressBarViewModel());
+
         self.previewRowsPerPage = ko.observable(20);
         self.previewPage = ko.observable(1);
 
         self.loadPreview = function() {
             var rowsPerPage = self.previewRowsPerPage();
             var page = self.previewPage();
-
-            self.isPreviewLoadingComplete(false);
-            self.loadingProgressPercent(0);
+            
+            self.progressBarViewModel().isProgressing(true);
             getEstimatedLoadingSeconds().done(function(estimatedSeconds) {
                 console.log("startGetPreview");
-                var startLoadingTimeStamp = new Date().getTime();
                 var estimatedLoadingTimestamp = estimatedSeconds * 1000;
-                self.estimatedTimestamp(estimatedLoadingTimestamp);
-                updateLoadingProgress(startLoadingTimeStamp, estimatedLoadingTimestamp);
-                getPreviewFromServer(rowsPerPage, page);
+                self.progressBarViewModel().setEstimatedTimeStamp(estimatedLoadingTimestamp);
+                self.progressBarViewModel().start();
+                getPreviewFromServer(rowsPerPage, page).always(function() {
+                    self.progressBarViewModel().stop();
+                });
             }).error(function() {
                 alert("Some errors occur at server, please refresh page and try again.");
             });
         };
 
         var getPreviewFromServer = function(rowsPerPage, page) {
-            $.ajax({
+            return $.ajax({
                 url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=10",
                 type: 'post',
                 dataType: 'json',
@@ -120,8 +118,6 @@ var WizardExcelPreviewProperties = {
                 error: function() {
                     alert("Some errors occur at server, please refresh page and try again.");
                 }
-            }).always(function() {
-                self.isPreviewLoadingComplete(true);
             });
         };
 

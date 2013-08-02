@@ -205,16 +205,16 @@
                         <div data-bind="foreach: previewFiles" id="previewFiles">
                             <p data-bind="text: filename" class="sourceName" style="margin-top: 10px;"></p>
                             <div class="previewFileContainer">
-                                <div data-bind="visible: !isPreviewLoadingComplete()" id ="loadingProgressContainer">
+                                <div data-bind="visible: progressBarViewModel().isProgressing()" id="loadingProgressContainer">
                                     <div class="loadingTextWrapper" style="margin-top: 60px;">
                                         <span class="loadingText">Preview is loading...</span>
-                                        <span data-bind="text: loadingProgressPercent() + '%'" style="float: right;" class='percentText'></span>
+                                        <span data-bind="text: progressBarViewModel().loadingProgressPercent() + '%'" style="float: right;" class='percentText'></span>
                                     </div>
                                     <div class="progress" id="previewProgressBar">
-                                        <div data-bind="style: {width: loadingProgressPercent() + '%'}" class="bar"></div>
+                                        <div data-bind="style: {width: progressBarViewModel().loadingProgressPercent() + '%'}" class="bar"></div>
                                     </div>                  
                                 </div>
-                                <div data-bind="visible: isPreviewLoadingComplete()" id="sheetExcelWrapper">
+                                <div data-bind="visible: !progressBarViewModel().isProgressing()" id="sheetExcelWrapper">
                                     <div id ='sheetExcel'>
                                         <ul data-bind="foreach: worksheetPreviewTables" class="nav nav-tabs">
                                             <li data-bind="attr: { class: $index() == 0 ? 'active' : '' }">
@@ -242,14 +242,24 @@
         </div>
     </div>
 
-   
-    <div class='wizard-card' data-cardname='dataMatchingStepCard' style=' width:600px; overflow: hidden; '><!--"+//style='width: 720px; overflow: hidden; '>-->
+
+    <div class='wizard-card' data-cardname='dataMatchingStepCard' id="dataMatchingStepCard" style=' width:600px; overflow: hidden; '><!--"+//style='width: 720px; overflow: hidden; '>-->
         <h3 style="display: inline;">Data Matching
             <img src='help.png' width='15' height='15' title='Verify the dname or type yours in the proper type box if not correct and then click submit. You can remove undesired dnames by checking the boxes in fornt of them.'/>
         </h3>
         <img id="dataMatchingStepInProgress"  src="templates/wistie/images/ajax-loader_cp.gif" style="width: 35px; vertical-align: middle;margin-left: 20px;"/>
 
-        <div class='wizard-input-section' style='position: relative; width: 100%; height: 100%; overflow: auto;'>
+        <div data-bind="visible: isProgressing()" id="dataMatchingLoadingProgressContainer">
+            <div class="loadingTextWrapper" style="margin-top: 60px;">
+                <span class="loadingText">Preview is loading...</span>
+                <span data-bind="text: loadingProgressPercent() + '%'" style="float: right;" class='percentText'></span>
+            </div>
+            <div class="progress" id="dataMatchingPreviewProgressBar">
+                <div data-bind="style: {width: loadingProgressPercent() + '%'}" class="bar"></div>
+            </div>                  
+        </div>
+
+        <div data-bind="visible: !isProgressing()" class='wizard-input-section' style='position: relative; width: 100%; height: 100%; overflow: auto;'>
             <!--style='position: relative; width: 780px; height: 100%; overflow: auto;'>-->
             <div id='tools'></div>
 
@@ -262,10 +272,7 @@
             <br/>
 
             <label><input type='checkbox' id='toggleAllColumns'/>toggle all</label>
-
             <div id='dataMatchingTable'></div>
-            <br/><br/><br/><br/>
-
         </div>
     </div>
 

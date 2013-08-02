@@ -77,10 +77,7 @@ var wizardFromDB = (function() {
             'isImport': wizardFromDB.isImport
         };
 
-        // alert(JSON.stringify(dataToSend));
-        return getTableForDataMatchingStep(dataToSend).done(function(data) {
-            importWizard.showDataMatchingStep(data);
-        });
+        return getTableForDataMatchingStep(dataToSend);
     };
 
     function getTableForDataMatchingStep(dataToSend) {

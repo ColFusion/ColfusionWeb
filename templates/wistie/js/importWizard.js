@@ -2,6 +2,8 @@ var importWizard = (function() {
     var importWizard = {};
 
     importWizard.loadingGif = "";
+    importWizard.dataMatchingProgressViewModel = new ProgressBarViewModel();
+
     importWizard.Init = function() {
         wizardFromFile.Init();
 
@@ -101,6 +103,8 @@ var importWizard = (function() {
 
         initBootstrapWizard();
         importWizard.loadingGif = "<img src='" + my_pligg_base + "/templates/wistie/images/ajax-loader_cp.gif'/>";
+
+        ko.applyBindings(importWizard.dataMatchingProgressViewModel, document.getElementById('dataMatchingStepCard'));
     };
 
     //***********************************************************************************************
@@ -108,7 +112,7 @@ var importWizard = (function() {
 
     // is callsed by dropdown change event which coming from generate_ktr.php file
     // Candidate for knowout.js
-    
+
     importWizard.getDataMatchingUserInputs = function() {
         var result = new Array();
 
@@ -150,8 +154,16 @@ var importWizard = (function() {
         return result;
     };
 
+    importWizard.getDataMatchingLoadingProgress = function() {
+        if (getImportSource() == "database") {
+            importWizard.dataMatchingProgressViewModel.stop();
+        }
+        else {
+            return wizardFromFile.getLoadingTime();
+        }
+    };
+
     importWizard.passInfofromDisplayOptionsStep = function() {
-        $('#schemaMatchinStepInProgressWrapper').show();
         $('#dataMatchingTable').empty();
         if (getImportSource() == "database") {
             var deferred = wizardFromDB.passSelectedTablesFromDisplayOptionStep();
@@ -159,7 +171,7 @@ var importWizard = (function() {
         else {
             var deferred = wizardFromFile.passSheetInfoFromDisplayOptionStep();
         }
-        deferred.done(function(data) {
+        return deferred.done(function(data) {
             importWizard.showDataMatchingStep(data);
         });
     };
@@ -200,17 +212,32 @@ var importWizard = (function() {
         });
 
         // steps
-        wizard.cards["UploadOptionStepCard"].on("validated", function(card) {});
+        wizard.cards["UploadOptionStepCard"].on("validated", function(card) {
+        });
 
         wizard.cards["displayOptionsStepCard"].on("selected", displayOptionsStepCardOnLoad);
-    
+
         wizard.cards["dataMatchingStepCard"].on("selected", function(card) {
-            importWizard.passInfofromDisplayOptionsStep();
+
+            importWizard.dataMatchingProgressViewModel.isProgressing(true);
+            var deferred = importWizard.getDataMatchingLoadingProgress();
+
+            if (deferred) {
+                deferred.done(function(estimatedSeconds) {
+                    importWizard.dataMatchingProgressViewModel.setEstimatedTimeStamp(estimatedSeconds * 1000);
+                    importWizard.dataMatchingProgressViewModel.start();
+                    importWizard.passInfofromDisplayOptionsStep().always(function() {
+                        importWizard.dataMatchingProgressViewModel.stop();
+                    });
+                });
+            } else {
+                importWizard.passInfofromDisplayOptionsStep();
+            }
         });
 
         wizard.on("submit", function(wizard) {
             $('#dataMatchingStepInProgress').show();
-         
+
             $('button.wizard-close').hide();
             execute().done(function(resultJson) {
                 $('button.wizard-close').show();
@@ -225,6 +252,7 @@ var importWizard = (function() {
 
                     $('#fromDataSetWrapper').find('.sidInput').val('New Dataset');
                 } else {
+                    wizard.trigger("failure");
                     $("#exe").html(resultJson.message);
                 }
             });
@@ -244,7 +272,7 @@ var importWizard = (function() {
         wizard.el.find(".wizard-success .create-another-server").click(function() {
             wizard.reset();
         });
-   
+
         $("#open-wizard").click(function() {
 
             // set sid for uplod file form. Tried to set it in Init, didn't work, value was empty
@@ -254,12 +282,12 @@ var importWizard = (function() {
             wizard.disableNextButton();
             return false;
         });
-        
+
         /*
-        $('.wizard-back').bind('click', function() {
-            wizard.enableNextButton();
-        });
-        */
+         $('.wizard-back').bind('click', function() {
+         wizard.enableNextButton();
+         });
+         */
     }
 
     function finishSubmittingData() {
@@ -272,7 +300,7 @@ var importWizard = (function() {
         if (getImportSource() == "database") {
             return wizardFromDB.executeFromDB();
         } else {
-         
+
             var callExecuteKtr = function() {
                 console.log("callExecuteKtr");
                 return $.ajax({

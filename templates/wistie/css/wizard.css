@@ -220,23 +220,19 @@ div[id^=sugmoreDiv]{
     cursor: pointer;
 }
 
-loadingProgressContainer{
-    width: 100%;
-}
-
-#previewProgressBar, .loadingTextWrapper {
+#previewProgressBar, #dataMatchingPreviewProgressBar, .loadingTextWrapper {
     width: 300px;
     margin-left: auto;
     margin-right: auto;
 
 }
 
-#previewProgressBar{
+#previewProgressBar, #dataMatchingPreviewProgressBar{
     -webkit-border-radius: 0;
     height: 13px;
 }
 
-#previewProgressBar .bar{
+#previewProgressBar .bar, #dataMatchingPreviewProgressBar .bar{
     background-color: grey;
     background-image: linear-gradient(to bottom,#aaaaaa,#aaaaaa);
 }

@@ -11,14 +11,15 @@ function ProgressBarViewModel() {
 
     self.start = function() {
         console.log("start progressing");
-        self.isProgressing(false);
+        self.isProgressing(true);
+        self.loadingProgressPercent(0);
         var startLoadingTimeStamp = new Date().getTime();
         updateLoadingProgress(startLoadingTimeStamp, self.estimatedTimestamp());
     };
     
     self.stop = function(){
         console.log("stop progressing");
-        self.isProgressing(true);
+        self.isProgressing(false);
     };
 
     function updateLoadingProgress(startLoadingTimeStamp, estimatedLoadingTimestamp) {

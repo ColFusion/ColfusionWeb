@@ -66,8 +66,12 @@ switch ($phase) {
         getFileSources($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 9:
-        $filename = $_POST["filename"];
-        echo estimateLoadingProgress($dataSource_dirPath . $filename);
+        $filenames = $_SESSION["ktrArguments_$sid"]["filenames"];
+        $totalSeconds = 0;
+        foreach ($filenames as $filename) {
+            $totalSeconds += estimateLoadingProgress($dataSource_dirPath . $filename);
+        }
+        echo $totalSeconds;
         break;
     case 10:
         getExcelPreview($sid, $dataSource_dirPath);
@@ -146,12 +150,12 @@ function getFileSources($sid) {
 }
 
 function getExcelPreview($sid, $dataSource_dirPath) {
-        $filename = $_POST['filename'];
-        $filePath = $dataSource_dirPath . $filename;
-        $previewRowsPerPage = $_POST['previewRowsPerPage'];
-        $previewPage = $_POST['previewPage'];
-        loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage);
-        echo json_encode(getSingleExcelPreview($sid, $filename));
+    $filename = $_POST['filename'];
+    $filePath = $dataSource_dirPath . $filename;
+    $previewRowsPerPage = $_POST['previewRowsPerPage'];
+    $previewPage = $_POST['previewPage'];
+    loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage);
+    echo json_encode(getSingleExcelPreview($sid, $filename));
 }
 
 function loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage) {
@@ -225,8 +229,8 @@ function addSheetSettings($sheetsRange, $dataSource_filePath, $sid) {
 
 function match_schema($sid) {
 
-    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);   
-    foreach ($ktrManagers as $filename => $ktrManager) {     
+    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
+    foreach ($ktrManagers as $filename => $ktrManager) {
         $filename_baseheaders[$filename] = $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'];
     }
 
@@ -269,7 +273,7 @@ function isReloadNeeded($filename, $headerRows) {
         $perPage = $_SESSION["excelPreviewRowsPerPage_$sid"][$filename];
         $isReloadNeeded = false;
         foreach ($headerRows as $headerRow) {
-            $isReloadNeeded = $isReloadNeeded || !(((int)$headerRow > ((int)$loadedPage - 1) * (int)$perPage) && ((int)$headerRow <= (int)$loadedPage * (int)$perPage));
+            $isReloadNeeded = $isReloadNeeded || !(((int) $headerRow > ((int) $loadedPage - 1) * (int) $perPage) && ((int) $headerRow <= (int) $loadedPage * (int) $perPage));
         }
         return $isReloadNeeded;
     } else {
