@@ -6,19 +6,12 @@ include_once('../'.mnminclude.'link.php');
 include_once('../'.mnminclude.'tags.php');
 include_once('../'.mnminclude.'user.php');
 include_once('../'.mnminclude.'smartyvariables.php');
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
+
 require_once("Chart.php");
 require_once("Canvas.php");
 
-//
-error_reporting(E_ALL);
 require_once("charts/PieChart.php");
 require_once('charts/ColumnChart.php');
-
-//
-//ini_set('display_errors', 1);
-
 
 require_once("charts/TableChart.php");
 require_once("charts/ComboChart.php");
