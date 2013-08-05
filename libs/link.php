@@ -234,8 +234,10 @@ class Link {
 
 			$this->additional_cats = array();
 			$results = $db->get_results("SELECT ac_cat_id FROM ".table_additional_categories." WHERE ac_link_id=$id",ARRAY_N);
+			/*
 			foreach ($results as $cat)
 			    $this->additional_cats[] = $cat[0];
+			*/
 			
 			return true;
 		}
