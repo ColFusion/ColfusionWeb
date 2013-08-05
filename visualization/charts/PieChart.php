@@ -25,6 +25,7 @@ class PieChart extends Chart {
             $_datainfo = $temp;
             $this->datainfo = $_datainfo;
         }
+        $inputObj = $_datainfo->inputObj;
         $sid = $_datainfo->sid;
         $table = $_datainfo->table;
         $pieColumnCat = $_datainfo->pieColumnCat;
@@ -49,7 +50,7 @@ class PieChart extends Chart {
 			$select .= "MIN(`" . $pieColumnAgg . "`) AS 'AggValue' ";
 			break;
 	}
-        $from = (object) array('sid' => $sid, 'tableName' => $table);
+        $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
         $fromArray = array($from);
         $groupby = " GROUP BY `" . $pieColumnCat . "` ";
         $queryEngine = new QueryEngine();

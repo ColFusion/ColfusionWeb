@@ -287,9 +287,10 @@ function createNewComboGadget(){
 	var gadget = "<div name='comboDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:400px; height: 300px' type='combo'>";
 	gadget +=  "<div class='gadget-header'><div class='gadget-title'>Combo chart " + gadgetID+"</div>";
 	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
-	gadget += "<div class='gadget-edit edit-combo'><i class='icon-edit'></i></div>";
-	gadget += "<div class='gadget-min' style = 'display:none'><i class='icon-resize-small'></i></div>";
-	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div> </div>";
+	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div>";
+	gadget += "<div class='gadget-normal' style = 'display:none'><i class='icon-resize-small'></i></div>";
+	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div>";
+	gadget += "<div class='gadget-min'><i class='icon-minus'></i></div> </div>";
 	gadget += "<input type='hidden' id='setting"+gadgetID+"' value='' />"; 	
 	gadget += "<div class='gadget-content'>";
 	gadget += "<div id='comboResult" + gadgetID + "' style='width:100%;'></div></div></div>";
@@ -309,17 +310,17 @@ function createNewComboGadget(){
 		chart.height = Math.round($("#"+gadgetID).height());
 		$(this).parent().parent().animate({
 			top: "40px",
-			left:"-80px",
+			left:"0px",
 			width: (parseFloat(window.innerWidth)-20)+"px",
 			height: (parseFloat(window.innerHeight)-60)+"px"
 			},500,null,function() {
 				$("#"+gadgetID).find(".gadget-max").hide();
-				$("#"+gadgetID).find(".gadget-min").show();
+				$("#"+gadgetID).find(".gadget-normal").show();
 				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
 				})
 		
 		});
-	$("#"+gadgetID+" .gadget-min").click(function() {
+	$("#"+gadgetID+" .gadget-normal").click(function() {
 		$(this).parent().parent().find(".gadget-content").css("opacity","0.0");
 		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
 		$(this).parent().parent().animate({
@@ -328,7 +329,7 @@ function createNewComboGadget(){
 			width: chart.width+"px",
 			height: chart.height+"px"
 			},500,null,function() {
-				$("#"+gadgetID).find(".gadget-min").hide();
+				$("#"+gadgetID).find(".gadget-normal").hide();
 				$("#"+gadgetID).find(".gadget-max").show();
 				$("#"+gadgetID).resize();$(this).parent().parent().find(".gadget-content").css("opacity","1.0");
 				})
@@ -348,8 +349,29 @@ function createNewComboGadget(){
 		var chart = CHARTS[cid];
 		$("#comboResult" + gadgetID).height($("#" + gadgetID).height() - $(".gadget-header").height() - 20);
 		refreshCombo(chart.chartData,chart.queryResult,"comboResult"+gadgetID);
-	})
-
+	});
+	$("#"+gadgetID+" .gadget-min").click(function() {
+		var cid = $(this).find('.chartID').val();
+		var gadgetID = $(this).parent().parent().attr("id");
+		var chartID = $("#"+gadgetID).find(".chartID").val();
+		var chart = CHARTS[$("#"+gadgetID).find(".chartID").val()];
+		chart.top = Math.round($("#"+gadgetID).position().top);
+		chart.left = Math.round($("#"+gadgetID).position().left);
+		chart.width = Math.round($("#"+gadgetID).width());
+		chart.height = Math.round($("#"+gadgetID).height());
+		$(this).parent().parent().animate(
+			{
+			top:window.innerHeight+"px",
+			left:"0px",
+			opacity:"0"},320,null,function() {
+				$(this).hide();
+				$("#min-items").append("<li class='min-item' id = 'min"+gadgetID+"'onclick='showMin("+gadgetID+")'><p>"+$("#"+gadgetID).find(".gadget-title").text()+"</p></li>")
+				$(".min-item").each(function() {
+					$(this).hide();
+					})
+				$(".min-item").last().show();
+				});
+		});
 	return gadgetID;
 }
 //create new combo chart

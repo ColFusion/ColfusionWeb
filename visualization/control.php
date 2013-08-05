@@ -296,9 +296,10 @@ function updateChartResult(){
 function getStory(){
     
     $queryEngine = new QueryEngine();
-    $sid = $_REQUEST['sid'];
-    $sname = $_REQUEST['sname'];
-    $result = $queryEngine->GetTablesInfo($sid);
+    /*$sid = $_REQUEST['sid'];
+    $sname = $_REQUEST['sname'];*/
+    $obj = $_REQUEST['obj'];
+    $result = $queryEngine->GetTablesInfo($obj);
     //$rst = array();
     //var_dump($result);
     if($result!=null){
@@ -313,9 +314,10 @@ function getStory(){
             $tables[$tname]['table'] = $tname;
             $tables[$tname]['columns'] = $columns;
         }
-        $RST['story']['sid'] = $_REQUEST['sid'];
-        $RST['story']['sname'] = $sname;
+        $RST['story']['sid'] = $obj['sid'];
+        $RST['story']['sname'] = $obj['title'];
         $RST['story']['tables'] = $tables;
+        $RST['story']['inputObj'] = $obj;
     }else{
         $RST['status'] = 'failed';
         $RST['message'] = 'Cannot find story '.$sid.'.';

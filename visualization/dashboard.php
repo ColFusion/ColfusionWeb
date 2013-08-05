@@ -20,6 +20,7 @@ if ($current_user->authenticated != TRUE) {
 /* * *********************	
   get dataset title No
  * ********************* */
+$dataset = $_POST['dataset'];
 $title = $_POST['title'];
 $where = $_GET['where'];
 $sid = $_POST['sid'];
@@ -181,8 +182,15 @@ $chart_columns[] = "Location";
                                     <li><a href="#addCombo" data-toggle="modal">Add Combo Chart</a></li>
                                     <li><a href="#addMap" data-toggle="modal">Add Map</a></li>
                                 </ul>
-                            </li>			
-                            <li id = "viewChartsNote" class="dropdown" id="view-dropdown" style="display:none" >
+                            </li>
+			    <li class="dropdown" id="view-dropdown">
+				<a href="#visualization" class="dropdown-toggle" data-toggle="dropdown">View <b class="caret"></b></a>
+				<ul class="dropdown-menu">
+					<li><a href="#" onclick="gridView(2,4)">2 * 4</a></li>
+					<li><a href="#" onclick="gridView(2,3)">2 * 3</a></li>
+				</ul>
+			    </li>
+                            <li id = "viewChartsNote" class="dropdown" style="display:none" >
                                 <a href="#view" onclick = "showNote()" class="dropdown-toggle" >Charts Notes</a>
                             </li>
                         </ul>
@@ -252,7 +260,12 @@ $chart_columns[] = "Location";
                 <textarea id = "CHART_NOTE"></textarea>
             </div>
         </div>
-
+	
+	</div>
+	<div id="min-window" style="position: fixed;bottom: 0px;left: 0px" onmouseover="showMinWindow()" onmouseout="hideMinWindow()">
+		<ul class="nav nav-pills nav-stacked" id="min-items">
+		</ul>	
+	</div>
         <!--New Canvas -->
         <div id="newCanvas" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="motionAddModalLabel" aria-hidden="true">
             <div class="modal-header">
@@ -343,23 +356,19 @@ $chart_columns[] = "Location";
         <div id="openchart" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="tableAddModalLabel" aria-hidden="true">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="icon-remove"></i></button>
-                <h3 id="tableAddModalLabel">Copy Current Canvas To Other Canvas</h3>
+                <h3 id="tableAddModalLabel">Chart Preview</h3>
             </div>
             <div class="modal-body">
 
-                <div id = "shareCharts">
-                    <div id="displaychart"> 
+                <div id = "shareCharts" style="height: 100%;width: 100%">
+                    <div id="displaychart" style="height: 100%;width: 100%"> 
 
-                    </div>
-                    <div id="copyto"> 
-                        <label class = "tabContentTitle" >Enter Targeted Canvas By Name: </label>
-                        <input type="text" id = "shareToWhom" style="width:auto" name="ShareToWhom">
                     </div>
                 </div>	
             </div>
             <div class="modal-footer">
                 <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                <button class="btn btn-primary" id="OpenChartBut" onclick="saveConfig()">OK</button>
+                <button class="btn btn-primary" id="OpenChartBut" data-dismiss="modal">OK</button>
             </div>
         </div>
 
@@ -1031,7 +1040,7 @@ $chart_columns[] = "Location";
 
 
         <!-- Canvas Information -->
-        <div class="container" onclick = "lostFocus()">
+        <div class="container" onclick = "lostFocus()" style="width:100%">
             <input type="hidden" id="vid" value=""/>
             <input type="hidden" id="canvasName" value=""/>
             <input type="hidden" id="privilege" value=""/>
@@ -1060,13 +1069,13 @@ $chart_columns[] = "Location";
         </div> <!-- /container -->
 
     </body>
-    <?php if($sid!=null){?>
+    <?php if($dataset!=null){?>
     <script type="text/javascript">
         $(document).ready(function() {
-            createNewCanvas("<?php echo $sid ?>" + "  <?php echo $tname ?>");
-            CANVAS.addStory("<?php echo $sid ?>", "<?php echo $title ?>");
+            createNewCanvas("<?php echo $dataset->sid ?>" + "  <?php echo $dataset->title ?>");
+            CANVAS.addStory(<?php echo $dataset ?>);
 	    $('#addTable').modal('show');
-	    $('#addTable .table-list').val("+<?php echo $tname ?>")
+	    $('#addTable .table-list').val("+<?php echo $dataset->title ?>")
 	    $('#addTable .columnSelection input').each(function() {
 		$(this).prop('checked','checked');
 		})

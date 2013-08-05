@@ -23,8 +23,8 @@ function Canvas(vid,name,privilege,authorization,mdate,cdate,note) {
 	this.isSave = false;
 }
 //use sid to get story name and tables in the story
-Canvas.prototype.addStory = function(sid,sname,callback) {
-	if (CANVAS.stories[sid]!=null) {
+Canvas.prototype.addStory = function(obj,callback) {
+	if (CANVAS.stories[obj.sid]!=null) {
 		return;
 	}
 	$.ajax({
@@ -32,8 +32,7 @@ Canvas.prototype.addStory = function(sid,sname,callback) {
 		url: 'control.php',
 		data: {
 			action: 'getStory',
-			sid: sid,
-			sname: sname
+			obj: obj
 			},
 		async:false,
 		success: function(JSON_Response) {
@@ -43,6 +42,7 @@ Canvas.prototype.addStory = function(sid,sname,callback) {
 				var sname = JSON_Response['sname'];
 				var tables = JSON_Response['tables'];*/
 				$('#chart-dropdown').show();
+				$("#view-dropdown").show();
 				var story = JSON_Response['story'];
 				var sid = story.sid;
 				CANVAS.stories[sid] = story;
@@ -132,7 +132,7 @@ function Chart(cid,name,type,top,left,height,width,depth,note,datainfo,queryResu
 	this.datainfo = datainfo;
 	this.queryResult = queryResult;
 	this.gadgetID = gadgetID;
-	CANVAS.addStory(this.getSid(),this.getSname());
+	CANVAS.addStory(datainfo.inputObj);
 }
 //get the sid from the chart datainfo
 Chart.prototype.getSid = function() {
@@ -148,8 +148,15 @@ Chart.prototype.getSname = function() {
 }
 function addStory() {
 	var sid = datasetSearcher.sid;
-	var sname = datasetSearcher.datasetName;	
-	CANVAS.addStory(sid,sname);
+	var sname = datasetSearcher.datasetName;
+	
+	var obj = {
+		sid: datasetSearcher.sid,
+		oneSid : true,
+		title:  datasetSearcher.datasetName
+	};
+	
+	CANVAS.addStory(obj);
 	showNote("flag");
 	$("#addStory").modal("hide");
 	
@@ -950,4 +957,52 @@ function showSuccess(msg) {
 	$("#canvas-alert").addClass("alert-success");
 	window.setTimeout(function() {$("#canvas-alert").fadeOut(500)},3000);
 }
+function showMin(gadgetID) {
+	$("#"+gadgetID).show();
+	var chartID = $("#"+gadgetID).find(".chartID").val();
+	var chart = CHARTS[chartID];
+	$("#min"+gadgetID).remove();
+	$("#"+gadgetID).animate({
+			top:chart.top + "px",
+			left:chart.left + "px",
+			height:chart.height+"px",
+			width:chart.width+"px",
+			opacity:"1"
+		},220,null,null)
+}
+function showMinWindow() {
+	$(".min-item").each(function() {
+		$(this).show();
+		})
+}
+function hideMinWindow() {
+	$(".min-item").each(function() {
+		$(this).hide();
+		})
+	$(".min-item").last().show();	
+}
+function gridView(rows, columns) {
+	var width = Math.floor(window.innerWidth/parseInt(columns));
+	var height = Math.floor(window.innerHeight/parseInt(rows));
+	width = width > 300 ? width:300;
+	height = height >200 ? height:200;
+	var i = 0;
+	$(".gadget ").each(function() {
+		if (!$(this).is(":hidden")) {
+			var top = 40 + Math.floor(i/columns)*height;
+			var left = i % columns * width;
+			$(this).find(".gadget-content").hide();
+			$(this).animate({
+				top:top+"px",
+				left:left+"px",
+				height:height+"px",
+				width:width+"px"
+				},500,null,function() {
+					$(this).find(".gadget-content").show();
+					$(this).resize();
+					})
+			i++;
+		}
 
+		})
+}

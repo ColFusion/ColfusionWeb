@@ -75,7 +75,7 @@ function createNewCanvas(_name,note) {
             $("#viewChartsNote").show();
             $('#file-dropdown').show();
             $('#chart-dropdown').hide();
-            $('#view-dropdown').show();
+            $('#view-dropdown').hide();
             $('#brand').text(JSONResponse['name']);
             CANVAS = new Canvas(JSONResponse['vid'],JSONResponse['name'],JSONResponse['privilege'],JSONResponse['authorization'],JSONResponse['mdate'],JSONResponse['cdate'],JSONResponse['note']);
         }
