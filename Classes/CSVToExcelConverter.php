@@ -13,13 +13,15 @@ class CSVToExcelConverter {
      * @throws Exception
      */
     public static function convert($csv_file, $xls_file, $csv_enc = null) {
-        // set cache
-        $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
-        PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
 
-        $cacheMethod = PHPExcel_CachedObjectStorageFactory:: cache_to_discISAM;
-        $cacheSettings = array( 'dir' => 'E:/PHPExcel_cache');
-        PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $cacheMethod = PHPExcel_CachedObjectStorageFactory:: cache_to_discISAM;
+            $cacheSettings = array( 'dir' => 'E:/PHPExcel_cache');
+            PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+        } else {
+            $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+            PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
+        }
 
         //open csv file
         $objReader = new PHPExcel_Reader_CSV();
