@@ -60,74 +60,13 @@ class AdvSearch {
 		if (!isset($this->searchKeyWords))
 			return "";
 		
-		$sids =  $this->getSidsContainingSearchKeys();
+		$sids = $this->getSidsContainingSearchKeys();
 
 		$result = $this->getRelationshipToJoin($sids);
 
 		$result = $this->getMoreInfoForEachRel($result);
 
 		return $result;
-
-/*
-		$sql = "
-select distinct CONCAT(cd.sid, '.' , tableName) as sid, sidTo 
-from colfusion_dnameinfo as cd LEFT JOIN
-	(
-	select sidFrom,  GROUP_CONCAT(distinct TRIM(sidTo)) as sidTo
-	from (
-			select sidTableFrom as sidFrom, sidTable2 as sidTo
-			from (
-					select distinct CONCAT(sid, '.' , tableName) as sidTableFrom
-					from colfusion_dnameinfo di join
-					colfusion_columnTableInfo cti on di.cid = cti.cid
-					where dname_chosen in ('$inCrit') or dname_original_name in ('$inCrit')
-				) as f, 
-				(
-					select CONCAT(sid1, '.' , tableName1) as sidTable1, CONCAT(sid2, '.' , tableName2)  as sidTable2
-					from colfusion_relationships
-				) as s
-			where f.sidTableFrom = s.sidTable1 and s.sidTable2 in (select distinct CONCAT(sid, '.' , tableName) as sidTableFrom
-					from colfusion_dnameinfo di join
-					colfusion_columnTableInfo cti on di.cid = cti.cid
-					where dname_chosen in ('$inCrit') or dname_original_name in ('$inCrit'))
-
-		union
-
-			select sidTableFrom as sidFrom, sidTable1 as sidTo
-			from (
-					select distinct CONCAT(sid, '.' , tableName) as sidTableFrom
-					from colfusion_dnameinfo di join
-					colfusion_columnTableInfo cti on di.cid = cti.cid
-					where dname_chosen in ('$inCrit') or dname_original_name in ('$inCrit')
-				) as f, 
-				(
-					select CONCAT(sid1, '.' , tableName1) as sidTable1, CONCAT(sid2, '.' , tableName2)  as sidTable2
-					from colfusion_relationships
-				) as s
-			where f.sidTableFrom = s.sidTable2 and s.sidTable1 in (select distinct CONCAT(sid, '.' , tableName) as sidTableFrom
-					from colfusion_dnameinfo di join
-					colfusion_columnTableInfo cti on di.cid = cti.cid
-					where dname_chosen in ('$inCrit') or dname_original_name in ('$inCrit'))
-	) as u
-	group by sidFrom
-) tj on cd.sid = tj.sidFrom,
-colfusion_columnTableInfo cti, colfusion_sourceinfo si
-where (dname_chosen in ('$inCrit') or dname_original_name in ('$inCrit'))
-and cd.cid = cti.cid
-		and cd.sid = si.sid and si.Status = 'queued'";
-		
-	//	echo $sql;
-		
-		$rst = $db->get_results($sql);
-		
-		$res = $this->constructResultArray($rst, $chunks);
-		
-		
-		
-		return $res;
-
-*/
-
 	}
 
 	private function getSidsContainingSearchKeys() {
@@ -305,7 +244,12 @@ and cd.cid = cti.cid
 
 		$result = array();
 
+		$i = 0;
+		$j = 0;
+
 		foreach ($searchResults as $key => $value) {
+
+			$i += 1;
 
 			$oneSearchResult = new stdClass();
 
@@ -315,8 +259,14 @@ and cd.cid = cti.cid
 
 			if ($value->oneSid) {
 				$oneSearchResult->sid = $value->value;
-				$oneSearchResult->sidTitle = $this->getTitleBySid($value->value);
-				$oneSearchResult->allColumns = $this->getColumnsBySid($value->value);
+				$oneSearchResult->title = $this->getTitleBySid($value->value);
+				$oneSearchResult->tableName = $this->getTableNameBySearchKeys($oneSearchResult->sid);
+				$oneSearchResult->allColumns = $this->getColumnsBySid($value->value, $oneSearchResult->tableName);
+				
+
+				$chunks = array_map('trim', $this->searchKeyWords);
+
+				$oneSearchResult->foundSearchKeys = (array)array_intersect($oneSearchResult->allColumns, $chunks);
 			}
 			else {
 
@@ -327,39 +277,58 @@ and cd.cid = cti.cid
 				//$value->value is array of all possible paths.
 				foreach ($allPossiblePaths as $key => $onePath) {
 
+					$j += 1;
+
 					$onePathResult = new stdClass();
 
 					$totalConfidence = 0;
 					$onePathSidTitles = array();
-
+					$onePathSids = array();
+					$onePathRelIds = array();
+					$onePathAllColumns = array();
+					
 					$onePathRelationships = array();
 
 					foreach ($onePath as $key => $oneRel) {
 
 						$onePathOneRelation = new stdClass();
 						
+						$onePathRelIds[] = $oneRel->rel_id;
+
 
 						$moreInfo = $this->getSidsAndTableNamesByRelId($oneRel->rel_id);
 						$onePathOneRelation->sidFrom = new stdClass();
 						$onePathOneRelation->sidFrom->sid = $moreInfo->sid1;
-						$onePathOneRelation->sidFrom->tableFrom = $moreInfo->tableName1;
+						$onePathOneRelation->sidFrom->tableName = $moreInfo->tableName1;
 						$onePathOneRelation->sidFrom->sidTitle = $this->getTitleBySid($moreInfo->sid1);
-						$onePathOneRelation->sidFrom->allColumns = $this->getColumnsBySid($moreInfo->sid1);
+						$onePathOneRelation->sidFrom->allColumns = $this->getColumnsBySid($moreInfo->sid1, $onePathOneRelation->sidFrom->tableName);
 
-						if (!in_array($moreInfo->sid1, $onePathSidTitles)) {
-							$onePathSidTitles[] = $moreInfo->sid1;
+						if (!in_array($moreInfo->sid1, $onePathSids)) {
+							$onePathSids[] = $moreInfo->sid1;
 						}
+
+						if (!in_array($onePathOneRelation->sidFrom->sidTitle, $onePathSidTitles)) {
+							$onePathSidTitles[] = $onePathOneRelation->sidFrom->sidTitle;
+						}
+
+						$onePathAllColumns = array_merge($onePathAllColumns, array_diff($onePathOneRelation->sidFrom->allColumns, $onePathAllColumns));
 
 						$onePathOneRelation->sidTo = new stdClass();
 						$onePathOneRelation->sidTo->sid = $moreInfo->sid2;
-						$onePathOneRelation->sidTo->tableFrom = $moreInfo->tableName2;
+						$onePathOneRelation->sidTo->tableName = $moreInfo->tableName2;
 						$onePathOneRelation->sidTo->sidTitle = $this->getTitleBySid($moreInfo->sid2);
-						$onePathOneRelation->sidTo->allColumns = $this->getColumnsBySid($moreInfo->sid2);
+						$onePathOneRelation->sidTo->allColumns = $this->getColumnsBySid($moreInfo->sid2, $onePathOneRelation->sidTo->tableName);
 
-						if (!in_array($moreInfo->sid2, $onePathSidTitles)) {
-							$onePathSidTitles[] = $moreInfo->sid2;
+						if (!in_array($moreInfo->sid2, $onePathSids)) {
+							$onePathSids[] = $moreInfo->sid2;
+						}
+
+						if (!in_array($onePathOneRelation->sidTo->sidTitle, $onePathSidTitles)) {
+							$onePathSidTitles[] = $onePathOneRelation->sidTo->sidTitle;
 						}
 						
+						$onePathAllColumns = array_merge($onePathAllColumns, array_diff($onePathOneRelation->sidTo->allColumns, $onePathAllColumns));
+
 						$onePathOneRelation->relId = $oneRel->rel_id;
 						$onePathOneRelation->relName = $moreInfo->name;
 						$onePathOneRelation->confidence = $oneRel->confidence;
@@ -373,13 +342,26 @@ and cd.cid = cti.cid
 					$onePathResult->avgConfidence = $totalConfidence / count($onePath);
 					$onePathResult->relationships = $onePathRelationships;
 					$onePathResult->sidTitles = $onePathSidTitles;
+					$onePathResult->sids = $onePathSids;
+					$onePathResult->relIds = $onePathRelIds;
+					$onePathResult->allColumns = $onePathAllColumns;
+					$onePathResult->oneSid = false;
+					$onePathResult->tableName = "NA";
+					$onePathResult->title = "Search result $i, path $j";
+
+					$chunks = array_map('trim', $this->searchKeyWords);
+
+					$onePathResult->foundSearchKeys =(array) array_intersect($onePathAllColumns, $chunks);
 					
 					$allPaths[] = $onePathResult;	
 				}
 
 				$oneSearchResult->allPaths = $allPaths;
+				$oneSearchResult->title = "Search result $i";
 				
 			}
+
+			
 
 			$result[] = $oneSearchResult;
 		}
@@ -396,10 +378,11 @@ and cd.cid = cti.cid
 		return $db->get_row($sql)->title;
 	}
 
-	private function getColumnsBySid($sid) {
+	private function getColumnsBySid($sid, $tableName = null) {
 		global $db;
 
-		$sql = "select dname_chosen from colfusion_dnameinfo where sid = $sid and dname_chosen not in ('Spd','Drd','Start','End','Location','Aggrtype')";
+		
+		$sql = "select dname_chosen, tableName from colfusion_dnameinfo inner join colfusion_columnTableInfo on (colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid) where sid = $sid and dname_chosen not in ('Spd','Drd','Start','End','Location','Aggrtype') and tableName = '$tableName'";
 
 		$res = $db->get_results($sql);
 
@@ -410,6 +393,27 @@ and cd.cid = cti.cid
 		}
 	
 		return $result;
+	}
+
+//TODO: look at closer, posisble wrong results
+	private function getTableNameBySearchKeys($sid) {
+		global $db;
+
+		$chunks = array_map('trim', $this->searchKeyWords);
+		
+		$inCrit = implode("','", $chunks);
+
+		$sql = "select tableName from colfusion_dnameinfo inner join colfusion_columnTableInfo on (colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid) where sid = $sid and dname_chosen not in ('Spd','Drd','Start','End','Location','Aggrtype') and dname_chosen not in  ('$inCrit') limit 1";
+
+		$res = $db->get_results($sql);
+
+		$result = array();
+
+		foreach ($res as $key => $value) {
+			$result[] = $value->tableName;
+		}
+	
+		return $result[0];
 	}
 
 	private function getSidsAndTableNamesByRelId($rel_id) {
