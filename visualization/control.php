@@ -298,7 +298,8 @@ function getStory(){
     $queryEngine = new QueryEngine();
     /*$sid = $_REQUEST['sid'];
     $sname = $_REQUEST['sname'];*/
-    $obj = $_REQUEST['obj'];
+    $obj = json_decode($_REQUEST['obj']);
+
     $result = $queryEngine->GetTablesInfo($obj);
     //$rst = array();
     //var_dump($result);
@@ -314,8 +315,8 @@ function getStory(){
             $tables[$tname]['table'] = $tname;
             $tables[$tname]['columns'] = $columns;
         }
-        $RST['story']['sid'] = $obj['sid'];
-        $RST['story']['sname'] = $obj['title'];
+        $RST['story']['sid'] = $obj->sid;
+        $RST['story']['sname'] = $obj->title;
         $RST['story']['tables'] = $tables;
         $RST['story']['inputObj'] = $obj;
     }else{

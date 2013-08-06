@@ -20,7 +20,8 @@ if ($current_user->authenticated != TRUE) {
 /* * *********************	
   get dataset title No
  * ********************* */
-$dataset = $_POST['dataset'];
+$dataset = json_decode($_POST['dataset']);
+//var_dump($dataset);
 $title = $_POST['title'];
 $where = $_GET['where'];
 $sid = $_POST['sid'];
@@ -1073,7 +1074,7 @@ $chart_columns[] = "Location";
     <script type="text/javascript">
         $(document).ready(function() {
             createNewCanvas("<?php echo $dataset->sid ?>" + "  <?php echo $dataset->title ?>");
-            CANVAS.addStory(<?php echo $dataset ?>);
+            CANVAS.addStory(<?php echo json_encode($dataset) ?>);
 	    $('#addTable').modal('show');
 	    $('#addTable .table-list').val("+<?php echo $dataset->title ?>")
 	    $('#addTable .columnSelection input').each(function() {

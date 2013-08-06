@@ -5,6 +5,8 @@ include_once("../DAL/ExternalDBHandlers/ExternalMSSQL.php");
 
 require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
+include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+
 class AdvSearch {
 	
 	private $searchKeyWords;
@@ -239,6 +241,7 @@ class AdvSearch {
 	    return $result;
 	}
 
+	// TODO: refactor created additional classesand use them
 	private function getMoreInfoForEachRel($searchResults) {
 		global $db;
 
@@ -263,10 +266,7 @@ class AdvSearch {
 				$oneSearchResult->tableName = $this->getTableNameBySearchKeys($oneSearchResult->sid);
 				$oneSearchResult->allColumns = $this->getColumnsBySid($value->value, $oneSearchResult->tableName);
 				
-
-				$chunks = array_map('trim', $this->searchKeyWords);
-
-				$oneSearchResult->foundSearchKeys = (array)array_intersect($oneSearchResult->allColumns, $chunks);
+				$oneSearchResult->foundSearchKeys = $this->checkFoundSearchKeysAndMerge(array(), $oneSearchResult->allColumns);
 			}
 			else {
 
@@ -311,8 +311,10 @@ class AdvSearch {
 							$onePathSidTitles[] = $onePathOneRelation->sidFrom->sidTitle;
 						}
 
-						$onePathAllColumns = array_merge($onePathAllColumns, array_diff($onePathOneRelation->sidFrom->allColumns, $onePathAllColumns));
-
+						$dif = $this->objectArrayDiff($onePathAllColumns, $onePathOneRelation->sidFrom->allColumns);
+					//	var_dump($dif);
+						$onePathAllColumns = array_merge($onePathAllColumns, $dif);
+					//	var_dump($onePathAllColumns);
 						$onePathOneRelation->sidTo = new stdClass();
 						$onePathOneRelation->sidTo->sid = $moreInfo->sid2;
 						$onePathOneRelation->sidTo->tableName = $moreInfo->tableName2;
@@ -327,7 +329,8 @@ class AdvSearch {
 							$onePathSidTitles[] = $onePathOneRelation->sidTo->sidTitle;
 						}
 						
-						$onePathAllColumns = array_merge($onePathAllColumns, array_diff($onePathOneRelation->sidTo->allColumns, $onePathAllColumns));
+						$dif = $this->objectArrayDiff($onePathAllColumns, $onePathOneRelation->sidTo->allColumns);
+						$onePathAllColumns = array_merge($onePathAllColumns, $dif);
 
 						$onePathOneRelation->relId = $oneRel->rel_id;
 						$onePathOneRelation->relName = $moreInfo->name;
@@ -348,10 +351,11 @@ class AdvSearch {
 					$onePathResult->oneSid = false;
 					$onePathResult->tableName = "NA";
 					$onePathResult->title = "Search result $i, path $j";
+					$onePathResult->sid = implode(",", $onePathResult->sids) . ',' . implode(",", $onePathResult->relIds);
 
 					$chunks = array_map('trim', $this->searchKeyWords);
 
-					$onePathResult->foundSearchKeys =(array) array_intersect($onePathAllColumns, $chunks);
+					$onePathResult->foundSearchKeys = $this->checkFoundSearchKeysAndMerge(array(), $onePathAllColumns);
 					
 					$allPaths[] = $onePathResult;	
 				}
@@ -361,14 +365,57 @@ class AdvSearch {
 				
 			}
 
-			
-
 			$result[] = $oneSearchResult;
 		}
 
 		return $result;
 
 	}
+
+	private function objectArrayDiff($onePathAllColumns, $oneStoryAllColumns) {
+		$result = array();
+
+		foreach ($oneStoryAllColumns as $key => $oneStoryColumn) {
+			$found = false;
+
+			foreach ($onePathAllColumns as $key => $onePathColumn) {
+				if ($oneStoryColumn->cid == $onePathColumn->cid) {
+					$found = true;
+					break;
+				}
+			}
+
+			if (!$found) {
+				$result[] = $oneStoryColumn;
+			}
+		}
+
+		return $result;	
+	}
+
+	private function checkFoundSearchKeysAndMerge($alreadyFoundAr, $allColumns) {
+		$chunks = array_map('trim', $this->searchKeyWords);
+
+		foreach ($allColumns as $key => $column) {
+			if (in_array($column->dname_chosen, $chunks) || in_array($column->dname_original_name, $chunks)) {
+				
+				$found = false;
+				foreach ($alreadyFoundAr as $key => $columnInFound) {
+					if ($columnInFound->cid == $column->cid) {
+						$found = true;
+						break;
+					}
+				}
+
+				if (!$found) {
+					$alreadyFoundAr[] = $column;
+				}
+			}
+		}
+
+		return $alreadyFoundAr;
+	}
+
 
 	private function getTitleBySid($sid) {
 		global $db;
@@ -379,20 +426,12 @@ class AdvSearch {
 	}
 
 	private function getColumnsBySid($sid, $tableName = null) {
-		global $db;
-
 		
-		$sql = "select dname_chosen, tableName from colfusion_dnameinfo inner join colfusion_columnTableInfo on (colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid) where sid = $sid and dname_chosen not in ('Spd','Drd','Start','End','Location','Aggrtype') and tableName = '$tableName'";
-
-		$res = $db->get_results($sql);
-
-		$result = array();
-
-		foreach ($res as $key => $value) {
-			$result[] = $value->dname_chosen;
-		}
-	
-		return $result;
+		$queryEngine = new QueryEngine();
+	    
+	    $result = $queryEngine->GetTablesInfo($sid);
+	   
+	    return $result[$tableName];
 	}
 
 //TODO: look at closer, posisble wrong results

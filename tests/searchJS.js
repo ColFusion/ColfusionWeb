@@ -51,14 +51,45 @@ function showSearchResutls(data){
 	for(var i=0; i < data.length; i++){
 
 		if (data[i].oneSid) {
-			showSearchResutlsOneSource(list, data[i]);	
+			showSearchResutlsOneSource(list, data[i], i);	
 
+
+			var st = "#searchResultVisSpan_" + i;
+	 		$(st).click(function(){
+	     	//	alert(this.getAttribute("data"));
+	     		
+	     		var f = document.getElementById("joinRequestToNewPage");
+	
+				var ind = this.getAttribute("i");
+
+	     		f.dataset.value = JSON.stringify(searchData[ind]);
+
+	     		//window.open('', 'visualizationWindow');
+	     		f.submit();
+	     	//	var w = window.open(my_pligg_base+"/visualization/dashboard.php"," _blank");
+	     		//w.document.getElementById("hiddenJoinQuery").value =this.getAttribute("data") ;
+	   		});
 		}
 		else {
 			for (var j = 0; j < data[i].allPaths.length; j++) {
-				showSearchResutlsSeveralSource(list, data[i].allPaths[j]);
+				showSearchResutlsSeveralSource(list, data[i].allPaths[j], i, j);
 
+				var st = "#searchResultVisSpan_" + i + "_" + j;
+		 		$(st).click(function(){
+		     	//	alert(this.getAttribute("data"));
+		     		
+		     		var f = document.getElementById("joinRequestToNewPage");
+		
+					var ind = this.getAttribute("i");
+					var jnd = this.getAttribute("j");
 
+		     		f.dataset.value = JSON.stringify(searchData[ind].allPaths[jnd]);
+
+		     		//window.open('', 'visualizationWindow');
+		     		f.submit();
+		     	//	var w = window.open(my_pligg_base+"/visualization/dashboard.php"," _blank");
+		     		//w.document.getElementById("hiddenJoinQuery").value =this.getAttribute("data") ;
+		   		});
 
 			};
 		}
@@ -245,7 +276,7 @@ function showSearchResutlsSeveralSource(container, path, i, j){
 		listItem.appendChild(pElement);
 
 		pElement = document.createElement("p");
-		pElement.innerHTML = '<p><span style="cursor:pointer;" id="searchResultVisSpan_' + i + '" i="' + i + '" j="' + j + '">Visualize</span></p>';
+		pElement.innerHTML = '<p><span style="cursor:pointer;" id="searchResultVisSpan_' + i + '_' + j + '" i="' + i + '" j="' + j + '">Visualize</span></p>';
 
 		listItem.appendChild(pElement);
 

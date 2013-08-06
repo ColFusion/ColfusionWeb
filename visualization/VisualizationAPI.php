@@ -53,6 +53,7 @@ function GetTableDataBySidAndName() {
     echo json_encode($json_array);
 }
 
+//TODO: refactor so the input is send as an objec as for visualization with oneSid atribute included
 function GetTableInfo(){
 	
 	
@@ -65,6 +66,7 @@ function GetTableInfo(){
     echo json_encode($result[$tableName]);
 }
 
+//TODO: refactor so the input is send as an objec as for visualization with oneSid atribute included
 function GetTablesInfo(){
     $queryEngine = new QueryEngine();
     $sid = $_POST["sid"];

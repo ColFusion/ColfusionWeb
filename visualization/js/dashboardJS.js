@@ -32,7 +32,7 @@ Canvas.prototype.addStory = function(obj,callback) {
 		url: 'control.php',
 		data: {
 			action: 'getStory',
-			obj: obj
+			obj: JSON.stringify(obj)
 			},
 		async:false,
 		success: function(JSON_Response) {

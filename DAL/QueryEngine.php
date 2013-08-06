@@ -3,7 +3,7 @@
 //include_once('../config.php');
 include_once(realpath(dirname(__FILE__)) . "/../config.php");
 include_once('SimpleQuery.php');
-//include_once('ExternalDBHandlers/ExternalDBs.php');
+include_once('ExternalDBHandlers/ExternalDBs.php');
 
 include_once(realpath(dirname(__FILE__)) . '/QueryMakers/CheckDataMatchingQueryMaker.php');
 
@@ -11,7 +11,7 @@ include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 include_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
 
-//require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
 class QueryEngine {
 
@@ -29,7 +29,29 @@ class QueryEngine {
     public function doQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
 
         if (count($from) == 1) { // then we don't need to do any joins.
-            return $this->prepareAndRunQuery($select, $from[0], $where, $groupby, $perPage, $pageNo);
+
+            $dataset = $from[0];
+
+        
+            if (isset($dataset->inputObj["oneSid"])) {
+
+                if ($dataset->inputObj["oneSid"]) { //onde story
+
+                    $datasetObj = (object) array('sid' => $dataset->inputObj["sid"], 'tableName' => $dataset->tableName);
+
+                    //var_dump($datasetObj);
+                    //return;
+
+                    return $this->prepareAndRunQuery($select, $datasetObj, $where, $groupby, $perPage, $pageNo);                
+                }
+                else {
+                    //merged stories.
+                    return $this->prepareAndRunMergedDatasetQuery($select, $$dataset->inputObj, $where, $groupby, $perPage, $pageNo);
+                }
+            }
+            else {
+               return $this->prepareAndRunQuery($select, $dataset, $where, $groupby, $perPage, $pageNo);
+            }
         } else { // need to do joins
             // TODO: implement
         }
@@ -106,9 +128,44 @@ class QueryEngine {
         return $result;
     }
 
-    public function GetTablesInfo($dataset) {
+
+//TODO: refactor so the input is send as an objec as for visualization with oneSid atribute included
+    // input can be a s simple number or as an object which comes from visualization
+    public function GetTablesInfo($sid) {
+
+        if (is_object($sid)) {
+            if (isset($sid->oneSid)) {
+                if ($sid->oneSid) {
+                    return $this->GetTablesInfoBySid($sid->sid);
+                }
+                else {
+                    return $this->GetTablesInfoForMergedDataset($sid);
+                }
+            }
+            else {
+                throw new Exception("Object is missing oneSid", 1);
+                
+            }
+        }
+        else {
+            return $this->GetTablesInfoBySid($sid);
+        }
+
+    }
+
+    public function GetTablesInfoForMergedDataset($mergedDataSet) {
+        // for now merged databset should have all columns already, so I will return it back.
+
+        $result["mergedTable"] = $mergedDataSet->allColumns;
+
+        return $result;
+    }
+
+    public function GetTablesInfoBySid($sid) {
         global $db;
-        $query = "SELECT * FROM colfusion_columnTableInfo natural join colfusion_dnameinfo where sid = ".$dataset['sid'];
+        
+        $query = "SELECT * FROM colfusion_columnTableInfo natural join colfusion_dnameinfo where sid = $sid";
+
         $rst = $db->get_results($query);
         foreach ($rst as $row) {
             $col = new stdClass;
@@ -117,6 +174,7 @@ class QueryEngine {
             $col->dname_value_type = $row->dname_value_type;
             $col->dname_value_unit = $row->dname_value_unit;
             $col->dname_value_description = $row->dname_value_description;
+            $col->dname_original_name = $row->dname_original_name;
 
             $tables[$row->tableName][] = $col;
         }

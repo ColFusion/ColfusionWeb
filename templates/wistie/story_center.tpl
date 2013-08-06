@@ -145,6 +145,17 @@
             $('#visualizationParaForm').find('#visualTableNameParam').val(dataPreviewViewModel.currentTable().tableName);
             $('#visualizationParaForm').find('#visualTitleParam').val($('#dataset_title').text());
             $('#visualizationParaForm').attr('action', my_pligg_base + "/visualization/dashboard.php");
+
+            var inputObj = {
+                sid : sid,
+                oneSid: true,
+                tableName: dataPreviewViewModel.currentTable().tableName,
+                title: $('#dataset_title').text()
+            };
+
+            $('#visualizationParaForm').find('#visualDatasetParam').val(JSON.stringify(inputObj));
+            
+
             document.getElementById('visualizationParaForm').submit();
         }
     </script>
@@ -155,6 +166,7 @@
     <input type="hidden" name="tableName" id="visualTableNameParam"/>
     <input type="hidden" name="sid" id="visualSidParam" value="{$sid}"/>
     <input type="hidden" name="title" id="visualTitleParam"/>
+    <input type="hidden" name="dataset" id="visualDatasetParam"/>
 </form>
 
 <div id="upload_result">	
