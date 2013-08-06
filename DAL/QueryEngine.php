@@ -3,7 +3,7 @@
 //include_once('../config.php');
 include_once(realpath(dirname(__FILE__)) . "/../config.php");
 include_once('SimpleQuery.php');
-include_once('ExternalDBHandlers/ExternalDBs.php');
+//include_once('ExternalDBHandlers/ExternalDBs.php');
 
 include_once(realpath(dirname(__FILE__)) . '/QueryMakers/CheckDataMatchingQueryMaker.php');
 
@@ -11,7 +11,7 @@ include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 include_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
 
-require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+//require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
 class QueryEngine {
 
@@ -106,11 +106,9 @@ class QueryEngine {
         return $result;
     }
 
-    public function GetTablesInfo($sid) {
+    public function GetTablesInfo($dataset) {
         global $db;
-
-        $query = "SELECT * FROM colfusion_columnTableInfo natural join colfusion_dnameinfo where sid = $sid";
-
+        $query = "SELECT * FROM colfusion_columnTableInfo natural join colfusion_dnameinfo where sid = ".$dataset['sid'];
         $rst = $db->get_results($query);
         foreach ($rst as $row) {
             $col = new stdClass;
