@@ -1,11 +1,11 @@
 <?php
 //include('getColumns.php');
 include('../config.php');
-include('../' . mnminclude . 'html1.php');
+/*include('../' . mnminclude . 'html1.php');
 include('../' . mnminclude . 'link.php');
 include('../' . mnminclude . 'tags.php');
 include('../' . mnminclude . 'user.php');
-include('../' . mnminclude . 'smartyvariables.php');
+include('../' . mnminclude . 'smartyvariables.php');*/
 include('Canvas.php');
 /* * **************
   force login
@@ -28,7 +28,7 @@ $sid = $_POST['sid'];
 $tname = $_POST['tableName'];
 $vid = $_GET['vid'];
 $userid = $current_user->user_id;
-$sqlVis = "SELECT * FROM colfusion_visualization WHERE userid = '" . $userid . "' ";
+/*$sqlVis = "SELECT * FROM colfusion_visualization WHERE userid = '" . $userid . "' ";
 if ($titleNum) {
     $sqlVis .= " AND titleno = '" . $titleNum . "' ";
 } else {
@@ -38,7 +38,7 @@ $rstVis = $db->get_results($sqlVis);
 $visGadgets = array();
 foreach ($rstVis as $row) {
     $visGadgets[] = $row;
-}
+}*/
 
 /* * ***************
   get column names

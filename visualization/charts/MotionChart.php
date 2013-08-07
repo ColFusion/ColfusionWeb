@@ -30,6 +30,7 @@ class MotionChart extends Chart {
         }
 	$sid = $_datainfo->sid;
 	$table = $_datainfo->table;
+	$inputObj = $_datainfo->inputObj;
 	$firstColumn = $_datainfo->firstColumn;
 	$dateColumn = $_datainfo->dateColumn;
 	$otherColumns = $_datainfo->otherColumns;
@@ -56,7 +57,7 @@ class MotionChart extends Chart {
 	if (!empty($where))
         $select .= $where;
 
-    $from = (object) array('sid' => $sid, 'tableName' => $table);
+    $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
     $fromArray = array($from);
 	$queryEngine = new QueryEngine();
 

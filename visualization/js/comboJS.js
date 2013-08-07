@@ -182,6 +182,7 @@ function ComboDatainfo(comboColumnCat,comboColumnAgg,comboAggType,sid,sname,tabl
 	this.sid = sid;
 	this.table = table;
 	this.where = where;
+	this.inputObj = CANVAS['stories'][sid]['inputObj'];
 }
 function comboDataInfoToForm(comboDatainfo) {
 	clearComboEditForm();

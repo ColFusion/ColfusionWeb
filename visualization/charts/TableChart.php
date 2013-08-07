@@ -32,14 +32,15 @@ class TableChart extends Chart{
         }
         $sid = $_datainfo->sid;
         $table = $_datainfo->table;
+	$inputObj = $_datainfo->inputObj;
 	$color = $_datainfo->color;
 	$tableColumns = $_datainfo->tableColumns;
 	$perPage = $_datainfo->perPage; // controls how many tuples shown on each page
 	$pageNo = $_datainfo->currentPage; // controls which page to show, got from JS function
 	$where = $_datainfo->where;
 
-	$from = (object) array('sid' => $sid, 'tableName' => $table);
-    $fromArray = array($from);
+	$from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
+	$fromArray = array($from);
 	
 	$queryEngine = new QueryEngine();
 	$totalTuple = $queryEngine->doQuery("SELECT COUNT(*)", $fromArray, null, null, null, null, null);

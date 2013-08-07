@@ -34,11 +34,12 @@ class ColumnChart extends Chart{
             $datainfo = $temp;
             $this->datainfo = $datainfo;
         }
+        $inputObj = $datainfo->inputObj;
         $columnCat = $datainfo->columnCat;
         $columnAgg = $datainfo->columnAgg;
         $columnAggType = $datainfo->columnAggType;
         $select = "SELECT `" . $columnCat . "` AS 'Category', ";
-    $sid = $datainfo->sid;
+        $sid = $datainfo->sid;
         $table = $datainfo->table;
     switch($columnAggType) {
         case "Count":
@@ -57,7 +58,7 @@ class ColumnChart extends Chart{
             $select .= "MIN(`" . $columnAgg . "`) AS 'AggValue' ";
             break;
     }
-        $from = (object) array('sid' => $sid, 'tableName' => $table);
+        $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
         $fromArray = array($from);
         $groupby = " GROUP BY `" . $columnCat . "` ";
         //$queryResult = json_decode('{"cat":"aaa","agg":"bbb","content":[["Year", "Sales"],["2004",15],["2005",12],["2006",16],["2007",18]]}');

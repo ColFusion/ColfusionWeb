@@ -128,8 +128,12 @@ function pieFormToDatainfo() {
 	var sname = $('#addPieSid').find("option:selected").text();
 	var where;
 	var table = $("#addPieTable").val();
-	var pieColumnCat = $('#pieColumnCat').val();
-	var pieColumnAgg = $('#pieColumnAgg').val();
+	var cid = $('#pieColumnCat').val();
+	var columnName = $('#pieColumnCat').find('option:selected').text();
+	var pieColumnCat = {cid: cid,columnName:columnName};//$('#pieColumnCat').val();//$('#pieColumnCat').text();
+	cid = $('#pieColumnAgg').val();
+	columnName = $('#pieColumnAgg').find('option:selected').text();
+	var pieColumnAgg = {cid: cid,columnName:columnName}
 	var pieAggType = $('input:radio[name="pieAggType"]:checked').val();
 	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,sname,table,where);
 }
@@ -138,8 +142,12 @@ function editPieFormToDatainfo() {
 	var sname = $('#editPieSid').find('option:selected').text();
 	var table = $("#editPieTable").val();
 	var where;
-	var pieColumnCat = $('#pieColumnCatEdit').val();
-	var pieColumnAgg = $('#pieColumnAggEdit').val();
+	var val = $('#pieColumnCat').val();
+	var text = $('#pieColumnCat').find('option:selected').text();
+	var pieColumnCat = {value: val,text:text};//$('#pieColumnCat').val();//$('#pieColumnCat').text();
+	val = $('#pieColumnAgg').val();
+	text = $('#pieColumnAgg').find('option:selected').text();
+	var pieColumnAgg = {value: val,text:text};
 	var pieAggType = $('input:radio[name="pieAggTypeEdit"]:checked').val();
 	return new PieDatainfo(pieColumnCat,pieColumnAgg,pieAggType,sid,sname,table,where);
 }
@@ -165,8 +173,8 @@ function pieDataInfoToForm(pieDatainfo) {
 	$('#editPieSid').find('option:selected').text(sname);
 	$('#editPieTable').val(table);
 	$('#editPieTable').change();
-	$('#pieColumnCatEdit').val(pieColumnCat);
-	$('#pieColumnAggEdit').val(pieColumnAgg);
+	$('#pieColumnCatEdit').val(pieColumnCat.value);
+	$('#pieColumnAggEdit').val(pieColumnAgg.value);
 	$('input:radio[name="pieAggTypeEdit"][value="'+pieAggType+'"]').attr('checked',true);
 }
 function clearPieEditForm() {

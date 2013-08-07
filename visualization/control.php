@@ -1,11 +1,11 @@
 <?php
 
-include_once('../config.php');	
+include_once('../config.php');	/*
 include_once('../'.mnminclude.'html1.php');
 include_once('../'.mnminclude.'link.php');
 include_once('../'.mnminclude.'tags.php');
 include_once('../'.mnminclude.'user.php');
-include_once('../'.mnminclude.'smartyvariables.php');
+include_once('../'.mnminclude.'smartyvariables.php');*/
 
 require_once("Chart.php");
 require_once("Canvas.php");
@@ -303,6 +303,7 @@ function getStory(){
     $result = $queryEngine->GetTablesInfo($obj);
     //$rst = array();
     //var_dump($result);
+    //var_dump($result);
     if($result!=null){
         $RST['status'] = 'success';
         $tables = array();
@@ -310,7 +311,7 @@ function getStory(){
             $columns = array();
             foreach($table as $column){
                 //array_push($columns,$column->dname_chosen);
-                $columns[$column->dname_chosen] = $column->dname_value_type;
+                $columns[$column->cid] = $column;
             }
             $tables[$tname]['table'] = $tname;
             $tables[$tname]['columns'] = $columns;

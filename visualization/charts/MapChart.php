@@ -29,6 +29,7 @@ class MapChart extends Chart {
         }
         $sid = $_datainfo->sid;
         $table = $_datainfo->table;
+        $inputObj = $_datainfo->inputObj;
 	$latitude = $_datainfo->latitude;
 	$longitude = $_datainfo->longitude;
         //$_datainfo->mapTooltip = array("ID","dvalue");
@@ -52,7 +53,7 @@ class MapChart extends Chart {
         if(isset($_datainfo->mapTooltip)){
             $select .= ", ".$tips; 
         }
-	$from = (object) array('sid' => $sid, 'tableName' => $table);
+	$from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
         $fromArray = array($from);
 	if (!empty($where))
         $select .= $where;

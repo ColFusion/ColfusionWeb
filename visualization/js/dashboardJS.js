@@ -879,8 +879,8 @@ $(document).ready(function() {
 			/*for (var i = 0;i<columns.length;i++) {
 				$(this).append('<option value="'+columns[i]+'">'+columns[i]+'</option>');
 			}*/
-			for (columnName in columns ) {
-				$(this).append('<option value="'+columnName+'">'+columnName+'</option>');
+			for (var column in columns ) {
+				$(this).append('<option value="'+columns[column].cid+'">'+columns[column].dname_chosen+'</option>');
 			}
 			})
 		$(this).parent().parent().find('.columnSelection').each(function() {
@@ -888,9 +888,9 @@ $(document).ready(function() {
 			/*for (var i = 0;i<columns.length;i++) {
 				$(this).append('<p><lable class="checkbox table-column" style="padding: 0px;"><input value="'+columns[i]+'" type="checkbox" class="check-columns">'+columns[i])+'</lable></p>';
 			}*/
-			for (columnName in columns ) {
-				$(this).append('<p><lable class="checkbox table-column" style="padding: 0px;"><input value="'+columnName+'" type="checkbox" class="check-columns">'+columnName)+'</lable></p>';
-				$(this).append('<option value="'+columnName+'">'+columnName+'</option>');
+			for (var column in columns ) {
+				$(this).append('<p><lable class="checkbox table-column" style="padding: 0px;"><input value="'+columns[column].cid+'" type="checkbox" class="check-columns">'+columns[column].dname_chosen)+'</lable></p>';
+				$(this).append('<option value="'+columns[column].cid+'">'+columns[column].dname_chosen+'</option>');
 			}
 			})
 	})

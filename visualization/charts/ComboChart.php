@@ -29,10 +29,11 @@ class ComboChart extends Chart{
         }
 	$sid = $_datainfo->sid;
         $table = $_datainfo->table;
+        $inputObj = $_datainfo->inputObj;
 	$comboColumnCat = $_datainfo->comboColumnCat;
 	$comboColumnAgg = $_datainfo->comboColumnAgg;
         $comboAggType = $_datainfo->comboAggType;
-        $from = (object) array('sid' => $sid, 'tableName' => $table);
+        $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
         $fromArray = array($from);	
 	$select = "SELECT `" . $comboColumnCat . "` AS 'Category' ";
         for($i = 0; $i < sizeof($comboAggType); $i++){

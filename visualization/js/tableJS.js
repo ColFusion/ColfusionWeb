@@ -232,6 +232,7 @@ function TableDatainfo(tableColumns,perPage,color,currentPage,sid,sname,table,wh
 	this.sname = sname;
 	this.table = table;
 	this.where = where;
+	this.inputObj = CANVAS['stories'][sid]['inputObj'];
 }
 function tableDataInfoToForm(tableDatainfo) {
 	clearTableEditForm();

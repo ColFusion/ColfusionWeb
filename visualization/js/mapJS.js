@@ -155,6 +155,7 @@ function MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where) {
 	this.sname = sname;
 	this.table = table;
 	this.where = where;
+	this.inputObj = CANVAS['stories'][sid]['inputObj'];
 }
 function mapDataInfoToForm(mapDatainfo) {
 	clearMapEditForm();

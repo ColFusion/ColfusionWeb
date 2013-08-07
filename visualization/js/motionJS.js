@@ -202,6 +202,7 @@ function MotionDatainfo(firstColumn,dateColumn,otherColumns,sid,sname,table,wher
 	this.sname = sname;
 	this.table = table;
 	this.where = where;
+	this.inputObj = CANVAS['stories'][sid]['inputObj'];
 }
 function motionDataInfoToForm(motionDatainfo) {
 	clearMotionEditForm();

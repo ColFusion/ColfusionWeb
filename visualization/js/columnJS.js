@@ -129,6 +129,7 @@ function ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,sname,table,where)
 	this.sid = sid;
 	this.table = table;
 	this.where = where;
+	this.inputObj = CANVAS['stories'][sid]['inputObj'];
 }
 function columnDataInfoToForm(columnDatainfo) {
 	var sid = columnDatainfo.sid;
