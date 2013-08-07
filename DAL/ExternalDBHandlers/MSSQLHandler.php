@@ -114,8 +114,10 @@ EOQ;
     // from - tableName with alias if specified
     // where - valid SQL where part
     // group by - valid SQL group by
-    // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
+       
+        //TODO: implement, right now this is just a copy from MySQLhandler, which will not work in MSSQL at least  because of limit.
+
         $query = $select . " from " . $from . " ";
 
         if (isset($where))

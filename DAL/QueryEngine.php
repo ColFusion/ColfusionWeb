@@ -6,6 +6,7 @@ include_once('SimpleQuery.php');
 include_once('ExternalDBHandlers/ExternalDBs.php');
 
 include_once(realpath(dirname(__FILE__)) . '/QueryMakers/CheckDataMatchingQueryMaker.php');
+include_once(realpath(dirname(__FILE__)) . '/QueryMakers/MergedDataSetQueryMaker.php');
 
 include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
@@ -39,7 +40,12 @@ class QueryEngine {
 
             if (isset($dataset->inputObj->oneSid)) {
 
-                if ($dataset->inputObj->oneSid === true) { //onde story
+
+                // var_dump($dataset->inputObj->oneSid);
+
+                if ($dataset->inputObj->oneSid === "true") { //onde story
+
+                   // var_dump($dataset->inputObj->oneSid);
 
                     $datasetObj = (object) array('sid' => $dataset->inputObj->sid, 'tableName' => $dataset->tableName);
 
@@ -251,7 +257,9 @@ class QueryEngine {
     }
 
     function prepareAndRunMergedDatasetQuery($select, $inputObj, $where, $groupby, $perPage, $pageNo){
-
+        $mergedDatasetQuery = new MergedDataSetQueryMaker($select, $inputObj, $where, $groupby, $perPage, $pageNo);
+        
+        return $mergedDatasetQuery->GetQuery();
     }
 
     function GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo) {

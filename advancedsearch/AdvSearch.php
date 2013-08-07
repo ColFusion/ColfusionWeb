@@ -357,6 +357,17 @@ class AdvSearch {
 
 					$onePathResult->foundSearchKeys = $this->checkFoundSearchKeysAndMerge(array(), $onePathAllColumns);
 					
+
+
+					$from = (object) array('inputObj' => $onePathResult, 'tableName' => "NA");
+			        $fromArray = array($from);
+			       
+			        $queryEngine = new QueryEngine();
+			        
+			       // var_dump($fromArray);
+
+					$onePathResult->queryTest = $queryEngine->doQuery("select hz", $fromArray, null, null, null, null, null);
+
 					$allPaths[] = $onePathResult;	
 				}
 

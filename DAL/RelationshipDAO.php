@@ -42,6 +42,14 @@ class RelationshipDAO {
         $relationship->fromTableName = $relInfo->tableName1;
         $relationship->toTableName = $relInfo->tableName2;
 
+        $relationship->links[] = $this->GetLinksByRelId($relId);
+
+        return $relationship;
+    }
+
+    public function GetLinksByRelId($relId) {
+        $links = array();
+
         $linksSql = "select cl_from, cl_to from `colfusion_relationships_columns` where rel_id = '" . mysql_real_escape_string($relId) . "'";
         $linkInfos = $this->ezSql->get_results($linksSql);
 
@@ -55,10 +63,10 @@ class RelationshipDAO {
             $link = new ColfusionLink();
             $link->fromPart = $transHandler->decodeTransformationInput($linkInfo->cl_from);
             $link->toPart = $transHandler->decodeTransformationInput($linkInfo->cl_to);
-            $relationship->links[] = $link;
+            $links[] = $link;
         }
 
-        return $relationship;
+        return $links;
     }
 
     public function deleteRelationship($relId, $userId) {
