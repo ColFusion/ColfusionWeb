@@ -14,19 +14,13 @@
 	<!--link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/dropdown-default.css" media="screen" /-->
     <!------------------------------------------------------------------------>
     
-    
-	<!--[if lt IE 7]>
-	<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/jquery/jquery.js"></script>
-    
-    <!--script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/jquery/jquery.dropdown.js"></script-->
-    
-
-	<![endif]-->
+    	
     <script src="{$my_pligg_base}/templates/{$the_template}/js/image-slider.js" type="text/javascript"></script>
-
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
+	
+	{if not $no_jquery_in_pligg}
+		<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
+	{/if}
     <script src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
-
 
 	{if $Voting_Method eq 2}
 	<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/star_rating/star.css" media="screen" />

@@ -21,6 +21,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/dataSourceUtil.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Utils.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/DataPreviewViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>

@@ -1,6 +1,5 @@
 <!-- START HEADER.TPL -->
 <head>
-<script type="text/javascript" src="{$my_pligg_base}/templates/wistie/js/jquery.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/wistie/js/script.js"></script>
  <!-- <link href="templates/wistie/js/style1.css" rel="stylesheet" type="text/css"> -->
 

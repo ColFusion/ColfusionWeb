@@ -67,11 +67,11 @@
 
   <!-- advanced search result -->
   <div data-bind="foreach: searchResults" id="resultDiv" style="border: none; margin: 0px; padding: 0px;">
-    
+
     <!-- ko if: resultObj.oneSid -->
-    <div data-bind="with: resultObj" class="stories datasetResult">
- 
-      <div class="searchResultBody" style="overflow: auto;">
+    <div class="stories datasetResult">
+
+      <div data-bind="with: resultObj" class="searchResultBody" style="overflow: auto;">
         <div class="searchResultProfile" style="float: left;">
           <h2>
             Dataset: <a data-bind="attr: {'id': 'title' + sid, 'href': '../story.php?title=' + sid}, text: title" class="title">undefined</a>
@@ -86,7 +86,34 @@
               Columns:
             </span>
             <!-- /ko -->
-            <span data-bind="text: $data" class="columnText"></span>
+            <span data-bind="bootstrapTooltip: $data.dname_chosen, 
+                  tooltipOptions: {placement: 'bottom'}, 
+                  tooltipDynamicValues: {
+                    dname_orginal_name: $data.dname_orginal_name, 
+                    dname_value_description: $data.dname_value_description, 
+                    dname_value_type: $data.dname_value_type, 
+                    dname_value_unit: $data.dname_value_unit
+                  }" 
+                  class="columnText">
+              <table class="tooltipContent">
+                <tr>
+                  <td class="tooltipColTitle" style="color: white !important">Original Name: </td>
+                  <td data-bind="text: $data.dname_orginal_name" id="dname_orginal_name" style="color: white !important"></td>
+                </tr>
+                <tr>
+                  <td class="tooltipColTitle" style="color: white !important">Description: </td>
+                  <td data-bind="text: $data.dname_value_description" id="dname_value_description" style="color: white !important"></td>
+                </tr>
+                <tr>
+                  <td class="tooltipColTitle" style="color: white !important">Data Type: </td>
+                  <td data-bind="text: $data.dname_value_type" id="dname_value_type" style="color: white !important"></td>
+                </tr>
+                <tr>
+                  <td class="tooltipColTitle" style="color: white !important">Unit: </td>
+                  <td data-bind="text: $data.dname_value_unit" id="dname_value_unit" style="color: white !important"></td>
+                </tr>
+              </table>
+            </span>
             <!-- ko if: $index() < $parent.allColumns.length - 1 -->, <!-- /ko -->
           </div>
         </div>
@@ -102,18 +129,46 @@
         </div>
       </div>
 
-      <div class="dataPreviewContainer">
-        
+      <div data-bind="visible: isDataPreviewTableShown" class="dataPreviewContainer">
+
+        <div  data-bind="with: dataPreviewViewModel">
+          <div class="storycontent" id="dataPreviewContainer">
+            <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
+            <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
+            <div data-bind="with: currentTable">
+              <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data">
+                <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
+                  <tr data-bind="foreach: headers">
+                    <th data-bind="text: name"></th>
+                  </tr>
+                  <tbody class="dataPreviewTBody" data-bind="foreach: rows">
+                    <tr class="datatr" data-bind="foreach: cells">
+                      <td data-bind="text: $data"></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div id="previewTableNavigations" style="margin-top: -15px;">
+                <div style="display: inline-block;margin-right: 4px;" id="dataPreviewLoadingIcon" class="dataPreviewLoadingIcon">
+                  <img data-bind="visible: $parent.isLoading" src="../images/ajax-loader.gif" />
+                </div>
+                <i class="icon-arrow-left" id="prevBtn" data-bind="visible: currentPage() > 1, click: $parent.goToPreviousPage" title="Previous Page"></i>
+                <i class="icon-arrow-right" id="nextBtn" data-bind="visible: currentPage() &lt; totalPage(), click: $parent.goToNextPage" title="Next Page"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
 
-      <div class="searchResultFooter">
+      <div data-bind="with: resultObj" class="searchResultFooter">
         <p data-bind="foreach: foundSearchKeys" style="margin-top: 10px;">
           <!-- ko if: $index() == 0 -->
           <span class="searchKeyText">
             <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
           </span>
           <!-- /ko -->
-          <span data-bind="text: $data" class="searchKeyText"></span>
+          <span data-bind="text: $data.dname_chosen" class="searchKeyText"></span>
           <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
         </p>
       </div>

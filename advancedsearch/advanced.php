@@ -25,14 +25,23 @@
         .tableNameText, .columnText{
             color: black;
         }
+        
+        .tooltipColTitle{
+            width: 100px;
+        }
+        
+        .tooltip .tooltipContent{
+            color: white !important;
+        }
     </style>
 
-    <script type="text/javascript" src="jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="bootstrap.min.js"></script>
-    <script type="text/javascript" src="searchJS.js"></script>
+    <script type="text/javascript" src="../javascripts/jquery-1.9.1.min.js"></script>    
+    <script type="text/javascript" src="../javascripts/jquery.mousewheel.js"></script>
+    <script type="text/javascript" src="../javascripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="../javascripts/persist-min.js"></script>
     <script type="text/javascript" src="../javascripts/knockout-2.3.0.js"></script>
     <script type="text/javascript" src="../javascripts/knockout.mapping.js"></script>
+    <script type="text/javascript" src="../javascripts/knockout_models/Utils.js"></script>
     <script type="text/javascript" src="../javascripts/knockout_models/AdvancedSearchViewModel.js"></script>
     <script type="text/javascript" src="../javascripts/knockout_models/DataPreviewViewModel.js"></script>
     <script type="text/javascript" src="../javascripts/dataSourceUtil.js"></script>
@@ -67,6 +76,7 @@
     $main_smarty = do_sidebar($main_smarty);
     //show the template
     $main_smarty->assign('tpl_center', $the_template . '/advanced');
+    $main_smarty->assign('no_jquery_in_pligg', true);
     $main_smarty->display($the_template . '/pligg.tpl');
     ?>
 </body>
