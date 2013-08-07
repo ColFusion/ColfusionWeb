@@ -1,4 +1,3 @@
-<?php ?>
 <div class="preview-story">
     <button data-bind="visible: currentTable" id="visualizeBtn" class="btn" onclick="openVisualizationPage()"><i class="icon-bar-chart" style="margin-right: 5px;"></i>Visualize</button>
     <h3 class="preview-title">Data Preview</h3>

@@ -3,3 +3,5 @@ ALTER TABLE `colfusion_temporary`
   DROP `AggrType`,
   DROP `Start`,
   DROP `End`;
+  DROP `Spd`,
+  DROP `Drd`;

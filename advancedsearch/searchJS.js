@@ -33,7 +33,7 @@ function showResult(){
 	}
 	// alert(JSON.stringify(dataToSend));
 	$.ajax({type: 'POST',
-		url: "searchResult.php",data: dataToSend,
+		url: "advSearch.json",data: dataToSend,
 		success: function(data){
 			showSearchResutls(data);		
 		},
