@@ -31,26 +31,27 @@ class QueryEngine {
         if (count($from) == 1) { // then we don't need to do any joins.
 
             $dataset = $from[0];
-
+            //TODO seems like inputObj is an array. This need to be fixed
         
-            if (isset($dataset->inputObj["oneSid"])) {
+            if (is_array($dataset->inputObj)) {
+                $dataset->inputObj = json_decode(json_encode($dataset->inputObj));
+            }
 
-                if ($dataset->inputObj["oneSid"]) { //onde story
+            if (isset($dataset->inputObj->oneSid)) {
 
-                    $datasetObj = (object) array('sid' => $dataset->inputObj["sid"], 'tableName' => $dataset->tableName);
+                if ($dataset->inputObj->oneSid === true) { //onde story
 
-                    //var_dump($datasetObj);
-                    //return;
+                    $datasetObj = (object) array('sid' => $dataset->inputObj->sid, 'tableName' => $dataset->tableName);
 
                     return $this->prepareAndRunQuery($select, $datasetObj, $where, $groupby, $perPage, $pageNo);                
                 }
                 else {
                     //merged stories.
-                    return $this->prepareAndRunMergedDatasetQuery($select, $$dataset->inputObj, $where, $groupby, $perPage, $pageNo);
+                    return $this->prepareAndRunMergedDatasetQuery($select, $dataset->inputObj, $where, $groupby, $perPage, $pageNo);
                 }
             }
             else {
-               return $this->prepareAndRunQuery($select, $dataset, $where, $groupby, $perPage, $pageNo);
+                return $this->prepareAndRunQuery($select, $dataset, $where, $groupby, $perPage, $pageNo);
             }
         } else { // need to do joins
             // TODO: implement
@@ -247,6 +248,10 @@ class QueryEngine {
         $rst = $db->get_results($query);
 
         return $rst;
+    }
+
+    function prepareAndRunMergedDatasetQuery($select, $inputObj, $where, $groupby, $perPage, $pageNo){
+
     }
 
     function GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo) {
