@@ -260,7 +260,13 @@ class QueryEngine {
     function prepareAndRunMergedDatasetQuery($select, $inputObj, $where, $groupby, $perPage, $pageNo){
         $mergedDatasetQuery = new MergedDataSetQueryMaker($select, $inputObj, $where, $groupby, $perPage, $pageNo);
         
-        return $mergedDatasetQuery->GetQuery();
+        $query = $mergedDatasetQuery->GetQuery();
+
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+
+        $result = $MSSQLHandler->ExecuteQuery($query);
+
+        return $result;
     }
 
     function GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo) {

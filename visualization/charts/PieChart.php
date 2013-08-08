@@ -38,16 +38,16 @@ class PieChart extends Chart {
 			$select .= "COUNT(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
 			break;
 		case "Sum":
-			$select .= "SUM(`" . $_datainfo->pieColumnAgg['cid'] . "`) AS 'AggValue' ";
+			$select .= "SUM(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
 			break;	
 		case "Avg":
-			$select .= "AVG(`" . $_datainfo->pieColumnAgg['cid'] . "`) AS 'AggValue' ";
+			$select .= "AVG(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
 			break;
 		case "Max":
-			$select .= "MAX(`" . $_datainfo->pieColumnAgg['cid'] . "`) AS 'AggValue' ";
+			$select .= "MAX(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
 			break;
 		case "Min":
-			$select .= "MIN(`" . $_datainfo->pieColumnAgg['cid'] . "`) AS 'AggValue' ";
+			$select .= "MIN(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
 			break;
 	}
         $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
