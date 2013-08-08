@@ -66,6 +66,13 @@ class TableChart extends Chart{
 	}
 	$select = "SELECT " . $cols;
 	$resultDoQuery = $queryEngine->doQuery($select, $fromArray, null, null, null, $perPage, $pageNo);
+
+	$returnedColumns = array();
+
+	if (isset($resultDoQuery) && count($resultDoQuery) > 0) {
+		$returnedColumns = array_keys(get_object_vars($resultDoQuery[0]));
+	}
+
 	$rst['content'] = $resultDoQuery;
 	$rst["perPage"] = $perPage;
 	$rst["totalPage"] = $totalPage;
@@ -74,6 +81,7 @@ class TableChart extends Chart{
 	$rst['color'] = $color;
 	
 	$rst['tableColumns'] = $tableColumns;
+	$rst['returnedColumns'] = $returnedColumns;
 	$rst['currentPage'] = $pageNo;
 	$rst['sid'] = $sid;
         $rst['table'] = $table;

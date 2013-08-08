@@ -412,6 +412,7 @@ function drawTable(sourceData,gadgetID){
 	var resulData = sourceData["content"];
 	var data = new google.visualization.DataTable();
 	var tableColumns = sourceData['tableColumns'];
+	var returnedColumns = sourceData['returnedColumns'];
 	data.addColumn('string','rownum');
 	for(i=0; i<tableColumns.length; i++){
 		data.addColumn('string', tableColumns[i]['columnName']);
@@ -421,7 +422,7 @@ function drawTable(sourceData,gadgetID){
 		data.setCell(i, 0, String(i+1));
 		var temp = 1;
 		for(k=0; k<tableColumns.length; k++) {
-			data.setCell(i, temp++, String(resulData[i][tableColumns[k]]));
+			data.setCell(i, temp++, String(resulData[i][returnedColumns[k]]));
 		}
 	}
 	var arr = gadgetID.split('Result');
