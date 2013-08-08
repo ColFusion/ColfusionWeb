@@ -37,7 +37,7 @@ class TransformationHandler {
         return  $this->decodeTransformationInputBase($transInput, $cids, $needOriginal, $this->columnPrefixDict);
     }
 
-    private function getColumnPrefixByCid($cid, $prefixStringArr) {
+    public function getColumnPrefixByCid($cid, $prefixStringArr) {
         $result = "";
 
     //    var_dump($cid);

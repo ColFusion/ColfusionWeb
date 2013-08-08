@@ -413,13 +413,13 @@ function drawTable(sourceData,gadgetID){
 	var data = new google.visualization.DataTable();
 	var tableColumns = sourceData['tableColumns'];
 	var returnedColumns = sourceData['returnedColumns'];
-	data.addColumn('string','rownum');
+	//data.addColumn('string','rownum');
 	for(i=0; i<tableColumns.length; i++){
 		data.addColumn('string', tableColumns[i]['columnName']);
 	}
 	for(i=0 ; resulData[i]!=null ; i++){
 		data.addRow();
-		data.setCell(i, 0, String(i+1));
+	//	data.setCell(i, 0, String(i+1));
 		var temp = 1;
 		for(k=0; k<tableColumns.length; k++) {
 			data.setCell(i, temp++, String(resulData[i][returnedColumns[k]]));

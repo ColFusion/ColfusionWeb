@@ -3,6 +3,7 @@
 require_once('Chart.php');
 
 include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
+include_once(realpath(dirname(__FILE__)) . '/../../DAL/TransformationHandler.php');
 
 class TableChart extends Chart{
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
@@ -57,8 +58,12 @@ class TableChart extends Chart{
 	    //echo("Please select the columns!");
 	}
 	else {
+
+		$transformationHandler = new TransformationHandler();
+
 	    for($i=0; $i < count($tableColumns); $i++){
-			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ") as ".$tableColumns[$i]['columnName']." ";
+	    		$prefix = $transformationHandler->getColumnPrefixByCid($tableColumns[$i]['cid'], array("tableName", "sid"));
+			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ") as " . $prefix . $tableColumns[$i]['columnName']." ";
 			    if(!empty($tableColumns[$i+1])){
 				    $cols .= ", ";
 			    }
@@ -70,7 +75,7 @@ class TableChart extends Chart{
 	$returnedColumns = array();
 
 	if (isset($resultDoQuery) && count($resultDoQuery) > 0) {
-		$returnedColumns = array_keys(get_object_vars($resultDoQuery[0]));
+		$returnedColumns = array_keys($resultDoQuery[0]);
 	}
 
 	$rst['content'] = $resultDoQuery;
