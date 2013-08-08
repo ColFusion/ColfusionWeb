@@ -58,7 +58,7 @@ class TableChart extends Chart{
 	}
 	else {
 	    for($i=0; $i < count($tableColumns); $i++){
-			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ")as `".$tableColumns[$i]['columnName']."` ";
+			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ") as ".$tableColumns[$i]['columnName']." ";
 			    if(!empty($tableColumns[$i+1])){
 				    $cols .= ", ";
 			    }
