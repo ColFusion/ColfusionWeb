@@ -267,6 +267,16 @@ class AdvSearch {
 				$oneSearchResult->allColumns = $this->getColumnsBySid($value->value, $oneSearchResult->tableName);
 				
 				$oneSearchResult->foundSearchKeys = $this->checkFoundSearchKeysAndMerge(array(), $oneSearchResult->allColumns);
+
+				$from = (object) array('inputObj' => $oneSearchResult, 'tableName' => $oneSearchResult->tableName);
+		        $fromArray = array($from);
+		       
+		        $queryEngine = new QueryEngine();
+
+		        $select = "select * ";// . implode(", ", $selectAr);
+
+				$oneSearchResult->queryTest = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
+
 			}
 			else {
 

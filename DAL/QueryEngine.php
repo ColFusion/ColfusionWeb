@@ -42,11 +42,11 @@ class QueryEngine {
             if (isset($dataset->inputObj->oneSid)) {
 
 
-                // var_dump($dataset->inputObj->oneSid);
+               // var_dump($dataset->inputObj->oneSid);
 
-                if ($dataset->inputObj->oneSid === "true") { //onde story
+                if ($dataset->inputObj->oneSid === "true" || $dataset->inputObj->oneSid === true) { //onde story
 
-                   // var_dump($dataset->inputObj->oneSid);
+                   //var_dump($dataset->inputObj->oneSid);
 
                     $datasetObj = (object) array('sid' => $dataset->inputObj->sid, 'tableName' => $dataset->tableName);
 
