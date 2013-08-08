@@ -129,7 +129,7 @@ class MergedDataSetQueryMaker {
         $conditionsArr = array();
 
         foreach ($links as $key => $link) {
-            $conditionsArr[] = " [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$link->fromPart}] = [{$relationship->sidTo->tableName}{$relationship->sidTo->sid}.{$link->toPart}] ";
+            $conditionsArr[] = " [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$link->fromPart}] = [{$relationship->sidTo->tableName}{$relationship->sidTo->sid}].[{$link->toPart}] ";
         }
 
         return implode(" and ", $conditionsArr);
