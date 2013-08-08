@@ -18,7 +18,7 @@ class MergedDataSetQueryMaker {
 
     public function __construct($select, $inputObj, $where, $groupby, $perPage, $pageNo) {
       
-        $this->select = $select;
+        $this->select = $select; // either * or cid() with optional alias
         $this->inputObj = $inputObj;
         $this->where = $where;
         $this->groupby = $groupby;
@@ -27,17 +27,34 @@ class MergedDataSetQueryMaker {
     }
 
     public function GetQuery() {
-        $finalQuery = "$select from ";
+        $finalQuery = $this->DecodeStringWithCids($this->select);
 
         $sidsAndTablesNeeded = $this->GetAssociateArrayOfSidsAndTablesNeeded($this->inputObj->relationships);
 
        // var_dump($sidsAndTablesNeeded);
 
-        $finalQuery .= $this->GetFromPartBySidAndTableArray($sidsAndTablesNeeded);
+        $finalQuery .= " from " . $this->GetFromPartBySidAndTableArray($sidsAndTablesNeeded);
         $finalQuery .= " where " . $this->GetWherePartFromRelationshipsArray($this->inputObj->relationships);
+
+         if (isset($groupby))
+             $finalQuery = $this->DecodeStringWithCids($this->groupby);
+
+        if (isset($perPage) && isset($pageNo)) {
+
+           $finalQuery = $this->wrapInLimit($pageNo, $perPage, "(" . $finalQuery . ") as b");
+        }
 
         return $finalQuery;
     }
+
+    public function DecodeStringWithCids($stringToDecode) {
+
+       // var_dump($stringToDecode);
+
+        $transHandler = new TransformationHandler();
+        return $transHandler->decodeTransformationInputWithPrefix($stringToDecode, array("tableName", "sid"));
+    }
+
 
     public function GetAssociateArrayOfSidsAndTablesNeeded($relationships) {
         $result = array();
@@ -112,7 +129,7 @@ class MergedDataSetQueryMaker {
         $conditionsArr = array();
 
         foreach ($links as $key => $link) {
-            $conditionsArr[] = " {$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}.{$link->fromPart} == {$relationship->sidTo->tableName}{$relationship->sidTo->sid}.{$link->toPart} ";
+            $conditionsArr[] = " [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$link->fromPart}] = [{$relationship->sidTo->tableName}{$relationship->sidTo->sid}.{$link->toPart}] ";
         }
 
         return implode(" and ", $conditionsArr);
@@ -125,7 +142,7 @@ class MergedDataSetQueryMaker {
 
         $linkedServerName = $db->get_row($query)->source_database;
 
-        return " [$linkedServerName]...{$sidAndTable->tableName} as {$sidAndTable->tableName}{$sidAndTable->sid} ";
+        return " [$linkedServerName]...{$sidAndTable->tableName} as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
     }
 
     private function getFromPartAsFromFile($sidAndTable) {
@@ -133,12 +150,12 @@ class MergedDataSetQueryMaker {
         $cidsAndColumnNames = $this->getCidsAndColumnNames($sidAndTable->sid, $sidAndTable->tableName); 
 
         $cids = implode(",", array_keys($cidsAndColumnNames));
-        $columnNames = implode("','", array_values($cidsAndColumnNames));
+        $columnNames = implode("],[", array_values($cidsAndColumnNames));
 
         $linkedServerName = my_pligg_base_no_slash;
 
         $query = <<<EOQ
-        (
+         (
             select *
             from
                 (
@@ -147,9 +164,9 @@ class MergedDataSetQueryMaker {
             pivot
                 (
                     max(T.VALUE)
-                    for T.Dname in ('$columnNames')
+                    for T.Dname in ([$columnNames])
                 ) as P
-        ) as {$sidAndTable->tableName}{$sidAndTable->sid} 
+        ) as [{$sidAndTable->tableName}{$sidAndTable->sid}] 
 EOQ;
 
         return $query;
@@ -168,6 +185,21 @@ EOQ;
         }
 
         return $result;
+    }
+
+    private function wrapInLimit($startPoint, $perPage, $table) {
+        $startPoint = $startPoint - 1;
+        $top = $startPoint + $perPage;
+
+        $query = <<<EOQ
+SELECT * FROM
+(
+    SELECT TOP $top *, ROW_NUMBER() OVER (ORDER BY (SELECT 1)) AS rnum
+    FROM $table
+) a
+WHERE rnum > $startPoint
+EOQ;
+        return $query;
     }
 }
 

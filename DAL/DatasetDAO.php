@@ -26,6 +26,24 @@ class DatasetDAO {
         return $columns;
     }
 
+    public function getTableNameByCid($cid) {
+        
+        $tableName = mysql_real_escape_string($cid);
+        $query = "SELECT tableName FROM `colfusion_columnTableInfo` 
+            WHERE cid = $cid";
+        
+       return $this->ezSql->get_row($query)->tableName;
+    }
+
+    public function getSidByCid($cid) {
+        
+        $tableName = mysql_real_escape_string($cid);
+        $query = "SELECT sid FROM `colfusion_dnameinfo` 
+            WHERE cid = $cid";
+        
+       return $this->ezSql->get_row($query)->sid;
+    }
+
 }
 
 ?>

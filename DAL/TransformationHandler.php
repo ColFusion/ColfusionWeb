@@ -8,6 +8,7 @@ class TransformationHandler {
     private $relationshipDao;
     private $datasetDao;
     private $columnDict;
+    private $columnPrefixDict;
 
     public function __construct() {
         $this->relationshipDao = new RelationshipDAO();
@@ -15,10 +16,57 @@ class TransformationHandler {
     }
 
     // TansInput includes link part and synonym in links.
+    //TODO: needOrigianl never used, probably this method by itself should assess if we need origianl name or chosen, depending on the source type of the column
     public function decodeTransformationInput($transInput, $needOriginal = false) {
-        preg_match_all('/cid\([0-9]+\)/', $transInput, $matches);
-        foreach ($matches[0] as $match) {
-            $cid = substr($match, 4, strlen($match) - 5);
+        $cids = $this->getCidsFromTransInput($transInput);
+
+        return $this->decodeTransformationInputBase($transInput, $cids, $needOriginal, null);
+    }
+
+    // TansInput includes link part and synonym in links.
+    //TODO: needOrigianl never used, probably this method by itself should assess if we need origianl name or chosen, depending on the source type of the column
+    public function decodeTransformationInputWithPrefix($transInput, $prefixStringArr) {
+        $cids = $this->getCidsFromTransInput($transInput);
+
+        foreach ($cids as $key => $cid) {
+            if (!isset($this->columnPrefixDict[$cid]))  {
+                $this->columnPrefixDict[$cid] = $this->getColumnPrefixByCid($cid, $prefixStringArr);                   
+            }
+        }
+
+        return  $this->decodeTransformationInputBase($transInput, $cids, $needOriginal, $this->columnPrefixDict);
+    }
+
+    private function getColumnPrefixByCid($cid, $prefixStringArr) {
+        $result = "";
+
+    //    var_dump($cid);
+    //    var_dump($prefixStringArr);
+
+        foreach ($prefixStringArr as $key => $prefixName) {
+            switch ($prefixName) {
+                case 'tableName':
+                    $result .= $this->datasetDao->getTableNameByCid($cid);
+                    break;
+                
+                case 'sid':
+                    $result .= $this->datasetDao->getSidByCid($cid);
+                    break;
+
+                default:
+                    throw new Exception("Error Processing Request. Prefix name is unknown", 1);
+                    
+                    break;
+            }
+        }   
+
+        return $result;
+    }
+
+    // TansInput includes link part and synonym in links.
+    //TODO: needOrigianl never used, probably this method by itself should assess if we need origianl name or chosen, depending on the source type of the column
+    private function decodeTransformationInputBase($transInput, $cids, $needOriginal = false, $columnPrefixDict = null) {
+        foreach ($cids as $key => $cid) {
             if (!isset($this->columnDict[$cid])) {
                 if ($needOriginal)
                     $this->columnDict[$cid] = $this->relationshipDao->getColumnInfo($cid)->dname_original_name;
@@ -26,10 +74,27 @@ class TransformationHandler {
                     $this->columnDict[$cid] = $this->relationshipDao->getColumnInfo($cid)->dname_chosen;
             }
 
-            $transInput = str_replace("cid($cid)", $this->columnDict[$cid], $transInput);
+            if (isset($columnPrefixDict) && isset($columnPrefixDict[$cid])) {
+                $transInput = str_replace("cid($cid)", "[{$columnPrefixDict[$cid]}].[{$this->columnDict[$cid]}]", $transInput);
+            }
+            else {
+                $transInput = str_replace("cid($cid)", $this->columnDict[$cid], $transInput);
+            }
         }
         
         return $transInput;
+    }
+
+    private function getCidsFromTransInput($transInput) {
+        $result = array();
+
+        preg_match_all('/cid\([0-9]+\)/', $transInput, $matches);
+        foreach ($matches[0] as $match) {
+            $cid = substr($match, 4, strlen($match) - 5);
+            $result[] = $cid;
+        }
+
+        return $result;
     }
 
     public function encodeTransformationInput($sid, $tableName, $transInput) {

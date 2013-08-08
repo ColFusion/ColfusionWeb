@@ -366,7 +366,7 @@ class AdvSearch {
 			        
 			       // var_dump($fromArray);
 
-					$onePathResult->queryTest = $queryEngine->doQuery("select hz", $fromArray, null, null, null, null, null);
+					$onePathResult->queryTest = $queryEngine->doQuery("select cid(967) as X, cid(992) as G, cid(949) as A", $fromArray, null, null, null, null, null);
 
 					$allPaths[] = $onePathResult;	
 				}
