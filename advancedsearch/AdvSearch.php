@@ -368,7 +368,7 @@ class AdvSearch {
 
 			        $selectAr = array();
 
-			        foreach ($$onePathResult->foundSearchKeys as $key => $fSearchKeys) {
+			        foreach ($onePathResult->foundSearchKeys as $key => $fSearchKeys) {
 			        	$selectAr[] = "cid({$fSearchKeys->cid}) as {$fSearchKeys->dname_chosen} ";
 			        }
 
