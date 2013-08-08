@@ -58,9 +58,9 @@ class TableChart extends Chart{
 	}
 	else {
 	    for($i=0; $i < count($tableColumns); $i++){
-			    $cols .= "`" . $tableColumns[$i] . "`";
+			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ")as `".$tableColumns[$i]['columnName']."` ";
 			    if(!empty($tableColumns[$i+1])){
-				    $cols .= ",";
+				    $cols .= ", ";
 			    }
 	    }
 	}
@@ -71,6 +71,7 @@ class TableChart extends Chart{
 	$rst['totalTuple'] = $totalTuple;
 	$rst["pageNo"] = $pageNo;
 	$rst['color'] = $color;
+	
 	$rst['tableColumns'] = $tableColumns;
 	$rst['currentPage'] = $pageNo;
 	$rst['sid'] = $sid;

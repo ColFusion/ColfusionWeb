@@ -43,7 +43,7 @@ class MotionChart extends Chart {
     }
     else{
 	    for($i=0; $i < count($otherColumns); $i++){
-		  $valueColumns .= "`" . $otherColumns[$i] . "` as 'valueColumn" . $i . "'";
+		  $valueColumns .= "cid(" . $otherColumns[$i]['cid'] . ") as 'valueColumn" . $i . "'";
           array_push($valueColumnsArray, "valueColumn" . $i);
 
 		  if(!empty($otherColumns[$i+1])){
@@ -52,7 +52,7 @@ class MotionChart extends Chart {
 	    }
 	}
 
-	$select = "SELECT `" . $firstColumn . "` as 'firstColumn', `" . $dateColumn . "` as 'dateColumn', ";
+	$select = "SELECT cid(" . $firstColumn['cid'] . ") as 'firstColumn', cid(" . $dateColumn['cid'] . ") as 'dateColumn', ";
 	$select .= $valueColumns;
 	if (!empty($where))
         $select .= $where;
@@ -64,12 +64,13 @@ class MotionChart extends Chart {
 //TODO: Return date as three separate values: year, month, day
 
     $rst = array();
-    $rst['firstColumn'] = $firstColumn;
-    $rst['dateColumn'] = $dateColumn;
+    $rst['firstColumn'] = $firstColumn['cid'];
+    $rst['dateColumn'] = $dateColumn['cid'];
     $rst['originalOtherColumns'] = $otherColumns;
     $rst['otherColumns'] = $valueColumnsArray;//array('numberofCase','precipitation','state');
     $rst['sid'] = $sid;
     $rst['table'] = $table;
+    echo $select;
     $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 
 //    foreach($valueColumns as $value){

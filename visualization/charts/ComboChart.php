@@ -35,19 +35,17 @@ class ComboChart extends Chart{
         $comboAggType = $_datainfo->comboAggType;
         $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
         $fromArray = array($from);	
-	$select = "SELECT `" . $comboColumnCat . "` AS 'Category' ";
+	$select = "SELECT cid(" . $comboColumnCat['cid'] . ") AS 'Category' ";
         for($i = 0; $i < sizeof($comboAggType); $i++){
-            $select .= ", ".$comboAggType[$i]."(`" . $comboColumnAgg . "`) AS '".$comboAggType[$i]."' ";
+            $select .= ", ".$comboAggType[$i]."(cid(" . $comboColumnAgg['cid'] . ")) AS '".$comboAggType[$i]."' ";
         }
-	/*$select .= "MAX(`" . $comboColumnAgg . "`) AS 'MAX', ";
-	$select .= "AVG(`" . $comboColumnAgg . "`) AS 'AVG', ";
-	$select .= "MIN(`" . $comboColumnAgg . "`) AS 'MIN' ";	*/		
-	$groupby = " GROUP BY `" . $comboColumnCat . "` ";
+
+	$groupby = " GROUP BY cid(" . $comboColumnCat['cid'] . ") ";
         $queryEngine = new QueryEngine();
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
         $rst['comboAggType'] = $comboAggType;
-        $rst['comboColumnCat'] = $comboColumnCat;
-        $rst['comboColumnAgg'] = $comboColumnAgg;
+        $rst['comboColumnCat'] = $comboColumnCat['columnName'];
+        $rst['comboColumnAgg'] = $comboColumnAgg['columnName'];
         $rst['sid'] = $sid;
         $rst['table'] = $table;
         //rst['content'] =  json_decode('[{"Category":"aaa","AVG":"13","MAX":"18","MIN":"12"},{"Category":"bbb","AVG":"14","MAX":"16","MIN":"11"},{"Category":"ccc","AVG":"10","MAX":"14","MIN":"6"},{"Category":"ddd","AVG":"43","MAX":"45","MIN":"14"}]');

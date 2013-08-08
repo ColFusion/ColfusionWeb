@@ -43,13 +43,13 @@ class MapChart extends Chart {
         }
 	else {
             for($i=0; $i < count($mapTooltip); $i++){
-                $tips .= "`" . $mapTooltip[$i] . "`";
+                $tips .= " cid(" . $mapTooltip[$i]['cid'] . ") as ".$mapTooltip[$i]['columnName'];
                 if(!empty($mapTooltip[$i+1])){
                         $tips .= ",";
                 }
             }
 	}	
-	$select = "SELECT `" . $latitude . "` as 'latitude', `" . $longitude . "` as 'longitude'";
+	$select = "SELECT cid(" . $latitude['cid'] . ") as 'latitude', cid(" . $longitude['cid'] . ") as 'longitude'";
         if(isset($_datainfo->mapTooltip)){
             $select .= ", ".$tips; 
         }

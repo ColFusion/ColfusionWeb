@@ -195,7 +195,9 @@ function tableFormToDatainfo() {
 	var currentPage = $('input:hidden[name="currentPage"]').val();
 	var tableColumns = new Array();
 	$.each($("#addTable .columnSelection").find("input:checked"), function(){
-		tableColumns.push($(this).val()); // columns to show
+	        var cid = $(this).val();
+		var columnName = $(this.nextSibling).text();
+		tableColumns.push({cid:cid,columnName:columnName}); // columns to show
 	});
 	if (tableColumns.length == 0) {
 	    $("#add-table-info").show().text("Please select at least one column.");
@@ -214,7 +216,9 @@ function editTableFormToDatainfo() {
 	var currentPage = $('input:hidden[name="currentPageEdit"]').val();
 	var tableColumns = new Array();
 	$.each($("#editTable .columnSelection").find("input:checked"), function(){
-		tableColumns.push($(this).val()); // columns to show
+		var cid = $(this).val();
+		var columnName = $(this.nextSibling).text();
+		tableColumns.push({cid:cid,columnName:columnName}); // columns to show
 	});
 	if (tableColumns == null) {
 	    $("#edit-table-info").show().text("Please select at least one column.");
@@ -253,8 +257,8 @@ function tableDataInfoToForm(tableDatainfo) {
 	$('input:hidden[name="currentPageEdit"]').val(currentPage);
 	if (tableColumns!=null) {
 	    for (var i = 0;i<tableColumns.length;i++) {
-		    var value = tableColumns[i];
-		    var obj = $("#editTable .columnSelection input:checkbox[value='"+value+"']");
+		    //var value = tableColumns[i];
+		    var obj = $("#editTable .columnSelection input:checkbox[value='"+tableColumns[i].cid+"']");
 		    obj.prop('checked','checked');
 	    }
 	}
@@ -410,7 +414,7 @@ function drawTable(sourceData,gadgetID){
 	var tableColumns = sourceData['tableColumns'];
 	data.addColumn('string','rownum');
 	for(i=0; i<tableColumns.length; i++){
-		data.addColumn('string', tableColumns[i]);
+		data.addColumn('string', tableColumns[i]['columnName']);
 	}
 	for(i=0 ; resulData[i]!=null ; i++){
 		data.addRow();

@@ -149,13 +149,19 @@ function motionFormToDatainfo() {
 	var where;
 	var table = $("#addMotionTable").val();
 	var otherColumns = new Array();
-	var firstColumn = $('#motionFirstColumn').val();
-	var dateColumn = $('#motionDate').val();
+	var cid = $('#motionFirstColumn').val();
+	var columnName = $('#motionFirstColumn').find("option:selected").text();
+	var firstColumn = {cid:cid, colunmName: columnName};
+	var cid = $('#motionDate').val();
+	var columnName = $('#motionDate').find("option:selected").text();
+	var dateColumn = {cid:cid, colunmName: columnName};	
 	var otherColCount = 0;
 	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
 	var oneNum = false;
 	$.each($("#addMotion .columnSelection").find("input:checked"), function(){
-		otherColumns.push($(this).val()); // columns to show
+		cid = $(this).val();
+		columnName = $(this.nextSibling).text();
+		otherColumns.push({cid:cid, columnName:columnName}); // columns to show
 		var a = CANVAS.getColumnType(sid,table,$(this).val());
 		if (CANVAS.getColumnType(sid,table,$(this).val()) == "NUMBER") {
 			oneNum = true;
@@ -175,13 +181,21 @@ function editMotionFormToDatainfo() {
 	var where;
 	var table = $("#editMotionTable").val();
 	var otherColumns = new Array();
+	var cid = $('#motionFirstColumnEdit').val();
+	var columnName = $('#motionFirstColumnEdit').find("option:selected").text();
+	var firstColumn = {cid:cid, colunmName: columnName};
+	var cid = $('#motionDateEdit').val();
+	var columnName = $('#motionDateEdit').find("option:selected").text();
+	var dateColumn = {cid:cid, colunmName: columnName};
 	var firstColumn = $('#motionFirstColumnEdit').val();
 	var dateColumn = $('#motionDateEdit').val();
 	var otherColCount = 0;
 	var oneNum = false;
 	//var  datainfo = {"firstColumn":firstColumn,"dateColumn":dateColumn,"otherColumns":otherColumns};
 	$.each($("#editMotion .columnSelection").find("input:checked"), function(){
-		otherColumns.push($(this).val()); // columns to show
+		cid = $(this).val();
+		columnName = $(this.nextSibling).text();
+		otherColumns.push({cid:cid, columnName:columnName});  // columns to show
 		if (CANVAS.getColumnType(sid,table,$(this).val()) == "NUMBER") {
 			oneNum = true;
 		}
@@ -221,8 +235,8 @@ function motionDataInfoToForm(motionDatainfo) {
 	$('#motionDateEdit').val(dateColumn);
 	if (otherColumns!=null) {
 	    for (var i = 0;i<tableColumns.length;i++) {
-		    var value = tableColumns[i];
-		    var obj = $("#editMotion .columnSelection input:checkbox[value='"+value+"']");
+		    //var value = tableColumns[i];
+		    var obj = $("#editMotion .columnSelection input:checkbox[value='"+tableColumns[i]['cid']+"']");
 		    obj.prop('checked','checked');
 	    }
 	}
@@ -244,7 +258,7 @@ function drawMotion(sourceData,gadgetID) {
 	data.addColumn('string', firstColumn);
   	data.addColumn('date', dateColumn);
 	for (var i = 0;i<originalOtherColumns.length;i++) {
-		data.addColumn(CANVAS.getColumnType(sourceData['sid'],sourceData['table'],originalOtherColumns[i]).toLowerCase(), originalOtherColumns[i]);
+		data.addColumn(CANVAS.getColumnType(sourceData['sid'],sourceData['table'],originalOtherColumns[i]['columnName']).toLowerCase(), originalOtherColumns[i]);
 	}
 	for(i=0; sourceData['content'][i]!=null; i++) {
 		data.addRow();

@@ -138,14 +138,16 @@ function comboFormToDatainfo() {
 	var sname = $('#addComboSid').find("option:selected").text();
 	var where;
 	var table = $("#addComboTable").val();
-	var comboColumnCat = "";
-	var comboColumnAgg = "";
 	var comboAggType = new Array();
 	$('input:checkbox[name="comboAggType"]:checked').each(function(){
 		comboAggType.push($(this).val());
 		});
-	comboColumnCat = $('#comboColumnCat').val();
-	comboColumnAgg = $('#comboColumnAgg').val();
+	var cid = $('#comboColumnCat').val();
+	var columnName = $('#comboColumnCat').find('option:selected').text();
+	var comboColumnCat = {cid:cid, columnName:columnName};
+	cid = $('#comboColumnAgg').val();
+	columnName = $('#comboColumnAgg').find('option:selected').text();
+	var comboColumnAgg = {cid:cid, columnName:columnName};
 	if (comboAggType.length == 0) {
 	    $("#add-combo-info").show().text("Please select at least one column.");
 	    $("#add-combo-info").addClass("alert-error");
@@ -158,12 +160,16 @@ function editComboFormToDatainfo() {
 	var sname = $('#editComboSid').find("option:selected").text();
 	var table = $("#editComboTable").val();
 	var where;
-	var comboColumnCat = "";
-	var comboColumnAgg = "";
 	var comboAggType = new Array();
 	$('input:checkbox[name="comboAggTypeEdit"]:checked').each(function(){
 		comboAggType.push($(this).val());
 		});
+	var cid = $('#comboColumnCatEdit').val();
+	var columnName = $('#comboColumnCatEdit').find('option:selected').text();
+	var comboColumnCat = {cid:cid, columnName:columnName};
+	cid = $('#comboColumnAggEdit').val();
+	columnName = $('#comboColumnAggEdit').find('option:selected').text();
+	var comboColumnAgg = {cid:cid, columnName:columnName};
 	comboColumnCat = $('#comboColumnCatEdit').val();
 	comboColumnAgg = $('#comboColumnAggEdit').val();
 	if (comboAggType.length == 0) {
@@ -197,8 +203,8 @@ function comboDataInfoToForm(comboDatainfo) {
 	$('#editComboSid').find("option:selected").text(sname);
 	$('#editComboTable').val(table);
 	$('#editComboTable').change();
-	$('#comboColumnCatEdit').val(comboColumnCat);
-	$('#comboColumnAggEdit').val(comboColumnAgg);
+	$('#comboColumnCatEdit').val(comboColumnCat.cid);
+	$('#comboColumnAggEdit').val(comboColumnAgg.cid);
 	if (comboAggType!=null) {
 		for (var i = 0; i<comboAggType.length;i++) {
 			var value = comboAggType[i]

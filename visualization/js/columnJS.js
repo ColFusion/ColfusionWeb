@@ -105,9 +105,13 @@ function columnFormToDatainfo() {
 	var sid = $("#addColumnSid").val();
 	var sname = $('#addColumnSid').find("option:selected").text();
 	var where;
-	var table = $("#addColumnTable").val();
-	var columnCat = $('#columnCat').val();
-	var columnAgg = $('#columnAgg').val();
+	var table = $("#addColumnTable").val();	
+	var cid =  $('#columnCat').val();
+	var columnName =  $('#columnCat').find("option:selected").text();
+	var columnCat = {cid:cid,columnName:columnName};
+	cid = $('#columnAgg').val();
+	columnName =  $('#columnAgg').find("option:selected").text();
+	var columnAgg = {cid:cid, columnName:columnName};
 	var columnAggType = $('input:radio[name="columnAggType"]:checked').val();
 	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,sname,table,where);
 }
@@ -115,9 +119,13 @@ function editColumnFormToDatainfo() {
 	var sid = $("#editColumnSid").val(); 
 	var sname = $('#editColumnSid').find("option:selected").text();
 	var table = $("#editColumnTable").val();
-	var where;	
-	var columnCat = $('#columnCatEdit').val();
-	var columnAgg = $('#columnAggEdit').val();
+	var where;
+	var cid =  $('#columnCatEdit').val();
+	var columnName =  $('#columnCatEdit').find("option:selected").text();
+	var columnCat = {cid:cid,columnName:columnName};
+	cid = $('#columnAggEdit').val();
+	columnName =  $('#columnAggEdit').find("option:selected").text();
+	var columnAgg = {cid:cid, columnName:columnName};
 	var columnAggType = $('input:radio[name="columnAggTypeEdit"]:checked').val();
 	return new ColumnDatainfo(columnCat,columnAgg,columnAggType,sid,name,table,where);
 }
@@ -143,8 +151,8 @@ function columnDataInfoToForm(columnDatainfo) {
 	$('#editColumnSid').find("option:selected").text(sname);
 	$('#editColumnTable').val(table);
 	$('#editColumnTable').change();
-	$('#columnCatEdit').val(columnCat);
-	$('#columnAggEdit').val(columnAgg);
+	$('#columnCatEdit').val(columnCat.cid);
+	$('#columnAggEdit').val(columnAgg.cid);
 	$('input:radio[name="columnAggTypeEdit"][value="'+columnAggType+'"]').attr('checked',true);
 }
 function clearColumnEditForm() {

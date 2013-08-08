@@ -127,10 +127,16 @@ function mapFormToDatainfo() {
 	var where;
 	var table = $("#addMapTable").val();
 	var mapTooltip = new Array();
-	var latitude = $("#latitude").val();
-	var longitude = $("#longitude").val();
+	var cid = $("#latitude").val();
+	var columnName = $("#latitude").find("option:selected").text();
+	var latitude = {cid:cid, columnName: columnName};
+	cid = $("#longitude").val();
+	columnName = $("#longitude").find("option:selected").text();
+	var longitude = {cid:cid, columnName: columnName};
 	$.each($("#addMap .columnSelection").find("input:checked"), function(){
-		mapTooltip.push($(this).val()); // columns to show
+	    	cid = $(this).val();
+		columnName = $(this.nextSibling).text();
+		mapTooltip.push({cid:cid,columnName:columnName});
 	});	
 	return new MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where);
 }
@@ -140,10 +146,16 @@ function editMapFormToDatainfo() {
 	var where;
 	var table = $("#editMapTable").val();
 	var mapTooltip = new Array();
-	var latitude = $("#latitudeEdit").val();
-	var longitude = $("#longitudeEdit").val();
+	var cid = $("#latitudeEdit").val();
+	var columnName = $("#latitudeEdit").find("option:selected").text();
+	var latitude = {cid:cid, columnName: columnName};
+	cid = $("#longitudeEdit").val();
+	columnName = $("#longitudeEdit").find("option:selected").text();
+	var longitude = {cid:cid, columnName: columnName};
 	$.each($("#editMap .columnSelection").find("input:checked"), function(){
-		mapTooltip.push($(this).val()); // columns to show
+		cid = $(this).val();
+		columnName = $(this.nextSibling).text();
+		mapTooltip.push({cid:cid,columnName:columnName});
 	});
 	return new MapDatainfo(latitude,longitude,mapTooltip,sid,sname,table,where);
 }
@@ -174,8 +186,8 @@ function mapDataInfoToForm(mapDatainfo) {
 	$('#longitudeEdit').val(longitude);
 	if (mapTooltip!=null) {
 	    for (var i = 0;i<mapTooltip.length;i++) {
-		var value = mapTooltip[i];
-		var obj = $("#editMap .columnSelection input:checkbox[value='"+value+"']");
+		//var value = mapTooltip[i];
+		var obj = $("#editMap .columnSelection input:checkbox[value='"+mapTooltip[i]['cid']+"']");
 		obj.prop('checked','checked');
 	    }
 	}
@@ -201,7 +213,7 @@ function drawMap(souceData,gadgetID){
 		var tips = "";
 		
 		for(var temp in mapTooltip){
-			tips += "<b>"+mapTooltip[temp]+"</b>" + ": " + String(souceData['content'][i][mapTooltip[temp]])+"<br>";
+			tips += "<b>"+mapTooltip[temp]['columnName']+"</b>" + ": " + String(souceData['content'][i][mapTooltip[temp]['columnName']])+"<br>";
 			
 		}
 		data.setCell(i, 2, tips);
