@@ -41,7 +41,7 @@ class MergedDataSetQueryMaker {
 
         if (isset($this->perPage) && isset($this->pageNo)) {
 
-           $finalQuery .= $this->wrapInLimit($this->pageNo, $this->perPage, "(" . $finalQuery . ") as b");
+           $finalQuery = $this->wrapInLimit($this->pageNo, $this->perPage, "(" . $finalQuery . ") as b");
         }
 
         return $finalQuery;
