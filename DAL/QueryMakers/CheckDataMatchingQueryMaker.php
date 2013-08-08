@@ -95,7 +95,7 @@ class CheckdataMatchingQueryMaker {
             //TODO: fix, currently only one column, no transformation is supported.
             $ar = array("cid(", ")");                
             $cidsArray[] = str_replace($ar, "", $link);
-            $columnName = $transHandler->decodeTransformationInput($link); // DALUtils::decodeLinkPart($link, $usedColumnNames);
+            $columnName = $transHandler->decodeTransformationInput($link, true); // DALUtils::decodeLinkPart($link, $usedColumnNames);
             $columnNamesArray[] = "[" . $columnName . "]";
            // $columnAlias = "column$i";
             $i += 1;

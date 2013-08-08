@@ -59,9 +59,9 @@ class QueryEngine {
                     //var_dump($datasetObj);
 
                     //NOTE: $select, $where and $group cannot have [] sybmols comming directly from column or table name
-                    $select =  $transHandler->decodeTransformationInput($select);
-                    $where =  $transHandler->decodeTransformationInput($where);
-                    $groupby =  $transHandler->decodeTransformationInput($groupby);
+                    $select =  $transHandler->decodeTransformationInput($select, true);
+                    $where =  $transHandler->decodeTransformationInput($where, true);
+                    $groupby =  $transHandler->decodeTransformationInput($groupby, true);
 
                     return $this->prepareAndRunQuery($select, $datasetObj, $where, $groupby, $perPage, $pageNo);                
                 }
@@ -73,10 +73,10 @@ class QueryEngine {
             else {
 
                 //NOTE: $select, $where and $group cannot have [] sybmols comming directly from column or table name
-                $select =  $transHandler->decodeTransformationInput($select);
-                $where =  $transHandler->decodeTransformationInput($where);
-                $groupby =  $transHandler->decodeTransformationInput($groupby);
-                
+                $select =  $transHandler->decodeTransformationInput($select, true);
+                $where =  $transHandler->decodeTransformationInput($where, true);
+                $groupby =  $transHandler->decodeTransformationInput($groupby, true);
+
                 return $this->prepareAndRunQuery($select, $dataset, $where, $groupby, $perPage, $pageNo);
 
                 //TODO: fix it, transformation should also accept sybmols in which to enclose table and column names

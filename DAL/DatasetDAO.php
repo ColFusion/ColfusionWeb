@@ -37,11 +37,19 @@ class DatasetDAO {
 
     public function getSidByCid($cid) {
         
-        $tableName = mysql_real_escape_string($cid);
+        $cid = mysql_real_escape_string($cid);
         $query = "SELECT sid FROM `colfusion_dnameinfo` 
             WHERE cid = $cid";
         
-       return $this->ezSql->get_row($query)->sid;
+        return $this->ezSql->get_row($query)->sid;
+    }
+
+    public function GetColumnsSourceInfo($cid) {
+        $cid = mysql_real_escape_string($cid);
+        $query = "SELECT si.* FROM colfusion_dnameinfo as di join colfusion_sourceinfo as si on di.sid = si.sid 
+            WHERE cid = $cid";
+        
+        return $this->ezSql->get_row($query);
     }
 
 }
