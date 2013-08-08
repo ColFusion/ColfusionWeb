@@ -420,7 +420,7 @@ function drawTable(sourceData,gadgetID){
 	for(i=0 ; resulData[i]!=null ; i++){
 		data.addRow();
 	//	data.setCell(i, 0, String(i+1));
-		var temp = 1;
+		var temp = 0;
 		for(k=0; k<tableColumns.length; k++) {
 			data.setCell(i, temp++, String(resulData[i][returnedColumns[k]]));
 		}

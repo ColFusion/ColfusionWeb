@@ -63,7 +63,7 @@ class TableChart extends Chart{
 
 	    for($i=0; $i < count($tableColumns); $i++){
 	    		$prefix = $transformationHandler->getColumnPrefixByCid($tableColumns[$i]['cid'], array("tableName", "sid"));
-			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ") as " . $prefix . $tableColumns[$i]['columnName']." ";
+			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ") as [" . $prefix . $tableColumns[$i]['columnName']."] ";
 			    if(!empty($tableColumns[$i+1])){
 				    $cols .= ", ";
 			    }
