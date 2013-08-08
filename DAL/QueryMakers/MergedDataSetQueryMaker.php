@@ -36,12 +36,12 @@ class MergedDataSetQueryMaker {
         $finalQuery .= " from " . $this->GetFromPartBySidAndTableArray($sidsAndTablesNeeded);
         $finalQuery .= " where " . $this->GetWherePartFromRelationshipsArray($this->inputObj->relationships);
 
-         if (isset($groupby))
+         if (isset($this->groupby))
              $finalQuery = $this->DecodeStringWithCids($this->groupby);
 
-        if (isset($perPage) && isset($pageNo)) {
+        if (isset($this->perPage) && isset($this->pageNo)) {
 
-           $finalQuery = $this->wrapInLimit($pageNo, $perPage, "(" . $finalQuery . ") as b");
+           $finalQuery = $this->wrapInLimit($this->pageNo, $this->perPage, "(" . $finalQuery . ") as b");
         }
 
         return $finalQuery;
