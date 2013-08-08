@@ -4,7 +4,9 @@
     <link rel="stylesheet" href="bootstrap.css" />
     <link rel="stylesheet" href="bootstrap-responsive.css" />
     <link rel="stylesheet" type="text/css" href="../css/font-awesome.css" />
-    <link rel="stylesheet" type="text/css" href="../css/dataTableModel.css" />
+    <link rel="stylesheet" href="bootstrap.css" />
+    <link rel="stylesheet" href="../css/parsley.css" />
+    <link rel="stylesheet" href="../css/parsley_custom.css" />
     <style type="text/css">
         #advancedsearch table{
             vertical-align: middle;
@@ -21,23 +23,38 @@
         .addFilterBtn:hover, .removeFilterBtn:hover{
             cursor:pointer;
         }
-                 
+
         .tableNameText, .columnText{
             color: black;
         }
-        
+
         .tooltipColTitle{
             width: 100px;
         }
-        
+
         .tooltip .tooltipContent{
             color: white !important;
         }
-    </style>
 
-    <script type="text/javascript" src="../javascripts/jquery-1.9.1.min.js"></script>    
+        .paths{
+            font-size :12px;
+        }
+
+        .path {
+            margin-bottom: 10px;
+            overflow: auto;
+        }
+
+        .pathBody {
+            overflow: auto;
+        }
+    </style>
+    
+    <script type="text/javascript" src="../javascripts/classify.min.js"></script>
+    <script type="text/javascript" src="../javascripts/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="../javascripts/jquery.mousewheel.js"></script>
     <script type="text/javascript" src="../javascripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../javascripts/parsley.min.js"></script>
     <script type="text/javascript" src="../javascripts/persist-min.js"></script>
     <script type="text/javascript" src="../javascripts/knockout-2.3.0.js"></script>
     <script type="text/javascript" src="../javascripts/knockout.mapping.js"></script>

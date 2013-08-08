@@ -1,13 +1,13 @@
 {literal}
 <div id="advanced" class="advanced">
-  <div id="advancedsearch" style="border: none; margin: 20px; padding: 0px;">
+  <form id="advancedsearch" style="border: none; margin: 20px; padding: 0px;">
     <h2>Advanced Search</h2>
     <br />
     <table style="width: 100%">
       <tr style="width: 100%">
         <td style="width: 80px !important;">Search for: </td>
         <td >
-          <input data-bind="value: searchTerm" type="text" id="search" style="width:100%" />
+          <input data-bind="value: searchTerm" data-required="true" type="text" id="search" style="width:100%" />
         </td>
       </tr>
     </table>
@@ -19,7 +19,6 @@
         </td>
         <td width="50">
           <select data-bind="value: condition"
-                  data-required="true"
                   name="select[]">
             <option>---- condition ----</option>
             <option value="like">contains</option>
@@ -34,7 +33,7 @@
         <td>
           <input data-bind="value: value" type="text" name="condition[]" style="width: 100%" />
         </td>
-        <td>
+        <td style="text-align: right;">
           <!-- ko if: $index() == 0 -->
           <i data-bind="click: $parent.addFilter" class="icon-plus addFilterBtn"></i>
           <!-- /ko -->
@@ -58,7 +57,7 @@
         </td>
       </tr>
     </table>
-  </div>
+  </form>
 
   <form id="joinRequestToNewPage" method="post" action="../visualization/dashboard.php" targe="visualizationWindow">
     <input type="hidden" name="joinQuery" />
@@ -86,38 +85,10 @@
               Columns:
             </span>
             <!-- /ko -->
-            <span data-bind="bootstrapTooltip: $data.dname_chosen, 
-                  tooltipOptions: {placement: 'bottom'}, 
-                  tooltipDynamicValues: {
-                    dname_orginal_name: $data.dname_orginal_name, 
-                    dname_value_description: $data.dname_value_description, 
-                    dname_value_type: $data.dname_value_type, 
-                    dname_value_unit: $data.dname_value_unit
-                  }" 
-                  class="columnText">
-              <table class="tooltipContent">
-                <tr>
-                  <td class="tooltipColTitle" style="color: white !important">Original Name: </td>
-                  <td data-bind="text: $data.dname_orginal_name" id="dname_orginal_name" style="color: white !important"></td>
-                </tr>
-                <tr>
-                  <td class="tooltipColTitle" style="color: white !important">Description: </td>
-                  <td data-bind="text: $data.dname_value_description" id="dname_value_description" style="color: white !important"></td>
-                </tr>
-                <tr>
-                  <td class="tooltipColTitle" style="color: white !important">Data Type: </td>
-                  <td data-bind="text: $data.dname_value_type" id="dname_value_type" style="color: white !important"></td>
-                </tr>
-                <tr>
-                  <td class="tooltipColTitle" style="color: white !important">Unit: </td>
-                  <td data-bind="text: $data.dname_value_unit" id="dname_value_unit" style="color: white !important"></td>
-                </tr>
-              </table>
-            </span>
+            <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="columnText"></span>
             <!-- ko if: $index() < $parent.allColumns.length - 1 -->, <!-- /ko -->
           </div>
         </div>
-
 
         <div class="buttonPanel" style="float: right;">
           <button data-bind="click: $parent.openVisualizationPage" class="btn" title="Visualization">
@@ -130,6 +101,8 @@
       </div>
 
       <div data-bind="visible: isDataPreviewTableShown" class="dataPreviewContainer">
+
+        <div data-bind="visible: !dataPreviewViewModel()" style="padding-top: 10px;padding-left: 30px;">Loading...</div>
 
         <div  data-bind="with: dataPreviewViewModel">
           <div class="storycontent" id="dataPreviewContainer">
@@ -168,7 +141,8 @@
             <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
           </span>
           <!-- /ko -->
-          <span data-bind="text: $data.dname_chosen" class="searchKeyText"></span>
+          <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="searchKeyText">
+          </span>
           <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
         </p>
       </div>
@@ -178,10 +152,119 @@
 
     <!-- ko ifnot: resultObj.oneSid -->
     <div class="stories pathResult">
+      <div class="searchResultBody" style="overflow: auto;">
+        <div class="searchResultProfile">
+          <h2>
+            Relationships: <a data-bind="text: resultObj.title" class="title"></a>
+          </h2>
+          <div data-bind="foreach: paths" class="paths">
 
+            <div data-bind="with: pathObj" class="path">
+
+              <div class="pathBody">
+                <div style="float:left;">
+                  <div class="pathTitle">
+                    <span  style="color: black;">Path: </span>
+                    <span data-bind="text: title" class="pathTitleText"></span>
+                  </div>
+                  <div data-bind="foreach: sidTitles" class="sources">
+                    <span data-bind="if: $index() == 0" class="sourcesTitle" style="color: black;">Datasets: </span>
+                    <span data-bind="text: $data" class="sourceText"></span>
+                  </div>
+                </div>
+
+                <div class="buttonPanel" style="float: right;">
+                  <button data-bind="click: $parent.toggleMore" class="btn" data-toggle="button">
+                    <i data-bind="visible: !$parent.isMoreShown()" class="icon-plus"></i>
+                    <i data-bind="visible: $parent.isMoreShown()" class="icon-minus"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div data-bind="visible: $parent.isMoreShown()" class="pathDetail" style="margin-top: 10px;">
+                <div style="color:black;">Relationships: </div>
+                <table class="pathRelTable tftable">
+                  <tr>
+                    <th>From</th>
+                    <th>To</th>
+                    <th>Confidence</th>
+                  </tr>
+                  <tbody data-bind="foreach: relationships">
+                    <tr>
+                      <td data-bind="template: { name: 'relInfo-template', data: sidFrom }">
+                      </td>
+                      <td data-bind="template: { name: 'relInfo-template', data: sidTo }">
+                      </td>
+                      <td data-bind="text: confidence">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+
+
+              <div class="searchResultFooter">
+                <p data-bind="foreach: foundSearchKeys" style="margin-top: 10px;">
+                  <!-- ko if: $index() == 0 -->
+                  <span class="searchKeyText">
+                    <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
+                  </span>
+                  <!-- /ko -->
+                  <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="searchKeyText">
+                    <span data-bind="text: $data.dname_chosen" class="searchKeyText"></span>
+                    <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
+                  </p>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
     </div>
     <!-- /ko -->
 
   </div>
 </div>
+
+<form id="visualizationDatasetSerializeForm" style="display:none;" target="_blank" method="post" action="../visualization/dashboard.php">
+  <input type="hidden" name="dataset" id="visualizationDatasetSerializeInput"></input>
+</form>
+
+<script type="text/html" id="columnTooltip-template">
+  <span data-bind="bootstrapTooltip: $data.dname_chosen, 
+                  tooltipOptions: {placement: 'bottom'}, 
+                  tooltipDynamicValues: {
+                    dname_orginal_name: $data.dname_orginal_name, 
+                    dname_value_description: $data.dname_value_description, 
+                    dname_value_type: $data.dname_value_type, 
+                    dname_value_unit: $data.dname_value_unit
+                  }">
+    <table class="tooltipContent">
+      <tr>
+        <td class="tooltipColTitle" style="color: white !important">Original Name: </td>
+        <td data-bind="text: $data.dname_orginal_name" id="dname_orginal_name" style="color: white !important"></td>
+      </tr>
+      <tr>
+        <td class="tooltipColTitle" style="color: white !important">Description: </td>
+        <td data-bind="text: $data.dname_value_description" id="dname_value_description" style="color: white !important"></td>
+      </tr>
+      <tr>
+        <td class="tooltipColTitle" style="color: white !important">Data Type: </td>
+        <td data-bind="text: $data.dname_value_type" id="dname_value_type" style="color: white !important"></td>
+      </tr>
+      <tr>
+        <td class="tooltipColTitle" style="color: white !important">Unit: </td>
+        <td data-bind="text: $data.dname_value_unit" id="dname_value_unit" style="color: white !important"></td>
+      </tr>
+    </table>
+  </span>
+</script>
+
+<script type="text/html" id="relInfo-template">
+  <a  data-bind="text: $data.sidTitle, attr: {href: '../story.php?title=' + $data.sid}"></a>
+  .<span data-bind="text:  $data.tableName"></span>
+</script>
+
 {/literal}

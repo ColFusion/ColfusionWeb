@@ -1,5 +1,5 @@
 ﻿var AdvancedSearchViewModelProperties = {
-    Filter: function () {
+    Filter: function() {
         var self = this;
 
         self.variable = ko.observable();
@@ -7,7 +7,7 @@
         self.value = ko.observable();
     },
 
-    SearchResult: function (resultObj) {
+    DatasetSearchResult: function(resultObj) {
         var self = this;
 
         self.resultObj = resultObj;
@@ -15,26 +15,50 @@
         self.isDataPreviewTableShown = ko.observable(false);
         self.dataPreviewViewModel = ko.observable();
 
-        self.openVisualizationPage = function (item, event) {
-
-
+        self.openVisualizationPage = function(item, event) {
+            $('#visualizationDatasetSerializeInput').val(JSON.stringify(self.resultObj));
+            $('#visualizationDatasetSerializeForm').submit();
         };
 
-        self.togglePreviewTable = function (item, event) {
+        self.togglePreviewTable = function(item, event) {
 
             // If preview is not loaded yet, load markup and bind view model.
             if (!self.dataPreviewViewModel()) {
-                /*
+                
                 self.dataPreviewViewModel(new DataPreviewViewModel(self.resultObj.sid));
                 self.dataPreviewViewModel().getTableDataBySidAndName(self.resultObj.tableName, 10, 1);
-                */
+                
+                /*
                 self.dataPreviewViewModel(new DataPreviewViewModel(2080));
                 self.dataPreviewViewModel().getTableDataBySidAndName("small.xls", 10, 1);
+                */
             }
 
             self.isDataPreviewTableShown(!self.isDataPreviewTableShown());
         };
-    }
+    },
+
+    PathSearchResult: function(resultObj) {
+        var self = this;
+
+        self.resultObj = resultObj;
+        self.paths = ko.observableArray();
+
+        $.each(resultObj.allPaths, function(i, pathObj) {
+            self.paths.push(new AdvancedSearchViewModelProperties.Path(pathObj));
+        });
+    },
+
+    Path: function (pathObj) {
+        var self = this;
+
+        self.pathObj = pathObj;
+        self.isMoreShown = ko.observable(false);
+        
+        self.toggleMore = function () {
+            self.isMoreShown(!self.isMoreShown());
+        };       
+    }  
 };
 
 function AdvancedSearchViewModel() {
@@ -57,6 +81,10 @@ function AdvancedSearchViewModel() {
 
     self.search = function () {
 
+        if (!$('#advancedsearch').parsley('validate')) {
+            return;
+        }
+        
         var searchKeys = $.map(self.searchTerm().split(','), function (searchKey) {
             return searchKey.trim();
         });
@@ -74,7 +102,8 @@ function AdvancedSearchViewModel() {
         });
 
         $.ajax({
-            url: 'advSearch.json',
+            // url: 'advSearch.json',
+            url: 'searchResult.php',
             data: {
                 "search[]": searchKeys,
                 "variable[]": filterVariables,
@@ -84,8 +113,11 @@ function AdvancedSearchViewModel() {
             type: 'post',
             dataType: 'json',
             success: function (data) {
+                self.searchResults([]);
                 $.each(data, function (i, resultObj) {
-                    self.searchResults.push(new AdvancedSearchViewModelProperties.SearchResult(resultObj));
+                    var searchResult = resultObj.oneSid ? new AdvancedSearchViewModelProperties.DatasetSearchResult(resultObj) :
+                        new AdvancedSearchViewModelProperties.PathSearchResult(resultObj);
+                    self.searchResults.push(searchResult);
                 });
             }
         });
