@@ -7,7 +7,7 @@ include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
 class TableChart extends Chart{
     function __construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note){
         parent::__construct($_cid, $_name, $_canvas, $_type, $_left, $_top, $_depth, $_height, $_width, $_datainfo, $_note);
-        $this->query($this->datainfo);
+      //  $this->query($this->datainfo);
     }
 
     function query($_datainfo){
@@ -65,7 +65,8 @@ class TableChart extends Chart{
 	    }
 	}
 	$select = "SELECT " . $cols;
-	$rst['content'] = $queryEngine->doQuery($select, $fromArray, null, null, null, $perPage, $pageNo);
+	$resultDoQuery = $queryEngine->doQuery($select, $fromArray, null, null, null, $perPage, $pageNo);
+	$rst['content'] = $resultDoQuery;
 	$rst["perPage"] = $perPage;
 	$rst["totalPage"] = $totalPage;
 	$rst['totalTuple'] = $totalTuple;
