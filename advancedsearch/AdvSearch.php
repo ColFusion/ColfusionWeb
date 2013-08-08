@@ -275,7 +275,7 @@ class AdvSearch {
 
 		        $select = "select * ";// . implode(", ", $selectAr);
 
-				$oneSearchResult->queryTest = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
+			//	$oneSearchResult->queryTest = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 
 			}
 			else {
@@ -384,7 +384,7 @@ class AdvSearch {
 
 			        $select = "select " . implode(", ", $selectAr);
 
-					$onePathResult->queryTest = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
+				//	$onePathResult->queryTest = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 
 					$allPaths[] = $onePathResult;	
 				}
