@@ -366,7 +366,15 @@ class AdvSearch {
 			        
 			       // var_dump($fromArray);
 
-					$onePathResult->queryTest = $queryEngine->doQuery("select cid(967) as X, cid(992) as G, cid(949) as A", $fromArray, null, null, null, null, null);
+			        $selectAr = array();
+
+			        foreach ($$onePathResult->foundSearchKeys as $key => $fSearchKeys) {
+			        	$selectAr[] = "cid({$fSearchKeys->cid}) as {$fSearchKeys->dname_chosen} ";
+			        }
+
+			        $select = "select " . implode(", ", $selectAr);
+
+					$onePathResult->queryTest = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 
 					$allPaths[] = $onePathResult;	
 				}
