@@ -11,6 +11,7 @@ include_once(realpath(dirname(__FILE__)) . '/QueryMakers/MergedDataSetQueryMaker
 include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 include_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
+include_once(realpath(dirname(__FILE__)) . '/RelationshipDAO.php');
 
 require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
@@ -310,9 +311,22 @@ class QueryEngine {
     public function MineRelationships($sid) {
         global $db;
 
-    //TODO: disable rel mining for now, need to think how to add them to neo4j
-            $res = $db->query("call doRelationshipMining('" . $sid . "')");
+        $relationshipDao = new RelationshipDAO();
+    
+        $relsForCurrentSidBeforeMining = $relationshipDao->getRelIdsForSid($sid);
 
+        if (!isset($relsForCurrentSidBeforeMining))
+            $relsForCurrentSidBeforeMining = array ();
+
+        $res = $db->query("call doRelationshipMining('" . $sid . "')");
+
+        $relsForCurrentSidAfterMining = $relationshipDao->getRelIdsForSid($sid);
+        if (!isset($relsForCurrentSidAfterMining))
+            $relsForCurrentSidAfterMining = array ();
+
+        $diff = array_diff($relsForCurrentSidAfterMining, $relsForCurrentSidBeforeMining);
+
+        $this->AddRelationshipsToNeo4jFromRelIdsArr($diff);
 
         $query = <<< EOQ
                 SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
@@ -369,35 +383,69 @@ EOQ;
         $sql = sprintf($sql, table_prefix, $rel_id, $user_id, $confidence, $comment);
         $rs = $db->query($sql);
 
+        $this->AddRelationshipToNeo4J($from["sid"], $to["sid"], $rel_id, $confidence);
+    }
 
-
+    // TODO: move to Neo4J Handler
+    public function AddRelationshipToNeo4J($sidFrom, $sidTo, $rel_id, $confidence) {
         // Connecting to the default port 7474 on localhost
         $client = new Everyman\Neo4j\Client();
 
         $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
         
-        $sourceFrom = $sourceIndex->queryOne("sid:{$from["sid"]}");
+     //   var_dump($sidFrom);
+     //   var_dump($sidTo);
+     //   var_dump($rel_id);
+     //   var_dump($confidence);
+
+        $sourceFrom = $sourceIndex->queryOne("sid:$sidFrom");
+
+     //   var_dump($sourceFrom);
 
         if (!isset($sourceFrom)) {
             $sourceFrom = $client->makeNode();
-            $sourceFrom->setProperty('sid', $from["sid"])->save();
+            $sourceFrom->setProperty('sid', $sidFrom)->save();
             $sourceIndex->add($sourceFrom, 'sid', $sourceFrom->getProperty('sid'));
             $sourceIndex->save();
         }
 
-        $sourceTo = $sourceIndex->queryOne("sid:{$to["sid"]}");
+    //    var_dump($sourceFrom);
+
+        $sourceTo = $sourceIndex->queryOne("sid:$sidTo");
+
+    //    var_dump($sourceTo);
 
         if (!isset($sourceTo)) {
             $sourceTo = $client->makeNode();
-            $sourceTo->setProperty('sid', $to["sid"])->save();
+            $sourceTo->setProperty('sid', $sidTo)->save();
             $sourceIndex->add($sourceTo, 'sid', $sourceTo->getProperty('sid'));
             $sourceIndex->save();
         }
+
+      //  var_dump($sourceTo);
+
+        if (!isset($sourceFrom) || !isset($sourceTo))
+            throw new Exception("Cannot add relationship on neo4j, one of the nodes is null", 1);
 
         $sourceFrom->relateTo($sourceTo, 'RELATED_TO')
                     ->setProperty('rel_id', $rel_id)
                     ->setProperty('confidence', $confidence)
                     ->save();
+    }
+
+    //TODO: move to neo4j handler
+    private function AddRelationshipsToNeo4jFromRelIdsArr($rel_ids) {
+        if (!isset($rel_ids))
+            return;
+
+        //var_dump($rel_ids);
+
+        $relationshipDao = new RelationshipDAO();
+
+        foreach ($rel_ids as $key => $rel_id) {
+            $relstionship = $relationshipDao->getRelationship($rel_id);
+            $this->AddRelationshipToNeo4J($relstionship->fromDataset->sid, $relstionship->toDataset->sid, $rel_id, 0);
+        }
     }
 
     public function CheckDataMatching($from, $to) {

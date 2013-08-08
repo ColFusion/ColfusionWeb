@@ -160,6 +160,24 @@ class RelationshipDAO {
         return $comment;
     }
 
+    public function getRelIdsForSid($sid) {
+        $sid = mysql_real_escape_string($sid);
+
+        $query = "SELECT distinct rel_id 
+            FROM  `colfusion_relationships`  
+            WHERE  sid1 = $sid or sid2 = $sid";
+
+        $queryResult =  $this->ezSql->get_results($query);
+
+        $result = array();
+
+        foreach ($queryResult as $key => $rel) {
+            $result[] = $rel->rel_id;
+        }
+
+        return $result;
+    }
+
 }
 
 function testRelDAO() {
