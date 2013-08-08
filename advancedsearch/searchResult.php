@@ -1,8 +1,12 @@
 <?php
 /***** List of titles below the advanced search conditions *****/
-include('../config.php');
 
-include(mnmpath.'advancedsearch/AdvSearch.php');
+
+//include('../config.php');
+
+
+
+include_once(realpath(dirname(__FILE__)) . '/AdvSearch.php');
 
 /***** Get requested variables *****/
 $search = $_POST['search'];
@@ -10,7 +14,12 @@ $variable = $_POST['variable'];
 $select = $_POST['select'];
 $condition = $_POST['condition'];
 
+
+
+
 $avdSearch = new AdvSearch();
+
+//var_dump($search);
 
 $avdSearch->setSearchKeywords($search);
 
@@ -20,11 +29,15 @@ $avdSearch->setWhereCondition($condition);
 
 echo json_encode($avdSearch->doSearch());
 
+/*
+
 $send["search"] = $search;
 $send["variable"] = $variable;
 $send["select"] = $select;
 $send["condition"] = $condition;
 $_SESSION['JSend'] = $send;
+
+
 
 function test(){
     $search = ['Households','Married Couples'];
@@ -32,11 +45,20 @@ function test(){
     $select = ['=','='];
     $condition = ['Taipei','31'];
 
+
+
+
     /***** Initial variables *****/
+    
+/*
+
     $sql_col = "";
     $result = array(); // array for results {"TitleID":title_id,"Title":link_title,"Dname":dname_string}
 
     /***** Set searching query *****/
+ 
+/*
+
     for($i=0; $i<count($search); $i++){
         $sql_col .= "Dname = '".$search[$i]."'";
         if(!empty($search[$i+1])){
@@ -59,7 +81,12 @@ function test(){
         }
     }
 
+
+
     /***** Query Result *****/
+
+/*
+
     $rst = $db->get_results($sql);
     foreach ($rst as $r) {
         $result[] = $r;
@@ -76,6 +103,10 @@ function test(){
     }
 
 	/***** Print result *****/
-    echo json_encode($result);
+  
+
+  /*  echo json_encode($result);
 }
+
+*/
 ?>
