@@ -23,7 +23,7 @@ class TransformationHandler {
 
         $cids = $this->getCidsFromTransInput($transInput);
 
-        return $this->decodeTransformationInputBase($transInput, $cids, $needOriginal, null);
+        return $this->decodeTransformationInputBase($transInput, $cids, $needOriginal, null, false);
     }
 
     // TansInput includes link part and synonym in links.
@@ -40,7 +40,7 @@ class TransformationHandler {
             }
         }
 
-        return  $this->decodeTransformationInputBase($transInput, $cids, $needOriginal, $this->columnPrefixDict);
+        return  $this->decodeTransformationInputBase($transInput, $cids, $needOriginal, $this->columnPrefixDict, true);
     }
 
     public function getColumnPrefixByCid($cid, $prefixStringArr) {
@@ -71,7 +71,7 @@ class TransformationHandler {
 
     // TansInput includes link part and synonym in links.
     //TODO: needOrigianl never used, probably this method by itself should assess if we need origianl name or chosen, depending on the source type of the column
-    private function decodeTransformationInputBase($transInput, $cids, $needOriginal = false, $columnPrefixDict = null) {
+    private function decodeTransformationInputBase($transInput, $cids, $needOriginal = false, $columnPrefixDict = null, $needToEnclose = false) {
         foreach ($cids as $key => $cid) {
             if (!isset($this->columnDict[$cid])) {
                 if ($needOriginal)
@@ -81,10 +81,22 @@ class TransformationHandler {
             }
 
             if (isset($columnPrefixDict) && isset($columnPrefixDict[$cid])) {
-                $transInput = str_replace("cid($cid)", "[{$columnPrefixDict[$cid]}].[{$this->columnDict[$cid]}]", $transInput);
+                if ($needToEnclose) {
+                    $transInput = str_replace("cid($cid)", "[{$columnPrefixDict[$cid]}].[{$this->columnDict[$cid]}]", $transInput);
+                }
+                else {
+                    $transInput = str_replace("cid($cid)", "{$columnPrefixDict[$cid]}.{$this->columnDict[$cid]}", $transInput);
+                }
+                
             }
             else {
-                $transInput = str_replace("cid($cid)", "[{$this->columnDict[$cid]}]", $transInput);
+                if ($needToEnclose) {
+                    $transInput = str_replace("cid($cid)", "[{$this->columnDict[$cid]}]", $transInput);
+                }
+                else {
+                    $transInput = str_replace("cid($cid)", "{$this->columnDict[$cid]}", $transInput);
+                }
+                
             }
         }
         
