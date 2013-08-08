@@ -18,6 +18,9 @@ class TransformationHandler {
     // TansInput includes link part and synonym in links.
     //TODO: needOrigianl never used, probably this method by itself should assess if we need origianl name or chosen, depending on the source type of the column
     public function decodeTransformationInput($transInput, $needOriginal = false) {
+        if (!isset($transInput))
+            return $transInput;
+
         $cids = $this->getCidsFromTransInput($transInput);
 
         return $this->decodeTransformationInputBase($transInput, $cids, $needOriginal, null);
@@ -26,6 +29,9 @@ class TransformationHandler {
     // TansInput includes link part and synonym in links.
     //TODO: needOrigianl never used, probably this method by itself should assess if we need origianl name or chosen, depending on the source type of the column
     public function decodeTransformationInputWithPrefix($transInput, $prefixStringArr) {
+        if (!isset($transInput))
+            return $transInput;
+
         $cids = $this->getCidsFromTransInput($transInput);
 
         foreach ($cids as $key => $cid) {
@@ -78,7 +84,7 @@ class TransformationHandler {
                 $transInput = str_replace("cid($cid)", "[{$columnPrefixDict[$cid]}].[{$this->columnDict[$cid]}]", $transInput);
             }
             else {
-                $transInput = str_replace("cid($cid)", $this->columnDict[$cid], $transInput);
+                $transInput = str_replace("cid($cid)", "[{$this->columnDict[$cid]}]", $transInput);
             }
         }
         

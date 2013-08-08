@@ -30,6 +30,15 @@ class QueryEngine {
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function doQuery($select, $from, $where, $groupby, $relationships, $perPage, $pageNo) {
 
+        //TODO: fix it, transformation should also accept sybmols in which to enclose table and column names
+
+        $transHandler = new TransformationHandler();
+
+        //NOTE: $select, $where and $group cannot have [] sybmols comming directly from column or table name
+        $select =  $transHandler->decodeTransformationInput($select);
+        $where =  $transHandler->decodeTransformationInput($where);
+        $groupby =  $transHandler->decodeTransformationInput($groupby);
+
         if (count($from) == 1) { // then we don't need to do any joins.
 
             $dataset = $from[0];
@@ -42,13 +51,15 @@ class QueryEngine {
             if (isset($dataset->inputObj->oneSid)) {
 
 
-               // var_dump($dataset->inputObj->oneSid);
+                //var_dump($dataset->inputObj->oneSid);
 
                 if ($dataset->inputObj->oneSid === "true" || $dataset->inputObj->oneSid === true) { //onde story
 
                    //var_dump($dataset->inputObj->oneSid);
 
                     $datasetObj = (object) array('sid' => $dataset->inputObj->sid, 'tableName' => $dataset->tableName);
+
+                    //var_dump($datasetObj);
 
                     return $this->prepareAndRunQuery($select, $datasetObj, $where, $groupby, $perPage, $pageNo);                
                 }
@@ -59,6 +70,12 @@ class QueryEngine {
             }
             else {
                 return $this->prepareAndRunQuery($select, $dataset, $where, $groupby, $perPage, $pageNo);
+
+                //TODO: fix it, transformation should also accept sybmols in which to enclose table and column names
+
+
+
+
             }
         } else { // need to do joins
             // TODO: implement
@@ -164,6 +181,8 @@ class QueryEngine {
     public function GetTablesInfoForMergedDataset($mergedDataSet) {
         // for now merged databset should have all columns already, so I will return it back.
 
+        //TODO: add table name of each column
+
         $result["mergedTable"] = $mergedDataSet->allColumns;
 
         return $result;
@@ -191,10 +210,25 @@ class QueryEngine {
     }
 
     public function GetTableDataBySidAndName($sid, $table_name, $perPage, $pageNo) {
-        if ($this->GetSourceType($sid) == "database") {
-            return $this->GetTableDataBySidAndNameFromExternalDB($sid, $table_name, $perPage, $pageNo);
-        } else {
-            return $this->GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo);
+
+        if (is_array($sid) || is_object($sid)) {
+
+            if (is_array($sid)) {
+                $sid = json_decode(json_encode($sid));
+            }
+
+            $from = (object) array('inputObj' => $sid, 'tableName' => $sid->tableName);
+            $fromArray = array($from);
+            $select = "select * ";// . implode(", ", $selectAr);
+
+            return $this->doQuery($select, $fromArray, null, null, null, null, null);      
+        }
+        else {
+            if ($this->GetSourceType($sid) == "database") {
+                return $this->GetTableDataBySidAndNameFromExternalDB($sid, $table_name, $perPage, $pageNo);
+            } else {
+                return $this->GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo);
+            }
         }
     }
 
@@ -209,6 +243,7 @@ class QueryEngine {
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
+        
         if ($this->GetSourceType($from->sid) == "database") {
             $externalDBCredentials = $this->GetExternalDBCredentialsBySid($from->sid);
 
@@ -224,17 +259,33 @@ class QueryEngine {
     }
 
     function prepareAndRunQueryFromFile($select, $from, $where, $groupby, $perPage, $pageNo) {
+//        var_dump($select);
+
+
+        $select = str_replace("[", "`", $select);
+        $select = str_replace("]", "`", $select);
+
         $query = $select;
         $query .= ' from resultDoJoin ';
 
         if (isset($from->alias))
-            $query .= ' as ' . $from->alias . ' ';
+            $query .= ' as `' . $from->alias . '` ';
 
-        if (isset($where))
+        if (isset($where)) {
+
+            $where = str_replace("[", "`", $where);
+            $where = str_replace("]", "`", $where);
+
             $query .= ' ' . $where . ' ';
+        }
 
-        if (isset($groupby))
+        if (isset($groupby)) {
+
+            $groupby = str_replace("[", "`", $groupby);
+            $groupby = str_replace("]", "`", $groupby);
+
             $query .= ' ' . $groupby . ' ';
+        }
 
         if (isset($perPage) && isset($pageNo)) {
 
@@ -242,7 +293,7 @@ class QueryEngine {
             $query .= " LIMIT " . $startPoint . "," . $perPage;
         }
 
-//echo $query;
+//var_dump ($query);
 
         return $this->runQuerySingleSidTableFromFile($query, $from->sid, $from->tableName);
     }
@@ -250,6 +301,8 @@ class QueryEngine {
     function runQuerySingleSidTableFromFile($query, $sid, $tableName) {
         global $db;
         $doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
+
+//var_dump ($doJoinQuery);
 
         $res = $db->query($doJoinQuery);
         $rst = $db->get_results($query);

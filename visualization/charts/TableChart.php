@@ -63,19 +63,32 @@ class TableChart extends Chart{
 
 	    for($i=0; $i < count($tableColumns); $i++){
 	    		$prefix = $transformationHandler->getColumnPrefixByCid($tableColumns[$i]['cid'], array("tableName", "sid"));
-			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ") as [" . $prefix . $tableColumns[$i]['columnName']."] ";
+			    $cols .= "cid(" . $tableColumns[$i]['cid'] . ") as [" . $prefix . $tableColumns[$i]['columnName'] . "] ";
 			    if(!empty($tableColumns[$i+1])){
 				    $cols .= ", ";
 			    }
 	    }
 	}
 	$select = "SELECT " . $cols;
+
+//var_dump($select);
+
 	$resultDoQuery = $queryEngine->doQuery($select, $fromArray, null, null, null, $perPage, $pageNo);
 
 	$returnedColumns = array();
 
+//var_dump($resultDoQuery);
+
 	if (isset($resultDoQuery) && count($resultDoQuery) > 0) {
-		$returnedColumns = array_keys($resultDoQuery[0]);
+
+		if (is_array($resultDoQuery[0])) {
+			$returnedColumns = array_keys($resultDoQuery[0]);	
+		}
+		else if (is_object($resultDoQuery[0])) {
+			$returnedColumns = array_keys(get_object_vars($resultDoQuery[0]));
+		}
+
+		
 	}
 
 	$rst['content'] = $resultDoQuery;

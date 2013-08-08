@@ -81,13 +81,26 @@ class PostgreSQLHandler extends DatabaseHandler {
     public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
     	$pdo = $this->GetConnection();
     	 
-    	$query = $select . " from " . $from . " ";
-    	 
-    	if (isset($where))
-    		$query .= ' ' . $where . ' ';
-    	
-    	if (isset($groupby))
-    		$query .= ' '. $groupby . ' ';
+    	$select = str_replace("[", "\"", $select);
+        $select = str_replace("]", "\"", $select);
+
+        $query = $select . " from " . $from . " ";
+        
+        if (isset($where)) {
+
+            $where = str_replace("[", "\"", $where);
+            $where = str_replace("]", "\"", $where);
+
+            $query .= ' ' . $where . ' ';
+        }
+         
+        if (isset($groupby)) {
+
+            $groupby = str_replace("[", "\"", $groupby);
+            $groupby = str_replace("]", "\"", $groupby);
+
+            $query .= ' '. $groupby . ' ';
+        }
     	 
     	if (isset($perPage) && isset($pageNo)) {
     		 

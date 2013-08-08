@@ -27,7 +27,7 @@ class MergedDataSetQueryMaker {
     }
 
     public function GetQuery() {
-        $finalQuery = $this->DecodeStringWithCids($this->select);
+        $finalQuery = MergedDataSetQueryMaker::DecodeStringWithCids($this->select);
 
         $sidsAndTablesNeeded = $this->GetAssociateArrayOfSidsAndTablesNeeded($this->inputObj->relationships);
 
@@ -37,7 +37,7 @@ class MergedDataSetQueryMaker {
         $finalQuery .= " where " . $this->GetWherePartFromRelationshipsArray($this->inputObj->relationships);
 
          if (isset($this->groupby))
-             $finalQuery .= $this->DecodeStringWithCids($this->groupby);
+             $finalQuery .= MergedDataSetQueryMaker::DecodeStringWithCids($this->groupby);
 
         if (isset($this->perPage) && isset($this->pageNo)) {
 
@@ -47,7 +47,7 @@ class MergedDataSetQueryMaker {
         return $finalQuery;
     }
 
-    public function DecodeStringWithCids($stringToDecode) {
+    public static function DecodeStringWithCids($stringToDecode) {
 
        // var_dump($stringToDecode);
 
