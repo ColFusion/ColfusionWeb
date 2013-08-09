@@ -384,7 +384,7 @@ class AdvSearch {
 
 			        $select = "select * ";// . implode(", ", $selectAr);
 
-					$onePathResult->queryTest = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
+				//	$onePathResult->queryTest = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 
 					$allPaths[] = $onePathResult;	
 				}
@@ -471,7 +471,7 @@ class AdvSearch {
 		
 		$inCrit = implode("','", $chunks);
 
-		$sql = "select tableName from colfusion_dnameinfo inner join colfusion_columnTableInfo on (colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid) where sid = $sid and dname_chosen not in ('Spd','Drd','Start','End','Location','Aggrtype') and dname_chosen not in  ('$inCrit') limit 1";
+		$sql = "select tableName from colfusion_dnameinfo inner join colfusion_columnTableInfo on (colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid) where sid = $sid and dname_chosen in ('$inCrit') limit 1";
 
 		$res = $db->get_results($sql);
 
