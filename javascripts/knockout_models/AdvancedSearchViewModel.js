@@ -24,14 +24,14 @@
 
             // If preview is not loaded yet, load markup and bind view model.
             if (!self.dataPreviewViewModel()) {
-                
+                /*
                 self.dataPreviewViewModel(new DataPreviewViewModel(self.resultObj.sid));
                 self.dataPreviewViewModel().getTableDataBySidAndName(self.resultObj.tableName, 10, 1);
+                */
                 
-                /*
                 self.dataPreviewViewModel(new DataPreviewViewModel(2080));
                 self.dataPreviewViewModel().getTableDataBySidAndName("small.xls", 10, 1);
-                */
+                
             }
 
             self.isDataPreviewTableShown(!self.isDataPreviewTableShown());
@@ -53,11 +53,20 @@
         var self = this;
 
         self.pathObj = pathObj;
+        self.isPreviewShown = ko.observable(false);
         self.isMoreShown = ko.observable(false);
-        
-        self.toggleMore = function () {
-            self.isMoreShown(!self.isMoreShown());
-        };       
+
+        self.dataPreviewViewModel = ko.observable();
+
+        self.togglePreview = function () {
+            
+            if (!self.dataPreviewViewModel()) {
+                self.dataPreviewViewModel(new DataPreviewViewModel(-1));
+                self.dataPreviewViewModel().getTableDataByObject(self.pathObj, 10, 1);
+            }
+
+            self.isPreviewShown(!self.isPreviewShown());
+        };
     }  
 };
 
@@ -102,8 +111,8 @@ function AdvancedSearchViewModel() {
         });
 
         $.ajax({
-            // url: 'advSearch.json',
-            url: 'searchResult.php',
+            url: 'advSearch.json',
+            // url: 'searchResult.php',
             data: {
                 "search[]": searchKeys,
                 "variable[]": filterVariables,

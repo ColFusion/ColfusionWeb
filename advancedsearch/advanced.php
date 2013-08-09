@@ -7,49 +7,9 @@
     <link rel="stylesheet" href="bootstrap.css" />
     <link rel="stylesheet" href="../css/parsley.css" />
     <link rel="stylesheet" href="../css/parsley_custom.css" />
-    <style type="text/css">
-        #advancedsearch table{
-            vertical-align: middle;
-        }
-
-        #advancedsearch table input, table select{
-            margin-bottom: 0 !important;
-        }
-
-        #advancedsearch td {
-            height: 40px;
-        }
-
-        .addFilterBtn:hover, .removeFilterBtn:hover{
-            cursor:pointer;
-        }
-
-        .tableNameText, .columnText{
-            color: black;
-        }
-
-        .tooltipColTitle{
-            width: 100px;
-        }
-
-        .tooltip .tooltipContent{
-            color: white !important;
-        }
-
-        .paths{
-            font-size :12px;
-        }
-
-        .path {
-            margin-bottom: 10px;
-            overflow: auto;
-        }
-
-        .pathBody {
-            overflow: auto;
-        }
-    </style>
-    
+    <link rel="stylesheet" href="../css/dataTableModel.css" />
+    <link rel="stylesheet" href="../css/advanced.css" />
+      
     <script type="text/javascript" src="../javascripts/classify.min.js"></script>
     <script type="text/javascript" src="../javascripts/jquery-1.9.1.min.js"></script>
     <script type="text/javascript" src="../javascripts/jquery.mousewheel.js"></script>

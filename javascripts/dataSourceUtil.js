@@ -38,6 +38,15 @@ var dataSourceUtil = (function() {
             dataType: 'json'
         });
     };
+    
+    dataSourceUtil.getTableDataByObject = function (object, perPage, pageNo) {
+        return $.ajax({
+            type: 'POST',
+            url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
+            data: { 'sid': JSON.stringify(object), 'table_name': 'object', 'perPage': perPage, 'pageNo': pageNo },
+            dataType: 'json'
+        });
+    };
 
     dataSourceUtil.mineRelationship = function(sid, perPage, pageNo) {
         return $.ajax({

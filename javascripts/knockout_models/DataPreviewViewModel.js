@@ -70,19 +70,7 @@ function DataPreviewViewModel(sid) {
         self.isError(false);
 
         dataSourceUtil.getTableDataBySidAndName(self.sid, tableName, perPage, pageNo).done(function(data) {
-            if (!data.Control || !data.Control.cols || data.Control.cols.length === 0) {
-                self.isNoData(true);
-                self.currentTable(null);
-                return;
-            }
-            self.isNoData(false);
-            // Controls.
-            var perPage = data.Control.perPage;
-            var totalPage = data.Control.totalPage;
-            var currentPage = data.Control.pageNo;
-
-            var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
-            self.currentTable(new DataPreviewViewModelProperties.Table(tableName, transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
+            createDataTable(tableName, data);
             self.isError(false);
         }).error(function() {
             self.isError(true);
@@ -90,6 +78,37 @@ function DataPreviewViewModel(sid) {
             self.isLoading(false);
         });
     };
+
+    self.getTableDataByObject = function (object, perPage, pageNo) {
+        self.isLoading(true);
+        self.isNoData(false);
+        self.isError(false);
+
+        dataSourceUtil.getTableDataByObject(object, perPage, pageNo).done(function (data) {
+            createDataTable('Merged Dataset', data);
+            self.isError(false);
+        }).error(function () {
+            self.isError(true);
+        }).always(function () {
+            self.isLoading(false);
+        });
+    };
+
+    function createDataTable(tableName, tableData) {
+        if (!tableData.Control || !tableData.Control.cols || tableData.Control.cols.length === 0) {
+            self.isNoData(true);
+            self.currentTable(null);
+            return;
+        }
+        self.isNoData(false);
+        // Controls.
+        var perPage = tableData.Control.perPage;
+        var totalPage = tableData.Control.totalPage;
+        var currentPage = tableData.Control.pageNo;
+
+        var transformedData = dataSourceUtil.transformRawDataToColsAndRows(tableData);
+        self.currentTable(new DataPreviewViewModelProperties.Table(tableName, transformedData.columns, transformedData.rows, tableData.data, totalPage, currentPage, perPage));
+    }
 
     self.chooseTable = function(tableListItem) {
         if (self.isLoading())

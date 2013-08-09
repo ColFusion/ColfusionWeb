@@ -1,0 +1,46 @@
+﻿#advancedsearch table {
+    vertical-align: middle;
+}
+
+    #advancedsearch table input, table select {
+        margin-bottom: 0 !important;
+    }
+
+#advancedsearch td {
+    height: 40px;
+}
+
+.addFilterBtn:hover, .removeFilterBtn:hover {
+    cursor: pointer;
+}
+
+.tableNameText, .columnText {
+    color: black;
+}
+
+.tooltipColTitle {
+    width: 100px;
+}
+
+.tooltip .tooltipContent {
+    color: white !important;
+}
+
+.sourceText {
+    font-weight: normal !important;
+    text-decoration: none;
+    color: #707070 !important;
+}
+
+.paths {
+    font-size: 12px;
+}
+
+.path {
+    margin-bottom: 10px;
+    overflow: auto;
+}
+
+.pathBody {
+    overflow: auto;
+}

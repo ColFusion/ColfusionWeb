@@ -100,42 +100,8 @@
         </div>
       </div>
 
-      <div data-bind="visible: isDataPreviewTableShown" class="dataPreviewContainer">
-
-        <div data-bind="visible: !dataPreviewViewModel()" style="padding-top: 10px;padding-left: 30px;">Loading...</div>
-
-        <div  data-bind="with: dataPreviewViewModel">
-          <div class="storycontent" id="dataPreviewContainer">
-            <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
-            <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
-            <div data-bind="with: currentTable">
-              <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data">
-                <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
-                  <tr data-bind="foreach: headers">
-                    <th data-bind="text: name"></th>
-                  </tr>
-                  <tbody class="dataPreviewTBody" data-bind="foreach: rows">
-                    <tr class="datatr" data-bind="foreach: cells">
-                      <td data-bind="text: $data"></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <div id="previewTableNavigations" style="margin-top: -15px;">
-                <div style="display: inline-block;margin-right: 4px;" id="dataPreviewLoadingIcon" class="dataPreviewLoadingIcon">
-                  <img data-bind="visible: $parent.isLoading" src="../images/ajax-loader.gif" />
-                </div>
-                <i class="icon-arrow-left" id="prevBtn" data-bind="visible: currentPage() > 1, click: $parent.goToPreviousPage" title="Previous Page"></i>
-                <i class="icon-arrow-right" id="nextBtn" data-bind="visible: currentPage() &lt; totalPage(), click: $parent.goToNextPage" title="Next Page"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
       <div data-bind="with: resultObj" class="searchResultFooter">
-        <p data-bind="foreach: foundSearchKeys" style="margin-top: 10px;">
+        <p data-bind="foreach: foundSearchKeys">
           <!-- ko if: $index() == 0 -->
           <span class="searchKeyText">
             <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
@@ -147,6 +113,14 @@
         </p>
       </div>
 
+      <div data-bind="visible: isDataPreviewTableShown" class="dataPreviewContainer">
+        <div data-bind="visible: !dataPreviewViewModel()" style="padding-top: 10px;padding-left: 30px;">Loading...</div>
+        <!-- ko if: dataPreviewViewModel() -->
+        <div  data-bind="template: { name: 'dataPreviewViewModel-template', data: dataPreviewViewModel}">
+        </div>
+        <!-- /ko -->
+      </div>
+
     </div>
     <!-- /ko -->
 
@@ -154,9 +128,6 @@
     <div class="stories pathResult">
       <div class="searchResultBody" style="overflow: auto;">
         <div class="searchResultProfile">
-          <h2>
-            Relationships: <a data-bind="text: resultObj.title" class="title"></a>
-          </h2>
           <div data-bind="foreach: paths" class="paths">
 
             <div data-bind="with: pathObj" class="path">
@@ -164,21 +135,50 @@
               <div class="pathBody">
                 <div style="float:left;">
                   <div class="pathTitle">
-                    <span  style="color: black;">Path: </span>
+                    <span  style="color: black; font-weight: bold;">Path: </span>
                     <span data-bind="text: title" class="pathTitleText"></span>
                   </div>
                   <div data-bind="foreach: sidTitles" class="sources">
                     <span data-bind="if: $index() == 0" class="sourcesTitle" style="color: black;">Datasets: </span>
-                    <span data-bind="text: $data" class="sourceText"></span>
+                    <a data-bind="text: $data, attr: {href: '../story.php?title=' + $parent.sids[$index()]}" class="sourceText"></a>
+                  </div>
+                  <div>
+                    <span  style="color: black;">Average Confidence: </span>
+                    <span data-bind="text: avgConfidence" class="pathTitleText"></span>
                   </div>
                 </div>
 
                 <div class="buttonPanel" style="float: right;">
-                  <button data-bind="click: $parent.toggleMore" class="btn" data-toggle="button">
+                  <button data-bind="click: $parent.togglePreview" class="btn" data-toggle="button">
+                    <i class="icon-table"></i>
+                  </button>
+                  <button data-bind="click: function() { $parent.isMoreShown(!$parent.isMoreShown()); }" class="btn" data-toggle="button">
                     <i data-bind="visible: !$parent.isMoreShown()" class="icon-plus"></i>
                     <i data-bind="visible: $parent.isMoreShown()" class="icon-minus"></i>
                   </button>
                 </div>
+              </div>
+
+              <div class="searchResultFooter">
+                <p data-bind="foreach: foundSearchKeys">
+                  <!-- ko if: $index() == 0 -->
+                  <span class="searchKeyText">
+                    <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
+                  </span>
+                  <!-- /ko -->
+                  <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="searchKeyText">
+                    <span data-bind="text: $data.dname_chosen" class="searchKeyText"></span>
+                    <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
+                  </span>
+                </p>
+              </div>
+
+              <div data-bind="visible: $parent.isPreviewShown()" class="pathDataPreview dataPreviewContainer">
+                  <div data-bind="visible: !$parent.dataPreviewViewModel()" style="padding-top: 10px;padding-left: 30px;">Loading...</div>
+                  <!-- ko if: $parent.dataPreviewViewModel() -->
+                  <div  data-bind="template: { name: 'dataPreviewViewModel-template', data: $parent.dataPreviewViewModel}">
+                  </div>
+                  <!-- /ko -->
               </div>
 
               <div data-bind="visible: $parent.isMoreShown()" class="pathDetail" style="margin-top: 10px;">
@@ -200,21 +200,6 @@
                     </tr>
                   </tbody>
                 </table>
-              </div>
-
-
-
-              <div class="searchResultFooter">
-                <p data-bind="foreach: foundSearchKeys" style="margin-top: 10px;">
-                  <!-- ko if: $index() == 0 -->
-                  <span class="searchKeyText">
-                    <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
-                  </span>
-                  <!-- /ko -->
-                  <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="searchKeyText">
-                    <span data-bind="text: $data.dname_chosen" class="searchKeyText"></span>
-                    <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
-                  </p>
               </div>
 
             </div>
@@ -260,6 +245,34 @@
       </tr>
     </table>
   </span>
+</script>
+
+<script type="text/html" id="dataPreviewViewModel-template">
+  <div class="storycontent" id="dataPreviewContainer">
+    <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
+    <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
+    <div data-bind="with: currentTable">
+      <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data">
+        <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
+          <tr data-bind="foreach: headers">
+            <th data-bind="text: name"></th>
+          </tr>
+          <tbody class="dataPreviewTBody" data-bind="foreach: rows">
+            <tr class="datatr" data-bind="foreach: cells">
+              <td data-bind="text: $data"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div id="previewTableNavigations" style="margin-top: -15px;">
+        <div style="display: inline-block;margin-right: 4px;" id="dataPreviewLoadingIcon" class="dataPreviewLoadingIcon">
+          <img data-bind="visible: $parent.isLoading" src="../images/ajax-loader.gif" />
+        </div>
+        <i class="icon-arrow-left" id="prevBtn" data-bind="visible: currentPage() > 1, click: $parent.goToPreviousPage" title="Previous Page"></i>
+        <i class="icon-arrow-right" id="nextBtn" data-bind="visible: currentPage() &lt; totalPage(), click: $parent.goToNextPage" title="Next Page"></i>
+      </div>
+    </div>
+  </div>
 </script>
 
 <script type="text/html" id="relInfo-template">
