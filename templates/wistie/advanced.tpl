@@ -197,6 +197,10 @@
                       </td>
                       <td data-bind="text: confidence">
                       </td>
+                      <td>
+                      <span>More...</span>
+                      <span>Less...</span>
+                      </td>
                     </tr>
                   </tbody>
                 </table>

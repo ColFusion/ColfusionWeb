@@ -41,8 +41,9 @@ class RelationshipDAO {
         $relationship->toDataset = $toDataset;
         $relationship->fromTableName = $relInfo->tableName1;
         $relationship->toTableName = $relInfo->tableName2;
-
-        $relationship->links[] = $this->GetLinksByRelId($relId);
+        
+        // $relationship->links[] = $this->GetLinksByRelId($relId);
+        $relationship->links = $this->GetLinksByRelId($relId);
 
         return $relationship;
     }
