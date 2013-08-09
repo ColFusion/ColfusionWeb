@@ -23,6 +23,12 @@ function GetTableDataBySidAndName() {
     $queryEngine = new QueryEngine();
 
     $sid = $_POST["sid"];
+
+    if (is_string($sid)) {
+        $sid = json_decode($sid);
+    }
+
+
     $table_name = $_POST["table_name"];
     $perPage = $_POST["perPage"];
     $pageNo = $_POST["pageNo"];
