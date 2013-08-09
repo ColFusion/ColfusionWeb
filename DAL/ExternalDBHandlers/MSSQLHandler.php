@@ -5,7 +5,7 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 class MSSQLHandler extends DatabaseHandler {
 
     public function __construct($user, $password, $database, $host, $port = 1433) {
-        parent::__construct($user, $password, $database, $host, $port);
+        parent::__construct($user, $password, $database, $host, $port, 'mssql');
     }
 
     public function getConnection() {
@@ -164,6 +164,28 @@ EOQ;
         //    }
 
         return $arrValues;
+    }
+
+    public function ExecuteCTASQuery($selectPart, $tableNameToCreate, $whatToInsert) {
+        $pdo = $this->GetConnection();
+
+
+        $query = " $selectPart into $tableNameToCreate $whatToInsert ";
+
+        try {
+
+            //$pdo->setAttribute(pdo::ATTR_ERRMODE, pdo:: ERRMODE_EXCEPTION);
+
+            $stmt = $pdo->prepare($query);
+
+            $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+            $stmt->execute();
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            exit;
+        }
+
     }
 
 // *******************************************************************

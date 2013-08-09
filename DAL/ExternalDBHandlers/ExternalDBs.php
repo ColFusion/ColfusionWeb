@@ -29,6 +29,11 @@ class ExternalDBs {
     	$dbHandler = ExternalDBs::GetDBHandler($externalDBCredentials);
     	return $dbHandler->prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo);
     }
+
+    public static function ExecuteQuery($query, $externalDBCredentials) {
+        $dbHandler = ExternalDBs::GetDBHandler($externalDBCredentials);
+        return $dbHandler->ExecuteQuery($query);
+    }
 }
 
 ?>

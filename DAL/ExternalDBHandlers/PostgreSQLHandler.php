@@ -5,7 +5,7 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 class PostgreSQLHandler extends DatabaseHandler {
 
     public function __construct($user, $password, $database, $host, $port = 5432) {
-        parent::__construct($user, $password, $database, $host, $port);
+        parent::__construct($user, $password, $database, $host, $port, 'postgresql');
     }
        
     public function getConnection() {
@@ -117,6 +117,22 @@ class PostgreSQLHandler extends DatabaseHandler {
     		$result[] = $row;
     	}
     	return $result;
+    }
+
+    public function ExecuteQuery($query) {
+        $pdo = $this->GetConnection();
+
+        $res = $pdo->query($query);
+        $result = array();
+        while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
+            $result[] = $row;
+        }
+        
+        return $result;
+    }
+
+    public function ExecuteCTASQuery($selectPart, $tableNameToCreate, $whatToInsert) {
+
     }
 }
 

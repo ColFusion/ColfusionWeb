@@ -5,7 +5,7 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 class MySQLHandler extends DatabaseHandler {
 
     public function __construct($user, $password, $database, $host, $port = 3306) {
-        parent::__construct($user, $password, $database, $host, $port);
+        parent::__construct($user, $password, $database, $host, $port, 'myssql');
     }
 
     public function getConnection() {
@@ -114,6 +114,22 @@ class MySQLHandler extends DatabaseHandler {
     	}
     	
     	return $result;
+    }
+
+    public function ExecuteQuery($query) {
+        $pdo = $this->GetConnection();
+
+        $res = $pdo->query($query);
+        $result = array();
+        while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
+            $result[] = $row;
+        }
+        
+        return $result;
+    }
+
+    public function ExecuteCTASQuery($selectPart, $tableNameToCreate, $whatToInsert) {
+
     }
 
 }

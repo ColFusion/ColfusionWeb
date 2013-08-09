@@ -6,6 +6,7 @@ include_once(realpath(dirname(__FILE__)) . "/FromLinkedServerQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
 include_once(realpath(dirname(__FILE__)) . '/../TransformationHandler.php');
 include_once(realpath(dirname(__FILE__)) . '/../RelationshipDAO.php');
+include_once(realpath(dirname(__FILE__)) . '/../CachedQueryDAO.php');
 
 class MergedDataSetQueryMaker {
 
@@ -24,27 +25,103 @@ class MergedDataSetQueryMaker {
         $this->groupby = $groupby;
         $this->perPage = $perPage;
         $this->pageNo = $pageNo;
+
+        if ($select === "select * ") {
+            $this->select = $this->replaceStartWithCids($this->select);   
+        }
+    }
+
+    private function replaceStartWithCids($select) {
+        $cids = array();
+        foreach ($this->inputObj->allColumns as $key => $column) {
+            $cids[] = "cid({$column->cid}) as [cid({$column->cid})]";
+        }
+
+        return str_replace("*", implode(",", $cids), $select);
     }
 
     public function GetQuery() {
-        $finalQuery = MergedDataSetQueryMaker::DecodeStringWithCids($this->select);
+
+        $allPartsOfQuery = $this->getAllPartsOfQuery();
+        
+//var_dump($allPartsOfQuery);
+
+        $result = $this->getActualQuery($allPartsOfQuery);
+
+        if (isset($this->perPage) && isset($this->pageNo)) {
+
+           $result->finalQuery = $this->wrapInLimit($this->pageNo, $this->perPage, "(" . $result->finalQuery . ") as b");
+        }
+
+        return $result;
+    }
+
+    private function getActualQuery($allPartsOfQuery) {
+        $cachedQueryDAO = new CachedQueryDAO();
+
+        $fromAndWherePart = $allPartsOfQuery->fromQuery . $allPartsOfQuery->whereJoinQuery;
+
+        $cachedQueryInfo = $cachedQueryDAO->getCacheQueryInfoByQuery($fromAndWherePart);
+
+        if (isset($cachedQueryInfo)) {
+            return $this->setActualQueryResult($cachedQueryInfo);
+        }
+        else {
+                          
+            $selectPart =  MergedDataSetQueryMaker::DecodeStringWithCids($this->replaceStartWithCids("select * "));
+
+            $cachedQueryInfo = $cachedQueryDAO->addCacheQuery($fromAndWherePart, $selectPart);
+
+            if (isset($cachedQueryInfo)) {
+                return $this->setActualQueryResult($cachedQueryInfo);
+            }
+            else {
+                throw new Exception("Error Processing Request. Could not add cached query", 1);    
+            }
+            
+        }
+    }
+
+    private function setActualQueryResult($cachedQueryInfo) {
+        $result = new stdClass();
+
+        $finalQuery = "{$allPartsOfQuery->selectQuery} {$cachedQueryInfo->database}.{$cachedQueryInfo->tableName} {$allPartsOfQuery->whereJoinQuery} {$allPartsOfQuery->groupbyQuery}"; 
+
+        $serverInfo = new stdClass();
+        $serverInfo->server_address = $cachedQueryInfo->server_address;
+        $serverInfo->port = $cachedQueryInfo->port;
+        $serverInfo->driver = $cachedQueryInfo->driver;
+        $serverInfo->user_name = $cachedQueryInfo->user_name;
+        $serverInfo->password = $cachedQueryInfo->password;
+        $serverInfo->database = $cachedQueryInfo->database;
+
+        $result->finalQuery = $finalQuery;
+        $result->serverInfo = $serverInfo;
+
+        return $result;
+    }
+
+    private function getAllPartsOfQuery() {
+        $result = new stdClass();
+
+        $result->selectQuery = MergedDataSetQueryMaker::DecodeStringWithCids($this->select);
 
         $sidsAndTablesNeeded = $this->GetAssociateArrayOfSidsAndTablesNeeded($this->inputObj->relationships);
 
        // var_dump($sidsAndTablesNeeded);
 
-        $finalQuery .= " from " . $this->GetFromPartBySidAndTableArray($sidsAndTablesNeeded);
-        $finalQuery .= " where " . $this->GetWherePartFromRelationshipsArray($this->inputObj->relationships);
+        $result->fromQuery = " from " . $this->GetFromPartBySidAndTableArray($sidsAndTablesNeeded);
 
-         if (isset($this->groupby))
-             $finalQuery .= MergedDataSetQueryMaker::DecodeStringWithCids($this->groupby);
 
-        if (isset($this->perPage) && isset($this->pageNo)) {
+        $result->whereJoinQuery = " where " . $this->GetWherePartFromRelationshipsArray($this->inputObj->relationships);
 
-           $finalQuery = $this->wrapInLimit($this->pageNo, $this->perPage, "(" . $finalQuery . ") as b");
+        $result->groupbyQuery = "";
+
+        if (isset($this->groupby)) {
+            $result->groupbyQuery = MergedDataSetQueryMaker::DecodeStringWithCids($this->groupby);
         }
 
-        return $finalQuery;
+        return $result;
     }
 
     public static function DecodeStringWithCids($stringToDecode) {

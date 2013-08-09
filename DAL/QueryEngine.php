@@ -321,13 +321,25 @@ class QueryEngine {
     function prepareAndRunMergedDatasetQuery($select, $inputObj, $where, $groupby, $perPage, $pageNo){
         $mergedDatasetQuery = new MergedDataSetQueryMaker($select, $inputObj, $where, $groupby, $perPage, $pageNo);
         
-        $query = $mergedDatasetQuery->GetQuery();
 
-        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+//var_dump($mergedDatasetQuery);
 
-        $result = $MSSQLHandler->ExecuteQuery($query);
+        $queryInfo = $mergedDatasetQuery->GetQuery();
 
-        return $result;
+        //$MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+
+        //$result = $MSSQLHandler->ExecuteQuery($query);
+
+        $externalDBCredentials = new stdClass();
+
+        $externalDBCredentials->driver = $queryInfo->serverInfo->driver;
+        $externalDBCredentials->user_name = $queryInfo->serverInfo->user_name;
+        $externalDBCredentials->password = $queryInfo->serverInfo->password;
+        $externalDBCredentials->source_database = $queryInfo->serverInfo->database;
+        $externalDBCredentials->server_address = $queryInfo->serverInfo->server_address;
+        $externalDBCredentials->port = $queryInfo->serverInfo->port;
+
+        return $queryInfo->finalQuery; //ExternalDBs::ExecuteQuery($queryInfo->finalQuery, $externalDBCredentials);
     }
 
     function GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo) {

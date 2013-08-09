@@ -82,18 +82,22 @@ class TransformationHandler {
 
             if (isset($columnPrefixDict) && isset($columnPrefixDict[$cid])) {
                 if ($needToEnclose) {
+                    $transInput = str_replace("[cid($cid)]", "[{$columnPrefixDict[$cid]}.{$this->columnDict[$cid]}]", $transInput);
                     $transInput = str_replace("cid($cid)", "[{$columnPrefixDict[$cid]}].[{$this->columnDict[$cid]}]", $transInput);
                 }
                 else {
+                    $transInput = str_replace("[cid($cid)]", "[{$columnPrefixDict[$cid]}.{$this->columnDict[$cid]}]", $transInput);
                     $transInput = str_replace("cid($cid)", "{$columnPrefixDict[$cid]}.{$this->columnDict[$cid]}", $transInput);
                 }
                 
             }
             else {
                 if ($needToEnclose) {
+                    $transInput = str_replace("[cid($cid)]", "[{$this->columnDict[$cid]}]", $transInput);
                     $transInput = str_replace("cid($cid)", "[{$this->columnDict[$cid]}]", $transInput);
                 }
                 else {
+                    $transInput = str_replace("[cid($cid)]", "[{$this->columnDict[$cid]}]", $transInput);
                     $transInput = str_replace("cid($cid)", "{$this->columnDict[$cid]}", $transInput);
                 }
                 
