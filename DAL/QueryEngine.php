@@ -339,7 +339,7 @@ class QueryEngine {
         $externalDBCredentials->server_address = $queryInfo->serverInfo->server_address;
         $externalDBCredentials->port = $queryInfo->serverInfo->port;
 
-        return $queryInfo->finalQuery; //ExternalDBs::ExecuteQuery($queryInfo->finalQuery, $externalDBCredentials);
+        return ExternalDBs::ExecuteQuery($queryInfo->finalQuery, $externalDBCredentials);
     }
 
     function GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo) {

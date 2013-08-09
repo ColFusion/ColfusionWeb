@@ -20,7 +20,7 @@ class CachedQueryDAO {
         $cachedQueryInfo = "SELECT * FROM `colfusion_cached_queries_info`  
             WHERE query = '$query'"; 
 
-//var_dump($cachedQueryInfo);
+var_dump($cachedQueryInfo);
 
         
         return $this->ezSql->get_row($cachedQueryInfo);
@@ -34,6 +34,8 @@ class CachedQueryDAO {
         $cacheQueryInfo = $this->saveNewQueryInTheDB($fromAndWherePart, $dbHandler);
 
         $dbHandler->ExecuteCTASQuery($selectAllPart, $cacheQueryInfo->tableName, $cacheQueryInfo->query);
+
+        return $cacheQueryInfo;
     }
 
     public function saveNewQueryInTheDB($fromAndWherePart, $dbHandler) {

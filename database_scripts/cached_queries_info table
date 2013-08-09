@@ -1,6 +1,6 @@
-CREATE  TABLE `colfusion`.`colfusion_cached_queries_info` (
+CREATE  TABLE `colfusion_cached_queries_info` (
   `id` INT NOT NULL AUTO_INCREMENT ,
-  `query` VARCHAR(1000) NOT NULL ,
+  `query` text NOT NULL ,
   `server_address` VARCHAR(345) NOT NULL ,
   `port` VARCHAR(45) NOT NULL ,
   `driver` VARCHAR(45) NOT NULL ,

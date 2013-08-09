@@ -64,7 +64,7 @@ class MergedDataSetQueryMaker {
         $cachedQueryInfo = $cachedQueryDAO->getCacheQueryInfoByQuery($fromAndWherePart);
 
         if (isset($cachedQueryInfo)) {
-            return $this->setActualQueryResult($cachedQueryInfo);
+            return $this->setActualQueryResult($allPartsOfQuery, $cachedQueryInfo);
         }
         else {
                           
@@ -73,7 +73,7 @@ class MergedDataSetQueryMaker {
             $cachedQueryInfo = $cachedQueryDAO->addCacheQuery($fromAndWherePart, $selectPart);
 
             if (isset($cachedQueryInfo)) {
-                return $this->setActualQueryResult($cachedQueryInfo);
+                return $this->setActualQueryResult($allPartsOfQuery, $cachedQueryInfo);
             }
             else {
                 throw new Exception("Error Processing Request. Could not add cached query", 1);    
@@ -82,10 +82,13 @@ class MergedDataSetQueryMaker {
         }
     }
 
-    private function setActualQueryResult($cachedQueryInfo) {
+    private function setActualQueryResult($allPartsOfQuery, $cachedQueryInfo) {
         $result = new stdClass();
 
-        $finalQuery = "{$allPartsOfQuery->selectQuery} {$cachedQueryInfo->database}.{$cachedQueryInfo->tableName} {$allPartsOfQuery->whereJoinQuery} {$allPartsOfQuery->groupbyQuery}"; 
+        $allPartsOfQuery->selectQuery = str_replace("].[", ".", $allPartsOfQuery->selectQuery);
+        $allPartsOfQuery->groupbyQuery = str_replace("].[", ".", $allPartsOfQuery->groupbyQuery);
+
+        $finalQuery = "{$allPartsOfQuery->selectQuery} from [{$cachedQueryInfo->database}].[dbo].[{$cachedQueryInfo->tableName}] {$allPartsOfQuery->whereUserConditions} {$allPartsOfQuery->groupbyQuery}"; 
 
         $serverInfo = new stdClass();
         $serverInfo->server_address = $cachedQueryInfo->server_address;
@@ -114,6 +117,8 @@ class MergedDataSetQueryMaker {
 
 
         $result->whereJoinQuery = " where " . $this->GetWherePartFromRelationshipsArray($this->inputObj->relationships);
+
+        $result->whereUserConditions = "";
 
         $result->groupbyQuery = "";
 

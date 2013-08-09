@@ -172,6 +172,9 @@ EOQ;
 
         $query = " $selectPart into $tableNameToCreate $whatToInsert ";
 
+        $query = str_replace("\\n", " ", $query);
+        
+
         try {
 
             //$pdo->setAttribute(pdo::ATTR_ERRMODE, pdo:: ERRMODE_EXCEPTION);
