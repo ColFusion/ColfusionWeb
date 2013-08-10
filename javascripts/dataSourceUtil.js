@@ -96,5 +96,14 @@ var dataSourceUtil = (function() {
         return obj;
     };
 
+    dataSourceUtil.loadRelationshipInfo = function(relId) {
+        return $.ajax({
+            url: my_pligg_base + '/datasetController/relationshipInfo.php',
+            data: { relId: relId },
+            type: 'POST',
+            dataType: 'json'           
+        });
+    };
+
     return dataSourceUtil;
 })();

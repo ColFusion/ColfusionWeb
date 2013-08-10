@@ -18,6 +18,10 @@
     color: black;
 }
 
+.searchResultFooter {
+    display: inline-block;
+}
+
 .tooltipColTitle {
     width: 100px;
 }

@@ -300,8 +300,7 @@ function NewRelationshipViewModel() {
     }
 
     function resetDatasets() {
-        self.fromDataSet(new RelationshipModel.DataSet(self.fromDataSet().sid()));
-        self.fromDataSet().loadTableList();
+        self.fromDataSet().currentTable(null);
         self.toDataSet(new RelationshipModel.DataSet());
     }
 

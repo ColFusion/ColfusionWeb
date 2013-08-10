@@ -8,8 +8,9 @@ function RelationshipViewModel(sid) {
 
     self.isRelationshipInfoLoaded = {};
     self.relationshipInfos = {};
+    self.isError = {};
 
-    self.removeRelationship = function(relId) {
+    self.removeRelationship = function (relId) {
         delete self.relationshipInfos[relId];
         $('tr[id="relationship_' + relId + '"]').add('#mineRelRec_' + relId).remove();
         if ($('.relationshipInfoRow').length === 0) {
@@ -17,25 +18,29 @@ function RelationshipViewModel(sid) {
         }
 
         $.ajax({
-            url: 'datasetController/deleteRelationship.php',
+            url: my_pligg_base + '/datasetController/deleteRelationship.php',
             type: 'POST',
             dataType: 'json',
-            data: {relId: relId}
+            data: { relId: relId }
         });
     };
 
-    self.mineRelationships = function(perPage, pageNo) {
+    self.mineRelationships = function (perPage, pageNo) {
 
         self.isRelationshipDataLoading(true);
         self.isNoRelationshipData(false);
 
-        dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function(data) {
+        dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function (data) {
             if (!data.Control || !data.Control.cols || data.Control.cols.length === 0) {
                 // Show 'no data' text;
                 self.isRelationshipDataLoading(false);
                 self.isNoRelationshipData(true);
                 return;
             }
+
+            $.each(data.data, function (i, relObj) {
+                self.isError[relObj.rel_id] = ko.observable(false);
+            });
 
             self.isNoRelationshipData(false);
             // Controls.
@@ -54,7 +59,13 @@ function RelationshipViewModel(sid) {
         });
     };
 
-    self.showMoreClicked = function(rel_id) {
+    /*
+        "More/Less" is a text cell in Data Table, so we cannot use observable to toggle those words.
+        (Dom manipulation is required.)
+    */
+    self.showMoreClicked = function (rel_id) {
+        self.isError[rel_id](false);
+
         $('#mineRelRec_' + rel_id).toggle();
         if ($('#mineRelRec_' + rel_id).css("display") === "none") {
             $('#mineRelRecSpan_' + rel_id).text("More...");
@@ -68,19 +79,13 @@ function RelationshipViewModel(sid) {
     };
 
     function loadRelationshipInfo(relId) {
-        $.ajax({
-            url: 'datasetController/relationshipInfo.php',
-            data: {relId: relId},
-            type: 'POST',
-            dataType: 'json',
-            success: function(data) {
-                self.relationshipInfos[data.rid] = ko.observable(new RelationshipModel.Relationship(data));
-                self.isRelationshipInfoLoaded[data.rid](true);
-                $('#relInfoLoadingIcon_' + relId).hide();
-            },
-            error: function(jqXHR, statusCode, errMessage) {
-                alert(errMessage);
-            }
+        dataSourceUtil.loadRelationshipInfo(relId).done(function (data) {
+            self.relationshipInfos[data.rid] = ko.observable(new RelationshipModel.Relationship(data));
+            self.isRelationshipInfoLoaded[data.rid](true);
+            $('#relInfoLoadingIcon_' + relId).hide();
+        }).error(function (jqXHR, statusCode, errMessage) {
+            alert(errMessage);
+            self.isError[relId](true);
         });
     }
 }

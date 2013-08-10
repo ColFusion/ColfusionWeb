@@ -16,7 +16,6 @@ $condition = $_POST['condition'];
 
 
 
-
 $avdSearch = new AdvSearch();
 
 //var_dump($search);

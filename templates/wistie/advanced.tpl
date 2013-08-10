@@ -70,11 +70,33 @@
     <!-- ko if: resultObj.oneSid -->
     <div class="stories datasetResult">
 
+      <div data-bind="with: resultObj" class="searchResultFooter">
+        <p data-bind="foreach: foundSearchKeys">
+          <!-- ko if: $index() == 0 -->
+          <span class="searchKeyText">
+            <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
+          </span>
+          <!-- /ko -->
+          <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="searchKeyText">
+          </span>
+          <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
+        </p>
+      </div>
+
+      <div class="buttonPanel" style="float: right;">
+        <button data-bind="click: openVisualizationPage" class="btn" title="Visualization">
+          <i class="icon-bar-chart"></i>
+        </button>
+        <button data-bind="click: togglePreviewTable" class="btn" title="Preview Data" data-toggle="button">
+          <i class="icon-table"></i>
+        </button>
+      </div>
+
       <div data-bind="with: resultObj" class="searchResultBody" style="overflow: auto;">
         <div class="searchResultProfile" style="float: left;">
-          <h2>
+          <div style="font-weight: bold;color: black;">
             Dataset: <a data-bind="attr: {'id': 'title' + sid, 'href': '../story.php?title=' + sid}, text: title" class="title">undefined</a>
-          </h2>
+          </div>
           <div class="tableName" style="font-size: 12px;">
             <sapn>Table Name: </sapn>
             <span data-bind="text: tableName" class="tableNameText"></span>
@@ -89,28 +111,6 @@
             <!-- ko if: $index() < $parent.allColumns.length - 1 -->, <!-- /ko -->
           </div>
         </div>
-
-        <div class="buttonPanel" style="float: right;">
-          <button data-bind="click: $parent.openVisualizationPage" class="btn" title="Visualization">
-            <i class="icon-bar-chart"></i>
-          </button>
-          <button data-bind="click: $parent.togglePreviewTable" class="btn" title="Preview Data" data-toggle="button">
-            <i class="icon-table"></i>
-          </button>
-        </div>
-      </div>
-
-      <div data-bind="with: resultObj" class="searchResultFooter">
-        <p data-bind="foreach: foundSearchKeys">
-          <!-- ko if: $index() == 0 -->
-          <span class="searchKeyText">
-            <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
-          </span>
-          <!-- /ko -->
-          <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="searchKeyText">
-          </span>
-          <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
-        </p>
       </div>
 
       <div data-bind="visible: isDataPreviewTableShown" class="dataPreviewContainer">
@@ -133,7 +133,33 @@
             <div data-bind="with: pathObj" class="path">
 
               <div class="pathBody">
+
+                <div class="buttonPanel" style="float: right;">
+                  <button data-bind="click: $parent.togglePreview" class="btn" data-toggle="button">
+                    <i class="icon-table"></i>
+                  </button>
+                  <button data-bind="click: function() { $parent.isMoreShown(!$parent.isMoreShown()); }" class="btn" data-toggle="button">
+                    <i data-bind="visible: !$parent.isMoreShown()" class="icon-plus"></i>
+                    <i data-bind="visible: $parent.isMoreShown()" class="icon-minus"></i>
+                  </button>
+                </div>
+
                 <div style="float:left;">
+                  
+                    <div class="searchResultFooter">
+                    <p data-bind="foreach: foundSearchKeys">
+                      <!-- ko if: $index() == 0 -->
+                      <span class="searchKeyText">
+                        <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
+                      </span>
+                      <!-- /ko -->
+                      <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="searchKeyText">
+                        <span data-bind="text: $data.dname_chosen" class="searchKeyText"></span>
+                        <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
+                      </span>
+                    </p>
+                  </div>
+
                   <div class="pathTitle">
                     <span  style="color: black; font-weight: bold;">Path: </span>
                     <span data-bind="text: title" class="pathTitleText"></span>
@@ -147,41 +173,17 @@
                     <span data-bind="text: avgConfidence" class="pathTitleText"></span>
                   </div>
                 </div>
-
-                <div class="buttonPanel" style="float: right;">
-                  <button data-bind="click: $parent.togglePreview" class="btn" data-toggle="button">
-                    <i class="icon-table"></i>
-                  </button>
-                  <button data-bind="click: function() { $parent.isMoreShown(!$parent.isMoreShown()); }" class="btn" data-toggle="button">
-                    <i data-bind="visible: !$parent.isMoreShown()" class="icon-plus"></i>
-                    <i data-bind="visible: $parent.isMoreShown()" class="icon-minus"></i>
-                  </button>
-                </div>
-              </div>
-
-              <div class="searchResultFooter">
-                <p data-bind="foreach: foundSearchKeys">
-                  <!-- ko if: $index() == 0 -->
-                  <span class="searchKeyText">
-                    <i class="icon-key" title="Matched Keywords" style="margin-right: 5px;"></i>
-                  </span>
-                  <!-- /ko -->
-                  <span data-bind="template: { name: 'columnTooltip-template', data: $data}" class="searchKeyText">
-                    <span data-bind="text: $data.dname_chosen" class="searchKeyText"></span>
-                    <!-- ko if: $index() < $parent.foundSearchKeys.length - 1 -->, <!-- /ko -->
-                  </span>
-                </p>
               </div>
 
               <div data-bind="visible: $parent.isPreviewShown()" class="pathDataPreview dataPreviewContainer">
-                  <div data-bind="visible: !$parent.dataPreviewViewModel()" style="padding-top: 10px;padding-left: 30px;">Loading...</div>
-                  <!-- ko if: $parent.dataPreviewViewModel() -->
-                  <div  data-bind="template: { name: 'dataPreviewViewModel-template', data: $parent.dataPreviewViewModel}">
-                  </div>
-                  <!-- /ko -->
+                <div data-bind="visible: !$parent.dataPreviewViewModel()" style="padding-top: 10px;padding-left: 30px;">Loading...</div>
+                <!-- ko if: $parent.dataPreviewViewModel() -->
+                <div  data-bind="template: { name: 'dataPreviewViewModel-template', data: $parent.dataPreviewViewModel}">
+                </div>
+                <!-- /ko -->
               </div>
 
-              <div data-bind="visible: $parent.isMoreShown()" class="pathDetail" style="margin-top: 10px;">
+              <div data-bind="visible: $parent.isMoreShown()" class="pathDetail" style="margin-top: 10px; width: 99%;">
                 <div style="color:black;">Relationships: </div>
                 <table class="pathRelTable tftable">
                   <tr>
@@ -198,8 +200,25 @@
                       <td data-bind="text: confidence">
                       </td>
                       <td>
-                      <span>More...</span>
-                      <span>Less...</span>
+                        <span data-bind="click: $parents[1].showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
+                      </td>
+                    </tr>
+                    <tr data-bind="attr: { id:  'mineRelRec_' + relId }" style="display: none;">
+                      <td class="relationshipInfo" colspan="5">
+                        <div data-bind="attr: { id: 'relInfoLoadingIcon_' + relId }, visible: !$parents[1].isError[relId]()" style="text-align: center;">
+                          <img src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />
+                        </div>
+                        <div data-bind="attr: { id: 'relInfoErrorMessage_' + relId }, 
+                             visible: $parents[1].isError[relId]()" style="text-align: center;">
+                          <span style="color: red;">Failed to load relationship information.</span>
+                        </div>
+                        <div data-bind="if: $parents[1].isRelationshipInfoLoaded[relId] && !$parents[1].isError[relId]()">
+                          <div data-bind="with: $parents[1].relationshipInfos[relId]">
+                            {/literal}
+                            {include file='relationshipInfo.html'}
+                            {literal}
+                          </div>
+                        </div>
                       </td>
                     </tr>
                   </tbody>

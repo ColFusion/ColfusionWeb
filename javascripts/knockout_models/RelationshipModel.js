@@ -1,21 +1,21 @@
-ko.extenders.withPrevious = function(target, option) {
+ko.extenders.withPrevious = function (target, option) {
     // Define new properties for previous value and whether it's changed
     target.previous = ko.observable();
-    target.changed = ko.computed(function() {
+    target.changed = ko.computed(function () {
         return target() !== target.previous();
     });
 
     // Subscribe to observable to update previous, before change.
-    target.subscribe(function(v) {
+    target.subscribe(function (v) {
         target.previous(v);
     }, null, 'beforeChange');
 
     // Return modified observable
     return target;
-}
+};
 
 var RelationshipModel = {
-    Relationship: function(relJson) {
+    Relationship: function (relJson) {
         var self = this;
         self.rid = relJson.rid;
         self.name = ko.observable(relJson.name);
@@ -41,7 +41,7 @@ var RelationshipModel = {
         self.isYourCommentEditing = ko.observable(false);
         self.editingComment = ko.observable();
         self.isSavingYourComment = ko.observable(false);
-        
+
         function createDatasetModel(dsJson, tableName) {
             var dataset = new RelationshipModel.DataSet(dsJson.sid);
             dataset.name(dsJson.title);
@@ -88,7 +88,7 @@ var RelationshipModel = {
             var totalConfidence = 0;
             var numOfFeedback = 0;
 
-            $.each(self.comments(), function(i, val) {
+            $.each(self.comments(), function (i, val) {
                 numOfFeedback++;
                 totalConfidence += parseFloat(val.confidence());
             });
@@ -107,7 +107,7 @@ var RelationshipModel = {
             $(relationshipTableDom).find('.avgConfidence').text((avgConfidence * 100 / 100).toFixed(2));
         }
 
-        self.showComments = function() {
+        self.showComments = function () {
             self.isCommentHided(false);
             self.isCommentLoadingError(false);
 
@@ -116,10 +116,10 @@ var RelationshipModel = {
 
                 $.ajax({
                     url: 'datasetController/relationshipComments.php',
-                    data: {relId: self.rid},
+                    data: { relId: self.rid },
                     type: 'POST',
                     dataType: 'json',
-                    success: function(data) {
+                    success: function (data) {
                         if (data.yourComment) {
                             self.yourComment(createCommentModel(data.yourComment, true));
                         } else {
@@ -132,7 +132,7 @@ var RelationshipModel = {
                         self.isCommentLoaded[self.rid] = true;
                         self.isCommentLoading(false);
                     },
-                    error: function(jqXHR, statusCode, errMessage) {
+                    error: function (jqXHR, statusCode, errMessage) {
                         self.isCommentLoading(false);
                         self.isCommentLoadingError(true);
                         self.isCommentLoaded[self.rid] = false;
@@ -141,11 +141,11 @@ var RelationshipModel = {
             }
         };
 
-        self.hideComments = function() {
+        self.hideComments = function () {
             self.isCommentHided(true);
         };
 
-        self.editComment = function() {
+        self.editComment = function () {
             self.isYourCommentEditing(true);
             if (self.yourComment()) {
                 self.editingComment(cloneCommentModel(self.yourComment()));
@@ -154,11 +154,11 @@ var RelationshipModel = {
             }
         };
 
-        self.cancelEditingComment = function() {
+        self.cancelEditingComment = function () {
             self.isYourCommentEditing(false);
         };
 
-        self.saveComment = function() {
+        self.saveComment = function () {
             var action = self.yourComment() ? 'updateComment' : 'addComment';
             self.yourComment(cloneCommentModel(self.editingComment()));
             self.isSavingYourComment(true);
@@ -172,26 +172,26 @@ var RelationshipModel = {
                 },
                 type: 'POST',
                 dataType: 'json',
-            }).pipe(function(data) {
+            }).pipe(function (data) {
                 return $.ajax({
                     url: 'datasetController/getYourComment.php',
-                    data: {relId: self.rid},
+                    data: { relId: self.rid },
                     type: 'POST',
                     dataType: 'json'
                 });
-            }).done(function(data) {
+            }).done(function (data) {
                 self.yourComment(createCommentModel(data, true));
                 self.isYourCommentEditing(false);
                 updateFeedbackStatistics();
-            }).fail(function(jqXHR, statusCode, errMessage) {
+            }).fail(function (jqXHR, statusCode, errMessage) {
                 self.isCommentLoadingError(true);
                 self.isCommentLoaded[self.rid] = false;
-            }).always(function() {
+            }).always(function () {
                 self.isSavingYourComment(false);
             });
         };
 
-        self.removeComment = function() {
+        self.removeComment = function () {
 
             if (!confirm('Do you want to remove your comment?')) {
                 return;
@@ -205,17 +205,17 @@ var RelationshipModel = {
                 },
                 type: 'POST',
                 dataType: 'json',
-                success: function(data) {
+                success: function (data) {
                     self.yourComment(null);
                     updateFeedbackStatistics();
                 },
-                error: function(jqXHR, statusCode, errMessage) {
+                error: function (jqXHR, statusCode, errMessage) {
                     alert(errMessage);
                 }
             });
         };
 
-        self.checkDataMatching = function() {
+        self.checkDataMatching = function () {
             self.fromDataset().name($('#fromDataSet').find('input.sidInput').val());
 
             $('#dataMatchCheckingForm input[name="fromSid"]').val(self.fromDataset().sid());
@@ -226,7 +226,7 @@ var RelationshipModel = {
             $('#dataMatchCheckingForm').submit();
         };
     },
-    Comment: function(rid, confidence, comment, userId, userName, userEmail, commentTime, isControlPanelShown) {
+    Comment: function (rid, confidence, comment, userId, userName, userEmail, commentTime, isControlPanelShown) {
         var self = this;
         self.rid = rid;
         self.confidence = ko.observable(Number(confidence).toFixed(1));
@@ -238,12 +238,12 @@ var RelationshipModel = {
 
         self.isControlPanelShown = ko.observable(isControlPanelShown);
     },
-    DataSet: function(sid) {
+    DataSet: function (sid) {
         var self = this;
         self.sid = ko.observable(sid);
         self.name = ko.observable('');
         self.tableList = ko.observableArray();
-        self.chosenTableName = ko.observable().extend({withPrevious: 'option'});
+        self.chosenTableName = ko.observable().extend({ withPrevious: 'option' });
         // Does not trigger load table info event.
         self.shownTableName = ko.observable();
         self.currentTable = ko.observable();
@@ -258,13 +258,13 @@ var RelationshipModel = {
         self.sourceType = ko.observable();
         /* ********* */
 
-        self.loadTableInfo = function() {
+        self.loadTableInfo = function () {
             if (!self.sid()
                     || (self.currentTable() && !confirm("Do you want to discard all editing relationships and reload the table?")))
                 return;
 
             self.isLoadingTableInfo(true);
-            dataSourceUtil.getTableInfo(self.sid(), self.chosenTableName()).done(function(data) {
+            dataSourceUtil.getTableInfo(self.sid(), self.chosenTableName()).done(function (data) {
                 if (data.length <= 0)
                     return;
                 var cols = [];
@@ -278,21 +278,25 @@ var RelationshipModel = {
                 }
 
                 self.currentTable(new RelationshipModel.Table(cols, rows));
-            }).always(function() {
+            }).always(function () {
                 self.isLoadingTableInfo(false);
             });
         };
 
-        self.chosenTableName.subscribe(function(newValue) {
+        self.chosenTableName.subscribe(function (newValue) {
             if (self.chosenTableName.changed()) {
-                self.loadTableInfo(self.sid(), newValue);
+                if (!newValue) {
+                    self.currentTable(null);
+                } else {
+                    self.loadTableInfo(self.sid(), newValue);
+                }
             }
         }, self);
 
         // Table list in adding relationship process.
-        self.loadTableList = function() {
+        self.loadTableList = function () {
             if (self.sid() >= 1) {
-                dataSourceUtil.getTablesList(self.sid()).done(function(data) {
+                dataSourceUtil.getTablesList(self.sid()).done(function (data) {
                     if (data != null) {
                         self.tableList(data);
                     }
@@ -306,10 +310,10 @@ var RelationshipModel = {
     },
     // cols: [],
     // rows: [{}, {}]
-    Table: function(cols, rows) {
+    Table: function (cols, rows) {
         var self = this;
         // Change data structure.
-        self.columns = ko.observableArray($.map(cols, function(i, val) {
+        self.columns = ko.observableArray($.map(cols, function (i, val) {
             return new RelationshipModel.Column(val);
         }));
         self.rows = ko.observableArray();
@@ -317,8 +321,8 @@ var RelationshipModel = {
             self.rows.push(new RelationshipModel.Row(rows[i]));
         }
 
-        self.getRawDataColumns = function() {
-            return $.map(self.rows(), function(row, i) {
+        self.getRawDataColumns = function () {
+            return $.map(self.rows(), function (row, i) {
                 var rawObj = row.colfusionDataColumn.rawColfusionDataColumnObj;
                 // Properties for typeahead.js.
                 rawObj.name = rawObj.dname_chosen;
@@ -331,16 +335,16 @@ var RelationshipModel = {
         };
         self.isSelected = ko.observable(false);
     },
-    Column: function(name) {
+    Column: function (name) {
         var self = this;
         self.name = ko.observable(name);
     },
-    Row: function(colfusionDataColumn) {
+    Row: function (colfusionDataColumn) {
         var self = this;
         self.colfusionDataColumn = new RelationshipModel.ColfusionDataColumn(colfusionDataColumn);
         self.isChecked = ko.observable(false);
     },
-    ColfusionDataColumn: function(rawDataColumn) {
+    ColfusionDataColumn: function (rawDataColumn) {
         var self = this;
         self.cid = ko.observable();
         self.dname_chosen = ko.observable();
@@ -349,7 +353,7 @@ var RelationshipModel = {
         self.dname_value_unit = ko.observable();
         self.rawColfusionDataColumnObj = rawDataColumn;
 
-        self.mapFromRawDataColumn = function(rawDataColumn) {
+        self.mapFromRawDataColumn = function (rawDataColumn) {
             if (rawDataColumn !== undefined) {
                 self.cid(rawDataColumn.cid);
                 self.dname_chosen(rawDataColumn.dname_chosen);
@@ -361,23 +365,23 @@ var RelationshipModel = {
 
         self.mapFromRawDataColumn(rawDataColumn);
     },
-    Link: function(fromDataSet, toDataSet) {
+    Link: function (fromDataSet, toDataSet) {
         var self = this;
         self.fromLinkPart = ko.observable(new RelationshipModel.LinkPart(fromDataSet));
         self.toLinkPart = ko.observable(new RelationshipModel.LinkPart(toDataSet));
     },
-    LinkPart: function(dataSet) {
+    LinkPart: function (dataSet) {
         var self = this;
         self.dataSet = dataSet;
         self.transInput = ko.observable('');
         self.colfusionDataColumn = ko.observable(new RelationshipModel.ColfusionDataColumn());
 
-        self.getEncodedTransInput = function() {
+        self.getEncodedTransInput = function () {
 
             var encodedInput = self.transInput();
             var rawDataColumns = dataSet.currentTable().getRawDataColumns();
 
-            $.each(rawDataColumns, function(index, rawDataColumnObj) {
+            $.each(rawDataColumns, function (index, rawDataColumnObj) {
                 encodedInput = encodedInput.replace(rawDataColumnObj.dname_chosen, 'cid(' + rawDataColumnObj.cid + ')');
             });
 
