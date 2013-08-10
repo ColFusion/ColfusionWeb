@@ -64,6 +64,9 @@ class AdvSearch {
 		
 		$sids = $this->getSidsContainingSearchKeys();
 
+		if (!isset($sids) || count($sids) == 0)
+			return array();
+
 		$result = $this->getRelationshipToJoin($sids);
 
 		$result = $this->getMoreInfoForEachRel($result);
