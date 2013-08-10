@@ -110,7 +110,7 @@ class TransformationHandler {
     private function isFromDatabase($cid) {
         $source = $this->datasetDao->GetColumnsSourceInfo($cid);
 
-        if ($source->source_type === database)
+        if ($source->source_type === "database")
             return true;
         else
             return false;
