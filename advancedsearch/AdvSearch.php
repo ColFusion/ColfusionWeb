@@ -89,6 +89,9 @@ class AdvSearch {
 
 		$rst = $db->get_results($sql);
 		
+		if (!isset($rst) || count($rst) == 0)
+			return array();
+
 		$result = array();
 
 		foreach ($rst as $key => $value) {
