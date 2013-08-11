@@ -5,13 +5,16 @@
     <link rel="stylesheet" href="bootstrap-responsive.css" />
     <link rel="stylesheet" type="text/css" href="../css/font-awesome.css" />
     <link rel="stylesheet" href="bootstrap.css" />
+    <link rel="stylesheet" type="text/css" href="../css/smoothness/jquery-ui-1.10.3.custom.min.css" />
     <link rel="stylesheet" href="../css/parsley.css" />
     <link rel="stylesheet" href="../css/parsley_custom.css" />
     <link rel="stylesheet" href="../css/dataTableModel.css" />
     <link rel="stylesheet" href="../css/advanced.css" />
+    <link rel="stylesheet" href="../css/relationship.css" />
       
     <script type="text/javascript" src="../javascripts/classify.min.js"></script>
     <script type="text/javascript" src="../javascripts/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../javascripts/jquery-ui-1.10.3.custom.min.js"></script>
     <script type="text/javascript" src="../javascripts/jquery.mousewheel.js"></script>
     <script type="text/javascript" src="../javascripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="../javascripts/parsley.min.js"></script>
@@ -21,7 +24,10 @@
     <script type="text/javascript" src="../javascripts/knockout_models/Utils.js"></script>
     <script type="text/javascript" src="../javascripts/knockout_models/AdvancedSearchViewModel.js"></script>
     <script type="text/javascript" src="../javascripts/knockout_models/DataPreviewViewModel.js"></script>
+    <script type="text/javascript" src="../javascripts/knockout_models/RelationshipViewModel.js"></script>
+    <script type="text/javascript" src="../javascripts/knockout_models/RelationshipModel.js"></script>
     <script type="text/javascript" src="../javascripts/dataSourceUtil.js"></script>
+    <script type="text/javascript" src="../javascripts/generalUtils.js"></script>
     <script type="text/javascript">
             $(function() {
                 var advancedSearchViewModel = new AdvancedSearchViewModel();

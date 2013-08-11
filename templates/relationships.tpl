@@ -38,7 +38,7 @@
                         </tr>
                         <tr data-bind="attr: { id:  'mineRelRec_' + rel_id }" style="display: none;">
                             <td class="relationshipInfo" colspan="5">
-								<div data-bind="attr: { id: 'relInfoLoadingIcon_' + rel_id }, visible: !$root.isError[rel_id]()" style="text-align: center;">
+								<div data-bind="attr: { id: 'relInfoLoadingIcon_' + rel_id }, visible: !$root.isError[rel_id]()" class="relInfoLoadingIcon" style="text-align: center;">
 									<img src="images/ajax-loader.gif" />
 								</div>
 								<div data-bind="attr: { id: 'relInfoErrorMessage_' + rel_id }, 

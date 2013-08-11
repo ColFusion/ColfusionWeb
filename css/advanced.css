@@ -48,3 +48,31 @@
 .pathBody {
     overflow: auto;
 }
+
+.confidenceSliderContainer {
+    width: 50%;
+    float: left;
+}
+
+.confidenceComment {
+    width: 48%;
+    float: right;
+}
+
+.confidenceCommentText, .confidenceCommentTextarea {
+    margin-left: 10px;
+}
+
+.yourCommentEditor {
+    padding-bottom: 5px;
+    overflow: auto;
+    padding-top: 10px;
+}
+
+.confidenceDesTable {
+    width: 100%;
+}
+
+.hideCommentText {
+    margin-left: 280px !important;
+}

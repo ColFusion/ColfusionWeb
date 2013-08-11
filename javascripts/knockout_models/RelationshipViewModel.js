@@ -63,26 +63,28 @@ function RelationshipViewModel(sid) {
         "More/Less" is a text cell in Data Table, so we cannot use observable to toggle those words.
         (Dom manipulation is required.)
     */
-    self.showMoreClicked = function (rel_id) {
+    self.showMoreClicked = function (rel_id, relRow, event) {
         self.isError[rel_id](false);
 
-        $('#mineRelRec_' + rel_id).toggle();
-        if ($('#mineRelRec_' + rel_id).css("display") === "none") {
-            $('#mineRelRecSpan_' + rel_id).text("More...");
+        var mineRelDom = $(event.target).parents('tr').next('tr');
+
+        $(mineRelDom).toggle();
+        if ($(mineRelDom).css("display") === "none") {
+            $(event.target).text("More...");
         } else {
-            $('#mineRelRecSpan_' + rel_id).text("Less");
+            $(event.target).text("Less");
             if (!self.relationshipInfos[rel_id]) {
-                $('#relInfoLoadingIcon_' + rel_id).show();
-                loadRelationshipInfo(rel_id);
+                $(mineRelDom).find('.relInfoLoadingIcon').show();
+                loadRelationshipInfo(rel_id, mineRelDom);
             }
         }
     };
 
-    function loadRelationshipInfo(relId) {
+    function loadRelationshipInfo(relId, mineRelDom) {
         dataSourceUtil.loadRelationshipInfo(relId).done(function (data) {
             self.relationshipInfos[data.rid] = ko.observable(new RelationshipModel.Relationship(data));
             self.isRelationshipInfoLoaded[data.rid](true);
-            $('#relInfoLoadingIcon_' + relId).hide();
+            $(mineRelDom).find('.relInfoLoadingIcon').hide();
         }).error(function (jqXHR, statusCode, errMessage) {
             alert(errMessage);
             self.isError[relId](true);

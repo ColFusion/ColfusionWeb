@@ -250,7 +250,7 @@ class AdvSearch {
 	// TODO: refactor created additional classesand use them
 	private function getMoreInfoForEachRel($searchResults) {
 		global $db;
-
+        
 		$result = array();
 
 		$i = 0;
@@ -478,9 +478,8 @@ class AdvSearch {
 		$inCrit = implode("','", $chunks);
 
 		$sql = "select tableName from colfusion_dnameinfo inner join colfusion_columnTableInfo on (colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid) where sid = $sid and dname_chosen in ('$inCrit') limit 1";
-
+         
 		$res = $db->get_results($sql);
-
 		$result = array();
 
 		foreach ($res as $key => $value) {

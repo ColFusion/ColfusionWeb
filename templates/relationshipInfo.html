@@ -8,8 +8,8 @@
             <td rowspan="2" style="vertical-align: top;">
                 <button data-bind="click: checkDataMatching" class="btn" style="width: 180px;">Check Data Matching</button>
             </td>
-            <td data-bind="visible: isOwned()" rowspan="2">
-                <button data-bind="    click: $root.removeRelationship.bind($data, rid)" class="btn btn-danger deleteRelBtn">Delete</button>
+            <td class="removeRelBtnWrapper" data-bind="visible: isOwned()" style="vertical-align: top;" rowspan="2">
+                <button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn btn-danger deleteRelBtn">Delete</button>
             </td>
         </tr>
         <tr>
@@ -63,7 +63,7 @@
         <a data-bind="click: hideComments, visible: !isCommentHided()" class="hideCommentText">Hide Feedbacks</a>
     </div>
     <div data-bind="visible: !isCommentHided() && isCommentLoading()" style="text-align: center; padding-top: 7px;">
-        <img src="images/ajax-loader.gif" />
+        <img src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />
     </div>
     <div data-bind="visible: isCommentLoadingError()" class="alert alert-error commentErrorMsg">
         Some errors occur when loading feedbacks, please try again.
@@ -71,7 +71,7 @@
     <div data-bind="visible: !isCommentHided() && !isCommentLoading() && !isCommentLoadingError()" class="commentContainer">
         <div data-bind="with: editingComment" class="yourCommentEditor">
             <div data-bind="visible: $parent.isYourCommentEditing()" id="confidenceContainer">
-                <div id="confidenceSliderContainer">
+                <div id="confidenceSliderContainer" class="confidenceSliderContainer">
                     <span id="confidenceText">Confidence: </span>
                     <span data-bind="text: confidence" style="font-weight: bold;" id="slideValue"></span>
                     <input data-bind="value: confidence" type="hidden" id="confidenceValueInput" />
@@ -91,12 +91,12 @@
                         </tr>
                     </table>
                 </div>
-                <div id="confidenceComment">
-                    <div style="margin-bottom: 10px">Confidence comment:</div>
-                    <textarea data-bind="value: comment" data-required="true" style="width: 95%; height: 80px; resize: none;"></textarea>
+                <div id="confidenceComment" class="confidenceComment">
+                    <div class="confidenceCommentText" style="margin-bottom: 10px">Confidence comment:</div>
+                    <textarea data-bind="value: comment" data-required="true" class="confidenceCommentTextarea" style="width: 95%; height: 80px; resize: none;"></textarea>
                     <div style="float: right; margin-right: 6px;">
                         <span data-bind="visible: $parent.isSavingYourComment()" style="margin-right: 10px;">
-                            <img src="images/ajax-loader.gif" /></span>
+                            <img src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" /></span>
                         <button data-bind="click: $parent.saveComment" class="btn btn-primary">Save</button>
                         <button data-bind="click: $parent.cancelEditingComment" class="btn">Cancel</button>
                     </div>

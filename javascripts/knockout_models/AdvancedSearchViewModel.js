@@ -10,7 +10,7 @@ var AdvancedSearchViewModelProperties = {
     },
 
     DatasetSearchResult: function (resultObj) {
-        var self = this;       
+        var self = this;
 
         self.resultObj = resultObj;
 
@@ -32,7 +32,7 @@ var AdvancedSearchViewModelProperties = {
                 } else {
                     self.dataPreviewViewModel(new DataPreviewViewModel(self.resultObj.sid));
                     self.dataPreviewViewModel().getTableDataBySidAndName(self.resultObj.tableName, 10, 1);
-                }               
+                }
             }
 
             self.isDataPreviewTableShown(!self.isDataPreviewTableShown());
@@ -53,6 +53,10 @@ var AdvancedSearchViewModelProperties = {
     Path: function (pathObj) {
         var self = this;
 
+        // Neo4j returns redundancy relationshps.
+        // Here remove redundant ones.       
+        pathObj.relationships = generalUtil.convertArrayToSet("relId", pathObj.relationships);
+
         self.pathObj = pathObj;
         self.isPreviewShown = ko.observable(false);
         self.isMoreShown = ko.observable(false);
@@ -66,6 +70,7 @@ var AdvancedSearchViewModelProperties = {
         self.relationshipInfos = {};
 
         $.each(pathObj.relIds, function (i, relId) {
+            self.isRelationshipInfoLoaded[relId] = ko.observable(false);
             self.isError[relId] = ko.observable(false);
         });
 
@@ -83,28 +88,30 @@ var AdvancedSearchViewModelProperties = {
             "More/Less" is a text cell in Data Table, so we cannot use observable to toggle those words.
             (Dom manipulation is required.)
         */
-        self.showMoreClicked = function (rel_id) {
+        self.showMoreClicked = function (rel_id, relRow, event) {
             self.isError[rel_id](false);
 
-            $('#mineRelRec_' + rel_id).toggle();
-            if ($('#mineRelRec_' + rel_id).css("display") === "none") {
-                $('#mineRelRecSpan_' + rel_id).text("More...");
+            var mineRelDom = $(event.target).parents('tr').next('tr');
+
+            $(mineRelDom).toggle();
+            if ($(mineRelDom).css("display") === "none") {
+                $(event.target).text("More...");
             } else {
-                $('#mineRelRecSpan_' + rel_id).text("Less");
+                $(event.target).text("Less");
                 if (!self.relationshipInfos[rel_id]) {
-                    $('#relInfoLoadingIcon_' + rel_id).show();
-                    loadRelationshipInfo(rel_id);
+                    $(mineRelDom).find('.relInfoLoadingIcon').show();
+                    loadRelationshipInfo(rel_id, mineRelDom);
                 }
             }
         };
 
-        function loadRelationshipInfo(relId) {
+        function loadRelationshipInfo(relId, mineRelDom) {
             dataSourceUtil.loadRelationshipInfo(relId).done(function (data) {
                 self.relationshipInfos[data.rid] = ko.observable(new RelationshipModel.Relationship(data));
                 self.isRelationshipInfoLoaded[data.rid](true);
-
-                $('#relInfoLoadingIcon_' + relId).hide();
+                $(mineRelDom).find('.relInfoLoadingIcon').hide();
             }).error(function (jqXHR, statusCode, errMessage) {
+                alert(errMessage);
                 self.isError[relId](true);
             });
         }
@@ -114,11 +121,12 @@ var AdvancedSearchViewModelProperties = {
 function AdvancedSearchViewModel() {
     var self = this;
 
-    self.searchTerm = ko.observable('default');
+    self.searchTerm = ko.observable('Ccode');
     self.filters = ko.observableArray();
     self.filters.push(new AdvancedSearchViewModelProperties.Filter());
     self.category = ko.observable();
 
+    self.isNoResultTextShown = ko.observable(false);
     self.searchResults = ko.observableArray();
 
     self.addFilter = function () {
@@ -130,6 +138,9 @@ function AdvancedSearchViewModel() {
     };
 
     self.search = function () {
+
+        // Delete btn is not used in search result.
+        $('.removeRelBtnWrapper').remove();
 
         if (!$('#advancedsearch').parsley('validate')) {
             return;
@@ -168,7 +179,12 @@ function AdvancedSearchViewModel() {
                         new AdvancedSearchViewModelProperties.PathSearchResult(resultObj);
                     self.searchResults.push(searchResult);
                 });
+                self.isNoResultTextShown(true);
             }
         });
+    };
+
+    // Adapt to story-page-based relationship info template.
+    self.removeRelationship = function() {
     };
 }

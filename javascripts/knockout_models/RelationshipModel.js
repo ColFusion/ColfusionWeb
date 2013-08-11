@@ -115,7 +115,7 @@ var RelationshipModel = {
                 self.isCommentLoading(true);
 
                 $.ajax({
-                    url: 'datasetController/relationshipComments.php',
+                    url: my_pligg_base + '/datasetController/relationshipComments.php',
                     data: { relId: self.rid },
                     type: 'POST',
                     dataType: 'json',
@@ -163,7 +163,7 @@ var RelationshipModel = {
             self.yourComment(cloneCommentModel(self.editingComment()));
             self.isSavingYourComment(true);
             $.ajax({
-                url: 'datasetController/commentUpdater.php',
+                url: my_pligg_base + '/datasetController/commentUpdater.php',
                 data: {
                     relId: self.rid,
                     action: action,
@@ -174,7 +174,7 @@ var RelationshipModel = {
                 dataType: 'json',
             }).pipe(function (data) {
                 return $.ajax({
-                    url: 'datasetController/getYourComment.php',
+                    url: my_pligg_base + '/datasetController/getYourComment.php',
                     data: { relId: self.rid },
                     type: 'POST',
                     dataType: 'json'
@@ -198,7 +198,7 @@ var RelationshipModel = {
             }
 
             $.ajax({
-                url: 'datasetController/commentUpdater.php',
+                url: my_pligg_base + '/datasetController/commentUpdater.php',
                 data: {
                     relId: self.rid,
                     action: 'removeComment'
