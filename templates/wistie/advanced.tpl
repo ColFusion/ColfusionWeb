@@ -11,7 +11,7 @@
                 </td>
             </tr>
         </table>
-        <table data-bind="foreach: filters" id="conditionTable" style="width: 100%">
+        <table data-bind="foreach: filters" id="conditionTable" style="width: 100%; display: none;">
             <tr style="width: 100%">
                 <td data-bind="text: $index() == 0? 'Where' : 'And'" style="width: 80px !important;">Where</td>
                 <td>
@@ -44,8 +44,8 @@
             </tr>
         </table>
 
-        <table style="width: 100%">
-            <tr style="width: 100%">
+        <table style="width: 100%;">
+            <tr style="width: 100%;display: none;">
                 <td style="width: 80px !important;">Category: </td>
                 <td>
                     <input data-bind="value: category" type="text" style="width: 100%" />
@@ -66,6 +66,9 @@
 
     <div data-bind="visible:isNoResultTextShown() && searchResults().length == 0" style="display: none; margin: -5px 0 0 20px;">
         No Results Found.
+    </div>
+    <div data-bind="visible:isSearchError()" style="display: none; margin: -5px 0 0 20px; color:red">
+        Some errors occur when searching dataset.
     </div>
 
     <!-- advanced search result -->

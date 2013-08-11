@@ -114,7 +114,7 @@ foreach ($ktrManagers as $filename => $ktrManager) {
 
         exit;
     } else {
-//TODO parse msg to get num inserted
+        //TODO parse msg to get num inserted
         $lastLine = $outA[count($outA) - 1];
         preg_match("/d+\s{1}[0-9]+\s{1}l+/", $lastLine, $matches);
         $m = explode(' ', $matches[0]);

@@ -298,8 +298,10 @@ function estimateLoadingProgress($dataSource_filePath) {
     $sampleFileSize = (float) filesize($sampleFilePath);
     $estimatedSeconds = ($sampleLoadTime * $targetFileSize / $sampleFileSize);
     $estimatedSeconds = $ext == 'xlsx' ? $estimatedSeconds * 4 : $estimatedSeconds;
-
-    echo $estimatedSeconds;
+    
+    // Loading time does not increase in linear pattern when the file is small.
+    // So the loading time is timed with an arbitrary number. 
+    echo $estimatedSeconds * 10;
 }
 
 function unsetFileResources($sid, $dataSource_dir, $dataSource_dirPath) {

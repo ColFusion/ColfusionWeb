@@ -171,9 +171,11 @@ class RelationshipDAO {
         $queryResult =  $this->ezSql->get_results($query);
 
         $result = array();
-
-        foreach ($queryResult as $key => $rel) {
-            $result[] = $rel->rel_id;
+        
+        if($queryResult != null){
+            foreach ($queryResult as $key => $rel) {
+                $result[] = $rel->rel_id;
+            }
         }
 
         return $result;

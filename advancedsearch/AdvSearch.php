@@ -115,7 +115,7 @@ class AdvSearch {
 	    do {
 
 			$node1Sid = array_pop($targetSidsCopy);
-
+            
 	    	$res = $this->rec($sourceIndex, $node1Sid, $targetSidsCopy);
 	    	
 	    	$oneSearchRes = new stdClass();
@@ -169,7 +169,7 @@ class AdvSearch {
         	}
 
             if (count($paths->paths) == 0) {
-        
+                               
                 $res = $this->rec($sourceIndex, $node, $list);
 
                 $result->ar = $res->ar;
