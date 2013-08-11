@@ -45,7 +45,7 @@
         </table>
 
         <table style="width: 100%;">
-            <tr style="width: 100%;display: none;">
+            <tr style="width: 100%; display: none;">
                 <td style="width: 80px !important;">Category: </td>
                 <td>
                     <input data-bind="value: category" type="text" style="width: 100%" />
@@ -67,7 +67,7 @@
     <div data-bind="visible:isNoResultTextShown() && searchResults().length == 0" style="display: none; margin: -5px 0 0 20px;">
         No Results Found.
     </div>
-    <div data-bind="visible:isSearchError()" style="display: none; margin: -5px 0 0 20px; color:red">
+    <div data-bind="visible:isSearchError()" style="display: none; margin: -5px 0 0 20px; color: red">
         Some errors occur when searching dataset.
     </div>
 
@@ -144,6 +144,9 @@
                             <div class="pathBody">
 
                                 <div class="buttonPanel" style="float: right;">
+                                    <button data-bind="click: $parent.openVisualizationPage" class="btn" title="Visualization">
+                                        <i class="icon-bar-chart"></i>
+                                    </button>
                                     <button data-bind="click: $parent.togglePreview" class="btn" data-toggle="button">
                                         <i class="icon-table"></i>
                                     </button>

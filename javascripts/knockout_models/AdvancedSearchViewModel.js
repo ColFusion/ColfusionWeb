@@ -1,4 +1,4 @@
-﻿var advDebug = false;
+﻿var advDebug = true;
 
 var AdvancedSearchViewModelProperties = {
     Filter: function () {
@@ -47,7 +47,7 @@ var AdvancedSearchViewModelProperties = {
 
         $.each(resultObj.allPaths, function (i, pathObj) {
             self.paths.push(new AdvancedSearchViewModelProperties.Path(pathObj));
-        });
+        });            
     },
 
     Path: function (pathObj) {
@@ -115,6 +115,11 @@ var AdvancedSearchViewModelProperties = {
                 self.isError[relId](true);
             });
         }
+        
+        self.openVisualizationPage = function (item, event) {
+            $('#visualizationDatasetSerializeInput').val(JSON.stringify(self.pathObj));
+            $('#visualizationDatasetSerializeForm').submit();
+        };
     }
 };
 
