@@ -131,6 +131,7 @@ function AdvancedSearchViewModel() {
     self.filters.push(new AdvancedSearchViewModelProperties.Filter());
     self.category = ko.observable();
 
+    self.isSearching = ko.observable(false);
     self.isNoResultTextShown = ko.observable(false);
     self.searchResults = ko.observableArray();
     self.isSearchError = ko.observable(false);
@@ -168,8 +169,10 @@ function AdvancedSearchViewModel() {
             return filter.value();
         });
 
+        self.isSearching(true);
         self.isSearchError(false);
         self.isNoResultTextShown(false);
+        
         $.ajax({
             url: advDebug ? 'advSearch.json' : 'searchResult.php',
             data: {
@@ -192,6 +195,8 @@ function AdvancedSearchViewModel() {
             error: function() {
                 self.isSearchError(true);
             }
+        }).always(function() {
+            self.isSearching(false);
         });
     };
 

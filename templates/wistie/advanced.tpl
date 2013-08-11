@@ -54,7 +54,8 @@
             <tr>
                 <td colspan="2">
                     <input data-bind="click: search" type="button" value="Search" />
-                </td>
+                    <img data-bind="visible: isSearching" style="margin-left: 5px;" src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif"/>
+                </td>               
             </tr>
         </table>
     </form>
