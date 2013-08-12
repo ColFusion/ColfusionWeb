@@ -73,6 +73,6 @@
     width: 100%;
 }
 
-.hideCommentText {
+.hideCommentText, .seeCommentText {
     margin-left: 280px !important;
 }

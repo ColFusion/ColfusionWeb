@@ -58,11 +58,19 @@ var AdvancedSearchViewModelProperties = {
         pathObj.relationships = generalUtil.convertArrayToSet("relId", pathObj.relationships);
 
         self.pathObj = pathObj;
+        self.avgConfidence = ko.computed(function () {
+            var confidence = 0;
+            $.each(self.pathObj.relationships, function (i, rel) {
+                confidence += Number(rel.confidence);
+            });
+
+            return confidence / self.pathObj.relationships.length;
+        });
+
         self.isPreviewShown = ko.observable(false);
         self.isMoreShown = ko.observable(false);
         self.isRelInfoShown = ko.observable(false);
-
-
+        
         self.dataPreviewViewModel = ko.observable();
 
         self.isRelationshipInfoLoaded = {};
@@ -111,7 +119,6 @@ var AdvancedSearchViewModelProperties = {
                 self.isRelationshipInfoLoaded[data.rid](true);
                 $(mineRelDom).find('.relInfoLoadingIcon').hide();
             }).error(function (jqXHR, statusCode, errMessage) {
-                alert(errMessage);
                 self.isError[relId](true);
             });
         }

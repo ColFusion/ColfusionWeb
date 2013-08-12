@@ -176,13 +176,14 @@ class UtilsForWizard {
     static function processOneColumn($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName = null) {
 
         $queryEngine = new QueryEngine();
-
-        $originalDnameStripped = UtilsForWizard::stripWordUntilFirstDot($originalDname);
-        $cid = $queryEngine->simpleQuery->addColumnInfo($sid, $newDname, $type, $unit, $description, $originalDnameStripped);
-
+        
         if (!isset($tableName)) {
             $tableName = UtilsForWizard::getWordUntilFirstDot($originalDname);
         }
+        
+        $originalDnameStripped = str_replace ($tableName.'.', '', $originalDname);
+        $cid = $queryEngine->simpleQuery->addColumnInfo($sid, $newDname, $type, $unit, $description, $originalDnameStripped);
+
         $queryEngine->simpleQuery->addColumnTableInfo($cid, $tableName);
 
         if (!($metadata === NULL)) {

@@ -158,6 +158,7 @@ function DataMatchCheckerViewModel() {
         });
     };
 
+    // Required params for jEditable Pagination.
     function setDistinctTableParams() {
         var fromTableParams = getDataTableParam();
         fromTableParams.action = 'getDistinctFromTable';

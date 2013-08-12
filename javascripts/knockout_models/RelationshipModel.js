@@ -101,10 +101,11 @@ var RelationshipModel = {
 
             var avgConfidence = totalConfidence / numOfFeedback;
             self.avgConfidence(avgConfidence);
-
+            
             var relationshipTableDom = $('#mineRelationshipsTableWrapper').find('#relationship_' + self.rid);
             $(relationshipTableDom).find('.numOfVerdicts').text(numOfFeedback);
             $(relationshipTableDom).find('.avgConfidence').text((avgConfidence * 100 / 100).toFixed(2));
+            $('.relConfidence_' + self.rid).text((avgConfidence * 100 / 100).toFixed(2));
         }
 
         self.showComments = function () {

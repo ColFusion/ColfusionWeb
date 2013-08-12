@@ -185,7 +185,7 @@
                                     </div>
                                     <div>
                                         <span style="color: black;">Average Confidence: </span>
-                                        <span data-bind="text: avgConfidence" class="pathTitleText"></span>
+                                        <span data-bind="text: Number($parent.avgConfidence()).toFixed(2)" class="pathTitleText"></span>
                                     </div>
                                 </div>
                             </div>
@@ -210,9 +210,9 @@
                                         <tr>
                                             <td data-bind="template: { name: 'relInfo-template', data: sidFrom }"></td>
                                             <td data-bind="template: { name: 'relInfo-template', data: sidTo }"></td>
-                                            <td data-bind="text: confidence"></td>
+                                            <td data-bind="text: confidence, attr: { id:  'relConfidence_' + relId, 'class': 'relConfidence_' + relId }"></td>
                                             <td>
-                                                <span data-bind="click: $parents[1].showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
+                                                <span data-bind="click: $parents[1].showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId, 'class': 'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
                                             </td>
                                         </tr>
                                         <tr data-bind="attr: { id:  'mineRelRec_' + relId }" style="display: none;">
