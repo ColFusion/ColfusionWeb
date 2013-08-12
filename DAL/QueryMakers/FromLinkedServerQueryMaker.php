@@ -11,7 +11,9 @@ class FromLinkedServerQueryMaker {
 
         $query = "select * from colfusion_sourceinfo_DB where sid = " . $source->sid;
 
-        $linkedServerName = $db->get_row($query)->source_database;
+        $result = $db->get_row($query);
+
+        $linkedServerName = $result->source_database;
 
         $cids = $columnsToSelect->cids;
         $columnNameAndAlias = $columnsToSelect->columnNameAndAlias;
@@ -19,10 +21,18 @@ class FromLinkedServerQueryMaker {
         
         $tableName = $source->tableName;
 
-        $query = <<<EOQ
+        if ($result->server_address === "tycho.exp.sis.pitt.edu") {
+            $query = <<<EOQ
+        select distinct $columnNameAndAlias
+        from [$linkedServerName].[dbo].$tableName       
+EOQ;
+        }
+        else {}
+            $query = <<<EOQ
         select distinct $columnNameAndAlias
 		from [$linkedServerName]...$tableName		
 EOQ;
+        }
 
         return $query;
     }

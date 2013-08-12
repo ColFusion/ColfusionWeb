@@ -222,9 +222,16 @@ class MergedDataSetQueryMaker {
 
         $query = "select * from colfusion_sourceinfo_DB where sid = " . $sidAndTable->sid;
 
-        $linkedServerName = $db->get_row($query)->source_database;
+        $result = $db->get_row($query);
 
-        return " [$linkedServerName]...{$sidAndTable->tableName} as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+        $linkedServerName = $result->source_database;
+  
+        if ($result->server_address === "tycho.exp.sis.pitt.edu") {
+            return " [$linkedServerName].[dbo].{$sidAndTable->tableName} as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+        }
+        else {
+            return " [$linkedServerName]...{$sidAndTable->tableName} as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+        }
     }
 
     private function getFromPartAsFromFile($sidAndTable) {
