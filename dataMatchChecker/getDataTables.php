@@ -62,16 +62,20 @@ function getDistinctTable($tableParams) {
     $queryEngine = new QueryEngine();
     $distinctTable = $queryEngine->GetDistinctForColumns($tableParams, $pageLength, $page, $cidSearchTerm);
 
-    if ($distinctTable->rows != null) {
-        foreach ($distinctTable->rows as $rowObj) {
-            $tableRow = array();
-            foreach ($distinctTable->columns as $column) {
-                $tableRow[] = $rowObj->$column;
+    $tableRows = array();
+
+    if (isset($distinctTable)) {
+        if ($distinctTable->rows != null) {
+            foreach ($distinctTable->rows as $rowObj) {
+                $tableRow = array();
+                foreach ($distinctTable->columns as $column) {
+                    $tableRow[] = $rowObj->$column;
+                }
+                $tableRows[] = $tableRow;
             }
-            $tableRows[] = $tableRow;
+        } else {
+            $tableRows = [];
         }
-    } else {
-        $tableRows = [];
     }
 
     $jsonResult['aaData'] = $tableRows;
