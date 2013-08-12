@@ -356,9 +356,11 @@ class QueryEngine {
 
             $from = (object) array('inputObj' => $sid, 'tableName' => $sid->table_name);
             $fromArray = array($from);
-            $select = "select count(*) ";// . implode(", ", $selectAr);
+            $select = "select count(*) as ct";// . implode(", ", $selectAr);
 
-            return $this->doQuery($select, $fromArray, null, null, null, null, null);      
+            $result = $this->doQuery($select, $fromArray, null, null, null, null, null);
+
+            return $result->ct;
         }
         else {
              if ($this->GetSourceType($sid) == "database") {
