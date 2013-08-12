@@ -52,17 +52,29 @@ function showNote(refresh){
 	var noteObj = CANVAS.getStories();
 	
 	for(var temp in noteObj){
-		
-		var tableStr ="";
 		var story = noteObj[temp];
-		noteStr += "<li id = "+story['sid']+"storiesTable class='unfold' onclick = 'StoryHighlight("+story['sid']+")'><a href ='#'>"+story["sid"]+":"+story["sname"]+"&nbsp&nbsp<i class='icon-plus' onclick = 'showRelatedTables("+story['sid']+")'></i></a></li>";
-
-		
-		for (var TempTable in story['tables']){
-			TempTable = TempTable.split(".");
-			TempTable = TempTable[0]+TempTable[1];
-			noteStr += "<li id = "+story['sid']+TempTable+" class = "+story['sid']+"StoriesChildren onclick = TableHighlight("+story['sid']+",'"+TempTable+"') style = 'display:none'><a href = '#' ><i class='icon-arrow-right'></i>"+TempTable+"</a></li>";
+		var storyName = story['sname'];
+		if (storyName.length>20) {
+			storyName = storyName.substr(0,20) + "...";
 		}
+		var tableStr ="";
+		
+		noteStr += "<li id = "+story['sid']+"storiesTable class='unfold' onclick = 'StoryHighlight("+story['sid']+")'><a href ='#'>"+storyName+"&nbsp&nbsp<i class='icon-plus' onclick = 'showRelatedTables("+story['sid']+")'></i></a></li>";
+		if (story['tables']!=null) {
+			noteStr += "<ul>";
+			for (var TempTable in story['tables']){
+				//TempTable = TempTable.split(".");
+				//TempTable = TempTable[0]+TempTable[1];
+				var tname = story['tables'][TempTable]['table'];
+				var shortTname = tname;
+				if (tname.length > 20) {
+					shortTname = tname.substr(0,20) + "...";
+				}
+				noteStr += "<li id = "+story['sid']+tname+" class = "+story['sid']+"StoriesChildren onclick = TableHighlight("+story['sid']+",'"+tname+"') style = 'display:none'><a href = '#' ><i class='icon-arrow-right'></i>"+shortTname+"</a></li>";
+			}
+			noteStr += "</ul>";
+		}
+
 	}
 	
 	
