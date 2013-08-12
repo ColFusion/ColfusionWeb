@@ -34,7 +34,7 @@ class MSSQLHandler extends DatabaseHandler {
     public function loadTables() {
         $pdo = $this->GetConnection();
 
-        $stmt = $pdo->prepare("select table_schema, table_name from information_schema.tables");
+        $stmt = $pdo->prepare("select table_name from [{$this->database}].[information_schema].[tables]");
         $stmt->execute();
 
         foreach ($stmt->fetchAll() as $row) {
