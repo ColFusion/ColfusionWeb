@@ -130,7 +130,7 @@ EOQ;
 
         if (isset($perPage) && isset($pageNo)) {
 
-            $query = $this->wrapInLimit($pageNo, $perPage, $query);
+            $query = $this->wrapInLimit($pageNo, $perPage, "( $query ) as toLimit ");
         }
 
         return $this->ExecuteQuery($query);
