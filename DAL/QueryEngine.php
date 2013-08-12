@@ -260,7 +260,7 @@ class QueryEngine {
             if (isset($from->alias))
                 $tableName .= ' as ' . $from->alias;
 
-            ExternalDBs::PrepareAndRunQuery($select, $tableName, $where, $groupby, $perPage, $pageNo, $externalDBCredentials);
+            return ExternalDBs::PrepareAndRunQuery($select, $tableName, $where, $groupby, $perPage, $pageNo, $externalDBCredentials);
         } else {
             return $this->prepareAndRunQueryFromFile($select, $from, $where, $groupby, $perPage, $pageNo);
         }

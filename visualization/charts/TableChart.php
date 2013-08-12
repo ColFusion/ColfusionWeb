@@ -45,7 +45,7 @@ class TableChart extends Chart{
 	
 	$queryEngine = new QueryEngine();
 	$totalTuple = $queryEngine->doQuery("SELECT COUNT(*)", $fromArray, null, null, null, null, null);
-	$tp;
+	$tp = 0;
     
 	foreach($totalTuple[0] as $value){
 	    $tp = $value;
