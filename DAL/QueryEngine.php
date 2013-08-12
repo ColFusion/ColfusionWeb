@@ -348,12 +348,24 @@ class QueryEngine {
     }
 
     public function GetTotalNumberTuplesInTableBySidAndName($sid, $table_name) {
-        global $db;
+        if (is_array($sid) || is_object($sid)) {
 
-        if ($this->GetSourceType($sid) == "database") {
-            return $this->GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $table_name);
-        } else {
-            return $this->GetTotalNumberTuplesInTableBySidAndNameFromFile($sid, $table_name);
+            if (is_array($sid)) {
+                $sid = json_decode(json_encode($sid));
+            }
+
+            $from = (object) array('inputObj' => $sid, 'tableName' => $sid->table_name);
+            $fromArray = array($from);
+            $select = "select count(*) ";// . implode(", ", $selectAr);
+
+            return $this->doQuery($select, $fromArray, null, null, null, null, null);      
+        }
+        else {
+             if ($this->GetSourceType($sid) == "database") {
+                return $this->GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $table_name);
+            } else {
+                return $this->GetTotalNumberTuplesInTableBySidAndNameFromFile($sid, $table_name);
+            }
         }
     }
 

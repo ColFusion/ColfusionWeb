@@ -120,7 +120,7 @@ foreach ($ktrManagers as $filename => $ktrManager) {
         $m = explode(' ', $matches[0]);
         $numProcessed = $m[1];
 
-        $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=1, RecordsProcessed='" . $numProcessed . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
+        $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=0, RecordsProcessed='" . $numProcessed . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
         $rs = $db->query($sql);
 
         $sid = getSid();

@@ -60,7 +60,7 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 		//save upload file
 		if ($_FILES['upload_file']['error'] > 0) {
 
-			$error = "ERROR: " . get_file_err($_FILES['upload_file']['error']) . "</br>";
+			$error = "ERROR: " . $_FILES['upload_file']['error'] . "</br>";
 			$_SESSION["upload_file_$sid"]['error'] = $_FILES['upload_file']['error'];
 
 		} else {

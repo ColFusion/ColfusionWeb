@@ -116,6 +116,8 @@ class AdvSearch {
 
 			$node1Sid = array_pop($targetSidsCopy);
             
+
+
 	    	$res = $this->rec($sourceIndex, $node1Sid, $targetSidsCopy);
 	    	
 	    	$oneSearchRes = new stdClass();
