@@ -30,8 +30,8 @@ class MapChart extends Chart {
         $sid = $_datainfo->sid;
         $table = $_datainfo->table;
         $inputObj = $_datainfo->inputObj;
-	$latitude = $_datainfo->latitude;
-	$longitude = $_datainfo->longitude;
+	$latitude = (object)$_datainfo->latitude;
+	$longitude = (object)$_datainfo->longitude;
         //$_datainfo->mapTooltip = array("ID","dvalue");
         if(isset($_datainfo->mapTooltip)){
             $mapTooltip = $_datainfo->mapTooltip;
@@ -43,13 +43,14 @@ class MapChart extends Chart {
         }
 	else {
             for($i=0; $i < count($mapTooltip); $i++){
-                $tips .= " cid(" . $mapTooltip[$i]['cid'] . ") as ".$mapTooltip[$i]['columnName'];
+                $mt = (object)$mapTooltip[$i];
+                $tips .= " cid(" . $mt->cid . ") as ".$mt->columnName;
                 if(!empty($mapTooltip[$i+1])){
                         $tips .= ",";
                 }
             }
 	}	
-	$select = "SELECT cid(" . $latitude['cid'] . ") as 'latitude', cid(" . $longitude['cid'] . ") as 'longitude'";
+	$select = "SELECT cid(" . $latitude->cid . ") as 'latitude', cid(" . $longitude->cid . ") as 'longitude'";
         if(isset($_datainfo->mapTooltip)){
             $select .= ", ".$tips; 
         }

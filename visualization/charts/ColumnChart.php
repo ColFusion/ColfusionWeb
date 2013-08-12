@@ -35,37 +35,37 @@ class ColumnChart extends Chart{
             $this->datainfo = $datainfo;
         }
         $inputObj = $datainfo->inputObj;
-        $columnCat = $datainfo->columnCat;
-        $columnAgg = $datainfo->columnAgg;
+        $columnCat = (object)$datainfo->columnCat;
+        $columnAgg = (object)$datainfo->columnAgg;
         $columnAggType = $datainfo->columnAggType;
-        $select = "SELECT cid(" . $columnCat['cid'] . ") AS 'Category', ";
+        $select = "SELECT cid(" . $columnCat->cid . ") AS 'Category', ";
         $sid = $datainfo->sid;
         $table = $datainfo->table;
     switch($columnAggType) {
         case "Count":
-            $select .= "COUNT(cid(" . $columnAgg['cid'] . ")) AS 'AggValue' ";
+            $select .= "COUNT(cid(" . $columnAgg->cid . ")) AS 'AggValue' ";
             break;
         case "Sum":
-            $select .= "SUM(cid(" . $columnAgg['cid'] . ")) AS 'AggValue' ";
+            $select .= "SUM(cid(" . $columnAgg->cid . ")) AS 'AggValue' ";
             break;  
         case "Avg":
-            $select .= "AVG(cid(" . $columnAgg['cid'] . ")) AS 'AggValue' ";
+            $select .= "AVG(cid(" . $columnAgg->cid . ")) AS 'AggValue' ";
             break;
         case "Max":
-            $select .= "MAX(cid(" . $columnAgg['cid'] . ")) AS 'AggValue' ";
+            $select .= "MAX(cid(" . $columnAgg->cid . ")) AS 'AggValue' ";
             break;
         case "Min":
-            $select .= "MIN(cid(" . $columnAgg['cid'] . ")) AS 'AggValue' ";
+            $select .= "MIN(cid(" . $columnAgg->cid . ")) AS 'AggValue' ";
             break;
     }
         $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
         $fromArray = array($from);
-        $groupby = " GROUP BY cid(" . $columnCat['cid'] . ") ";
+        $groupby = " GROUP BY cid(" . $columnCat->cid . ") ";
         //$queryResult = json_decode('{"cat":"aaa","agg":"bbb","content":[["Year", "Sales"],["2004",15],["2005",12],["2006",16],["2007",18]]}');
         $queryEngine = new QueryEngine();
         $rst = array();
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
-        $rst['columnCat'] = $columnCat['columnName'];
+        $rst['columnCat'] = $columnCat->columnName;
         $rst['columnAggType'] = $columnAggType;
         $rst['sid'] = $sid;
         $rst['table'] = $table;

@@ -284,6 +284,7 @@ function createNewPieGadget(){
 function addPieChart() {
 	var gadgetID = createNewPieGadget();
 	var datainfo = pieFormToDatainfo();
+	$("#addPieSave").css("background-image","url(../img/loading.gif)");
 	$.ajax({
 	    type: 'POST',
 		    //url: "getPie.php",

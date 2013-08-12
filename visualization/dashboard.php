@@ -105,6 +105,7 @@ $chart_columns[] = "Location";
         <script type="text/javascript" src="js/jquery.ui.mouse.js"></script>
         <script type="text/javascript" src="js/jquery.ui.resizable.js"></script>
         <script type="text/javascript" src="js/jquery.ui.draggable.js"></script>
+	<script type="text/javascript" src="js/Canvas.js"></script>	
         <script type="text/javascript" src="js/dashboardJS.js"></script>		
         <script type="text/javascript" src="js/test.js"></script>
         <script type="text/javascript" src="js/ContentResponse.js"></script>
@@ -149,7 +150,7 @@ $chart_columns[] = "Location";
         <input type="hidden" id="hiddenPageCount" value="1"/>
 
         <!-- Navigation bar -->
-        <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar navbar-inverse navbar-fixed-top" style="z-index: 10001">
             <div class="navbar-inner">
                 <div class="container">
                     <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
@@ -1073,7 +1074,7 @@ $chart_columns[] = "Location";
     <?php if($dataset!=null){?>
     <script type="text/javascript">
         $(document).ready(function() {
-            createNewCanvas("<?php echo $dataset->sid ?>" + "  <?php echo $dataset->title ?>");
+            createNewCanvas("  <?php echo $dataset->title ?>");
             CANVAS.addStory(<?php echo json_encode($dataset) ?>);
 	    $('#addTable').modal('show');
 	    $('#addTable .table-list').val("+<?php echo $dataset->title ?>")

@@ -30,34 +30,36 @@ class PieChart extends Chart {
         $table = $_datainfo->table;
         //$pieColumnCat = $_datainfo->pieColumnCat['columnName'];
         //$pieColumnAgg = $_datainfo->pieColumnAgg['text'];//$_datainfo->pieColumnAgg[key($_datainfo->pieColumnAgg)];
+        $pieColumnCat = (object)$_datainfo->pieColumnCat;
+        $pieColumnAgg = (object)$_datainfo->pieColumnAgg;
         $pieAggType = $_datainfo->pieAggType;
         $where = $_datainfo->where;
-        $select = "SELECT cid(" . $_datainfo->pieColumnCat['cid'] . ") AS 'Category', ";
+        $select = "SELECT cid(" . $pieColumnCat->cid . ") AS 'Category', ";
         switch($pieAggType) {
 		case "Count":
-			$select .= "COUNT(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
+			$select .= "COUNT(cid(" . $pieColumnAgg->cid . ")) AS 'AggValue' ";
 			break;
 		case "Sum":
-			$select .= "SUM(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
+			$select .= "SUM(cid(" . $pieColumnAgg->cid . ")) AS 'AggValue' ";
 			break;	
 		case "Avg":
-			$select .= "AVG(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
+			$select .= "AVG(cid(" . $pieColumnAgg->cid . ")) AS 'AggValue' ";
 			break;
 		case "Max":
-			$select .= "MAX(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
+			$select .= "MAX(cid(" . $pieColumnAgg->cid . ")) AS 'AggValue' ";
 			break;
 		case "Min":
-			$select .= "MIN(cid(" . $_datainfo->pieColumnAgg['cid'] . ")) AS 'AggValue' ";
+			$select .= "MIN(cid(" . $pieColumnAgg->cid . ")) AS 'AggValue' ";
 			break;
 	}
         $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
         $fromArray = array($from);
-        $groupby = " GROUP BY cid(" . $_datainfo->pieColumnCat['cid'] . ") ";
+        $groupby = " GROUP BY cid(" . $pieColumnCat->cid . ") ";
         $queryEngine = new QueryEngine();
         $rst = array();
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
         $rst['pieAggType'] = $pieAggType;
-        $rst['pieColumnCat'] = $_datainfo->pieColumnCat['columnName'];
+        $rst['pieColumnCat'] = $pieColumnCat->columnName;
         $rst['sid'] = $sid;
         $rst['table'] = $table;
         //$queryResult = json_decode('{"string":"aaa","number":"bbb","content":[{"Category":" 2.0","AggValue":"1"},{"Category":" 3.0","AggValue":"2"},{"Category":" 4.0","AggValue":"3"}]}');

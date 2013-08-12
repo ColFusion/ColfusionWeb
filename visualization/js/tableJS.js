@@ -307,7 +307,7 @@ function createNewTableGadget(){
 	var gadget = "<div name='tableDivs' class='gadget' id='" + gadgetID + "' style='top: 50px; left:0px; width:1160px; height: 500px' type='table'>";
 	gadget += "<div class='gadget-header'><div class='gadget-title'>Table" + gadgetID+"</div>";
 	gadget +=  "<div class='gadget-close'><i class='icon-remove'></i></div>";
-	gadget += "<div class='gadget-edit edit-pie'><i class='icon-edit'></i></div>";
+	gadget += "<div class='gadget-edit edit-table'><i class='icon-edit'></i></div>";
 	gadget += "<div class='gadget-normal' style = 'display:none'><i class='icon-resize-small'></i></div>";
 	gadget += "<div class='gadget-max'><i class='icon-resize-full'></i></div>";
 	gadget += "<div class='gadget-min'><i class='icon-minus'></i></div> </div>";
