@@ -9,7 +9,7 @@ class PostgreSQLHandler extends DatabaseHandler {
     }
        
     public function getConnection() {
-        $pdo = new PDO("pgsql:host=$this->host;dbname=$this->database", $this->user, $this->password);
+        $pdo = new PDO("pgsql:host=$this->host;dbname=$this->database:$this->port", $this->user, $this->password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     }
