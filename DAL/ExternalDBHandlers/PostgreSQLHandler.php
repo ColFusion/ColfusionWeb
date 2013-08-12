@@ -9,7 +9,7 @@ class PostgreSQLHandler extends DatabaseHandler {
     }
        
     public function getConnection() {
-        $pdo = new PDO("pgsql:host={$this->host};port={$this->port};dbname=postgres", $this->user, $this->password);
+        $pdo = new PDO("pgsql:host={$this->host};port={$this->port};dbname={$this->database}", $this->user, $this->password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     }
@@ -45,21 +45,6 @@ class PostgreSQLHandler extends DatabaseHandler {
     public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
 		
     	return $this->prepareAndRunQuery("select * ", " \"$table_name\" ", null, null, null, $perPage, $pageNo);
-    	
-    	
-//     	$pdo = $this->GetConnection();
-
-//         $sql = "SELECT * FROM $table_name ";
-//         $startPoint = ($pageNo - 1) * $perPage;
-//         $sql .= " LIMIT " . $startPoint . " OFFSET " . $perPage;
-
-//         $res = $pdo->query($sql);
-//         $result = array();
-
-//         foreach ($res->fetchAll() as $row) {
-//             $result[] = $row;
-//         }
-//         return $result;
     }
 
     public function getTotalNumberTuplesInTable($table_name) {
