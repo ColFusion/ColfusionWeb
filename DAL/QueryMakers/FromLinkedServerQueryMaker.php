@@ -27,7 +27,7 @@ class FromLinkedServerQueryMaker {
         from [$linkedServerName].[dbo].$tableName       
 EOQ;
         }
-        else {}
+        else {
             $query = <<<EOQ
         select distinct $columnNameAndAlias
 		from [$linkedServerName]...$tableName		
