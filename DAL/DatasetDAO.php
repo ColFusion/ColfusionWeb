@@ -16,7 +16,7 @@ class DatasetDAO {
         
         $tableName = mysql_real_escape_string($tableName);
         $allColsSql = "SELECT di.cid, sid, tableName, dname_chosen FROM `colfusion_dnameinfo` di 
-            INNER JOIN `colfusion_columntableinfo` cti ON di.cid = cti.cid 
+            INNER JOIN `colfusion_columnTableInfo` cti ON di.cid = cti.cid 
             WHERE sid = $sid AND tableName = '$tableName'";
         
         foreach($this->ezSql->get_results($allColsSql) as $row){
