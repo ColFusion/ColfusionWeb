@@ -28,7 +28,7 @@ class TransformationHandler {
 
     // TansInput includes link part and synonym in links.
     //TODO: needOrigianl never used, probably this method by itself should assess if we need origianl name or chosen, depending on the source type of the column
-    public function decodeTransformationInputWithPrefix($transInput, $prefixStringArr) {
+    public function decodeTransformationInputWithPrefix($transInput, $prefixStringArr, $needOriginal = true) {
         if (!isset($transInput))
             return $transInput;
 
