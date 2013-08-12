@@ -74,7 +74,7 @@ function getDistinctTable($tableParams) {
                 $tableRows[] = $tableRow;
             }
         } else {
-            $tableRows = [];
+            $tableRows = array();
         }
     }
 

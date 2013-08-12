@@ -144,7 +144,7 @@
                         </div>
                     </div>                
                 </div>  
-                <div class="accordionWrapper">
+                <div class="accordionWrapper" style="display:none;">
                     <div class="accordion" id="sameDataAccordion">
                         <div class="accordion-group">
                             <div class="accordion-heading">

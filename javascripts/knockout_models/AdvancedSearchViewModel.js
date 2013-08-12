@@ -1,4 +1,4 @@
-﻿var advDebug = true;
+﻿var advDebug = false;
 
 var AdvancedSearchViewModelProperties = {
     Filter: function () {
@@ -133,7 +133,7 @@ var AdvancedSearchViewModelProperties = {
 function AdvancedSearchViewModel() {
     var self = this;
 
-    self.searchTerm = ko.observable('Ccode');
+    self.searchTerm = ko.observable();
     self.filters = ko.observableArray();
     self.filters.push(new AdvancedSearchViewModelProperties.Filter());
     self.category = ko.observable();
