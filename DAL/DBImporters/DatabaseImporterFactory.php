@@ -16,9 +16,9 @@ class DatabaseImporterFactory {
 
     public static function createDatabaseImporter($engine, $sid, $prefix = "colfusion") {
 
-        $user = DatabaseImporterFactory::$importSettings[$engine]['user'];
-        $password = DatabaseImporterFactory::$importSettings[$engine]['password'];
-        $port = DatabaseImporterFactory::$importSettings[$engine]['port'];
+        $user = DatabaseImporterFactory::$importSettings[strtolower($engine)]['user'];
+        $password = DatabaseImporterFactory::$importSettings[strtolower($engine)]['password'];
+        $port = DatabaseImporterFactory::$importSettings[strtolower($engine)]['port'];
         $host = 'localhost';
         $database = "$prefix" . "_external_$sid";
 
