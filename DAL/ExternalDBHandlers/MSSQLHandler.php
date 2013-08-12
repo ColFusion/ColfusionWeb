@@ -130,8 +130,7 @@ EOQ;
 
         if (isset($perPage) && isset($pageNo)) {
 
-            $startPoint = ($pageNo - 1) * $perPage;
-            $query .= " LIMIT " . $startPoint . "," . $perPage;
+            $query = $this->wrapInLimit($pageNo, $perPage, $query);
         }
 
         return $this->ExecuteQuery($query);

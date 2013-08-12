@@ -78,7 +78,7 @@ class MySQLHandler extends DatabaseHandler {
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
-    	$pdo = $this->GetConnection();
+    //	$pdo = $this->GetConnection();
     	
         $select = str_replace("[", "`", $select);
         $select = str_replace("]", "`", $select);
@@ -107,13 +107,13 @@ class MySQLHandler extends DatabaseHandler {
     		$query .= " LIMIT " . $startPoint . "," . $perPage;
     	}
     	    	    	
-    	$res = $pdo->query($query);
-    	$result = array();
-    	while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
-    		$result[] = $row;
-    	}
+    //	$res = $pdo->query($query);
+    //	$result = array();
+    //	while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
+    //		$result[] = $row;
+    //	}
     	
-    	return $result;
+    	return $this->ExecuteQuery($query);
     }
 
     public function ExecuteQuery($query) {
