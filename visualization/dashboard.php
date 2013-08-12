@@ -105,6 +105,7 @@ $chart_columns[] = "Location";
         <script type="text/javascript" src="js/jquery.ui.mouse.js"></script>
         <script type="text/javascript" src="js/jquery.ui.resizable.js"></script>
         <script type="text/javascript" src="js/jquery.ui.draggable.js"></script>
+	<script type="text/javascript" src="js/Chart.js"></script>
 	<script type="text/javascript" src="js/Canvas.js"></script>	
         <script type="text/javascript" src="js/dashboardJS.js"></script>		
         <script type="text/javascript" src="js/test.js"></script>
