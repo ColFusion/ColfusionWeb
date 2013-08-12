@@ -226,7 +226,11 @@ class Canvas{
     }
    
     function dropChart($cid){
-        $this->charts[$cid]->dropChart();
+        if(substr($cid,0,9) == 'TempChart'){
+            
+        }else{
+            $this->charts[$cid]->dropChart();
+        }
         unset($this->charts[$cid]);
     }
     function __destruct(){

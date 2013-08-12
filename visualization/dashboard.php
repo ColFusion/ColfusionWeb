@@ -1078,7 +1078,7 @@ $chart_columns[] = "Location";
             createNewCanvas("  <?php echo $dataset->title ?>");
             CANVAS.addStory(<?php echo json_encode($dataset) ?>);
 	    $('#addTable').modal('show');
-	    $('#addTable .table-list').val("+<?php echo $dataset->title ?>")
+	    $('#addTable .table-list').val("<?php echo $dataset->tableName ?>")
 	    $('#addTable .columnSelection input').each(function() {
 		$(this).prop('checked','checked');
 		})

@@ -144,8 +144,6 @@ function TableHighlight(sid,tablename){
 	for (var chart in CHARTS){
 		var compareSid = CHARTS[chart].getSid();
 		var compareTname = CHARTS[chart].getTable();
-		compareTname = compareTname.split(".");
-		compareTname = compareTname[0]+compareTname[1];
 		if (compareSid!=sid||compareTname!=tablename){
 			var G = CHARTS[chart]['gadgetID'].split('Result');
 			var gid = G[1];
