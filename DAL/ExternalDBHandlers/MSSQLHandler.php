@@ -65,6 +65,8 @@ class MSSQLHandler extends DatabaseHandler {
 
         $sql = $this->wrapInLimit($pageNo, $perPage, $table_name);
 
+        $result = array();
+
         $res = $pdo->query($sql);
         foreach ($res->fetchAll() as $row) {
             $result[] = $row;
