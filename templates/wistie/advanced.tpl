@@ -312,4 +312,12 @@
     .<span data-bind="text:  $data.tableName"></span>
 </script>
 
+<form id="dataMatchCheckingForm" target="_blank" method="post" action="{/literal}{$my_pligg_base}{literal}/dataMatchChecker/dataMatchChecker.php" style="display:none;">
+    <input type="hidden" name="fromSid" value="2122">
+    <input type="hidden" name="toSid" value="2121">
+    <input type="hidden" name="fromTable" value="s6.xlsx">
+    <input type="hidden" name="toTable" value="s5.xlsx">
+    <input typle="hidden" name="relSerializedString">
+</form>
+
 {/literal}

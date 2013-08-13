@@ -12,24 +12,16 @@ class CachedQueryDAO {
         $this->ezSql = $db;
     }
 
-    public function getCacheQueryInfoByQuery($query) {
-        
-
-
+    public function getCacheQueryInfoByQuery($query) {      
         $query = mysql_real_escape_string($query);
         $cachedQueryInfo = "SELECT * FROM `colfusion_cached_queries_info`  
             WHERE query = '$query'"; 
-
-var_dump($cachedQueryInfo);
-
-        
+   
         return $this->ezSql->get_row($cachedQueryInfo);
     }
 
     public function addCacheQuery($fromAndWherePart, $selectAllPart) {
         $dbHandler = CachedServerFacotry::createDatabaseHandler("mssql");
-
-//var_dump($selectAllPart);
 
         $cacheQueryInfo = $this->saveNewQueryInTheDB($fromAndWherePart, $dbHandler);
 
@@ -52,16 +44,12 @@ var_dump($cachedQueryInfo);
 
         $sql = "INSERT INTO `colfusion_cached_queries_info`(`query`, `server_address`, `port`, `driver`, `user_name`, `password`, `database`, `tableName`, `expiration_date`) VALUES ('{$result->query}', '{$result->server_address}', '{$result->port}', '{$result->driver}', '{$result->user_name}', '{$result->password}', '{$result->database}', 'tableToUpdate', NOW())";
 
-//var_dump($sql);
-
         $this->ezSql->query($sql);
 
         $result->cachedQueruId = $this->ezSql->insert_id;
         $result->tableName = "cachedTable_{$result->cachedQueruId}";
 
         $sql = "update colfusion_cached_queries_info set tableName = '{$result->tableName}' where id = {$result->cachedQueruId}";
-
-//var_dump($sql);
 
         $this->ezSql->query($sql);
 

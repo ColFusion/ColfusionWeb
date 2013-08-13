@@ -217,7 +217,7 @@ var RelationshipModel = {
         };
 
         self.checkDataMatching = function () {
-            self.fromDataset().name($('#fromDataSet').find('input.sidInput').val());
+            self.fromDataset().name($('#fromDataSet').find('input.sidInput').val() || self.fromDataset().name());
 
             $('#dataMatchCheckingForm input[name="fromSid"]').val(self.fromDataset().sid());
             $('#dataMatchCheckingForm input[name="toSid"]').val(self.toDataset().sid());

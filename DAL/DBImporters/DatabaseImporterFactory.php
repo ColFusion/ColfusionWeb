@@ -15,7 +15,8 @@ class DatabaseImporterFactory {
     );
 
     public static function createDatabaseImporter($engine, $sid, $prefix = "colfusion") {
-
+        $engine = strtolower($engine);
+        
         $user = DatabaseImporterFactory::$importSettings[strtolower($engine)]['user'];
         $password = DatabaseImporterFactory::$importSettings[strtolower($engine)]['password'];
         $port = DatabaseImporterFactory::$importSettings[strtolower($engine)]['port'];

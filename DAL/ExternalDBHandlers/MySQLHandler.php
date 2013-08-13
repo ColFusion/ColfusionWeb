@@ -43,23 +43,7 @@ class MySQLHandler extends DatabaseHandler {
     }
 
     public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
-        
     	return $this->prepareAndRunQuery("select * ", "`$table_name`", null, null, $perPage, $pageNo);
-    	
-    	
-//     	$pdo = $this->GetConnection();
-
-//         $sql = "SELECT * FROM `$table_name` ";
-//         $startPoint = ($pageNo - 1) * $perPage;
-//         $sql .= " LIMIT " . $startPoint . "," . $perPage;
-      
-//         $res = $pdo->query($sql);
-//         $result = array();
-//         while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
-//             $result[] = $row;
-//         }
-
-//         return $result;
     }
 
     public function getTotalNumberTuplesInTable($table_name) {

@@ -7,13 +7,13 @@ class PostgreSQLHandler extends DatabaseHandler {
     public function __construct($user, $password, $database, $host, $port = 5432) {
         parent::__construct($user, $password, $database, $host, $port, 'postgresql');
     }
-       
+
     public function getConnection() {
         $pdo = new PDO("pgsql:host={$this->host};port={$this->port};dbname={$this->database}", $this->user, $this->password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         return $pdo;
     }
-   
+
     public function loadTables() {
         $pdo = $this->GetConnection();
 
@@ -43,7 +43,6 @@ class PostgreSQLHandler extends DatabaseHandler {
     }
 
     public function getTableData($table_name, $perPage = 10, $pageNo = 1) {
-		
     	return $this->prepareAndRunQuery("select * ", " \"$table_name\" ", null, null, null, $perPage, $pageNo);
     }
 
@@ -57,7 +56,7 @@ class PostgreSQLHandler extends DatabaseHandler {
         return $tupleNum;
     }
 
-    
+
     // select - valid sql select part
     // from - tableName with alias if specified
     // where - valid SQL where part
@@ -65,12 +64,12 @@ class PostgreSQLHandler extends DatabaseHandler {
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     public function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
     	$pdo = $this->GetConnection();
-    	 
+
     	$select = str_replace("[", "\"", $select);
         $select = str_replace("]", "\"", $select);
 
         $query = $select . " from " . $from . " ";
-        
+
         if (isset($where)) {
 
             $where = str_replace("[", "\"", $where);
@@ -78,7 +77,7 @@ class PostgreSQLHandler extends DatabaseHandler {
 
             $query .= ' ' . $where . ' ';
         }
-         
+
         if (isset($groupby)) {
 
             $groupby = str_replace("[", "\"", $groupby);
@@ -86,18 +85,18 @@ class PostgreSQLHandler extends DatabaseHandler {
 
             $query .= ' '. $groupby . ' ';
         }
-    	 
+
     	if (isset($perPage) && isset($pageNo)) {
-    		 
+
     		$startPoint = ($pageNo - 1) * $perPage;
     		$query .= " LIMIT " . $startPoint . " OFFSET " . $perPage;
     	}
-    	    	       	
+
     	//echo $query;
-    	
+
     	$res = $pdo->query($query);
     	$result = array();
-    	
+
     	foreach ($res->fetchAll(PDO::FETCH_ASSOC) as $row) {
     		$result[] = $row;
     	}
@@ -112,7 +111,7 @@ class PostgreSQLHandler extends DatabaseHandler {
         while(($row = $res->fetch(PDO::FETCH_ASSOC))) {
             $result[] = $row;
         }
-        
+
         return $result;
     }
 

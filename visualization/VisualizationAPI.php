@@ -5,9 +5,10 @@ include_once(realpath(dirname(__FILE__)) . '/../config.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
 header('Content-type: text/html; charset=utf-8');
-$action = $_GET["action"];
-$action();
-exit;
+if(isset($_GET["action"])){
+    $action = $_GET["action"];
+    $action();
+}
 
 // Expects sid in post
 function GetTablesList() {
@@ -16,27 +17,24 @@ function GetTablesList() {
     echo json_encode($queryEngine->GetTablesList($_POST["sid"]));
 }
 
-// Simple case, expects sid and table_name in post
-// also numberof tuples per page: perPage
-// and page number: pageNo
-function GetTableDataBySidAndName() {
-    $queryEngine = new QueryEngine();
-
-    $sid = $_POST["sid"];
-
-    if (is_string($sid)) {
-        $sid = json_decode($sid);
-    }
-
-
+function GetTableDataBySidAndName(){
+    $sid = (int)$_POST["sid"];
     $table_name = $_POST["table_name"];
     $perPage = $_POST["perPage"];
     $pageNo = $_POST["pageNo"];
+    
+    echo json_encode(GetTableData($sid, $table_name, $perPage, $pageNo));
+}
 
+// Simple case, expects sid and table_name in post
+// also numberof tuples per page: perPage
+// and page number: pageNo
+function GetTableData($sid, $table_name, $perPage, $pageNo) {
+    
+    $queryEngine = new QueryEngine();
     $result = $queryEngine->GetTableDataBySidAndName($sid, $table_name, $perPage, $pageNo);
 
     $columns = NULL;
-
     foreach ($result as $r) {
         $json_array["data"][] = $r;
 
@@ -55,8 +53,8 @@ function GetTableDataBySidAndName() {
     $json_array["Control"]["totalPage"] = $totalPage;
     $json_array["Control"]["pageNo"] = $pageNo;
     $json_array["Control"]["cols"] = $columns;
-
-    echo json_encode($json_array);
+    
+    return $json_array;
 }
 
 //TODO: refactor so the input is send as an objec as for visualization with oneSid atribute included
@@ -106,22 +104,4 @@ function CheckDataMatching() {
 	
 	echo json_encode($queryEngine->CheckDataMatching($from, $to));
 }
-
-// Expects in POST:
-// sid(s) - could be comma separated sids
-// For each sid provide following data strucutre:
-// sid: {[
-//        table_name : [columns],
-//		 ]},
-// where: condition here in form:
-//                  column: value
-//                  operator: value
-//                  expression: value
-// perPage: value,
-// pageNo: value
-//function GetTableDataBySidAndName() {
-//	$queryEngine = new QueryEngine();
-//
-	//	echo json_encode($queryEngine->GetTableDataBySidAndName($_POST["sid"], $_POST["table_name"]));
-//}
 ?>	

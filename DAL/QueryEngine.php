@@ -34,36 +34,28 @@ class QueryEngine {
 
         $transHandler = new TransformationHandler();
 
-        
+
 
         if (count($from) == 1) { // then we don't need to do any joins.
 
             $dataset = $from[0];
             //TODO seems like inputObj is an array. This need to be fixed
-        
+
             if (is_array($dataset->inputObj)) {
                 $dataset->inputObj = json_decode(json_encode($dataset->inputObj));
             }
 
             if (isset($dataset->inputObj->oneSid)) {
-
-
-                //var_dump($dataset->inputObj->oneSid);
-
                 if ($dataset->inputObj->oneSid === "true" || $dataset->inputObj->oneSid === true) { //onde story
 
-                   //var_dump($dataset->inputObj->oneSid);
-
                     $datasetObj = (object) array('sid' => $dataset->inputObj->sid, 'tableName' => $dataset->tableName);
-
-                    //var_dump($datasetObj);
 
                     //NOTE: $select, $where and $group cannot have [] sybmols comming directly from column or table name
                     $select =  $transHandler->decodeTransformationInput($select, true);
                     $where =  $transHandler->decodeTransformationInput($where, true);
                     $groupby =  $transHandler->decodeTransformationInput($groupby, true);
 
-                    return $this->prepareAndRunQuery($select, $datasetObj, $where, $groupby, $perPage, $pageNo);                
+                    return $this->prepareAndRunQuery($select, $datasetObj, $where, $groupby, $perPage, $pageNo);
                 }
                 else {
                     //merged stories.
@@ -95,8 +87,8 @@ class QueryEngine {
 
         global $db;
 
-// 		$sql = "select source_type from colfusion_sourceinfo where sid = $from";
-// 		$rst = $db->get_results($sql);
+        // 		$sql = "select source_type from colfusion_sourceinfo where sid = $from";
+        // 		$rst = $db->get_results($sql);
 
         if ($this->GetSourceType($from) == "database") {
 
@@ -148,7 +140,6 @@ class QueryEngine {
     public function GetTablesList($sid) {
         global $db;
 
-        //  if ($this->GetSourceType($sid) == "database") {
         $query = "SELECT distinct tableName FROM colfusion_columnTableInfo natural join colfusion_dnameinfo where sid = $sid";
         $rst = $db->get_results($query);
 
@@ -162,7 +153,7 @@ class QueryEngine {
     }
 
 
-//TODO: refactor so the input is send as an objec as for visualization with oneSid atribute included
+    //TODO: refactor so the input is send as an objec as for visualization with oneSid atribute included
     // input can be a s simple number or as an object which comes from visualization
     public function GetTablesInfo($sid) {
 
@@ -177,7 +168,6 @@ class QueryEngine {
             }
             else {
                 throw new Exception("Object is missing oneSid", 1);
-                
             }
         }
         else {
@@ -198,7 +188,7 @@ class QueryEngine {
 
     public function GetTablesInfoBySid($sid) {
         global $db;
-        
+
         $query = "SELECT * FROM colfusion_columnTableInfo natural join colfusion_dnameinfo where sid = $sid";
 
         $rst = $db->get_results($query);
@@ -229,7 +219,7 @@ class QueryEngine {
             $fromArray = array($from);
             $select = "select * ";// . implode(", ", $selectAr);
 
-            return $this->doQuery($select, $fromArray, null, null, null, null, null);      
+            return $this->doQuery($select, $fromArray, null, null, null, null, null);
         }
         else {
             if ($this->GetSourceType($sid) == "database") {
@@ -251,7 +241,7 @@ class QueryEngine {
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
-        
+
         if ($this->GetSourceType($from->sid) == "database") {
             $externalDBCredentials = $this->GetExternalDBCredentialsBySid($from->sid);
 
@@ -267,8 +257,6 @@ class QueryEngine {
     }
 
     function prepareAndRunQueryFromFile($select, $from, $where, $groupby, $perPage, $pageNo) {
-//        var_dump($select);
-
 
         $select = str_replace("[", "`", $select);
         $select = str_replace("]", "`", $select);
@@ -301,16 +289,12 @@ class QueryEngine {
             $query .= " LIMIT " . $startPoint . "," . $perPage;
         }
 
-//var_dump ($query);
-
         return $this->runQuerySingleSidTableFromFile($query, $from->sid, $from->tableName);
     }
 
     function runQuerySingleSidTableFromFile($query, $sid, $tableName) {
         global $db;
         $doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
-
-//var_dump ($doJoinQuery);
 
         $res = $db->query($doJoinQuery);
         $rst = $db->get_results($query);
@@ -320,15 +304,8 @@ class QueryEngine {
 
     function prepareAndRunMergedDatasetQuery($select, $inputObj, $where, $groupby, $perPage, $pageNo){
         $mergedDatasetQuery = new MergedDataSetQueryMaker($select, $inputObj, $where, $groupby, $perPage, $pageNo);
-        
-
-//var_dump($mergedDatasetQuery);
 
         $queryInfo = $mergedDatasetQuery->GetQuery();
-
-        //$MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
-
-        //$result = $MSSQLHandler->ExecuteQuery($query);
 
         $externalDBCredentials = new stdClass();
 
@@ -363,7 +340,7 @@ class QueryEngine {
             return $result->ct;
         }
         else {
-             if ($this->GetSourceType($sid) == "database") {
+            if ($this->GetSourceType($sid) == "database") {
                 return $this->GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $table_name);
             } else {
                 return $this->GetTotalNumberTuplesInTableBySidAndNameFromFile($sid, $table_name);
@@ -405,7 +382,7 @@ class QueryEngine {
         global $db;
 
         $relationshipDao = new RelationshipDAO();
-    
+
         $relsForCurrentSidBeforeMining = $relationshipDao->getRelIdsForSid($sid);
 
         if (!isset($relsForCurrentSidBeforeMining))
@@ -429,18 +406,18 @@ class QueryEngine {
 	   statOnVerdicts.numberOfVerdicts, statOnVerdicts.numberOfApproved, statOnVerdicts.numberOfReject,
 	   statOnVerdicts.numberOfNotSure, statOnVerdicts.avgConfidence
 
-FROM 
-	colfusion_relationships as rel, 
-	colfusion_users as u,		
-	colfusion_sourceinfo as siFrom, 
+FROM
+	colfusion_relationships as rel,
+	colfusion_users as u,
+	colfusion_sourceinfo as siFrom,
 	colfusion_sourceinfo as siTo,
 	statOnVerdicts
-	
-where    
+
+where
 		rel.creator = u.user_id
 		and rel.rel_id = statOnVerdicts.rel_id
 		and rel.sid1 = siFrom.Sid
-		and rel.sid2 = siTo.Sid		
+		and rel.sid2 = siTo.Sid
 		and (rel.sid1 = $sid or rel.sid2 = $sid)
 EOQ;
 
@@ -485,15 +462,8 @@ EOQ;
         $client = new Everyman\Neo4j\Client();
 
         $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
-        
-     //   var_dump($sidFrom);
-     //   var_dump($sidTo);
-     //   var_dump($rel_id);
-     //   var_dump($confidence);
 
         $sourceFrom = $sourceIndex->queryOne("sid:$sidFrom");
-
-     //   var_dump($sourceFrom);
 
         if (!isset($sourceFrom)) {
             $sourceFrom = $client->makeNode();
@@ -502,11 +472,7 @@ EOQ;
             $sourceIndex->save();
         }
 
-    //    var_dump($sourceFrom);
-
         $sourceTo = $sourceIndex->queryOne("sid:$sidTo");
-
-    //    var_dump($sourceTo);
 
         if (!isset($sourceTo)) {
             $sourceTo = $client->makeNode();
@@ -514,8 +480,6 @@ EOQ;
             $sourceIndex->add($sourceTo, 'sid', $sourceTo->getProperty('sid'));
             $sourceIndex->save();
         }
-
-      //  var_dump($sourceTo);
 
         if (!isset($sourceFrom) || !isset($sourceTo))
             throw new Exception("Cannot add relationship on neo4j, one of the nodes is null", 1);
@@ -531,8 +495,6 @@ EOQ;
         if (!isset($rel_ids))
             return;
 
-        //var_dump($rel_ids);
-
         $relationshipDao = new RelationshipDAO();
 
         foreach ($rel_ids as $key => $rel_id) {
@@ -542,14 +504,14 @@ EOQ;
     }
 
     public function CheckDataMatching($from, $to) {
-        
+
         $checkDataMatchingQueryMaker = new CheckdataMatchingQueryMaker($from, $to);
 
         $notMatchedInFrom = $checkDataMatchingQueryMaker->getNotMachedInFromQuery();
         $notMatchedInTo = $checkDataMatchingQueryMaker->getNotMachedInToQuery();
         $countOfMached = $checkDataMatchingQueryMaker->getCountOfMached();
         $countOfTotalDistinct = $checkDataMatchingQueryMaker->getCountOfTotalDistinct();
-        
+
         $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
 
         $result = new stdClass;
@@ -596,18 +558,18 @@ EOQ;
     // links are columns or transformations
     // $searchTerms is an associated array where keys are the links and values are search terms for associated links.
     public function GetDistinctForColumns($source, $perPage, $pageNo, $searchTerms = null) {
-   
+
         $from = (object) array('sid' => $source->sid, 'tableName' => $source->tableName);
         $fromArray = array($from);
-    
-        $transHandler = new TransformationHandler();       
+
+        $transHandler = new TransformationHandler();
 
         $columnNames = array();
 
         $whereArray = array();
 
         foreach ($source->links as $key=>$link) {
-           
+
             $column = $transHandler->decodeTransformationInput($link);
             $columnNames[] = $column;
 
@@ -617,10 +579,10 @@ EOQ;
                 }
             }
         }
- 
+
         $columns = implode(",", array_values($columnNames));
-       
-        
+
+
         $where = null;
 
         if (count($whereArray) > 0)
@@ -628,8 +590,8 @@ EOQ;
 
         $result = new stdClass;
         $result->columns = explode(",", $columns);
-        $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, $where, null, null, $perPage, $pageNo);     
-        $result->totalRows = $this->doQuery("SELECT COUNT(*) as ct", $fromArray, $where, null, null, null, null); 
+        $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, $where, null, null, $perPage, $pageNo);
+        $result->totalRows = $this->doQuery("SELECT COUNT(*) as ct", $fromArray, $where, null, null, null, null);
 
         return $result;
     }
