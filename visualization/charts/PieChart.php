@@ -52,7 +52,7 @@ class PieChart extends Chart {
 			$select .= "MIN(cid(" . $pieColumnAgg->cid . ")) AS 'AggValue' ";
 			break;
 	}
-        $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
+        $from = (object) array('inputObj' => $inputObj, 'tableName' => "[$table]");
         $fromArray = array($from);
         $groupby = " GROUP BY cid(" . $pieColumnCat->cid . ") ";
         $queryEngine = new QueryEngine();

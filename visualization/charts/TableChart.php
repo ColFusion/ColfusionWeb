@@ -40,7 +40,7 @@ class TableChart extends Chart{
 	$pageNo = $_datainfo->currentPage; // controls which page to show, got from JS function
 	$where = $_datainfo->where;
 
-	$from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
+	$from = (object) array('inputObj' => $inputObj, 'tableName' => "[$table]");
 	$fromArray = array($from);
 	
 	$queryEngine = new QueryEngine();

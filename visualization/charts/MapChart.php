@@ -54,7 +54,7 @@ class MapChart extends Chart {
         if(isset($_datainfo->mapTooltip)){
             $select .= ", ".$tips; 
         }
-	$from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
+	$from = (object) array('inputObj' => $inputObj, 'tableName' => "[$table]");
         $fromArray = array($from);
 	if (!empty($where))
         $select .= $where;

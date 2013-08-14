@@ -33,7 +33,7 @@ class ComboChart extends Chart{
 	$comboColumnCat = (object)$_datainfo->comboColumnCat;
 	$comboColumnAgg = (object)$_datainfo->comboColumnAgg;
         $comboAggType = $_datainfo->comboAggType;
-        $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
+        $from = (object) array('inputObj' => $inputObj, 'tableName' => "[$table]");
         $fromArray = array($from);	
 	$select = "SELECT cid(" . $comboColumnCat->cid . ") AS 'Category' ";
         for($i = 0; $i < sizeof($comboAggType); $i++){

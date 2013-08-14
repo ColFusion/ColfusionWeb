@@ -58,7 +58,7 @@ class ColumnChart extends Chart{
             $select .= "MIN(cid(" . $columnAgg->cid . ")) AS 'AggValue' ";
             break;
     }
-        $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
+        $from = (object) array('inputObj' => $inputObj, 'tableName' => "[$table]");
         $fromArray = array($from);
         $groupby = " GROUP BY cid(" . $columnCat->cid . ") ";
         //$queryResult = json_decode('{"cat":"aaa","agg":"bbb","content":[["Year", "Sales"],["2004",15],["2005",12],["2006",16],["2007",18]]}');

@@ -58,7 +58,7 @@ class MotionChart extends Chart {
 	if (!empty($where))
         $select .= $where;
 
-    $from = (object) array('inputObj' => $inputObj, 'tableName' => $table);
+    $from = (object) array('inputObj' => $inputObj, 'tableName' => "[$table]");
     $fromArray = array($from);
 	$queryEngine = new QueryEngine();
 
