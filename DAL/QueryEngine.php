@@ -294,6 +294,10 @@ class QueryEngine {
 
     function runQuerySingleSidTableFromFile($query, $sid, $tableName) {
         global $db;
+
+        $tableName = str_replace("[", "`", $tableName);
+        $tableName = str_replace("]", "`", $tableName);
+
         $doJoinQuery = "call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($tableName) . "')";
 
         $res = $db->query($doJoinQuery);
