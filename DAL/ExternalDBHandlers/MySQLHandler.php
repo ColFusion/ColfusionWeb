@@ -83,6 +83,9 @@ class MySQLHandler extends DatabaseHandler
         $select = str_replace("[", "`", $select);
         $select = str_replace("]", "`", $select);
 
+        $from = str_replace("[", "`", $from);
+        $from = str_replace("]", "`", $from);
+
         $query = $select . " from " . $from . " ";
 
         if (isset($where)) {
