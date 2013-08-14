@@ -1,6 +1,7 @@
 <?php
 
 require_once(realpath(dirname(__FILE__)) . '/../Classes/PHPExcel.php');
+require_once(realpath(dirname(__FILE__)) . '/ServerCredForExcelToDatabase.php');
 
 class KTRManager {
 
@@ -10,11 +11,15 @@ class KTRManager {
     private $addedConstants;
     private $updatedColAndStreamNames;
     private $filePaths;
+    private $sid;
+    private $connectionInfo;
+    private $tableName;
 
-    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths) {
+    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid) {
         $this->ktrTemplatePath = $ktrTemplatePath;
         $this->ktrFilePath = $ktrFilePath;
         $this->filePaths = $filePaths;
+        $this->sid = $sid;
     }
 
     public function createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs) {
@@ -27,27 +32,83 @@ class KTRManager {
         $this->addUrls($this->filePaths);
         $this->addSheets($sheetNamesRowsColumns);
         $this->clearConstantAndTarget();
-        $this->addSampleTarget();
-        foreach ($this->addedConstants as $constant) {
-            $this->addConstantIntoFile($constant->name1, $constant->value, $constant->type, $constant->format);
-        }
-        foreach ($this->updatedColAndStreamNames as $colAndStmName) {
-            $this->updateColumnAndStreamNameIntoFile($colAndStmName->name1, $colAndStmName->value1);
-        }
-        $this->addNormalizer($baseHeader, $dataMatchingUserInputs);
+
+        $this->addExcelInputFields($baseHeader);
+
+        // $this->addSampleTarget();
+        // foreach ($this->addedConstants as $constant) {
+        //     $this->addConstantIntoFile($constant->name1, $constant->value, $constant->type, $constant->format);
+        // }
+        // foreach ($this->updatedColAndStreamNames as $colAndStmName) {
+        //     $this->updateColumnAndStreamNameIntoFile($colAndStmName->name1, $colAndStmName->value1);
+        // }
+        // $this->addNormalizer($baseHeader, $dataMatchingUserInputs);
+        // 
+        
+        $this->updatedColAndStreamNames = $dataMatchingUserInputs;
+        $this->updateTargetSchemaStepColumnAndStreamName($dataMatchingUserInputs);
+
+//var_dump($this); 
 
         file_put_contents($this->ktrFilePath, $this->ktrXml->asXML());
+        unset($this->ktrXml);
     }
 
     private function changeConnection() {
+ 
+        $connectionInfo = new stdClass();
 
-        $connectdatabase = constant("EZSQL_DB_NAME");
-        $connectusername = constant("EZSQL_DB_USER");
-        $connectpassword = constant("EZSQL_DB_PASSWORD");
+        $connectionInfo->database = constant("FILETODB_DB_NAMEPREFIX") . $this->sid;
+        $connectionInfo->username = constant("FILETODB_DB_USER");
+        $connectionInfo->password = constant("FILETODB_DB_PASSWORD");
+        $connectionInfo->server = constant("FILETODB_DB_HOST");
+        $connectionInfo->port = constant("FILETODB_DB_PORT");
+        $connectionInfo->engine = constant("FILETODB_DB_ENGINE");
 
-        $this->ktrXml->connection[0]->database = $connectdatabase;
-        $this->ktrXml->connection[0]->username = $connectusername;
-        $this->ktrXml->connection[0]->password = $connectpassword;
+        $this->ktrXml->connection[0]->database = $connectionInfo->database;
+        $this->ktrXml->connection[0]->username = $connectionInfo->username;
+        $this->ktrXml->connection[0]->password = $connectionInfo->password;
+        $this->ktrXml->connection[0]->server = $connectionInfo->server;
+        $this->ktrXml->connection[0]->port = $connectionInfo->port;
+        $this->ktrXml->connection[0]->type = $connectionInfo->engine;
+
+        $this->connectionInfo = $connectionInfo;
+    }
+
+    /**
+     * Return connection information the target server from the ktr file.
+     * @return stdClass Returned object has following fields:
+     *         database - the name of the target database
+     *         username - dbms user name which should have permissions to connect to the target database
+     *         password - password to use for connection
+     *         server - the url of the target server
+     *         port - port number on which the dbms is listening
+     *         engine - name of the dbms, e.g.: mysql, mssql,...
+     */
+    public function getConnectionInfo() {
+ 
+//var_dump($this);
+
+        return $this->connectionInfo;
+    }
+
+    /**
+     * Return table name from Target Schema step of the ktr file.
+     * @return String table name - the name of the sql table in the target database.
+     */
+    public function getTableName() {
+
+        return $this->tableName;
+    }
+
+    /**
+     * Return the array of objects which describe columns from the file. TODO need to defince a class for that object
+     * @return array columns info
+     */
+    public function getColumns()
+    {
+        //var_dump($this);
+        return $this->updatedColAndStreamNames;
     }
 
     private function changeSheetType() {
@@ -123,28 +184,26 @@ class KTRManager {
             if ($name == 'Target Schema') {
                 $fields = $step->fields;
 
-                $field = $fields->addChild('field');
-                $field->addChild('column_name', 'Dname');
-                $field->addChild('stream_name', 'Dname');
+                // $field = $fields->addChild('field');
+                // $field->addChild('column_name', 'Dname');
+                // $field->addChild('stream_name', 'Dname');
 
-                $field = $fields->addChild('field');
-                $field->addChild('column_name', 'Sid');
-                $field->addChild('stream_name', 'Sid');
+                // $field = $fields->addChild('field');
+                // $field->addChild('column_name', 'Sid');
+                // $field->addChild('stream_name', 'Sid');
 
-                $field = $fields->addChild('field');
-                $field->addChild('column_name', 'Eid');
-                $field->addChild('stream_name', 'Eid');
+                // $field = $fields->addChild('field');
+                // $field->addChild('column_name', 'Eid');
+                // $field->addChild('stream_name', 'Eid');
 
-                $field = $fields->addChild('field');
-                $field->addChild('column_name', 'value');
-                $field->addChild('stream_name', 'value');
+                // $field = $fields->addChild('field');
+                // $field->addChild('column_name', 'value');
+                // $field->addChild('stream_name', 'value');
             }
         }
     }
 
     private function addNormalizer($baseHeader, $dataMatchingUserInputs) {
-
-        $this->addExcelInputFields($baseHeader);
 
         $steps = $this->ktrXml->xpath('//step[name = "Row Normalizer"]');
         $step = $steps[0];
@@ -233,6 +292,27 @@ class KTRManager {
                 $field = $fields->addChild('field');
                 $field->addChild('column_name', $name1);
                 $field->addChild('stream_name', $value1);
+            }
+        }
+    }
+
+    private function updateTargetSchemaStepColumnAndStreamName(array $columnNameAndStreamName) {
+        $steps = $this->ktrXml->step;
+
+        foreach ($steps as $step) {
+            $name = $step->name;
+            if ($name == 'Target Schema') {
+
+                $step->table = $columnNameAndStreamName[0]["tableName"];
+                $this->tableName = $columnNameAndStreamName[0]["tableName"];
+
+                $fields = $step->fields;
+
+                foreach ($columnNameAndStreamName as $key => $value) {
+                    $field = $fields->addChild('field');
+                    $field->addChild('column_name', $value["originalDname"]);
+                    $field->addChild('stream_name', $value["originalDname"]);
+                }
             }
         }
     }

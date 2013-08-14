@@ -3,9 +3,16 @@
 include_once(dirname(__FILE__) . '/../DAL/ExternalDBHandlers/MSSQLHandler.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 
-class SimpleQuery {
-
-    public function getNewSid($author, $state) {
+class SimpleQuery
+{
+    /**
+     * [getNewSid description]
+     * @param  [type] $author
+     * @param  [type] $state
+     * @return [type]
+     */
+    public function getNewSid($author, $state)
+    {
         global $db;
 
         $datetime = date("Y-m-d H:i:s", mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y')));
@@ -17,7 +24,8 @@ class SimpleQuery {
         return $newSid;
     }
 
-    public function setSourceTypeBySid($sid, $soureType) {
+    public function setSourceTypeBySid($sid, $soureType)
+    {
         global $db;
 
         $sql = "UPDATE " . table_prefix . "sourceinfo set source_type = '$soureType' where sid=$sid;";
@@ -26,17 +34,20 @@ class SimpleQuery {
 
 // Get info of all attachments of a source.
 // Return an array of objects with properties mapped to table's columns.
-    public function getSourceAttachmentsInfo($sid) {
+    public function getSourceAttachmentsInfo($sid)
+    {
         global $db;
         $sid = $db->escape($sid);
         $sql = "SELECT * FROM colfusion_des_attachments WHERE Sid='$sid';";
         $results = $db->get_results($sql);
+
         return $results;
     }
 
 // Get source attachment info.
 // Return an object with properties mapped to table's columns.
-    public function getSourceAttachmentInfo($fileId) {
+    public function getSourceAttachmentInfo($fileId)
+    {
         global $db;
         $fileId = $db->escape($fileId);
         $sql = "SELECT * FROM colfusion_des_attachments WHERE FileId='$fileId';";
@@ -49,7 +60,8 @@ class SimpleQuery {
 
 // Store attachment info.
 // Returns fileId.
-    public function addSourceAttachmentInfo($sourceId, $userId, $title, $filename, $size, $description) {
+    public function addSourceAttachmentInfo($sourceId, $userId, $title, $filename, $size, $description)
+    {
         global $db;
 
         $title = $db->escape($title);
@@ -64,13 +76,14 @@ class SimpleQuery {
 // Delete file info in DB.
 // Use userId to check if the file is deleted by uploader.
 // Return filename.
-    public function deleteSourceAttachmentInfo($fileId, $userId) {
+    public function deleteSourceAttachmentInfo($fileId, $userId)
+    {
         global $db;
 
         $fileId = $db->escape($fileId);
         $userId = $db->escape($userId);
 
-// Get filename.                       
+// Get filename.
         $filename_sql = "SELECT Filename FROM colfusion_des_attachments WHERE FileId='$fileId' AND UserId='$userId';";
         $results = $db->get_results($filename_sql);
         foreach ($results as $result) {
@@ -85,7 +98,8 @@ class SimpleQuery {
     }
 
 // Store info about external source db.
-    public function addSourceDBInfo($sid, $server, $port, $user, $password, $database, $driver) {
+    public function addSourceDBInfo($sid, $server, $port, $user, $password, $database, $driver)
+    {
         global $db;
 
         $sid = $db->escape($sid);
@@ -103,7 +117,8 @@ class SimpleQuery {
         $this->addLinkedServer($server, $port, $user, $password, $database, $driver);
     }
 
-    public function getSourceDBInfo($sid) {
+    public function getSourceDBInfo($sid)
+    {
         global $db;
 
         $query = "select * from colfusion_sourceinfo_DB where sid = $sid";
@@ -111,8 +126,8 @@ class SimpleQuery {
         return $db->get_row($sql);
     }
 
-    private function addLinkedServer($server, $port, $user, $password, $database, $driver) {
-
+    private function addLinkedServer($server, $port, $user, $password, $database, $driver)
+    {
         $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
 
         if ($server == "localhost")
@@ -124,7 +139,8 @@ class SimpleQuery {
     }
 
 // Store metadata about column.
-    public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname) {
+    public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname)
+    {
         global $db;
 
         $sid = $db->escape($sid);
@@ -142,7 +158,8 @@ class SimpleQuery {
     }
 
 // Store metadata about column.
-    public function addConstantColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $value) {
+    public function addConstantColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $value)
+    {
         global $db;
 
         $sid = $db->escape($sid);
@@ -161,7 +178,8 @@ class SimpleQuery {
     }
 
 // Store "parent" between column and tables
-    public function addColumnTableInfo($cid, $tableName) {
+    public function addColumnTableInfo($cid, $tableName)
+    {
         global $db;
 
         $cid = $db->escape($cid);
@@ -172,7 +190,8 @@ class SimpleQuery {
     }
 
 // Store "parent" between column and tables
-    public function addColumnDataMatchingInfo($sid, $cid, $category, $suggestedValue) {
+    public function addColumnDataMatchingInfo($sid, $cid, $category, $suggestedValue)
+    {
         global $db;
 
         $sid = $db->escape($sid);
@@ -184,19 +203,20 @@ class SimpleQuery {
         $db->query($sql);
     }
 
-    public function addCidToNewData($sid, $tableName) {
+    public function addCidToNewData($sid, $tableName)
+    {
         global $db;
 
         $tableName = mysql_real_escape_string($tableName);
         $query = <<< EOQ
              update colfusion_temporary t1
-set cid =  ( 
-    SELECT colfusion_dnameinfo.cid 
+set cid =  (
+    SELECT colfusion_dnameinfo.cid
     FROM colfusion_dnameinfo, colfusion_columnTableInfo
     where sid = t1.sid and dname_chosen = t1.dname
       and colfusion_dnameinfo.cid = colfusion_columnTableInfo.cid
       and colfusion_columnTableInfo.tableName = '$tableName'
-    
+
    )
 where cid is null and sid = $sid;
 EOQ;
@@ -205,5 +225,3 @@ EOQ;
     }
 
 }
-
-?>

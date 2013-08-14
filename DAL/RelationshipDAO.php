@@ -7,7 +7,8 @@ require_once realpath(dirname(__FILE__)) . '/../datasetModel/ColfusionLink.php';
 require_once realpath(dirname(__FILE__)) . '/../datasetModel/Comment.php';
 require_once realpath(dirname(__FILE__)) . '/TransformationHandler.php';
 
-class RelationshipDAO {
+class RelationshipDAO 
+{
 
     private $ezSql;
 
@@ -72,7 +73,7 @@ class RelationshipDAO {
 
     public function deleteRelationship($relId, $userId) {
         
-        // Check if deletor is creator.
+        // Check if deleter is creator.
         $sql = "select relId from colfusion_relationship where creator = '$userId'";
         $matchCreatorResult = $this->ezSql->get_results($sql);    
         if(!$matchCreatorResult){

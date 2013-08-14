@@ -1,7 +1,7 @@
 <?php
 
-abstract class DatabaseHandler {
-
+abstract class DatabaseHandler
+{
     protected $host;
     protected $port;
     protected $user;
@@ -9,16 +9,18 @@ abstract class DatabaseHandler {
     protected $database;
     protected $driver;
 
-    public function __construct($user, $password, $database, $host, $port, $driver) {
+    public function __construct($user, $password, $database, $host, $port, $driver)
+    {
         $this->host = $host;
         $this->port = $port;
         $this->user = $user;
         $this->database = $database;
-        $this->password = $password;   
+        $this->password = $password;
         $this->driver = $driver;
     }
-    
-    public function setDriver($driver){
+
+    public function setDriver($driver)
+    {
         $this->driver = $driver;
     }
 
@@ -42,31 +44,52 @@ abstract class DatabaseHandler {
     abstract public function ExecuteQuery($query);
 
     abstract public function ExecuteCTASQuery($selectPart, $tableNameToCreate, $whatToInsert);
-    
-    public function getDriver(){
+
+    /**
+     * Create a database for given name is not exists yet.
+     * @param  string $database name of the database
+     * @return dbHandler           new dbHandler which uses newly created database
+     */
+    abstract public function createDatabaseIfNotExist($database);
+
+    /**
+     * Create a table for given table name if it does not exist yet. The columns of the created table are given by the columns array.
+     * @param  string $tableName name of the table
+     * @param  array $columns   array of stdClass which come all the way from generate ktr file. TODO need to use special class.
+     * @return nothing            nothing
+     * @throws PDOException If there are error runing the sql statement.
+     */
+    abstract public function createTableIfNotExist($tableName, $columns);
+
+
+    public function getDriver()
+    {
         return $this->driver;
     }
-    
-    public function getPort() {
+
+    public function getPort()
+    {
         return $this->port;
     }
 
-    public function getHost() {
+    public function getHost()
+    {
         return $this->host;
     }
 
-    public function getUser() {
+    public function getUser()
+    {
         return $this->user;
     }
 
-    public function getDatabase() {
+    public function getDatabase()
+    {
         return $this->database;
     }
 
-    public function getPassword() {
+    public function getPassword()
+    {
         return $this->password;
     }
 
 }
-
-?>

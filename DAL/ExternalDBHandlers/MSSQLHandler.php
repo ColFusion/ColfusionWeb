@@ -192,6 +192,31 @@ EOQ;
 
     }
 
+    //TODO implement
+    /**
+     * Create a database for given name is not exists yet.
+     * @param  string $database name of the database
+     * @return dbHandler           new dbHandler which uses newly created database
+     */
+    public function createDatabaseIfNotExist($database)
+    {
+        $pdo = $this->GetConnection();
+    }
+
+
+    // TODO: implement
+    /**
+     * Create a table for given table name if it does not exist yet. The columns of the created table are given by the columns array.
+     * @param  string $tableName name of the table
+     * @param  array $columns   array of stdClass which come all the way from generate ktr file. TODO need to use special class.
+     * @return nothing            nothing
+     * @throws PDOException If there are error runing the sql statement.
+     */
+    public function createTableIfNotExist($tableName, $columns)
+    {
+
+    }
+
 // *******************************************************************
 // ADD LINKED SERVER
 // *******************************************************************

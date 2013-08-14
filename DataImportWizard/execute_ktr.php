@@ -21,6 +21,8 @@ include(mnminclude . 'smartyvariables.php');
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/UtilsForWizard.php");
 require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 
 $pentaho_err_code = array(
     0 => 'The transformation ran without a problem',
@@ -48,7 +50,7 @@ foreach ($ktrManagers as $filename => $ktrManager) {
     $returnVar = 0;
     $sql = 'INSERT INTO ' . table_prefix . 'executeinfo (Sid ,Userid ,TimeStart)VALUES (' . $sid . ' , ' . $author . ',CURRENT_TIMESTAMP);';
     $rs = $db->query($sql);
-    if (!rs) {
+    if (!$rs) {
         $returnVar = 10;
     }
 
@@ -64,8 +66,22 @@ foreach ($ktrManagers as $filename => $ktrManager) {
         $command = 'sh ' . $locationOfPan . ' -file="' . $ktrFilePath . '" ' . '-param:Sid=' . $sid . ' -param:Eid=' . $logID;
     }
 
+    $databaseConnectionInfo = $ktrManager->getConnectionInfo();
+
+
     $commands[] = $command;
     if ($returnVar == 0) {
+
+        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($databaseConnectionInfo->engine, $databaseConnectionInfo->username, $databaseConnectionInfo->password, null, $databaseConnectionInfo->server, $databaseConnectionInfo->port);
+
+        $dbHandler = $dbHandler->createDatabaseIfNotExist($databaseConnectionInfo->database);
+
+        $tableName = $ktrManager->getTableName();
+
+        $columns = $ktrManager->getColumns();
+
+        $dbHandler->createTableIfNotExist($tableName, $columns);
+
         $ret = exec($command, $outA, $returnVar);
     }
 
@@ -82,7 +98,7 @@ foreach ($ktrManagers as $filename => $ktrManager) {
         $re2 = '( )';
 
         for ($i = 0; $i < count($outA); $i++) {
-            if (strstr($outA[$i], 'ERROR') != FALSE) {
+            if (strstr($outA[$i], 'ERROR') != false) {
                 break;
             }
         }
@@ -125,29 +141,35 @@ foreach ($ktrManagers as $filename => $ktrManager) {
 
         $sid = getSid();
 
-        $dnamelistquery = "SELECT DISTINCT Dname FROM " . table_prefix . "temporary WHERE Sid = $sid";
-        $dnamelist = $db->get_results($dnamelistquery);
-        $num = count($dnamelist);
+        $queryEngine = new QueryEngine();
 
-        $query = "UPDATE `colfusion_temporary` AS t, 
-       (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
-        FROM `colfusion_temporary`, (select @rownumN := -1) rn
-        where `Sid` = $sid
-       ) AS r
-SET t.`rownum` = r.rownumN DIV $num + 1
-WHERE t.`Tid` = r.`Tid`";
-        $db->query($query);
+        $queryEngine->simpleQuery->addSourceDBInfo($sid, $databaseConnectionInfo->server, $databaseConnectionInfo->port, $databaseConnectionInfo->username, $databaseConnectionInfo->password, $databaseConnectionInfo->database, $databaseConnectionInfo->engine);
 
-        $query = "UPDATE `colfusion_temporary` AS t, 
-       (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
-        FROM `colfusion_temporary`, (select @rownumN := -1) rn
-        where `Sid` = $sid
-       ) AS r
-SET t.`columnnum` = r.rownumN % $num + 1
-WHERE t.`Tid` = r.`Tid`";
-        $db->query($query);
+        $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
 
-        UtilsForWizard::insertCidToNewData($sid, $filename);
+//         $dnamelistquery = "SELECT DISTINCT Dname FROM " . table_prefix . "temporary WHERE Sid = $sid";
+//         $dnamelist = $db->get_results($dnamelistquery);
+//         $num = count($dnamelist);
+
+//         $query = "UPDATE `colfusion_temporary` AS t, 
+//        (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
+//         FROM `colfusion_temporary`, (select @rownumN := -1) rn
+//         where `Sid` = $sid
+//        ) AS r
+// SET t.`rownum` = r.rownumN DIV $num + 1
+// WHERE t.`Tid` = r.`Tid`";
+//         $db->query($query);
+
+//         $query = "UPDATE `colfusion_temporary` AS t, 
+//        (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
+//         FROM `colfusion_temporary`, (select @rownumN := -1) rn
+//         where `Sid` = $sid
+//        ) AS r
+// SET t.`columnnum` = r.rownumN % $num + 1
+// WHERE t.`Tid` = r.`Tid`";
+//         $db->query($query);
+
+//         UtilsForWizard::insertCidToNewData($sid, $filename);
     }
 }
 
@@ -159,8 +181,9 @@ echo json_encode($result);
 
 exit;
 
-function getSid() {
-// determine which step of the submit process we are on
+function getSid()
+{
+    // determine which step of the submit process we are on
     if (isset($_POST["sid"]))
         $sid = $_POST["sid"];
     else if (isset($_GET["sid"]))
@@ -172,5 +195,6 @@ function getSid() {
 
     return $sid;
 }
+
 
 ?>

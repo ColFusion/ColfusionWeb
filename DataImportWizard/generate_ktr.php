@@ -94,7 +94,7 @@ function getSid() {
 
 function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode) {
 
-    $template = 'excel-to-target_schema.ktr';
+    $template = 'excel-to-database.ktr'; //'excel-to-target_schema.ktr';
     $newDir = mnmpath . "temp/$sid";
     if (!file_exists($newDir)) {
         mkdir($newDir);
@@ -112,7 +112,7 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
             }
         }
 
-        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths);
+        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid);
     } else {
         foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
             if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
@@ -122,7 +122,7 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
                 $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
                 $ktrFilePath = "$newDir/$dataSource_filename.ktr";
                 copy($template, $ktrFilePath);
-                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath));
+                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid);
             }
         }
     }
@@ -248,7 +248,7 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
         throw new Exception("Invalid arguments");
     }
 
-    foreach ($ktrManagers as $filename => $ktrManager) {
+    foreach ($ktrManagers as $filename => &$ktrManager) {
         $baseHeader = $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'];
         $sheetNamesRowsColumns = $_SESSION["ktrArguments_$sid"][$filename]["sheetNamesRowsColumns"];
 
@@ -262,6 +262,8 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
 
         $ktrManager->createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputsForATable);
     }
+
+    $_SESSION["ktrArguments_$sid"]["ktrManagers"] = serialize($ktrManagers);
 
     UtilsForWizard::processDataMatchingUserInputsWithTableNameStoreDB($sid, $_POST["dataMatchingUserInputs"]);
 }
