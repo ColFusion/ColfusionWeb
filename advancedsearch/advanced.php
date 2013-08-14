@@ -11,14 +11,17 @@
     <link rel="stylesheet" href="../css/dataTableModel.css" />
     <link rel="stylesheet" href="../css/advanced.css" />
     <link rel="stylesheet" href="../css/relationship.css" />
+    <link rel="stylesheet" href="../css/addRelationship.css" />
+    <link rel="stylesheet" href="../css/relGraph.css" />
       
     <script type="text/javascript" src="../javascripts/classify.min.js"></script>
-    <script type="text/javascript" src="../javascripts/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src="../javascripts/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="../javascripts/jquery-ui-1.10.3.custom.min.js"></script>
     <script type="text/javascript" src="../javascripts/jquery.mousewheel.js"></script>
     <script type="text/javascript" src="../javascripts/bootstrap.min.js"></script>
     <script type="text/javascript" src="../javascripts/parsley.min.js"></script>
     <script type="text/javascript" src="../javascripts/persist-min.js"></script>
+    <script type="text/javascript" src="../javascripts/cytoscape.js-2.0.2/cytoscape.js"></script>
     <script type="text/javascript" src="../javascripts/knockout-2.3.0.js"></script>
     <script type="text/javascript" src="../javascripts/knockout.mapping.js"></script>
     <script type="text/javascript" src="../javascripts/knockout_models/Utils.js"></script>

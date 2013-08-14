@@ -7,7 +7,8 @@
             <tr style="width: 100%">
                 <td style="width: 80px !important;">Search for: </td>
                 <td>
-                    <input data-bind="value: searchTerm" data-required="true" type="text" id="search" style="width: 100%" />
+                    <input data-bind="value: searchTerm, event: {keyup: function(model, e){if(e.keyCode == 13)model.search();}}"  
+                        data-required="true" type="text" id="search" style="width: 100%" />
                 </td>
             </tr>
         </table>
@@ -139,7 +140,6 @@
             <div class="searchResultBody" style="overflow: auto;">
                 <div class="searchResultProfile">
                     <div data-bind="foreach: paths" class="paths">
-
                         <div data-bind="with: pathObj" class="path">
 
                             <div class="pathBody">
@@ -235,9 +235,11 @@
                             </div>
 
                         </div>
-
-                    </div>
+                    </div>                   
                 </div>
+                
+                <div class="graphTitle">Relationship Graph:</div>
+                <div data-bind="relationshipGraph: resultObj.allPaths"></div>
             </div>
         </div>
         <!-- /ko -->

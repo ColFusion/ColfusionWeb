@@ -62,7 +62,7 @@ ko.bindingHandlers.slider = {
 };
 
 ko.bindingHandlers.relationshipGraph = {
-    init: function (element, valueAccessor, allBindingsAccessor) {      
+    init: function (element, valueAccessor, allBindingsAccessor) {
         var relGraphDom = $('<div class="relGraph"></div>');
         var nodeTooltipDom = $('<div class="relGraphTooltip_node"></div>');
         var edgeTootipDom = $('<div class="relGraphTooltip_edge"></div>');
@@ -71,25 +71,78 @@ ko.bindingHandlers.relationshipGraph = {
         $(element).append(edgeTootipDom);
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
+      
         var allPaths = valueAccessor();
-        var elements = ko_bindingHandlers_relationshipGraph.getElements(allPaths);
+        var elements = koBindingHandlersRelationshipGraph.getElements(allPaths);
 
+        $(element).children('.relGraph').empty().cytoscape({
+            elements: elements,
 
+            style: cytoscape.stylesheet().selector('node').css({
+                'content': 'data(name)',
+                'class': 'node datasetNode',
+                'font-family': 'helvetica',
+                'font-size': 14,
+                'text-outline-width': 3,
+                'text-outline-color': '#888',
+                'text-valign': 'center',
+                'color': '#fff',
+                'width': '40',
+                'height': '40',
+                'border-color': '#fff'
+            })
+          .selector('edge')
+            .css({
+                'width': 2,
+                'class': 'edge relEdge',
+            }),
+            
+            minZoom: 0,
+            maxZoom: 0
+        });
+
+        var nodeTooltip = $(element).children('.relGraphTooltip_node');
+        var edgeTootip = $(element).children('.relGraphTooltip_edge');
+
+        var cy = $(element).children('.relGraph').cytoscape('get');
+        cy.nodes().bind("mouseover", function (evt) {
+            
+            koBindingHandlersRelationshipGraph.updateNodeTooltip(evt.cyTarget._private.data, nodeTooltip);
+            $(nodeTooltip).css({ 'left': evt.originalEvent.x, 'top': evt.originalEvent.y }).show();
+            
+        }).bind('mouseout', function (evt) {
+            $(nodeTooltip).hide();
+        }).bind('click', function (evt) {
+            var sid = evt.cyTarget._private.data.sid;
+            window.open('../story.php?title=' + sid, '_blank');
+        });
+
+        cy.edges().bind("mouseover", function (evt) {
+       
+            koBindingHandlersRelationshipGraph.updateEdgeTooltip(evt.cyTarget._private.data, edgeTootip);
+            $(edgeTootip).css({ 'left': evt.originalEvent.x, 'top': evt.originalEvent.y }).show();
+            
+        }).bind('mouseout', function (evt) {
+            $(edgeTootip).hide();
+        });
     }
 };
 
-var ko_bindingHandlers_relationshipGraph = (function () {
-    var ko_bindingHandlers_relationshipGraph = {};
+var koBindingHandlersRelationshipGraph = (function () {
+    var koBindingHandlersRelationshipGraph = {};
 
-    ko_bindingHandlers_relationshipGraph.getElements = function (allPaths) {
-        
+    koBindingHandlersRelationshipGraph.getElements = function (allPaths) {
+
         var allDatasets = [];
         $.each(allPaths, function (i, path) {
-            for (var j = 0; j < path.sids.length; j++) {
-                allDatasets.push({
-                    sid: path.sids[j],
-                    name: path.sidTitles[j]
-                });
+            for (var j = 0; j < path.relationships.length; j++) {
+                var relationship = path.relationships[j];
+
+                relationship.sidFrom.name = relationship.sidFrom.sidTitle;
+                relationship.sidTo.name = relationship.sidTo.sidTitle;
+
+                allDatasets.push(relationship.sidFrom);
+                allDatasets.push(relationship.sidTo);
             }
         });
         var distinctDatasets = generalUtil.convertArrayToSet('sid', allDatasets);
@@ -128,7 +181,61 @@ var ko_bindingHandlers_relationshipGraph = (function () {
         };
     };
 
-    return ko_bindingHandlers_relationshipGraph;
+    koBindingHandlersRelationshipGraph.updateNodeTooltip = function (node, tooltipDom) {
+
+        var tooltipTable = $('<table class="tableInfoTable">' +
+            '<thead>' +
+            '<tr>' +
+            '<th style="width: 100px">Column Name</th>' +
+            '<th style="width: 80px">Type</th>' +
+            '<th style="width: 80px">Unit/Format</th>' +
+            '<th style="width: 150px; text-align: center;">Description</th>' +
+            '</tr>' +
+            '</thead>' +
+            '<tbody></tbody>' +
+            '</table>');
+
+        $.each(node.allColumns, function (i, col) {
+            var colDom = $('<tr></tr>');
+
+            $(colDom).append('<td>' + col.dname_chosen + '</td>')
+                .append('<td>' + col.dname_value_type + '</td>')
+                .append('<td>' + col.dname_value_unit + '</td>')
+                .append('<td>' + col.dname_value_description + '</td>');
+
+            $(tooltipTable).children('tbody').append(colDom);
+        });
+
+        $(tooltipDom).empty().append('<div class="tableInfoTableWrapper"></div>')
+            .children('.tableInfoTableWrapper').append(tooltipTable);
+    };
+
+    koBindingHandlersRelationshipGraph.updateEdgeTooltip = function (edge, tooltipDom) {
+
+        var tooltipTable = $('<table class="relationshipGraphTooltipTable">' +
+            '<tr>' +
+            '<td class="titleText">Title: </td>' +
+            '<td>' + edge.relName + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td class="titleText">Avg Confidence: </td>' +
+            '<td>' + edge.confidence + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td class="titleText">From: </td>' +
+            '<td>' + edge.sidFrom.sidTitle + '.' + edge.sidFrom.tableName + '</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td class="titleText">To: </td>' +
+            '<td>' + edge.sidTo.sidTitle + '.' + edge.sidTo.tableName + '</td>' +
+            '</tr>' +
+            '</table>');
+
+        $(tooltipDom).empty().append(tooltipTable);
+
+    };
+
+    return koBindingHandlersRelationshipGraph;
 })();
 
 var KnockoutUtil = {
