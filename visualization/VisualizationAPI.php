@@ -18,10 +18,14 @@ function GetTablesList() {
 }
 
 function GetTableDataBySidAndName(){
-    $sid = (int)$_POST["sid"];
+    $sid = $_POST["sid"];
     $table_name = $_POST["table_name"];
     $perPage = $_POST["perPage"];
     $pageNo = $_POST["pageNo"];
+    
+    if (is_string($sid)) {
+        $sid = json_decode($sid);
+    }
     
     echo json_encode(GetTableData($sid, $table_name, $perPage, $pageNo));
 }

@@ -215,6 +215,7 @@ class QueryEngine {
                 $sid = json_decode(json_encode($sid));
             }
 
+            //TODO: refactor wrapping table name in [], it is done in several places, should be done in one place.
             $from = (object) array('inputObj' => $sid, 'tableName' => "{{$sid->tableName}]");
             $fromArray = array($from);
             $select = "select * ";// . implode(", ", $selectAr);
@@ -311,6 +312,8 @@ class QueryEngine {
 
         $queryInfo = $mergedDatasetQuery->GetQuery();
 
+
+
         $externalDBCredentials = new stdClass();
 
         $externalDBCredentials->driver = $queryInfo->serverInfo->driver;
@@ -335,7 +338,7 @@ class QueryEngine {
                 $sid = json_decode(json_encode($sid));
             }
 
-            $from = (object) array('inputObj' => $sid, 'tableName' => $sid->table_name);
+            $from = (object) array('inputObj' => $sid, 'tableName' => "[{$sid->table_name}]");
             $fromArray = array($from);
             $select = "select count(*) as ct";// . implode(", ", $selectAr);
 
