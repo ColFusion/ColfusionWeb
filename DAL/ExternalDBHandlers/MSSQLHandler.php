@@ -174,6 +174,8 @@ EOQ;
         $query = " $selectPart into $tableNameToCreate $whatToInsert ";
 
         $query = str_replace("\\n", " ", $query);
+        $query = str_replace("\\'", "'", $query);
+        $query = str_replace("\\\"", "\"", $query);
         
 
         try {
