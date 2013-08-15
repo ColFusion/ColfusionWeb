@@ -182,6 +182,22 @@ class RelationshipDAO
         return $result;
     }
 
+    /**
+     * Return average confidence of the relationship by given relationship id
+     * @param  int $rel_id id of the relationship
+     * @return float         average confidcen value
+     */
+    public function getRelationshipAverageConfidenceByRelId($rel_id) {
+        $rel_id = mysql_real_escape_string($rel_id);
+        
+
+        $sql = "select avg(confidence) as avgconf 
+            from colfusion_user_relationship_verdict 
+            where rel_id = $rel_id";
+
+        return $this->ezSql->get_row($sql)->avgconf;
+    }
+
 }
 
 function testRelDAO() {

@@ -6,6 +6,7 @@ include_once("../DAL/ExternalDBHandlers/ExternalMSSQL.php");
 require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+include_once(realpath(dirname(__FILE__)) . '/../DAL/RelationshipDAO.php');
 
 class AdvSearch {
 	
@@ -66,6 +67,9 @@ class AdvSearch {
 
 		if (!isset($sids) || count($sids) == 0)
 			return array();
+// echo "sids:";
+// var_dump($sids);
+// echo "\n";
 
 		$result = $this->getRelationshipToJoin($sids);
 
@@ -76,8 +80,6 @@ class AdvSearch {
 
 	private function getSidsContainingSearchKeys() {
 		global $db;
-
-//var_dump($db);
 
 		$chunks = array_map('trim', $this->searchKeyWords);
 		
@@ -116,9 +118,15 @@ class AdvSearch {
 
 			$node1Sid = array_pop($targetSidsCopy);
             
+// echo "iteration in getRelationshipToJoin\n";
+// echo "node1Sid:";
+// var_dump($node1Sid);
+// echo "\n";
+// echo "targetSidsCopy:";
+// var_dump($targetSidsCopy);
+// echo "\n";
 
-
-	    	$res = $this->rec($sourceIndex, $node1Sid, $targetSidsCopy);
+	    	$res = $this->rec($sourceIndex, $node1Sid, $targetSidsCopy, "\t", array(), array());
 	    	
 	    	$oneSearchRes = new stdClass();
 	    	
@@ -131,73 +139,107 @@ class AdvSearch {
 	    		$oneSearchRes->value = $res->ar;
 	    	}
 	    	
-	    	//$oneSearchRes->foundSearchKeys = array_diff($targetSidsCopy, $res->needToCheck);
-
 	    	$allSearchRes[] = $oneSearchRes;
 	    	
 	    	$targetSidsCopy = $res->needToCheck;
 	    	
 	    } while (count($targetSidsCopy) > 0);
 
+// echo "done:";
+// var_dump($allSearchRes);
+
 	    
 	    return $allSearchRes;
 	}
 
 	//TODO: move to other class for neo4j handler
-	private function rec($sourceIndex, $node, $list) {
-///echo "sid:{$node}";
-        $result = new stdClass();
+	private function rec($sourceIndex, $node, $list, $intend, $needToCheckAccumul, $resultAccumul) {
+
+// echo "$intend rec iteration:\n";
+// echo "$intend \t sid:{$node}\n";
+// echo "$intend \t list:";
+// var_dump($list);
+// echo "\n";
+// echo "$intend \t needToCheckAccumul:";
+// var_dump($needToCheckAccumul);
+// echo "\n";
+// echo "$intend \t resultAccumul:";
+// var_dump($resultAccumul);
+// echo "\n";
 
         if (count($list) == 0) {
-            $result->ar = array();
-            $result->needToCheck = array();
+
+        	$result = new stdClass();
+
+            $result->ar = $resultAccumul;
+            $result->needToCheck = $needToCheckAccumul;
+
+            return $result;
         }
-        else {
 
-            $otherNode = array_pop($list);
-//echo $otherNode;
+        $otherNode = array_pop($list);
+// echo "$intend \t otherNode:{$otherNode}\n";   
 
-            $startNode = $sourceIndex->queryOne("sid:{$node}");
-            $endNode = $sourceIndex->queryOne("sid:{$otherNode}");
+        $startNode = $sourceIndex->queryOne("sid:{$node}");
+        $endNode = $sourceIndex->queryOne("sid:{$otherNode}");
 
 //var_dump($startNode);
 
-			if (!isset($startNode) || !isset($endNode)) {
-				$paths = new stdClass();
-				$paths->paths = array(); 
-			}
-			else {
-            	$paths = $this->getAllPathsBetweenTwoNodes($startNode,  $endNode);
-        	}
+        $paths = new stdClass();
 
-            if (count($paths->paths) == 0) {
-                               
-                $res = $this->rec($sourceIndex, $node, $list);
+		if (!isset($startNode) || !isset($endNode)) {
+			
+			$paths->paths = array(); 
+		}
+		else {
+        	$paths = $this->getAllPathsBetweenTwoNodes($startNode,  $endNode);
+    	}
 
-                $result->ar = $res->ar;
-                $result->needToCheck = array_merge($res->needToCheck, array($otherNode));
+// echo "$intend \t paths:";
+// var_dump($paths->paths);
+// echo "\n";
+
+
+        if (count($paths->paths) == 0) {
+                        
+        	$needToCheck = array_merge($needToCheckAccumul, array($otherNode));
+
+            return $this->rec($sourceIndex, $node, $list, $intend . "\t", $needToCheck, $resultAccumul);
+        }
+        else {
+
+            if (count($resultAccumul) == 0) {
+                $resultAccumul =$paths->paths;
             }
             else {
-                $res = $this->rec($sourceIndex, $otherNode, $list);
+            	$resultAccumul = $this->mergePaths($paths->paths, $resultAccumul);
+            }       
 
-                $res2 = array();
-
-                if (count($res->ar) == 0) {
-                    $res2 =$paths->paths;
-                }
-                else {
-
-                    for ($j=0; $j < count($paths->paths); $j++) {
-                        for ($i=0; $i < count($res->ar); $i++) { 
-                            $res2[] = array_merge($paths->paths[$j], $res->ar[$i]);
-                        }
-                    }     
-                }       
-
-                $result->ar = $res2;
-                $result->needToCheck = $res->needToCheck;
-            }
+            return $this->rec($sourceIndex, $otherNode, $list, $intend . "\t", $needToCheckAccumul, $resultAccumul);
         }
+    }
+
+    private function mergePaths($newPaths, $foundBefore) {
+    	$result = array();
+
+		for ($j=0; $j < count($newPaths); $j++) {
+            for ($i=0; $i < count($foundBefore); $i++) { 
+
+                $newMergedPath = array_unique(array_merge($foundBefore[$i], $newPaths[$j]));
+
+                $found = false;
+
+                foreach ($result as $key => $path) {
+                	if (count(array_diff($path, $newMergedPath)) == 0) {
+                		$found = true;
+                		break;
+                	}
+                }
+
+                if (!$found)
+                	$result[] = $newMergedPath;
+            }
+        }  
 
         return $result;
     }
@@ -217,33 +259,16 @@ class AdvSearch {
 
 	    foreach ($paths as $i => $path) {
 	        $path->setContext(Everyman\Neo4j\Path::ContextRelationship);
-	        $totalConfidence = 0;
 
-	      //  $pathToResult = new stdClass();
 	        $pathSteps = array();
 
 	        foreach ($path as $j => $rel) {
 	            $direction = $rel->getProperty('rel_id');
-	            $confidence = $rel->getProperty('confidence');
-	            
-	            $step = $j+1;
-	            $totalConfidence += $confidence;
 
-	            $pathStep = new stdClass();
-	           // $pathStep->stepIndex = $step;
-	            $pathStep->rel_id = $direction;
-	            $pathStep->confidence = $confidence;
-
-	            $pathSteps[] = $pathStep;           
+	            $pathSteps[] = $direction;           
 	        }
 
-	     //   $avgConfidence = $totalConfidence / $step;
-
-	     //   $pathToResult->pathSteps = $pathSteps;
-	     //   $pathToResult->avgConfidence = $avgConfidence;
-	     //   $pathToResult->numOfSteps = $step;
-
-	        $result->paths[] = $pathSteps;//$pathToResult;
+	        $result->paths[] = $pathSteps;
 	    }
 
 	    return $result;
@@ -265,8 +290,6 @@ class AdvSearch {
 			$oneSearchResult = new stdClass();
 
 			$oneSearchResult->oneSid = $value->oneSid;
-		//	$oneSearchResult->foundSearchKeys = $value->foundSearchKeys;
-
 
 			if ($value->oneSid) {
 				$oneSearchResult->sid = $value->value;
@@ -311,10 +334,10 @@ class AdvSearch {
 
 						$onePathOneRelation = new stdClass();
 						
-						$onePathRelIds[] = $oneRel->rel_id;
+						$onePathRelIds[] = $oneRel;
 
 
-						$moreInfo = $this->getSidsAndTableNamesByRelId($oneRel->rel_id);
+						$moreInfo = $this->getSidsAndTableNamesByRelId($oneRel);
 						$onePathOneRelation->sidFrom = new stdClass();
 						$onePathOneRelation->sidFrom->sid = $moreInfo->sid1;
 						$onePathOneRelation->sidFrom->tableName = $moreInfo->tableName1;
@@ -350,13 +373,13 @@ class AdvSearch {
 						$dif = $this->objectArrayDiff($onePathAllColumns, $onePathOneRelation->sidTo->allColumns);
 						$onePathAllColumns = array_merge($onePathAllColumns, $dif);
 
-						$onePathOneRelation->relId = $oneRel->rel_id;
+						$onePathOneRelation->relId = $oneRel;
 						$onePathOneRelation->relName = $moreInfo->name;
-						$onePathOneRelation->confidence = $oneRel->confidence;
+						$onePathOneRelation->confidence = $this->getRelationshipCofidence($oneRel);
 
 						$onePathRelationships[] = $onePathOneRelation; 
 
-						$totalConfidence += $oneRel->confidence;
+						$totalConfidence += $onePathOneRelation->confidence;
 
 					}
 
@@ -501,6 +524,11 @@ class AdvSearch {
 		$res = $db->get_row($sql);
 
 		return $res;
+	}
+
+	private function getRelationshipCofidence($rel_id){
+		$relDAO = new RelationshipDAO();
+		return $relDAO->getRelationshipAverageConfidenceByRelId($rel_id);
 	}
 
 	private function constructResultArray($sidDnames, $searchKeyWords) {
