@@ -227,10 +227,10 @@ class MergedDataSetQueryMaker {
         $linkedServerName = $result->source_database;
   
         if ($result->server_address === "tycho.exp.sis.pitt.edu") {
-            return " [$linkedServerName].[dbo].{$sidAndTable->tableName} as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+            return " [$linkedServerName].[dbo].[{$sidAndTable->tableName}] as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
         }
         else {
-            return " [$linkedServerName]...{$sidAndTable->tableName} as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+            return " [$linkedServerName]...[{$sidAndTable->tableName}] as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
         }
     }
 
