@@ -32,7 +32,7 @@ function GetTableDataBySidAndName(){
 function GetTableData($sid, $table_name, $perPage, $pageNo) {
     
     $queryEngine = new QueryEngine();
-    $result = $queryEngine->GetTableDataBySidAndName($sid, $table_name, $perPage, $pageNo);
+    $result = $queryEngine->GetTableDataBySidAndName($sid, "[$table_name]", $perPage, $pageNo);
 
     $columns = NULL;
     foreach ($result as $r) {

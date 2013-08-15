@@ -215,7 +215,7 @@ class QueryEngine {
                 $sid = json_decode(json_encode($sid));
             }
 
-            $from = (object) array('inputObj' => $sid, 'tableName' => $sid->tableName);
+            $from = (object) array('inputObj' => $sid, 'tableName' => "{{$sid->tableName}]");
             $fromArray = array($from);
             $select = "select * ";// . implode(", ", $selectAr);
 
