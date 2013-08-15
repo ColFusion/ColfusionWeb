@@ -230,7 +230,24 @@ class MergedDataSetQueryMaker {
             return " [$linkedServerName].[dbo].[{$sidAndTable->tableName}] as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
         }
         else {
-            return " [$linkedServerName]...[{$sidAndTable->tableName}] as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+            switch ($result->driver) {
+                case 'mysql':
+                    return " (select * from OPENQUERY([$linkedServerName], 'select * from `{$sidAndTable->tableName}`')) as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+                    break;
+
+                case 'postgresql':
+                    return " (select * from OPENQUERY([$linkedServerName], 'select * from \"{$sidAndTable->tableName}\"')) as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+                    break;
+
+                case 'mysql':
+                    return " [$linkedServerName]...[{$sidAndTable->tableName}] as [{$sidAndTable->tableName}{$sidAndTable->sid}] ";
+                    break;
+                default:
+                    throw new Exception("Error Processing Request. DBMS engine is not recognized", 1);
+                    
+                    break;
+            }
+            
         }
     }
 
