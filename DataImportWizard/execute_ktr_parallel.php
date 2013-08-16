@@ -102,11 +102,6 @@ $pentaho_err_code = array(
 
     $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
 
-    $sql = "UPDATE " . table_prefix . "executeinfo SET status='success' WHERE Eid=" . $logID;
-	$rs = $db->query($sql);
-
-
-
     $sql = "UPDATE " . table_prefix . "executeinfo SET status='executing transformation' WHERE Eid=" . $logID;
 	$rs = $db->query($sql);
 
@@ -174,6 +169,11 @@ $pentaho_err_code = array(
 
         $sql = "UPDATE " . table_prefix . "executeinfo SET status='transformation finished successfully' WHERE Eid=" . $logID;
 		$rs = $db->query($sql);
+
+
+	    $sql = "UPDATE " . table_prefix . "executeinfo SET status='success' WHERE Eid=" . $logID;
+		$rs = $db->query($sql);
+
 
        // $sid = getSid();
 
