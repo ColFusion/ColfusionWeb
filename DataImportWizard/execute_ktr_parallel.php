@@ -91,6 +91,22 @@ $pentaho_err_code = array(
 
     $dbHandler->createTableIfNotExist($tableName, $columns);
 
+
+
+	$queryEngine = new QueryEngine();
+
+    $sql = "UPDATE " . table_prefix . "executeinfo SET status='adding database info and linked server' WHERE Eid=" . $logID;
+	$rs = $db->query($sql);
+
+    $queryEngine->simpleQuery->addSourceDBInfo($sid, $databaseConnectionInfo->server, $databaseConnectionInfo->port, $databaseConnectionInfo->username, $databaseConnectionInfo->password, $databaseConnectionInfo->database, $databaseConnectionInfo->engine);
+
+    $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
+
+    $sql = "UPDATE " . table_prefix . "executeinfo SET status='success' WHERE Eid=" . $logID;
+	$rs = $db->query($sql);
+
+
+
     $sql = "UPDATE " . table_prefix . "executeinfo SET status='executing transformation' WHERE Eid=" . $logID;
 	$rs = $db->query($sql);
 
@@ -161,17 +177,7 @@ $pentaho_err_code = array(
 
        // $sid = getSid();
 
-        $queryEngine = new QueryEngine();
-
-        $sql = "UPDATE " . table_prefix . "executeinfo SET status='adding database info and linked server' WHERE Eid=" . $logID;
-		$rs = $db->query($sql);
-
-        $queryEngine->simpleQuery->addSourceDBInfo($sid, $databaseConnectionInfo->server, $databaseConnectionInfo->port, $databaseConnectionInfo->username, $databaseConnectionInfo->password, $databaseConnectionInfo->database, $databaseConnectionInfo->engine);
-
-        $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
-
-        $sql = "UPDATE " . table_prefix . "executeinfo SET status='success' WHERE Eid=" . $logID;
-		$rs = $db->query($sql);
+        
 
 //         $dnamelistquery = "SELECT DISTINCT Dname FROM " . table_prefix . "temporary WHERE Sid = $sid";
 //         $dnamelist = $db->get_results($dnamelistquery);

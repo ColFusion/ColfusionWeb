@@ -224,6 +224,19 @@ EOQ;
 // *******************************************************************
 
     public function AddLinkedServer($engine, $server, $port, $database, $user, $password) {
+
+        $dropIfExistQuery = "IF  EXISTS (SELECT srv.name FROM sys.servers srv WHERE srv.server_id != 0 AND srv.name = N'$database') 
+        EXEC master.dbo.sp_dropserver @server=N'$database', @droplogins='droplogins'";
+
+        try {
+
+            $stmt = $pdo->prepare($dropIfExistQuery);
+            $res = $stmt->execute();
+        } catch (Exception $e) {
+            //var_dump($e);
+            throw new Exception($pdo->errorInfo());
+        }
+
         switch (strtolower($engine)) {
             case 'mysql': {
                     $srvproduct = "MySQL";

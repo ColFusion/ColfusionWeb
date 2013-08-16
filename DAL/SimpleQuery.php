@@ -110,7 +110,9 @@ class SimpleQuery
         $database = $db->escape($database);
         $driver = $db->escape($driver);
 
-        $sql = "INSERT INTO %ssourceinfo_DB (sid, server_address, port, user_name, password, source_database, driver) VALUES (%d, '%s', %d, '%s', '%s', '%s', '%s')";
+        $sql = "INSERT INTO %ssourceinfo_DB (sid, server_address, port, user_name, password, source_database, driver) VALUES (%d, '%s', %d, '%s', '%s', '%s', '%s') 
+                ON DUPLICATE KEY UPDATE server_address = values(server_address), port = values(port), user_name = values(user_name), 
+                password = values(password), source_database = values(source_database), driver = values(driver)";
         $sql = sprintf($sql, table_prefix, $sid, $server, $port, $user, $password, $database, $driver);
         $db->query($sql);
 
