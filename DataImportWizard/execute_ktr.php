@@ -1,182 +1,39 @@
 <?php
 
-set_time_limit(0);
-// The source code packaged with this file is Free Software, Copyright (C) 2005 by
-// Ricardo Galli <gallir at uib dot es>.
-// It's licensed under the AFFERO GENERAL PUBLIC LICENSE unless stated otherwise.
-// You can get copies of the licenses here:
-// 		http://www.affero.org/oagpl.html
-// AFFERO GENERAL PUBLIC LICENSE is also included in the file called "COPYING".
+include_once '../config.php';
+include_once(mnminclude . 'user.php');
 
-include_once('../Smarty.class.php');
-$main_smarty = new Smarty;
-
-include('../config.php');
-include(mnminclude . 'html1.php');
-include(mnminclude . 'link.php');
-include(mnminclude . 'tags.php');
-include(mnminclude . 'user.php');
-include(mnminclude . 'smartyvariables.php');
-include(mnminclude . 'smartyvariables.php');
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/UtilsForWizard.php");
 require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 
-$pentaho_err_code = array(
-    0 => 'The transformation ran without a problem',
-    1 => "Errors occurred during processing",
-    2 => "An unexpected error occurred during loading / running of the transformation",
-    3 => "Unable to prepare and initialize this transformation",
-    7 => "The transformation couldn't be loaded from XML or the Repository",
-    8 => "Error loading steps or plugins (error in loading one of the plugins mostly)",
-    9 => "Command line usage printing",
-    10 => "Errors occur when storing source information"
-);
+// parent sript, called by user request from browser
 
-global $current_user, $db, $dblang;
+$sid = getSid();
+
+global $current_user, $db;
 
 $author = $current_user->user_id;
 
-$sid = getSid();
 $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
-//unset($_SESSION["ktrArguments_$sid"]);
 
 foreach ($ktrManagers as $filename => $ktrManager) {
 
-    $ktrFilePath = $ktrManager->getKtrFilePath();
-
-    $returnVar = 0;
-    $sql = 'INSERT INTO ' . table_prefix . 'executeinfo (Sid ,Userid ,TimeStart)VALUES (' . $sid . ' , ' . $author . ',CURRENT_TIMESTAMP);';
+    $sql = "INSERT INTO " . table_prefix . "executeinfo (Sid, Userid, TimeStart, status)VALUES ($sid, $author, CURRENT_TIMESTAMP, 'started');";
     $rs = $db->query($sql);
-    if (!$rs) {
-        $returnVar = 10;
-    }
 
     //get eid returned from the insert
     $logID = mysql_insert_id();
 
-
-    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-        $locationOfPan = mnmpath . 'kettle-data-integration\\Pan_WHDV.bat';
-        $command = 'cmd.exe /C ' . $locationOfPan . ' /file:"' . $ktrFilePath . '" ' . '"-param:Sid=' . $sid . '"' . ' "-param:Eid=' . $logID . '"';
-    } else {
-        $locationOfPan = mnmpath . 'kettle-data-integration/pan.sh';
-        $command = 'sh ' . $locationOfPan . ' -file="' . $ktrFilePath . '" ' . '-param:Sid=' . $sid . ' -param:Eid=' . $logID;
-    }
-
-    $databaseConnectionInfo = $ktrManager->getConnectionInfo();
-
-
-    $commands[] = $command;
-    if ($returnVar == 0) {
-
-        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($databaseConnectionInfo->engine, $databaseConnectionInfo->username, $databaseConnectionInfo->password, null, $databaseConnectionInfo->server, $databaseConnectionInfo->port);
-
-        $dbHandler = $dbHandler->createDatabaseIfNotExist($databaseConnectionInfo->database);
-
-        $tableName = $ktrManager->getTableName();
-
-        $columns = $ktrManager->getColumns();
-
-        $dbHandler->createTableIfNotExist($tableName, $columns);
-
-        $ret = exec($command, $outA, $returnVar);
-    }
-
-    if ($returnVar != 0) {
-        $num = 0;
-        $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=$returnVar, ErrorMessage='" . mysql_real_escape_string(implode("\n", $outA)) . "', RecordsProcessed='" . $num . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
-        $rs = $db->query($sql);
-
-        $error = implode("<br />", $outA);
-
-        $errora = array();
-        $errorb = array();
-        $re1 = '(at)';
-        $re2 = '( )';
-
-        for ($i = 0; $i < count($outA); $i++) {
-            if (strstr($outA[$i], 'ERROR') != false) {
-                break;
-            }
-        }
-
-        $n = $i;
-        for ($j = $n + 1; $j < count($outA); $j++) {
-            if ($c = preg_match_all("/" . $re1 . $re2 . '/is', $outA[$j], $matches)) {
-                break;
-            }
-        }
-        for ($i; $i < $j; $i++) {
-            array_push($errora, $outA[$i]);
-        }
-
-        for ($o = 0; $o < count($outA); $o++) {
-            if ($c = preg_match_all("/" . $re1 . $re2 . '/is', $outA[$o], $matches)) {
-                array_push($errorb, "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $outA[$o]);
-            }
-        }
-     
-        $msg = '<p class="error">Error Message:<br />' . $pentaho_err_code[$returnVar] . '</p>';
-
-        $result = new stdClass;
-        $result->isSuccessful = false;
-        $result->message = $msg;
-        $result->pentaho_cmd = $commands;
-        $result->exeCode = $returnVar;
-        echo json_encode($result);
-
-        exit;
-    } else {
-        //TODO parse msg to get num inserted
-        $lastLine = $outA[count($outA) - 1];
-        preg_match("/d+\s{1}[0-9]+\s{1}l+/", $lastLine, $matches);
-        $m = explode(' ', $matches[0]);
-        $numProcessed = $m[1];
-
-        $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=0, RecordsProcessed='" . $numProcessed . "', TimeEnd=CURRENT_TIMESTAMP WHERE EID=" . $logID;
-        $rs = $db->query($sql);
-
-        $sid = getSid();
-
-        $queryEngine = new QueryEngine();
-
-        $queryEngine->simpleQuery->addSourceDBInfo($sid, $databaseConnectionInfo->server, $databaseConnectionInfo->port, $databaseConnectionInfo->username, $databaseConnectionInfo->password, $databaseConnectionInfo->database, $databaseConnectionInfo->engine);
-
-        $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
-
-//         $dnamelistquery = "SELECT DISTINCT Dname FROM " . table_prefix . "temporary WHERE Sid = $sid";
-//         $dnamelist = $db->get_results($dnamelistquery);
-//         $num = count($dnamelist);
-
-//         $query = "UPDATE `colfusion_temporary` AS t, 
-//        (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
-//         FROM `colfusion_temporary`, (select @rownumN := -1) rn
-//         where `Sid` = $sid
-//        ) AS r
-// SET t.`rownum` = r.rownumN DIV $num + 1
-// WHERE t.`Tid` = r.`Tid`";
-//         $db->query($query);
-
-//         $query = "UPDATE `colfusion_temporary` AS t, 
-//        (SELECT @rownumN:=@rownumN+1 as rownumN, `Tid`, `rownum`
-//         FROM `colfusion_temporary`, (select @rownumN := -1) rn
-//         where `Sid` = $sid
-//        ) AS r
-// SET t.`columnnum` = r.rownumN % $num + 1
-// WHERE t.`Tid` = r.`Tid`";
-//         $db->query($query);
-
-//         UtilsForWizard::insertCidToNewData($sid, $filename);
-    }
+    callChildProcessToExectueOneKTRTransformation($sid, $logID, $ktrManager);
 }
 
 $result = new stdClass;
 $result->isSuccessful = true;
 $result->message = 'Success!';
-$result->pentaho_cmd = $commands;
+// $result->pentaho_cmd = $commands;
 echo json_encode($result);
 
 exit;
@@ -196,5 +53,37 @@ function getSid()
     return $sid;
 }
 
+function callChildProcessToExectueOneKTRTransformation($sid, $logId, $ktrManager)
+{
+    // create socket for calling child script
+    $socketToChild = fsockopen("localhost", 80);
 
-?>
+    $base = my_pligg_base;
+
+    // HTTP-packet building; header first
+    $msgToChild = "POST $base/DataImportWizard/execute_ktr_parallel.php?&sid=$sid&logId=$logId HTTP/1.0\n";
+    $msgToChild .= "Host: localhost\n";
+
+    $vars = array("ktrManager" => serialize($ktrManager));
+
+    $postData = http_build_query($vars);
+    $msgToChild .= "Content-Type: application/x-www-form-urlencoded\r\n";
+    $msgToChild .= "Content-Length: ".strlen($postData)."\n\n";
+
+    // header done, glue with data
+    $msgToChild .= $postData;
+
+//var_dump($socketToChild);
+//var_dump($msgToChild);
+
+    // send packet no oneself www-server - new process will be created to handle our query
+    fwrite($socketToChild, $msgToChild);
+
+    // wait and read answer from child
+    $data = fread($socketToChild, 100);//stream_get_contents($socketToChild);
+
+//var_dump($data);
+
+    // close connection to child
+    fclose($socketToChild);
+}
