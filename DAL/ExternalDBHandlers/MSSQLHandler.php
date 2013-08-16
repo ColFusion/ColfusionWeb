@@ -228,6 +228,9 @@ EOQ;
         $dropIfExistQuery = "IF  EXISTS (SELECT srv.name FROM sys.servers srv WHERE srv.server_id != 0 AND srv.name = N'$database') 
         EXEC master.dbo.sp_dropserver @server=N'$database', @droplogins='droplogins'";
 
+
+        $pdo = $this->GetConnection();
+
         try {
 
             $stmt = $pdo->prepare($dropIfExistQuery);
@@ -270,8 +273,6 @@ EOQ;
                 break;
         }
 
-
-        $pdo = $this->GetConnection();
 
 //echo 'connected\n';
 
