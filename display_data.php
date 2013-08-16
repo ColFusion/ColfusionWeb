@@ -1,10 +1,4 @@
 ﻿<?php
-// The source code packaged with this file is Free Software, Copyright (C) 2005 by
-// Ricardo Galli <gallir at uib dot es>.
-// It's licensed under the AFFERO GENERAL PUBLIC LICENSE unless stated otherwise.
-// You can get copies of the licenses here:
-// 		http://www.affero.org/oagpl.html
-// AFFERO GENERAL PUBLIC LICENSE is also included in the file called "COPYING".
 
 include_once('Smarty.class.php');
 $main_smarty = new Smarty;
@@ -29,6 +23,8 @@ include_once(mnminclude.'user.php');
 	    $lastUpdated = $s->EntryDate;
 	}
 	
+
+    
 	echo '<br/>
             <span style="font-weight:bold;padding-left:10px;">Dataset Title: </span>
             <span id="dataset_title">'.$s->Title.'</span>              

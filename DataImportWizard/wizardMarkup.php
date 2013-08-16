@@ -277,7 +277,7 @@
     </div>
 
     <div class='wizard-error'>
-        <div class='alert alert-error'><strong>There was a problem</strong> during your submission. Please report this to <a href='mailto:radwanfatima@gmail.com?subject=ErrorReported from Colfusion importing wizard'>Colfusion</a> and restart the wizard again from the main page.
+        <div class='alert alert-error'><strong>There was a problem</strong> during your submission. Please report this to <a href='mailto:karataev.evgeny@gmail.com?subject=ErrorReported from Colfusion importing wizard'>Colfusion</a> and restart the wizard again from the main page.
             <p id='exe'></p>
         </div>
     </div>
@@ -289,7 +289,11 @@
 
     <div class='wizard-success'>
         <div class='alert alert-success'>
-            <p id='exe' value=''> Your dataset has been imported successfully. Please click on the finish button to close the wizard and go to the original submit new data page to finish up your submission.</p>
+            <p id='exe' value=''> You have complited the wizard successfully. Your dataset is being processed now. Please click on the finish button to close the wizard and go to the original submit new data page to finish up your submission. 
+            <br/>
+            You might the message that there is no data in your submission. Don't worry about it, your data is loading in background and will appear on the screen after every 1000 records are processed. You will have to refresh the page to see it though.
+
+            </p>
             <p id='exe'></p>
         </div>
         <a id='done' class='btn im-done'>Finish</a> 

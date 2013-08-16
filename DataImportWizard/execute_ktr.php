@@ -3,12 +3,6 @@
 include_once '../config.php';
 include_once(mnminclude . 'user.php');
 
-require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
-require_once(realpath(dirname(__FILE__)) . "/UtilsForWizard.php");
-require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
-require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
-require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
-
 // parent sript, called by user request from browser
 
 $sid = getSid();
@@ -20,15 +14,10 @@ $author = $current_user->user_id;
 $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
 
 foreach ($ktrManagers as $filename => $ktrManager) {
-
-    $sql = "INSERT INTO " . table_prefix . "executeinfo (Sid, Userid, TimeStart, status)VALUES ($sid, $author, CURRENT_TIMESTAMP, 'started');";
-    $rs = $db->query($sql);
-
-    //get eid returned from the insert
-    $logID = mysql_insert_id();
-
-    callChildProcessToExectueOneKTRTransformation($sid, $logID, $ktrManager);
+    callChildProcessToExectueOneKTRTransformation($sid, $author, $ktrManager);
 }
+
+// TODO: read output from the child process if it was started successfully.
 
 $result = new stdClass;
 $result->isSuccessful = true;
@@ -53,7 +42,7 @@ function getSid()
     return $sid;
 }
 
-function callChildProcessToExectueOneKTRTransformation($sid, $logId, $ktrManager)
+function callChildProcessToExectueOneKTRTransformation($sid, $userID, $ktrManager)
 {
     // create socket for calling child script
     $socketToChild = fsockopen("localhost", 80);
@@ -61,7 +50,7 @@ function callChildProcessToExectueOneKTRTransformation($sid, $logId, $ktrManager
     $base = my_pligg_base;
 
     // HTTP-packet building; header first
-    $msgToChild = "POST $base/DataImportWizard/execute_ktr_parallel.php?&sid=$sid&logId=$logId HTTP/1.0\n";
+    $msgToChild = "POST $base/DataImportWizard/execute_ktr_parallel.php?&sid=$sid&userID=$userID HTTP/1.0\n";
     $msgToChild .= "Host: localhost\n";
 
     $vars = array("ktrManager" => serialize($ktrManager));
@@ -73,16 +62,16 @@ function callChildProcessToExectueOneKTRTransformation($sid, $logId, $ktrManager
     // header done, glue with data
     $msgToChild .= $postData;
 
-//var_dump($socketToChild);
-//var_dump($msgToChild);
+var_dump($socketToChild);
+var_dump($msgToChild);
 
     // send packet no oneself www-server - new process will be created to handle our query
     fwrite($socketToChild, $msgToChild);
 
     // wait and read answer from child
-    $data = fread($socketToChild, 100);//stream_get_contents($socketToChild);
+    $data = fread($socketToChild, 5000);//stream_get_contents($socketToChild);
 
-//var_dump($data);
+var_dump($data);
 
     // close connection to child
     fclose($socketToChild);
