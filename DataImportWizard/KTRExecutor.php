@@ -36,7 +36,7 @@ class KTRExecutor
      */
     public function execute()
     {
-        $logID = $this->ktrExecutorDAO->addExecutionInfoTuple($this->sid, $this->userId);
+        $logID = $this->ktrExecutorDAO->addExecutionInfoTuple($this->sid, $this->ktrManager->getTableName(), $this->userId);
 
         $command = $this->getCommand($logID);
 
@@ -148,5 +148,32 @@ class KTRExecutor
 
             $this->ktrExecutorDAO->updateExecutionInfoTupleAfterPanTerminated($logID, $returnVar, "", $numProcessed, "success");    // loggin to db
         }
+    }
+
+    /**
+     * Returns execution status with additional information like how many records were processed.
+     * @param   $sid sid of the story 
+     * @return stdClass      info about the status
+     */
+    public static function getExecutionStatus($sid) 
+    {
+        $ktrExecutorDAO = new KTRExecutorDAO();
+
+        $tuplesFromExecuteInfoTable = $ktrExecutorDAO->getTuplesBySid($sid);
+        
+        $result = array();
+
+        $queryEngine = new QueryEngine();
+
+        foreach ($tuplesFromExecuteInfoTable as $key => $value) {
+
+            $res = $value;
+
+            $res->numberProcessRecords = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, $value->tableName);
+
+            $result[] = $res;
+        }
+
+        return $result;
     }
 }

@@ -33,9 +33,9 @@ class KTRExecutorDAO
      * @param         $userId user who starts the transformation.
      * @throws Exception If query failed.
      */
-    public function addExecutionInfoTuple( $sid,  $userId)
+    public function addExecutionInfoTuple($sid, $tableName, $userId)
     {
-        $sql = "INSERT INTO " . table_prefix . "executeinfo (Sid, Userid, TimeStart, status)VALUES ($sid, $userId, CURRENT_TIMESTAMP, 'in progress');";
+        $sql = "INSERT INTO " . table_prefix . "executeinfo (Sid, tableName, UserId, TimeStart, status)VALUES ($sid, $tableName, $userId, CURRENT_TIMESTAMP, 'in progress');";
 
         try {
             $this->ezSql->query($sql);
@@ -101,6 +101,24 @@ class KTRExecutorDAO
 
         try {
             $this->ezSql->query($sql);
+
+        } catch (Exception $e) {
+            throw new Exception("Error Processing Request. Could not execute the query", 1);
+        }
+    }
+
+    /**
+     * Returns array of objects which holds all information about the tuples for gien sid.
+     * @param  [type] $sid sid to check.
+     * @return array      array of rows from the table.
+     * @throws Exception If query failed.
+     */
+    public function getTuplesBySid($sid)
+    {
+        $sql = "SELECT * FROM " . table_prefix . "executeinfo WHERE Sid= $sid";
+
+        try {
+            return $this->ezSql->get_results($sql);
 
         } catch (Exception $e) {
             throw new Exception("Error Processing Request. Could not execute the query", 1);

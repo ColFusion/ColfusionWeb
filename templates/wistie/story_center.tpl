@@ -63,6 +63,8 @@
 
         $(document).ready(function() {
 
+            getStoryStatus(sid);
+
             fileManager.loadSourceAttachments(sid, $('#attachmentList'));
 
             $.ajax({
@@ -83,6 +85,18 @@
             dataPreviewViewModel.getTablesList();
             relationshipViewModel.mineRelationships(10, 1);
         });
+
+        function getStoryStatus(sid) {
+            $.ajax({
+                type: 'POST',
+                url: "DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus",
+                data: { sid: sid },
+                success: function(data) {
+                     $("#tempStoryStatus").append(data);
+                },
+                dataType: 'json'
+            });
+        }
 
         window.onload = function showData()
         {
@@ -184,6 +198,8 @@
         </tr>
     </table>
 </div>
+
+<div id="tempStoryStatus"> </div>
 
 <div id="dataPreviewContainer"> </div>
 

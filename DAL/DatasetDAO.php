@@ -51,7 +51,6 @@ class DatasetDAO {
         
         return $this->ezSql->get_row($query);
     }
-
 }
 
 ?>
