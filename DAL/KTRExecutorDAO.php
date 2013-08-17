@@ -35,7 +35,7 @@ class KTRExecutorDAO
      */
     public function addExecutionInfoTuple($sid, $tableName, $userId)
     {
-        $sql = "INSERT INTO " . table_prefix . "executeinfo (Sid, tableName, UserId, TimeStart, status)VALUES ($sid, $tableName, $userId, CURRENT_TIMESTAMP, 'in progress');";
+        $sql = "INSERT INTO " . table_prefix . "executeinfo (Sid, tableName, UserId, TimeStart, status)VALUES ($sid, '$tableName', $userId, CURRENT_TIMESTAMP, 'in progress');";
 
         try {
             $this->ezSql->query($sql);
