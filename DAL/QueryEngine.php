@@ -566,7 +566,7 @@ EOQ;
     // $searchTerms is an associated array where keys are the links and values are search terms for associated links.
     public function GetDistinctForColumns($source, $perPage, $pageNo, $searchTerms = null) {
 
-        $from = (object) array('sid' => $source->sid, 'tableName' => $source->tableName);
+        $from = (object) array('sid' => $source->sid, 'tableName' => "[{$source->tableName}]");
         $fromArray = array($from);
 
         $transHandler = new TransformationHandler();
@@ -577,12 +577,12 @@ EOQ;
 
         foreach ($source->links as $key=>$link) {
 
-            $column = $transHandler->decodeTransformationInput($link);
-            $columnNames[] = $column;
+            $column = $transHandler->decodeTransformationInput($link, true);
+            $columnNames[] = "[$column]";
 
             if (isset($searchTerms)) {
                 if (isset($searchTerms[$link])) {
-                    $whereArray[] = " $column like '%" . $searchTerms[$link] . "%' ";
+                    $whereArray[] = " [$column] like '%" . $searchTerms[$link] . "%' ";
                 }
             }
         }
