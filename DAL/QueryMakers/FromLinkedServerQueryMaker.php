@@ -21,20 +21,35 @@ class FromLinkedServerQueryMaker {
         
         $tableName = $source->tableName;
 
+        $selectPart = " select distinct $columnNameAndAlias ";
+        $fromParm = " from ";
+
         if ($result->server_address === "tycho.exp.sis.pitt.edu") {
-            $query = <<<EOQ
-        select distinct $columnNameAndAlias
-        from [$linkedServerName].[dbo].$tableName       
-EOQ;
+            $fromParm .= " [$linkedServerName].[dbo].[{$tableName}] as [{$tableName}{$source->sid}] ";
         }
         else {
-            $query = <<<EOQ
-        select distinct $columnNameAndAlias
-		from [$linkedServerName]...$tableName		
-EOQ;
+            switch ($result->driver) {
+                case 'mysql':
+                    $fromParm .= " (select * from OPENQUERY([$linkedServerName], 'select * from `{$tableName}`')) as [{$tableName}{$source->sid}] ";
+                    break;
+
+                case 'postgresql':
+                    $fromParm .= " (select * from OPENQUERY([$linkedServerName], 'select * from \"{$tableName}\"')) as [{$tableName}{$source->sid}] ";
+                    break;
+
+                case 'mssql':
+                    $fromParm .= " [$linkedServerName]...[{$tableName}] as [{$tableName}{$source->sid}] ";
+                    break;
+                    
+                default:
+                    throw new Exception("Error Processing Request. DBMS engine is not recognized", 1);
+                    
+                    break;
+            }
+            
         }
 
-        return $query;
+        return $selectPart . $fromParm;
     }
     
     private static function wrapInLimit($startPoint, $perPage, $table) {
