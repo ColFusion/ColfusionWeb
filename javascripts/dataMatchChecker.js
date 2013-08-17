@@ -27,8 +27,8 @@ Since Relstionship and NewRelationship use different model,
 we need to transfer data between uncommon attributes.
 */
 function makeRelationshipModelCompatibleToNewRelationshipModel(relationModel) {
-    relationModel.fromDataSet.shownTableName = relationModel.shownTableName || 'empty';
-    relationModel.toDataSet.shownTableName = relationModel.shownTableName || 'empty';
+    relationModel.fromDataSet.shownTableName = $('#fromTableInput').val();
+    relationModel.toDataSet.shownTableName = $('#toTableInput').val();
     
     return relationModel;
 }

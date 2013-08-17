@@ -198,7 +198,7 @@
             <li data-bind="with: $data" class="storyStatus">
                 <span data-bind="text: tableName" class="statusTableName statusCol"></span>
                 <span class="statusRecordsProcessed statusCol">
-                    <span data-bind="text: RecordsProcessed"></span>
+                    <span data-bind="text: numberProcessRecords"></span>
                 </span>
                 <span data-bind="style: {'color': $root.statusColor[status]}" class="statusStatus statusCol">
                     <span style="padding-right: 3px;">

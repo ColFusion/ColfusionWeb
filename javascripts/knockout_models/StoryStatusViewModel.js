@@ -18,6 +18,7 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
     self.sid = sid;
     self.dataPreviewViewModel = dataPreviewViewModel || new MockDataPreviewViewModel();
 
+    self.isDataShown = ko.observable(false);
     self.isRefreshingUpdateStatus = ko.observable(false);
     self.datasetStatus = ko.observableArray();
 
@@ -61,8 +62,9 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
             readyForLoading = readyForLoading && (statusObj.RecordsProcessed >= 1000 || statusObj.status == 'success');
         });
 
-        if (readyForLoading) {
+        if (readyForLoading && !self.isDataShown()) {
             self.dataPreviewViewModel.getTablesList();
+            self.isDataShown(true);
         }
     }
 
