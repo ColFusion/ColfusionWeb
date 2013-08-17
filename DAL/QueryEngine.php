@@ -572,6 +572,7 @@ EOQ;
         $transHandler = new TransformationHandler();
 
         $columnNames = array();
+        $columnNamesNoBrack = array();
 
         $whereArray = array();
 
@@ -579,6 +580,7 @@ EOQ;
 
             $column = $transHandler->decodeTransformationInput($link, true);
             $columnNames[] = "[$column]";
+            $columnNamesNoBrack[] = $column;
 
             if (isset($searchTerms)) {
                 if (isset($searchTerms[$link])) {
@@ -596,7 +598,7 @@ EOQ;
             $where = "where " . implode(" and ", array_values($whereArray));
 
         $result = new stdClass;
-        $result->columns = explode(",", $columns);
+        $result->columns = $columnNamesNoBrack;
         $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, $where, null, null, $perPage, $pageNo);
         $result->totalRows = $this->doQuery("SELECT COUNT(*) as ct", $fromArray, $where, null, null, null, null);
 

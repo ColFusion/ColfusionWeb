@@ -69,7 +69,7 @@ function getDistinctTable($tableParams) {
             foreach ($distinctTable->rows as $rowObj) {
                 $tableRow = array();
                 foreach ($distinctTable->columns as $column) {
-                    $tableRow[] = $rowObj->$column;
+                    $tableRow[] = $rowObj[$column];
                 }
                 $tableRows[] = $tableRow;
             }
