@@ -247,13 +247,12 @@ function NewRelationshipViewModel() {
     self.checkDataMatching = function() {
 
         self.fromDataSet().name($('#fromDataSet').find('input.sidInput').val());
-        self.persistStore.set('checkDataMatching_' + self.fromDataSet().sid() + '_' + self.fromDataSet().chosenTableName()
-                + '_' + self.toDataSet().sid() + '_' + self.toDataSet().chosenTableName(), ko.toJSON(self));
-
+     
         $('#dataMatchCheckingForm input[name="fromSid"]').val(self.fromDataSet().sid());
         $('#dataMatchCheckingForm input[name="toSid"]').val(self.toDataSet().sid());
         $('#dataMatchCheckingForm input[name="fromTable"]').val(self.fromDataSet().chosenTableName());
         $('#dataMatchCheckingForm input[name="toTable"]').val(self.toDataSet().chosenTableName());
+        $('#dataMatchCheckingForm input[name="relSerializedString"]').val(ko.toJSON(self));
         $('#dataMatchCheckingForm').submit();
     };
 

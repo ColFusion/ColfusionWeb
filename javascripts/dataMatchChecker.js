@@ -5,24 +5,34 @@ $(function() {
 });
 
 function prepareDataMatchCheckerViewModel() {
-    var newRelationModel = getRelationshipInfo();
-    return createDataMatchCheckerViewModel(newRelationModel);
+    var relationModel = getRelationshipInfo();
+    return createDataMatchCheckerViewModel(relationModel);
 }
 
 function getRelationshipInfo() {  
-    var newRelationModel = JSON.parse($('#relSerializedString').val());
-    
-    if (newRelationModel.isContainerShowned === undefined) {
-        newRelationModel = makeNewRelationshipModelCompatibleToRelationshipModel(newRelationModel);
+    var relationModel = JSON.parse($('#relSerializedString').val()); 
+
+    if (relationModel.isContainerShowned === undefined) {
+        relationModel = makeNewRelationshipModelCompatibleToRelationshipModel(relationModel);
+    } else {
+        relationModel = makeRelationshipModelCompatibleToNewRelationshipModel(relationModel);
     }
-    console.log(newRelationModel);
-    return newRelationModel;
+
+    console.log(relationModel);
+    return relationModel;
+}
+
+function makeRelationshipModelCompatibleToNewRelationshipModel(relationModel) {
+    relationModel.fromDataSet.shownTableName = relationModel.shownTableName || 'empty';
+    relationModel.toDataSet.shownTableName = relationModel.shownTableName || 'empty';
+    
+    return relationModel;
 }
 
 function makeNewRelationshipModelCompatibleToRelationshipModel(relationModel) {
     relationModel.fromDataSet = relationModel.fromDataSet || relationModel.fromDataset;
     relationModel.toDataSet = relationModel.toDataSet || relationModel.toDataset;
-
+    
     var newLinks = [];
     $.each(relationModel.links, function(i, link) {
         var newLink = {

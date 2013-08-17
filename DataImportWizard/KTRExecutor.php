@@ -8,8 +8,8 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseH
 require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
 
 /**
-* Execute ktr transformation from KTRManager
-*/
+ * Execute ktr transformation from KTRManager
+ */
 class KTRExecutor
 {
     private $sid; //sid for which the data will be loaded.
@@ -39,17 +39,12 @@ class KTRExecutor
         $logID = $this->ktrExecutorDAO->addExecutionInfoTuple($this->sid, $this->ktrManager->getTableName(), $this->userId);
 
         $command = $this->getCommand($logID);
-
-        
-
         $this->ktrExecutorDAO->updateExecutionInfoTupleCommand($logID, $command);   // loggin to db
-
-         $databaseConnectionInfo = $this->createTargetDatabaseAndTable($logID);
-
-//var_dump($databaseConnectionInfo);
+        
+        $databaseConnectionInfo = $this->createTargetDatabaseAndTable($logID);
 
         $this->addMetaDataAboutTargetDatabase($logID, $databaseConnectionInfo);
-
+        
         $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "executing pan");  // loggin to db
 
         // ACTUALL PAN SCRIPT EXECUTION
@@ -152,15 +147,15 @@ class KTRExecutor
 
     /**
      * Returns execution status with additional information like how many records were processed.
-     * @param   $sid sid of the story 
+     * @param   $sid sid of the story
      * @return stdClass      info about the status
      */
-    public static function getExecutionStatus($sid) 
+    public static function getExecutionStatus($sid)
     {
         $ktrExecutorDAO = new KTRExecutorDAO();
 
         $tuplesFromExecuteInfoTable = $ktrExecutorDAO->getTuplesBySid($sid);
-        
+
         $result = array();
 
         $queryEngine = new QueryEngine();

@@ -1,0 +1,61 @@
+﻿.link {
+    fill: none;
+    stroke: #666;
+    stroke-width: 1.5px;
+}
+
+.node circle {
+    fill: #ccc;
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.relGraph {
+    border: solid 1px black;
+}
+
+.node:hover {
+    cursor: pointer;
+}
+
+.relGraph {
+    height: 300px;
+    width: 99%;
+}
+
+.relGraphTooltip_node, .relGraphTooltip_edge {
+    position: fixed;
+    z-index: 5;
+    display: none;
+    background-color: white;
+}
+
+.relationshipGraphTooltipTable {
+    font-size: 12px;
+    border: solid 2px #dbdbdb;
+}
+
+    .relationshipGraphTooltipTable .titleText {
+        font-weight: bold;
+        padding-right: 5px;
+    }
+
+.tableInfoTable td, .tableInfoTable th {
+    padding-left: 5px;
+}
+
+.tableInfoTable {
+    border: solid 1px;
+}
+
+.relationshipGraphTooltipTable .titleText {
+    font-size: 11px;
+}
+
+.graphTitle {
+    margin-top: 30px;
+    font-weight: bold;
+    color: black;
+    font-size: 16px;
+    padding-bottom: 5px;
+}
