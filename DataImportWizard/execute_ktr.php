@@ -62,8 +62,8 @@ function callChildProcessToExectueOneKTRTransformation($sid, $userID, $ktrManage
     // header done, glue with data
     $msgToChild .= $postData;
 
-var_dump($socketToChild);
-var_dump($msgToChild);
+//var_dump($socketToChild);
+//var_dump($msgToChild);
 
     // send packet no oneself www-server - new process will be created to handle our query
     fwrite($socketToChild, $msgToChild);
@@ -71,7 +71,7 @@ var_dump($msgToChild);
     // wait and read answer from child
     $data = fread($socketToChild, 5000);//stream_get_contents($socketToChild);
 
-var_dump($data);
+//var_dump($data);
 
     // close connection to child
     fclose($socketToChild);

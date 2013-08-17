@@ -55,7 +55,7 @@ class KTRExecutor
         // ACTUALL PAN SCRIPT EXECUTION
         exec($command, $outA, $returnVar);
 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan finisehd");  // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan finished");  // loggin to db
 
         $this->processExecutionResultMessage($logID, $returnVar, $outA);
     }
