@@ -71,10 +71,10 @@ class KTRExecutor
         $ktrFilePath = $this->ktrManager->getKtrFilePath();
 
         if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $locationOfPan = mnmpath . 'kettle-data-egration\\Pan_WHDV.bat';
+            $locationOfPan = mnmpath . 'kettle-data-integration\\Pan_WHDV.bat';
             $command = 'cmd.exe /C ' . $locationOfPan . ' /file:"' . $ktrFilePath . '" ' . '"-param:Sid=' . $this->sid . '"' . ' "-param:Eid=' . $logID . '"';
         } else {
-            $locationOfPan = mnmpath . 'kettle-data-egration/pan.sh';
+            $locationOfPan = mnmpath . 'kettle-data-integration/pan.sh';
             $command = 'sh ' . $locationOfPan . ' -file="' . $ktrFilePath . '" ' . '-param:Sid=' . $this->sid . ' -param:Eid=' . $logID;
         }
 
