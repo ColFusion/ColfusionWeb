@@ -92,7 +92,7 @@
                 url: "DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus",
                 data: { sid: sid },
                 success: function(data) {
-                     $("#tempStoryStatus").append(data);
+                     $("#tempStoryStatus").append("<p>" + JSON.stringify(data) + "</p>");
                 },
                 dataType: 'json'
             });
