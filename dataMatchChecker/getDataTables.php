@@ -69,7 +69,14 @@ function getDistinctTable($tableParams) {
             foreach ($distinctTable->rows as $rowObj) {
                 $tableRow = array();
                 foreach ($distinctTable->columns as $column) {
-                    $tableRow[] = $rowObj[$column];
+                    if (is_object($rowObj)) { //TODO: this need to be fixed. There should only one format of returned data. All should be accociated array
+                        $tableRow[] = $rowObj->$column;
+                    }
+                    else {
+                        $tableRow[] = $rowObj[$column];
+                    }
+
+                    
                 }
                 $tableRows[] = $tableRow;
             }
@@ -81,8 +88,17 @@ function getDistinctTable($tableParams) {
     $jsonResult['aaData'] = $tableRows;
     $jsonResult['aoColumns'] = $distinctTable->columns;
     // $jsonResult['mData'] = $distinctTable->rows;
-    $jsonResult["iTotalRecords"] = $distinctTable->totalRows[0]['ct'];
-    $jsonResult["iTotalDisplayRecords"] = $distinctTable->totalRows[0]['ct'];
+
+    if (is_object($distinctTable->totalRows[0])) { // TODO FIXME.
+        $jsonResult["iTotalRecords"] = $distinctTable->totalRows[0]->ct;
+        $jsonResult["iTotalDisplayRecords"] = $distinctTable->totalRows[0]->ct;
+    }
+    else {
+        $jsonResult["iTotalRecords"] = $distinctTable->totalRows[0]['ct'];
+        $jsonResult["iTotalDisplayRecords"] = $distinctTable->totalRows[0]['ct'];
+    }
+
+   
 
     echo json_encode($jsonResult);
 }
