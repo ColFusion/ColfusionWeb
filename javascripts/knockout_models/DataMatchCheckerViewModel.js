@@ -182,8 +182,8 @@ function DataMatchCheckerViewModel() {
             dataType: 'json',
             data: params,
             success: function(data) {
-                self.differentValueFromTable(createDataTable(data.notMatchedInFromData));
-                self.differentValueToTable(createDataTable(data.notMatchedInToData));
+                self.differentValueFromTable(createDataTable(data.notMatchedInFromData, "FromTable"));
+                self.differentValueToTable(createDataTable(data.notMatchedInToData, "ToTable"));
                 self.sameValueTable(getStaticDataTable());
                 self.countOfMatchedData(data.countOfMachedData.rows[0].ct);
                 self.countOfTotalDistinctData(data.countOfTotalDistinctData.rows[0].ct);
@@ -208,6 +208,16 @@ function DataMatchCheckerViewModel() {
 
     self.saveSynonym = function () {
 
+        if (!isValueInTable(self.differentValueFromTable(), self.synFrom())) {
+            self.addingSynonymMessage('Value in From part is not found.');
+            return;
+        }
+
+        if (!isValueInTable(self.differentValueToTable(), self.synTo())) {
+            self.addingSynonymMessage('Value in To part is not found.');
+            return;
+        }
+
         var data = {
             fromTransInput: self.currentLink().fromLinkPart.transInput,
             toTransInput: self.currentLink().toLinkPart.transInput,
@@ -218,14 +228,10 @@ function DataMatchCheckerViewModel() {
             tableFrom: self.fromDataset().shownTableName,
             tableTo: self.toDataset().shownTableName
         };
-
+        
         self.isAddingSynonym(true);
         self.addingSynonymMessage('');
-        /*
-         updateTables(self.synFrom(), self.synTo());
-         self.synFrom('');
-         self.synTo('');
-         */
+       
         $.ajax({
             url: 'addSynonym.php',
             type: 'post',
@@ -257,13 +263,27 @@ function DataMatchCheckerViewModel() {
         self.countOfMatchedData(Number(self.countOfMatchedData()) + 1);
     }
 
+    function isValueInTable(table, value) {
+        for (var i = 0; i < table.getCells().length; i++) {
+            var row = table.getCells()[i];
+            for (var j = 0; j < row.length; j++) {
+                if (row[j] != null && value != null && row[j].trim() == value.trim()) {
+                    return true;
+                }
+            }      
+        }
+
+        return false;
+    }
+
     // DataPreviewViewModelProperties.Table
     function removeValueInTable(oldTable, value, replaceColIndex) {
         replaceColIndex = replaceColIndex === undefined ? 0 : replaceColIndex;
         var newCells = [];
 
-        $.each(oldTable.getCells(), function(i, row) {
-            if (row[replaceColIndex] == value.toString().trim()) {
+        $.each(oldTable.getCells(), function (i, row) {
+            if (row[replaceColIndex] != null && value != null
+                && row[replaceColIndex].toString().trim() == value.toString().trim()) {
                 return;
             }
             newCells.push(row);
@@ -284,7 +304,7 @@ function DataMatchCheckerViewModel() {
     }
 
     // Handle json sent from server and creates DataTable object.
-    function createDataTable(tableJson) {
+    function createDataTable(tableJson, tableName) {
         var columns = tableJson.columns;
         var rows = [];
 
@@ -296,7 +316,7 @@ function DataMatchCheckerViewModel() {
             rows.push(row);
         });
 
-        return new DataPreviewViewModelProperties.Table("FromTable", columns, rows);
+        return new DataPreviewViewModelProperties.Table(tableName || "FromTable", columns, rows);
     }
 }
 

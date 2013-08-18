@@ -1,4 +1,4 @@
-<html>
+ <html>
     <head>
         <meta charset="UTF-8">
         <title>DataMatchChecker</title>
@@ -110,7 +110,10 @@
                         in <span style="font-weight: bold;">To</span> part.
                         <button data-bind="click: saveSynonym" class="btn addSynonymBtn">Add</button>
                         <img data-bind="visible: isAddingSynonym" src="../images/ajax-loader.gif" style="margin: -8px 0 0 5px;"/>
-                        <span data-bind="text: addingSynonymMessage" style="color:red; display: inline-block;"></span>
+                        <div style="color:red;">
+                            <i data-bind="visible: addingSynonymMessage" class="icon-remove-sign" style="padding-right: 3px;"></i>
+                            <span data-bind="text: addingSynonymMessage" ></span>
+                        </div>
                     </div>
                 </div>
                 <div class="accordionWrapper">
