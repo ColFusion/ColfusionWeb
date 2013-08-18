@@ -67,9 +67,12 @@ class MSSQLHandler extends DatabaseHandler {
 
         $result = array();
 
-        $pdo->setAttribute(PDO::FETCH_ASSOC);
-        
-        $res = $pdo->query($sql);
+
+        $stmt = $pdo->prepare($sql);
+        $stmt->setFetchMode(PDO::FETCH_ASSOC);
+        $stmt->execute();
+               
+        $res = $stmt->fetchAll();
         foreach ($res->fetchAll() as $row) {
             $result[] = $row;
         }

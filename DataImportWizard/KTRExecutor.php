@@ -156,6 +156,9 @@ class KTRExecutor
 
         $tuplesFromExecuteInfoTable = $ktrExecutorDAO->getTuplesBySid($sid);
 
+        if (!isset($tuplesFromExecuteInfoTable) || count($tuplesFromExecuteInfoTable) == 0)
+            return "success";
+
         $result = array();
 
         $queryEngine = new QueryEngine();
