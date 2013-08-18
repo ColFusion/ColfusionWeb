@@ -2,7 +2,7 @@
 
 include_once '../config.php';
 include_once(mnminclude . 'user.php');
-include_once '/ExecutionManager.php';
+require_once(realpath(dirname(__FILE__)) . "/ExecutionManager.php");
 
 // parent sript, called by user request from browser
 
