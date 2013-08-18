@@ -167,7 +167,7 @@ class KTRExecutor
 
             $res = $value;
                                         //TODO FIXME table name should not be wrapped into [] at this spet. Need global refactoring to move wrapping table into brackets closer to the query execution
-            $res->numberProcessRecords = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[$value->tableName]");
+            $res->numberProcessRecords = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[{$value->tableName}]");
 
             $result[] = $res;
         }

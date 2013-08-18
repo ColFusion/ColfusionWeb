@@ -64,7 +64,10 @@ class MySQLHandler extends DatabaseHandler
         
         $res = $this->prepareAndRunQuery("SELECT COUNT(*) as ct", "$table_name", null, null, null, null);
 
-        return $res[0]->ct;
+        if (is_object($res[0]))
+            return $res[0]->ct;
+        else
+            return $res[0]["ct"];
 
         // $pdo = $this->GetConnection();
         // $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM `$table_name`");
@@ -123,6 +126,9 @@ class MySQLHandler extends DatabaseHandler
         return $this->ExecuteQuery($query);
     }
 
+    //TODO FIXME I think this place need reactoring, it is not efficient to loop through the whole result. Actually we can just use the same way as in MSSQL
+    //but need to be carefull with refactoring, some code might be broken depending on what is returned (array or object). We need to unify it, e.g. returning
+    // always array of objects.
     public function ExecuteQuery($query)
     {
         $pdo = $this->GetConnection();
