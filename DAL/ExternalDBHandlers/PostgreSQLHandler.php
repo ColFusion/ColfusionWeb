@@ -47,13 +47,17 @@ class PostgreSQLHandler extends DatabaseHandler {
     }
 
     public function getTotalNumberTuplesInTable($table_name) {
-        $pdo = $this->GetConnection();
-        $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM \"$table_name\"");
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_BOTH);
-        $tupleNum = (int) $row[0];
-        $stmt->closeCursor();
-        return $tupleNum;
+        $res = $this->prepareAndRunQuery("SELECT COUNT(*) as ct", "$table_name", null, null, null, null);
+
+        return $res[0]->ct;
+
+        // $pdo = $this->GetConnection();
+        // $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM \"$table_name\"");
+        // $stmt->execute();
+        // $row = $stmt->fetch(PDO::FETCH_BOTH);
+        // $tupleNum = (int) $row[0];
+        // $stmt->closeCursor();
+        // return $tupleNum;
     }
 
 
