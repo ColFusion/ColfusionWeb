@@ -2,7 +2,7 @@
 
 include(realpath(dirname(__FILE__)) . '/../config.php');
 include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
-include(realpath(dirname(__FILE__)) . '/KTRExecutor.php');
+include(realpath(dirname(__FILE__)) . '/ExecutionManager.php');
 
 $action = $_GET["action"];
 
@@ -49,7 +49,7 @@ function GetStoryStatus() {
 
     $sid = $_POST["sid"];
 
-    $result = KTRExecutor::getExecutionStatus($sid);
+    $result = ExecutionManager::getExecutionStatus($sid);
 
     echo json_encode($result);
 }

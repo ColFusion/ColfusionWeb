@@ -144,34 +144,4 @@ class KTRExecutor
             $this->ktrExecutorDAO->updateExecutionInfoTupleAfterPanTerminated($logID, $returnVar, "", $numProcessed, "success");    // loggin to db
         }
     }
-
-    /**
-     * Returns execution status with additional information like how many records were processed.
-     * @param   $sid sid of the story
-     * @return stdClass      info about the status
-     */
-    public static function getExecutionStatus($sid)
-    {
-        $ktrExecutorDAO = new KTRExecutorDAO();
-
-        $tuplesFromExecuteInfoTable = $ktrExecutorDAO->getTuplesBySid($sid);
-
-        if (!isset($tuplesFromExecuteInfoTable) || count($tuplesFromExecuteInfoTable) == 0)
-            return "success";
-
-        $result = array();
-
-        $queryEngine = new QueryEngine();
-
-        foreach ($tuplesFromExecuteInfoTable as $key => $value) {
-
-            $res = $value;
-                                        //TODO FIXME table name should not be wrapped into [] at this spet. Need global refactoring to move wrapping table into brackets closer to the query execution
-            $res->numberProcessRecords = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[{$value->tableName}]");
-
-            $result[] = $res;
-        }
-
-        return $result;
-    }
 }
