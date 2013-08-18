@@ -68,6 +68,13 @@
 	        		$rec = new stdClass();
 	        		$rec->tableName = $tableName;
 	        		$rec->status = "success";
+	        		$rec->Eid = "NA";
+	        		$rec->ErrorMessage = "";
+	        		$rec->RecordsProcessed = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[$tableName]");
+	        		$rec->Sid = $sid;
+	        		$rec->TimeEnd = "2013-08-18 12:21:19"; //FIXME
+	        		$rec->TimeStart = "2013-08-18 12:21:19";
+	        		$rec->UserId = "NA";
 
 	        		$tuplesFromExecuteInfoTable[] = $rec;
 	        	}
