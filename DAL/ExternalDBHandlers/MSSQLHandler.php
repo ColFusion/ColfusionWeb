@@ -73,7 +73,7 @@ class MSSQLHandler extends DatabaseHandler {
         $stmt->execute();
                
         $res = $stmt->fetchAll();
-        foreach ($res->fetchAll() as $row) {
+        foreach ($res as $row) {
             $result[] = $row;
         }
 
