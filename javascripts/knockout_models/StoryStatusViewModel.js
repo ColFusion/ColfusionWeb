@@ -11,7 +11,6 @@ function MockDataPreviewViewModel() {
 This model can be seemed as a wrapper of DataPreivewViewModel.
 It manages importing status and helps DataPreivewViewModel to retrieve data in appropiate time.
 */
-
 function StoryStatusViewModel(sid, dataPreviewViewModel) {
     var self = this;
 
@@ -19,16 +18,18 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
     self.dataPreviewViewModel = dataPreviewViewModel || new MockDataPreviewViewModel();
 
     self.isDataShown = ko.observable(false);
-    self.isRefreshingUpdateStatus = ko.observable(false);
+    self.isRefreshingUpdateStatus = ko.observable(true);
     self.datasetStatus = ko.observableArray();
+    dataPreviewViewModel.isRefreshingUpdateStatus = self.isRefreshingUpdateStatus;
     
     self.refreshUpdateStatus = function () {
         console.log("Refreshing Status");
 
-        self.isRefreshingUpdateStatus(true);
+        $('#datasetDescription-lastRefresh').text(new Date().toString("yyyy-MM-dd HH:mm:ss"));
 
         return $.ajax({
             url: my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
+            // url: my_pligg_base + '/DataImportWizard/testStoryStatus.json',
             data: { sid: self.sid },
             type: 'post',
             dataType: 'json',
@@ -36,8 +37,6 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
                 self.datasetStatus(data);
                 loadData();
             }
-        }).always(function () {
-            self.isRefreshingUpdateStatus(false);
         });
     };
 
@@ -63,9 +62,11 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
         });
 
         if (needRefreshing) {
-            self.refreshUpdateStatus().done(function (data) {
+            self.refreshUpdateStatus().done(function(data) {
                 setTimeout(autoRefreshUpdateStatus, 5000);
             });
+        } else {
+            self.isRefreshingUpdateStatus(false);
         }
     }
 

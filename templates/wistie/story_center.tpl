@@ -18,6 +18,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/persist-min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/parsley.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/purl.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/date.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.3.0.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
@@ -89,7 +90,7 @@
         // dataPreviewViewModel.getTablesList();
         relationshipViewModel.mineRelationships(10, 1);
     });
-    
+
     window.onload = function showData() {
         xmlhttp.open("GET", my_pligg_base + "/display_data.php?count=5", false);
         xmlhttp.send(null);
@@ -193,6 +194,8 @@
             <span class="statusHeader statusHeader-tableName">Table Name</span>
             <span class="statusHeader statusHeader-records">Record Processed</span>
             <span class="statusHeader statusHeader-status">Status</span>
+            <span class="statusHeader statusHeader-timeStart">Time Start</span>
+            <span class="statusHeader statusHeader-timeEnd">Time End</span>
         </div>
         <ul data-bind="foreach: datasetStatus" class="storyStatusTableList" style="margin: 0;">
             <li data-bind="with: $data" class="storyStatus">
@@ -205,11 +208,13 @@
                         <i data-bind="attr: { 'class': $root.getStatusIcon(status) }"></i>
                     </span>
                     <span data-bind="visible: status != 'error', text: status"></span>
+                    <span data-bind="visible: ErrorMessage, text: ErrorMessage"
+                          class="statusErrorMessage statusCol"
+                          style="float: right;">                        
+                    </span>
                 </span>
-                <span data-bind="visible: ErrorMessage, text: ErrorMessage" 
-                      class="statusErrorMessage statusCol" 
-                      style="float: right;">
-                </span>
+                <span data-bind="text: TimeStart" class="statusTimeStart statusCol"></span>
+                <span data-bind="text: TimeEnd" class="statusTimeEnd statusCol"></span>
             </li>
         </ul>
     </div>

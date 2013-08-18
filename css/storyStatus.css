@@ -32,15 +32,18 @@
 }
 
 .statusHeader-tableName, .statusTableName {
-    width: 40%;
+    width: 25%;
     padding-left: 10px;
 }
 
 .statusHeader-records, .statusRecordsProcessed {
+    width: 15%;
+}
+
+.statusHeader-status, .statusStatus {
     width: 20%;
 }
 
-.statusErrorMessage {
-    width: 35%;
-    padding-right: 10px;
+.statusHeader-timeStart, .statusHeader-timeEnd, .statusTimeStart, .statusTimeEnd {
+    width: 18%;
 }

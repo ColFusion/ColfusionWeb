@@ -14,6 +14,11 @@
                     <span class="tableText" data-bind="text: tableName"></span>
                 </li>
             </ul>
+            <!-- ko if: $data.hasOwnProperty("isRefreshingUpdateStatus") -->
+            <div data-bind="visible: isRefreshingUpdateStatus() && !isNoData() && !currentTable()" style="color: grey;">
+                Processing Data...
+            </div>
+            <!-- /ko -->
             <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
             <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
             <div data-bind="with: currentTable">

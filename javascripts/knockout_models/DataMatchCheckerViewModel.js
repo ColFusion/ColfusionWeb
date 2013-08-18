@@ -247,9 +247,10 @@ function DataMatchCheckerViewModel() {
         });
     };
 
-    function updateTables(synFrom, synTo) {
+    function updateTables(synFrom, synTo) {     
         var oldFromTable = self.differentValueFromTable();
         var oldToTable = self.differentValueToTable();
+               
         self.differentValueFromTable(removeValueInTable(oldFromTable, synFrom));
         self.differentValueToTable(removeValueInTable(oldToTable, synTo));
         addValueToTable(self.sameValueTable(), synFrom, synTo);
@@ -262,7 +263,7 @@ function DataMatchCheckerViewModel() {
         var newCells = [];
 
         $.each(oldTable.getCells(), function(i, row) {
-            if (row[replaceColIndex] == value) {
+            if (row[replaceColIndex] == value.toString().trim()) {
                 return;
             }
             newCells.push(row);
@@ -286,6 +287,7 @@ function DataMatchCheckerViewModel() {
     function createDataTable(tableJson) {
         var columns = tableJson.columns;
         var rows = [];
+
         $.each(tableJson.rows, function(i, rowObj) {
             var row = [];
             $.each(columns, function(j, column) {
