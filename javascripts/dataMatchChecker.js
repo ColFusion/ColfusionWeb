@@ -1,4 +1,4 @@
-$(function() {
+$(function () {
     var dataMatchCheckerViewModel = prepareDataMatchCheckerViewModel();
     ko.applyBindings(dataMatchCheckerViewModel);
     initNavListStyleEvent();
@@ -9,14 +9,10 @@ function prepareDataMatchCheckerViewModel() {
     return createDataMatchCheckerViewModel(relationModel);
 }
 
-function getRelationshipInfo() {  
-    var relationModel = JSON.parse($('#relSerializedString').val()); 
+function getRelationshipInfo() {
+    var relationModel = JSON.parse($('#relSerializedString').val());
 
-    if (relationModel.isContainerShowned === undefined) {
-        relationModel = makeNewRelationshipModelCompatibleToRelationshipModel(relationModel);
-    } else {
-        relationModel = makeRelationshipModelCompatibleToNewRelationshipModel(relationModel);
-    }
+    relationModel = makeNewRelationshipModelCompatibleToRelationshipModel(relationModel);
 
     console.log(relationModel);
     return relationModel;
@@ -26,19 +22,15 @@ function getRelationshipInfo() {
 Since Relstionship and NewRelationship use different model,
 we need to transfer data between uncommon attributes.
 */
-function makeRelationshipModelCompatibleToNewRelationshipModel(relationModel) {
-    relationModel.fromDataSet.shownTableName = $('#fromTableInput').val();
-    relationModel.toDataSet.shownTableName = $('#toTableInput').val();
-    
-    return relationModel;
-}
-
 function makeNewRelationshipModelCompatibleToRelationshipModel(relationModel) {
     relationModel.fromDataSet = relationModel.fromDataSet || relationModel.fromDataset;
     relationModel.toDataSet = relationModel.toDataSet || relationModel.toDataset;
-    
+
+    relationModel.fromDataSet.shownTableName = $('#fromTableInput').val();
+    relationModel.toDataSet.shownTableName = $('#toTableInput').val();
+
     var newLinks = [];
-    $.each(relationModel.links, function(i, link) {
+    $.each(relationModel.links, function (i, link) {
         var newLink = {
             fromLinkPart: {
                 transInput: link.fromPart
@@ -62,8 +54,7 @@ function createDataMatchCheckerViewModel(newRelationModel) {
     dataMatchCheckerViewModel.toDataset(newRelationModel.toDataSet);
     dataMatchCheckerViewModel.links(newRelationModel.links);
 
-    dataMatchCheckerViewModel.links($.map(newRelationModel.links, function(link, i) {
-        console.log(link);
+    dataMatchCheckerViewModel.links($.map(newRelationModel.links, function (link, i) {
         if (link.fromLinkPart.transInput && link.toLinkPart.transInput) {
             return link;
         }
@@ -73,7 +64,7 @@ function createDataMatchCheckerViewModel(newRelationModel) {
 }
 
 function initNavListStyleEvent() {
-    $('#navListContainer').find('a').click(function() {
+    $('#navListContainer').find('a').click(function () {
         $('#navListContainer').find('li').removeClass('selected');
         $(this).parent().addClass('selected');
     });

@@ -206,7 +206,8 @@ function DataMatchCheckerViewModel() {
         return params;
     }
 
-    self.saveSynonym = function() {
+    self.saveSynonym = function () {
+
         var data = {
             fromTransInput: self.currentLink().fromLinkPart.transInput,
             toTransInput: self.currentLink().toLinkPart.transInput,
@@ -214,8 +215,8 @@ function DataMatchCheckerViewModel() {
             synTo: self.synTo(),
             sidFrom: self.fromDataset().sid,
             sidTo: self.toDataset().sid,
-            tableFrom: self.fromDataset().chosenTableName,
-            tableTo: self.toDataset().chosenTableName
+            tableFrom: self.fromDataset().shownTableName,
+            tableTo: self.toDataset().shownTableName
         };
 
         self.isAddingSynonym(true);

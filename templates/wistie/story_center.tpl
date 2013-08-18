@@ -200,9 +200,9 @@
                 <span class="statusRecordsProcessed statusCol">
                     <span data-bind="text: numberProcessRecords"></span>
                 </span>
-                <span data-bind="style: {'color': $root.statusColor[status]}" class="statusStatus statusCol">
+                <span data-bind="style: { 'color': $root.getStatusTextColor(status) }" class="statusStatus statusCol">
                     <span style="padding-right: 3px;">
-                        <i data-bind="attr: { 'class': $root.statusIcon[status] }"></i>
+                        <i data-bind="attr: { 'class': $root.getStatusIcon(status) }"></i>
                     </span>
                     <span data-bind="visible: status != 'error', text: status"></span>
                 </span>

@@ -3,7 +3,7 @@ To loose UpdateStatusViewModel's dependency on DataPreviewViewModel,
 we define a Mock DataPreviewViewModel to prevent error if there's no DataPreviewViewModel passed in UpdateStatusViewModel.
 */
 function MockDataPreviewViewModel() {
-    this.getTableList = function() {
+    this.getTableList = function () {
     };
 }
 
@@ -21,23 +21,10 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
     self.isDataShown = ko.observable(false);
     self.isRefreshingUpdateStatus = ko.observable(false);
     self.datasetStatus = ko.observableArray();
-
-    // class value for i element using font-awesome.
-    self.statusIcon = {
-        'success': 'icon-ok-sign',
-        'error': 'icon-remove-sign',
-        'uploading': 'icon-upload'
-    };
-
-    self.statusColor = {
-        'success': 'green',
-        'error': 'red',
-        'uploading': 'black'
-    };
-
-    self.refreshUpdateStatus = function() {
+    
+    self.refreshUpdateStatus = function () {
         console.log("Refreshing Status");
-        
+
         self.isRefreshingUpdateStatus(true);
 
         return $.ajax({
@@ -45,20 +32,20 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
             data: { sid: self.sid },
             type: 'post',
             dataType: 'json',
-            success: function(data) {
+            success: function (data) {
                 self.datasetStatus(data);
                 loadData();
             }
-        }).always(function() {
+        }).always(function () {
             self.isRefreshingUpdateStatus(false);
         });
     };
 
     function loadData() {
         console.log("load Data");
-        
+
         var readyForLoading = self.datasetStatus() != null && self.datasetStatus().length > 0;
-        ko.utils.arrayForEach(self.datasetStatus(), function(statusObj) {
+        ko.utils.arrayForEach(self.datasetStatus(), function (statusObj) {
             readyForLoading = readyForLoading && (statusObj.RecordsProcessed >= 1000 || statusObj.status == 'success');
         });
 
@@ -76,11 +63,32 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
         });
 
         if (needRefreshing) {
-            self.refreshUpdateStatus().done(function(data) {
+            self.refreshUpdateStatus().done(function (data) {
                 setTimeout(autoRefreshUpdateStatus, 5000);
-            });         
+            });
         }
     }
 
+    // class value for i element using font-awesome.
+    self.getStatusIcon = function (status) {
+        if (status == 'success') {
+            return 'icon-ok-sign';
+        } else if (status == 'error') {
+            return 'icon-remove-sign';
+        } else {
+            return 'icon-upload';
+        }
+    };
+
+    self.getStatusTextColor = function (status) {
+        if (status == 'success') {
+            return 'green';
+        } else if (status == 'error') {
+            return 'red';
+        } else {
+            return 'black';
+        }
+    };
+    
     autoRefreshUpdateStatus();
 }
