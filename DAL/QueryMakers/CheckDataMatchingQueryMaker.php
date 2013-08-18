@@ -97,7 +97,7 @@ EOQ;
     public function getCountOfMached($forseUpdate = false) {
          $this->MakeOrUpdateFromAndToQuery($forseUpdate);
 
-        return "select count(*) as ct from (" . $this->toQuery . " intersect " . $this->fromQuery . ") as t";
+        return "select count(*) as ct from ( (" . $this->toQuery . " intersect " . $this->fromQuery . ") union " . $this->getSynonymsQueryFor("to", "from") . ") as t";
     }
 
     public function getCountOfTotalDistinct($forseUpdate = false) {
