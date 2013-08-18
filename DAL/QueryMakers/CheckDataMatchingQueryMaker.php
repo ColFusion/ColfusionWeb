@@ -5,6 +5,7 @@ include_once(realpath(dirname(__FILE__)) . "/FromFileQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/FromLinkedServerQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
 include_once(realpath(dirname(__FILE__)) . '/../TransformationHandler.php');
+include_once(realpath(dirname(__FILE__)) . "/../../config.php");
 
 class CheckdataMatchingQueryMaker {
 
@@ -42,10 +43,10 @@ class CheckdataMatchingQueryMaker {
 
     public function MakeOrUpdateFromAndToQuery($forseUpdate = false) {
         if (!isset($this->fromQuery) || $forseUpdate)
-            $this->prepareOneQuery($this->from);
+            $this->fromQuery = $this->prepareOneQuery($this->from);
 
         if (!isset($this->toQuery) || $forseUpdate)
-            $this->prepareOneQuery($this->to);
+            $this->toQuery = $this->prepareOneQuery($this->to);
     }
 
     public function getIntersectionQuery($forseUpdate = false) {
@@ -57,13 +58,40 @@ class CheckdataMatchingQueryMaker {
     public function getNotMachedInFromQuery($forseUpdate = false) {
         $this->MakeOrUpdateFromAndToQuery($forseUpdate);
 
-        return $this->fromQuery . " except " . $this->toQuery;
+        return $this->fromQuery . " except " . $this->toQuery . " except " . $this->getSynonymsQueryFor("from", "to");
+    }
+
+    public function getSynonymsQueryFor($direction, $opositeDirection) {
+        $linkedServerName = my_pligg_base_no_slash;
+
+        if ($direction == "from") {
+            $source1 = $this->from;
+            $source2 = $this->to;
+        }
+        else {
+            $source1 = $this->to;
+            $source2 = $this->from;
+        }
+
+        $query = <<<EOQ
+           
+        SELECT value
+        FROM [$linkedServerName]...[colfusion_synonyms_$direction] as syn
+        WHERE syn.sid = {$source1->sid} AND syn.tableName = '{$source1->tableName}' AND syn.transInput = '{$source1->links[0]}'
+              AND syn.syn_id in (SELECT syn_id
+                                 FROM [$linkedServerName]...[colfusion_synonyms_$opositeDirection] as syn2
+                                 WHERE syn2.sid = {$source2->sid} AND syn2.tableName = '{$source2->tableName}' AND syn2.transInput = '{$source2->links[0]}'
+                                )
+EOQ;
+    
+        return $query;
+
     }
 
     public function getNotMachedInToQuery($forseUpdate = false) {
          $this->MakeOrUpdateFromAndToQuery($forseUpdate);
 
-        return $this->toQuery . " except " . $this->fromQuery;
+        return $this->toQuery . " except " . $this->fromQuery . " except " . $this->getSynonymsQueryFor("to", "from");
     }
 
     public function getCountOfMached($forseUpdate = false) {
