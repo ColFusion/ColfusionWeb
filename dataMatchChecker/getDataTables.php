@@ -35,18 +35,18 @@ $to->links = $toCids;
 $pageLength = $_POST['pageLength'];
 $page = $_POST['page'];
 
-$action($from, $to, $page, $pageLength);
+$action($from, $to);//, $page, $pageLength);
 
 function getDifferentAndSameValueTables($from, $to) {
     $queryEngine = new QueryEngine();
     echo json_encode($queryEngine->CheckDataMatching($from, $to));
 }
 
-function getDistinctFromTable($from) {
+function getDistinctFromTable($from, $to) {
     getDistinctTable($from);
 }
 
-function getDistinctToTable($to) {
+function getDistinctToTable($from, $to) {
     getDistinctTable($to);
 }
 
@@ -81,8 +81,8 @@ function getDistinctTable($tableParams) {
     $jsonResult['aaData'] = $tableRows;
     $jsonResult['aoColumns'] = $distinctTable->columns;
     // $jsonResult['mData'] = $distinctTable->rows;
-    $jsonResult["iTotalRecords"] = $distinctTable->totalRows[0]->ct;
-    $jsonResult["iTotalDisplayRecords"] = $distinctTable->totalRows[0]->ct;
+    $jsonResult["iTotalRecords"] = $distinctTable->totalRows[0]['ct'];
+    $jsonResult["iTotalDisplayRecords"] = $distinctTable->totalRows[0]['ct'];
 
     echo json_encode($jsonResult);
 }

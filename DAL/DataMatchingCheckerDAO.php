@@ -38,6 +38,9 @@ class DataMatchingCheckerDAO {
         $fromMappings = $this->getSynonymValues($fromSid, $fromTableName, $fromTransInput, $fromValue, $userId, DataMatchingCheckerDAO::SynFromTable);
         $toMappings = $this->getSynonymValues($toSid, $toTableName, $toTransInput, $toValue, $userId, DataMatchingCheckerDAO::SynToTable);
 
+        if (!isset($fromMappings) || !isset($toMappings))
+                return false;
+
         foreach ($fromMappings as $fromMapping) {
             $fromSynIds[] = $fromMapping->syn_Id;
         }
