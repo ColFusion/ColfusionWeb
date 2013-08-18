@@ -50,7 +50,7 @@ function GetTableData($sid, $table_name, $perPage, $pageNo) {
         }
     }
 
-    $totalTuple = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, $table_name);
+    $totalTuple = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[$table_name]");
     $totalPage = ceil($totalTuple / $perPage);
 
     $json_array["Control"]["perPage"] = $perPage;
