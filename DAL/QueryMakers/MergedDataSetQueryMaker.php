@@ -225,7 +225,7 @@ class MergedDataSetQueryMaker {
 
                 foreach ($synonums as $key => $syn) {
 
-                    $synStr = " ( [{$encodeToDecodeMap[$syn->linkFrom]}] = '{$syn->valueFrom}' AND [{$encodeToDecodeMap[$syn->linkTo]}] = '{$syn->valueTo}') ";
+                    $synStr = " ( [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$encodeToDecodeMap[$syn->linkFrom]}] = '{$syn->valueFrom}' AND [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$encodeToDecodeMap[$syn->linkTo]}] = '{$syn->valueTo}') ";
 
                     $synCondArr[] = $synStr;
                 }
