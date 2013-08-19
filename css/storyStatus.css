@@ -2,6 +2,10 @@
     margin-bottom: 10px;
 }
 
+.storyStatusCollapseIcon:hover {
+    cursor: pointer;
+}
+
 .storyStatusTableList {
     list-style-type: none;
 }

@@ -49,23 +49,16 @@
         }
     </style>
 <script type="text/javascript">
-
-    var xmlhttp;
-
-    if (window.XMLHttpRequest)
-        xmlhttp = new XMLHttpRequest();
-    else if (window.ActiveXObject)
-        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    else
-        alert("Your browser does not support XMLHTTP!");
-
+  
     var sid = $.url().param('title');
     var dataPreviewViewModel;
     var relationshipViewModel;
     var storyStatusViewModel;
 
     $(document).ready(function () {
-
+        
+        fetchDatasetProfile();
+        
         fileManager.loadSourceAttachments(sid, $('#attachmentList'));
 
         $.ajax({
@@ -86,59 +79,20 @@
         ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
         ko.applyBindings(storyStatusViewModel, document.getElementById("storyStatus"));
 
-        // dataPreviewViewModel.getTablesList();
         relationshipViewModel.mineRelationships(10, 1);
     });
 
-    window.onload = function showData() {
-        xmlhttp.open("GET", my_pligg_base + "/display_data.php?count=5", false);
-        xmlhttp.send(null);
-
-        if (xmlhttp.responseText !== "") {
-            $('#upload_result').prepend(xmlhttp.responseText);
-            var dataset_title = $('#dataset_title').text();
-            dataset_title = dataset_title ? dataset_title : "New Dataset";
-            $('#fromDataSetWrapper').find('.dataSetDesTable').find('.sidInput').val(dataset_title);
-        }
-
-        else {
-            document.getElementById('upload_result').innerHTML = "nothing";
-        }
-    };
-
-
-    function savefile() {
-        var filetype = saveform.filetype.value;
-
-        xmlhttp.open("GET", my_pligg_base + "/display_data.php?filetype=" + filetype, false);
-        xmlhttp.send(null);
-        alert(my_pligg_base + "/display_data.php?filetype=" + filetype);
+    function fetchDatasetProfile() {
+        $.ajax({
+            url: my_pligg_base + "/display_data.php?count=5",
+            success: function(data) {
+                $('#upload_result').prepend(data);
+                var datasetTitle = $('#dataset_title').text() || "New Dataset";
+                $('#fromDataSetWrapper').find('.dataSetDesTable').find('.sidInput').val(datasetTitle);
+            }
+        });
     }
-
-    function dopage(url) {
-        document.getElementById('upload_result').innerHTML = "Loading...";
-
-        xmlhttp.open("GET", my_pligg_base + "/" + url, false);
-        xmlhttp.send(null);
-
-        if (xmlhttp.responseText != "") {
-            document.getElementById('upload_result').innerHTML = xmlhttp.responseText;
-            document.getElementById('btn_all').style.display = 'none';
-            document.getElementById('btn_hide').style.display = 'block';
-            //document.getElementById('hint').style.display='block';
-        }
-
-        else {
-            document.getElementById('upload_result').innerHTML = 'nothing';
-        }
-
-    }
-    function go_visualization() {
-        //window.location.href = my_pligg_base+"/visualization/dashboard.php";
-        titleNum = location.href.substring(location.href.indexOf("=") + 1);
-        window.open(my_pligg_base + "/visualization/dashboard.php?title=" + titleNum, " _blank");
-    }
-
+   
     function openVisualizationPage() {
         $('#visualizationParaForm').find('#visualTableNameParam').val(dataPreviewViewModel.currentTable().tableName);
         $('#visualizationParaForm').find('#visualTitleParam').val($('#dataset_title').text());
@@ -187,8 +141,12 @@
 
 {literal}
 <div id="storyStatus">
-    <div style="font-weight: bold; padding-left: 10px;">Status:</div>
-    <div class="storyStatusTableListWrapper">
+    <div style="padding-left: 10px;">
+        <span style="font-weight: bold;">Status:</span>
+        <i data-bind="visible: isStatusShown, click: function () { isStatusShown(false) }" class="icon-collapse storyStatusCollapseIcon"></i>
+        <i data-bind="visible: !isStatusShown(), click: function () { isStatusShown(true) }" class="icon-collapse-top storyStatusCollapseIcon"></i>
+    </div>
+    <div data-bind="visible: isStatusShown" class="storyStatusTableListWrapper">
         <div class="storyStatusTableListHeader">
             <span class="statusHeader statusHeader-tableName">Table Name</span>
             <span class="statusHeader statusHeader-records">Record Processed</span>

@@ -41,11 +41,13 @@ var DataPreviewViewModelProperties = {
         };
     }
 };
+
 function DataPreviewViewModel(sid) {
     var self = this;
     self.sid = sid;
     self.tableList = ko.observableArray();
     self.currentTable = ko.observable();
+    
     self.isLoading = ko.observable(false);
     self.isError = ko.observable(false);
     self.isNoData = ko.observable(false);

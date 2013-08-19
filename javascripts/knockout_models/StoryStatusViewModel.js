@@ -17,8 +17,10 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
     self.sid = sid;
     self.dataPreviewViewModel = dataPreviewViewModel || new MockDataPreviewViewModel();
 
+    self.isStatusShown = ko.observable(true);
     self.isDataShown = ko.observable(false);
     self.isRefreshingUpdateStatus = ko.observable(true);
+    
     self.datasetStatus = ko.observableArray();
     dataPreviewViewModel.isRefreshingUpdateStatus = self.isRefreshingUpdateStatus;
     
