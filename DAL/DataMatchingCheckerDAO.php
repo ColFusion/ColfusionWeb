@@ -71,6 +71,16 @@ class DataMatchingCheckerDAO {
         $this->ezSql->query($sql);
     }
 
+    public function getSynonymnsByCids($cid1, $cid2) {
+        $query = "SELECT syn_from.transInput as linkFrom, syn_from.value as valueFrom, syn_to.transInput as linkTo, syn_to.value as valueTo
+FROM  `colfusion_synonyms_from` syn_from,  `colfusion_synonyms_to` syn_to
+WHERE syn_from.syn_id = syn_to.syn_id 
+AND ((syn_from.transInput = '$cid1' AND syn_to.transInput = '$cid2') OR (syn_from.transInput = '$cid2' AND syn_to.transInput = '$cid1'))";
+
+        return $this->ezSql->get_results($query);
+
+    }
+
 }
 
 ?>

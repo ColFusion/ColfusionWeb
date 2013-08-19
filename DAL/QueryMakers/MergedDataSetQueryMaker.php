@@ -7,6 +7,7 @@ include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
 include_once(realpath(dirname(__FILE__)) . '/../TransformationHandler.php');
 include_once(realpath(dirname(__FILE__)) . '/../RelationshipDAO.php');
 include_once(realpath(dirname(__FILE__)) . '/../CachedQueryDAO.php');
+include_once(realpath(dirname(__FILE__)) . '/../DataMatchingCheckerDAO.php');
 
 class MergedDataSetQueryMaker {
 
@@ -210,8 +211,29 @@ class MergedDataSetQueryMaker {
 
         $conditionsArr = array();
 
+        $dataMatchingCheckerDAO = new DataMatchingCheckerDAO();
+
         foreach ($links as $key => $link) {
-            $conditionsArr[] = " [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$link->fromPart}] = [{$relationship->sidTo->tableName}{$relationship->sidTo->sid}].[{$link->toPart}] ";
+            $condition = " [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$link->fromPart}] = [{$relationship->sidTo->tableName}{$relationship->sidTo->sid}].[{$link->toPart}] ";
+
+            $encodeToDecodeMap = array($link->fromPartEncoded => $link->fromPart, $link->toPartEncoded => $link->toPart);
+
+            $synonums = $dataMatchingCheckerDAO->getSynonymnsByCids($link->fromPartEncoded, $link->toPartEncoded);
+
+            $synCondArr = array();
+
+
+            foreach ($synonums as $key => $syn) {
+
+                $synStr = " ( [{$encodeToDecodeMap[$syn->linkFrom]}] = '{$syn->valueFrom}' AND [{$encodeToDecodeMap[$syn->linkTo]}] = '{$syn->valueTo}') ";
+
+                $synCondArr[] = $synStr;
+            }
+
+
+            $synCond = implode(" OR ", $synCondArr);
+
+            $conditionsArr[] = "( $condition OR $synCond )";
         }
 
         return implode(" and ", $conditionsArr);

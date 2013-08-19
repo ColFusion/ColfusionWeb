@@ -63,8 +63,12 @@ class RelationshipDAO
         $transHandler = new TransformationHandler();
         foreach ($linkInfos as $linkInfo) {
             $link = new ColfusionLink();
-            $link->fromPart = $transHandler->decodeTransformationInput($linkInfo->cl_from);
-            $link->toPart = $transHandler->decodeTransformationInput($linkInfo->cl_to);
+            $link->fromPart = $transHandler->decodeTransformationInput($linkInfo->cl_from, true);
+            $link->toPart = $transHandler->decodeTransformationInput($linkInfo->cl_to, true);
+
+            $link->fromPartEncoded = $linkInfo->cl_from;
+            $link->toPartEncoded = $linkInfo->cl_to;
+
             $links[] = $link;
         }
 
