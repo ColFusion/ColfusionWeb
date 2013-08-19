@@ -28,7 +28,7 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
         $('#datasetDescription-lastRefresh').text(new Date().toString("yyyy-MM-dd HH:mm:ss"));
 
         return $.ajax({
-            url: my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
+             url: my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
             // url: my_pligg_base + '/DataImportWizard/testStoryStatus.json',
             data: { sid: self.sid },
             type: 'post',
@@ -44,8 +44,9 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
         console.log("load Data");
 
         var readyForLoading = self.datasetStatus() != null && self.datasetStatus().length > 0;
+        
         ko.utils.arrayForEach(self.datasetStatus(), function (statusObj) {
-            readyForLoading = readyForLoading && (statusObj.RecordsProcessed >= 1000 || statusObj.status == 'success');
+            readyForLoading = readyForLoading && (parseInt(statusObj.numberProcessRecords) >= 1000 || statusObj.status == 'success');
         });
 
         if (readyForLoading && !self.isDataShown()) {

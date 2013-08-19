@@ -224,9 +224,7 @@
                                                     <span style="color: red;">Failed to load relationship information.</span>
                                                 </div>
                                                 <div data-bind="if: $parents[1].isRelationshipInfoLoaded[relId]() && !$parents[1].isError[relId]()">
-                                                    <div data-bind="with: $parents[1].relationshipInfos[relId]">
-                                                        {/literal}{include file='relationshipInfo.html'}{literal}
-                                                    </div>
+                                                    <div data-bind="with: $parents[1].relationshipInfos[relId]">{/literal}{include file='relationshipInfo.html'}{literal}</div>
                                                 </div>
                                             </td>
                                         </tr>

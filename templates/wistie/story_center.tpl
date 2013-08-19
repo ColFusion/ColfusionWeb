@@ -18,7 +18,6 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/persist-min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/parsley.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/purl.js"></script>
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/date.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.3.0.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>

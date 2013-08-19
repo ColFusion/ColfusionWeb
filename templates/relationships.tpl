@@ -46,11 +46,11 @@
 									<span style="color: red;">Failed to load relationship information.</span>
 								</div>   
 								<div data-bind="if: $root.isRelationshipInfoLoaded[rel_id]">
-									<div data-bind="with: $root.relationshipInfos[rel_id]">
-										{/literal}
-										{include file='relationshipInfo.html'}
-										{literal}
-									</div>
+								    <div data-bind="with: $root.relationshipInfos[rel_id]">
+								        {/literal}
+								        {include file='relationshipInfo.html'}
+								        {literal}
+								    </div>
 								</div>
                             </td>
                         </tr>                                    
