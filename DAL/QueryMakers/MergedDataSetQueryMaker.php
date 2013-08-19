@@ -220,20 +220,26 @@ class MergedDataSetQueryMaker {
 
             $synonums = $dataMatchingCheckerDAO->getSynonymnsByCids($link->fromPartEncoded, $link->toPartEncoded);
 
-            $synCondArr = array();
+            if (isset($synonums) && count($synonums) > 0) {
+                $synCondArr = array();
+
+                foreach ($synonums as $key => $syn) {
+
+                    $synStr = " ( [{$encodeToDecodeMap[$syn->linkFrom]}] = '{$syn->valueFrom}' AND [{$encodeToDecodeMap[$syn->linkTo]}] = '{$syn->valueTo}') ";
+
+                    $synCondArr[] = $synStr;
+                }
 
 
-            foreach ($synonums as $key => $syn) {
+                $synCond = implode(" OR ", $synCondArr);
 
-                $synStr = " ( [{$encodeToDecodeMap[$syn->linkFrom]}] = '{$syn->valueFrom}' AND [{$encodeToDecodeMap[$syn->linkTo]}] = '{$syn->valueTo}') ";
-
-                $synCondArr[] = $synStr;
+                $conditionsArr[] = "( $condition OR $synCond )";
+            }
+            else {
+                $conditionsArr[] = "( $condition )";
             }
 
-
-            $synCond = implode(" OR ", $synCondArr);
-
-            $conditionsArr[] = "( $condition OR $synCond )";
+            
         }
 
         return implode(" and ", $conditionsArr);
