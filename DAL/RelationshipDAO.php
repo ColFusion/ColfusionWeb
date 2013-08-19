@@ -78,13 +78,13 @@ class RelationshipDAO
     public function deleteRelationship($relId, $userId) {
         
         // Check if deleter is creator.
-        $sql = "select relId from colfusion_relationship where creator = '$userId'";
+        $sql = "select rel_id from colfusion_relationships where creator = '$userId'";
         $matchCreatorResult = $this->ezSql->get_results($sql);    
         if(!$matchCreatorResult){
             throw new Exception("You are not able to delete this relationship.");
         }
         
-        $delSql = "delete from colfusion_relationship where creator = '$userId' and rel_id='$relId'";
+        $delSql = "delete from colfusion_relationships where creator = '$userId' and rel_id='$relId'";
         $this->ezSql->query($delSql);
     }
 
