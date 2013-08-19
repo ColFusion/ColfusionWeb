@@ -16,7 +16,7 @@ class SimpleQuery
         global $db;
 
         $datetime = date("Y-m-d H:i:s", mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y')));
-        $sql = "INSERT INTO " . table_prefix . "sourceinfo (UserId, EntryDate, Status) VALUES ('$author','$datetime', '$state');";
+        $sql = "INSERT INTO " . table_prefix . "sourceinfo (UserId, EntryDate, Status, source_type) VALUES ('$author','$datetime', '$state', 'database');";
 
         $rs = $db->query($sql);
         $newSid = mysql_insert_id();
