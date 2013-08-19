@@ -264,6 +264,8 @@ function DataMatchCheckerViewModel() {
     }
 
     function isValueInTable(table, value) {
+        return true;
+
         for (var i = 0; i < table.getCells().length; i++) {
             var row = table.getCells()[i];
             for (var j = 0; j < row.length; j++) {

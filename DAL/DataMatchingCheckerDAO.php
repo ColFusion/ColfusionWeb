@@ -3,6 +3,7 @@
 require_once realpath(dirname(__FILE__)) . '/../config.php';
 require_once realpath(dirname(__FILE__)) . '/TransformationHandler.php';
 require_once realpath(dirname(__FILE__)) . '/../Exceptions/SynonymExistedException.php';
+require_once realpath(dirname(__FILE__)) . '/../Exceptions/ValueNotFoundException.php';
 
 class DataMatchingCheckerDAO {
 
