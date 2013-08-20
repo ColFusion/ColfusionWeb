@@ -17,11 +17,13 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/bootstrap.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/persist-min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/parsley.min.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/moment.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/purl.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.3.0.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/dataSourceUtil.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/generalUtils.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Utils.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/DataPreviewViewModel.js"></script>
@@ -152,10 +154,10 @@
             <span class="statusHeader statusHeader-records">Record Processed</span>
             <span class="statusHeader statusHeader-status">Status</span>
             <span class="statusHeader statusHeader-timeStart">Time Start</span>
-            <span class="statusHeader statusHeader-timeEnd">Time End</span>
+            <span class="statusHeader statusHeader-timeEnd">Time Elapse/Time End</span>
         </div>
         <ul data-bind="foreach: datasetStatus" class="storyStatusTableList" style="margin: 0;">
-            <li data-bind="with: $data" class="storyStatus">
+            <li data-bind="with: $data.statusObj" class="storyStatus">
                 <span data-bind="text: tableName" class="statusTableName statusCol"></span>
                 <span class="statusRecordsProcessed statusCol">
                     <span data-bind="text: numberProcessRecords"></span>
@@ -171,7 +173,8 @@
                     </span>
                 </span>
                 <span data-bind="text: TimeStart" class="statusTimeStart statusCol"></span>
-                <span data-bind="text: TimeEnd" class="statusTimeEnd statusCol"></span>
+                <span data-bind="visible: $parent.needRefreshing(), text: $parent.timeElapse" class="statusTimeEnd statusCol"></span>
+                <span data-bind="visible: !$parent.needRefreshing(), text: TimeEnd" class="statusTimeEnd statusCol"></span>
             </li>
         </ul>
     </div>
