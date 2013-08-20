@@ -102,8 +102,10 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
 
     if ($excelFileMode == 'append') {
         $ktrFilePath = "$newDir/$sid.ktr";
-        copy($template, $ktrFilePath);
-
+        if (!file_exists($ktrFilePath)) {
+            copy($template, $ktrFilePath);
+        }
+        
         foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
             if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
                 $filenames[] = $dataSource_filename;
@@ -121,7 +123,9 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
                 $filePaths[] = $filePath;
                 $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
                 $ktrFilePath = "$newDir/$dataSource_filename.ktr";
-                copy($template, $ktrFilePath);
+                if (!file_exists($ktrFilePath)) {
+                    copy($template, $ktrFilePath);
+                }
                 $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid);
             }
         }
@@ -295,9 +299,11 @@ function estimateLoadingProgress($dataSource_filePath) {
     $PHPExcelReader->load($sampleFilePath);
     $sampleEnd = time();
     $sampleLoadTime = $sampleEnd - $sampleStart;
+    $sampleLoadTime = $sampleLoadTime > 0.015 ? $sampleLoadTime : 0.015;
 
     $targetFileSize = (float) filesize($dataSource_filePath);
     $sampleFileSize = (float) filesize($sampleFilePath);
+       
     $estimatedSeconds = ($sampleLoadTime * $targetFileSize / $sampleFileSize);
     $estimatedSeconds = $ext == 'xlsx' ? $estimatedSeconds * 4 : $estimatedSeconds;
     

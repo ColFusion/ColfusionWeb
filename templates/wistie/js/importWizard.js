@@ -237,9 +237,7 @@ var importWizard = (function () {
 
             if (deferred) {
                 deferred.done(function (estimatedSeconds) {
-                    importWizard.dataMatchingProgressViewModel
-							.setEstimatedTimeStamp(estimatedSeconds * 1000);
-                    importWizard.dataMatchingProgressViewModel.start();
+                    importWizard.dataMatchingProgressViewModel.start(estimatedSeconds * 1000);
                     importWizard.passInfofromDisplayOptionsStep().done(
 							function () {
 							    wizard.enableNextButton();

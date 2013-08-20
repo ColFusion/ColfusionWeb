@@ -111,7 +111,6 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
 
         if (needRefreshing) {
             self.refreshUpdateStatus().done(function (data) {
-                return;
                 setTimeout(autoRefreshUpdateStatus, 5000);
             });
         } else {
