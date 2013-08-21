@@ -1,2 +1,0 @@
-ALTER TABLE `colfusion`.`colfusion_dnameinfo` ADD COLUMN `isConstant` BIT NOT NULL DEFAULT 0 COMMENT 'if user is submitting database and on matching chema they provide input value, this flagg will be set'  AFTER `dname_original_name` , ADD COLUMN `constant_value` VARCHAR(255) NULL DEFAULT NULL COMMENT 'if user is submitting database and on matching chema they provide input value, the value will be stored here'  AFTER `isConstant` ;
-

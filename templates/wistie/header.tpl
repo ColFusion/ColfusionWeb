@@ -10,6 +10,7 @@
 
 <!-- TOP MENU -->
 <div id="login">
+
         {if $user_authenticated eq true} 
         <div>
             <ul>
@@ -35,7 +36,7 @@
 
 <!-- BANNER -->
 <div id="banner">
-        <a id="webname" href="{$my_base_url}{$my_pligg_base}">{#PLIGG_Visual_Name#}</a>
+        <a id="webname" href="{$my_base_url}{$my_pligg_base}">{#PLIGG_Visual_Name#} </a>
 
         <!--div id="rss_slogan">{#PLIGG_Visual_RSS_Description#}</div-->
         

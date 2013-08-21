@@ -1,2 +1,0 @@
-ALTER TABLE  `colfusion_synonyms_to` ADD PRIMARY KEY (  `syn_id` ,  `userId` ,  `sid` ,  `tableName` ,  `transInput` ,  `value` ) ;
-ALTER TABLE  `colfusion_synonyms_from` ADD PRIMARY KEY (  `syn_id` ,  `userId` ,  `sid` ,  `tableName` ,  `transInput` ,  `value` ) ;
