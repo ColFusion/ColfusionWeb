@@ -71,59 +71,32 @@ ko.bindingHandlers.relationshipGraph = {
         $(element).append(edgeTootipDom);
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
-      
-        var allPaths = valueAccessor();
-        var elements = koBindingHandlersRelationshipGraph.getElements(allPaths);
+
+        var pathModels = valueAccessor()();
+        var allPaths = $.map(pathModels, function (pathModel) {
+            return pathModel.pathObj;
+        });
+
+        var cyGraphElements = koBindingHandlersRelationshipGraph.getCyGraphElements(allPaths);
 
         $(element).children('.relGraph').empty().cytoscape({
-            elements: elements,
+            elements: cyGraphElements,
 
-            style: cytoscape.stylesheet().selector('node').css({
-                'content': 'data(name)',
-                'class': 'node datasetNode',
-                'font-family': 'helvetica',
-                'font-size': 14,
-                'text-outline-width': 3,
-                'text-outline-color': '#888',
-                'text-valign': 'center',
-                'color': '#fff',
-                'width': '40',
-                'height': '40',
-                'border-color': '#fff'
-            })
-          .selector('edge')
-            .css({
-                'width': 2,
-                'class': 'edge relEdge',
-            }),
-            
+            style: cytoscape.stylesheet()
+                   .selector('node')
+                   .css(koBindingHandlersRelationshipGraph.defaultNodeCss)
+                   .selector('edge')
+                   .css(koBindingHandlersRelationshipGraph.defaultEdgeCss),
+
             minZoom: 0,
             maxZoom: 0
         });
 
-        var nodeTooltip = $(element).children('.relGraphTooltip_node');
-        var edgeTootip = $(element).children('.relGraphTooltip_edge');
+        koBindingHandlersRelationshipGraph.bindNodeTooltipEvents(element);
+        koBindingHandlersRelationshipGraph.bindEdgeTooltipEvents(element);
 
-        var cy = $(element).children('.relGraph').cytoscape('get');
-        cy.nodes().bind("mouseover", function (evt) {
-            
-            koBindingHandlersRelationshipGraph.updateNodeTooltip(evt.cyTarget._private.data, nodeTooltip);
-            $(nodeTooltip).css({ 'left': evt.originalEvent.x, 'top': evt.originalEvent.y }).show();
-            
-        }).bind('mouseout', function (evt) {
-            $(nodeTooltip).hide();
-        }).bind('click', function (evt) {
-            var sid = evt.cyTarget._private.data.sid;
-            window.open('../story.php?title=' + sid, '_blank');
-        });
-
-        cy.edges().bind("mouseover", function (evt) {
-       
-            koBindingHandlersRelationshipGraph.updateEdgeTooltip(evt.cyTarget._private.data, edgeTootip);
-            $(edgeTootip).css({ 'left': evt.originalEvent.x, 'top': evt.originalEvent.y }).show();
-            
-        }).bind('mouseout', function (evt) {
-            $(edgeTootip).hide();
+        $.each(pathModels, function (i, pathModel) {
+            koBindingHandlersRelationshipGraph.addHighlightPathButton(i, pathModel, element);
         });
     }
 };
@@ -131,7 +104,28 @@ ko.bindingHandlers.relationshipGraph = {
 var koBindingHandlersRelationshipGraph = (function () {
     var koBindingHandlersRelationshipGraph = {};
 
-    koBindingHandlersRelationshipGraph.getElements = function (allPaths) {
+    koBindingHandlersRelationshipGraph.defaultNodeCss = {
+        'content': 'data(name)',
+        'class': 'node datasetNode',
+        'font-family': 'helvetica',
+        'font-size': 14,
+        'text-outline-width': 3,
+        'text-outline-color': '#888',
+        'text-valign': 'center',
+        'color': '#fff',
+        'width': '40',
+        'height': '40',
+        'border-color': '#fff',
+        'background-color': '#888'
+    };
+
+    koBindingHandlersRelationshipGraph.defaultEdgeCss = {
+        'width': 2,
+        'class': 'edge relEdge',
+        'line-color': '#888'
+    };
+
+    koBindingHandlersRelationshipGraph.getCyGraphElements = function (allPaths) {
 
         var allDatasets = [];
         $.each(allPaths, function (i, path) {
@@ -181,6 +175,25 @@ var koBindingHandlersRelationshipGraph = (function () {
         };
     };
 
+    koBindingHandlersRelationshipGraph.bindNodeTooltipEvents = function (relGraphElem) {
+
+        var nodeTooltip = $(relGraphElem).children('.relGraphTooltip_node');
+
+        var cy = $(relGraphElem).children('.relGraph').cytoscape('get');
+        cy.nodes().bind("mouseover", function (evt) {
+
+            koBindingHandlersRelationshipGraph.updateNodeTooltip(evt.cyTarget._private.data, nodeTooltip);
+            $(nodeTooltip).css({ 'left': evt.originalEvent.x, 'top': evt.originalEvent.y }).show();
+
+        }).bind('mouseout', function (evt) {
+            $(nodeTooltip).hide();
+        }).bind('click', function (evt) {
+            var sid = evt.cyTarget._private.data.sid;
+            window.open('../story.php?title=' + sid, '_blank');
+        });
+
+    };
+
     koBindingHandlersRelationshipGraph.updateNodeTooltip = function (node, tooltipDom) {
 
         var tooltipTable = $('<table class="tableInfoTable">' +
@@ -210,6 +223,22 @@ var koBindingHandlersRelationshipGraph = (function () {
             .children('.tableInfoTableWrapper').append(tooltipTable);
     };
 
+    koBindingHandlersRelationshipGraph.bindEdgeTooltipEvents = function (relGraphElem) {
+
+        var edgeTootip = $(relGraphElem).children('.relGraphTooltip_edge');
+        var cy = $(relGraphElem).children('.relGraph').cytoscape('get');
+
+        cy.edges().bind("mouseover", function (evt) {
+
+            koBindingHandlersRelationshipGraph.updateEdgeTooltip(evt.cyTarget._private.data, edgeTootip);
+            $(edgeTootip).css({ 'left': evt.originalEvent.x, 'top': evt.originalEvent.y }).show();
+
+        }).bind('mouseout', function (evt) {
+            $(edgeTootip).hide();
+        });
+
+    };
+
     koBindingHandlersRelationshipGraph.updateEdgeTooltip = function (edge, tooltipDom) {
 
         var tooltipTable = $('<table class="relationshipGraphTooltipTable">' +
@@ -219,7 +248,7 @@ var koBindingHandlersRelationshipGraph = (function () {
             '</tr>' +
             '<tr>' +
             '<td class="titleText">Avg Confidence: </td>' +
-            '<td>' + edge.confidence + '</td>' +
+            '<td>' + Number(edge.confidence).toFixed(2) + '</td>' +
             '</tr>' +
             '<tr>' +
             '<td class="titleText">From: </td>' +
@@ -233,6 +262,85 @@ var koBindingHandlersRelationshipGraph = (function () {
 
         $(tooltipDom).empty().append(tooltipTable);
 
+    };
+
+    koBindingHandlersRelationshipGraph.addHighlightPathButton = function (i, pathModel, relGraphElem) {
+
+        var pathElems = $(relGraphElem).parent().find('.path');
+        var highlightPathBtn = $(
+            '<button class="highlightPathBtn btn">' +
+                '<i class="icon-code-fork" title="Highlight this path in graph"></i>' +
+            '</button>'
+        );
+        $(pathElems).find('.buttonPanel').eq(i).prepend(highlightPathBtn);
+
+        $(highlightPathBtn).click(function () {
+
+            if (!$(this).hasClass('active')) {
+                
+                $(pathElems).find('.buttonPanel').find('.highlightPathBtn').removeClass('active');
+                $(this).addClass('active');
+                koBindingHandlersRelationshipGraph.highlightPath(pathModel, relGraphElem);
+
+                $('html, body').animate({
+                    scrollTop: $(relGraphElem).offset().top
+                }, 1000);
+
+            } else {
+                
+                $(this).removeClass('active');
+                koBindingHandlersRelationshipGraph.restoreToDefaultStyle(relGraphElem);
+                
+            }
+
+        });
+    };
+
+    koBindingHandlersRelationshipGraph.highlightPath = function (pathModel, relGraphElem) {
+        var pathObj = pathModel.pathObj;
+        var cy = $(relGraphElem).children('.relGraph').cytoscape('get');
+
+        var nodeFilterString = "";
+        $.each(pathObj.sids, function (i, sid) {
+            nodeFilterString += "[sid='" + sid + "'],";
+        });
+        nodeFilterString = nodeFilterString.substring(0, nodeFilterString.length - 1);
+
+        var edgeFilterString = "";
+        $.each(pathObj.relIds, function (i, relId) {
+            edgeFilterString += "[relId='" + relId + "'],";
+        });
+        edgeFilterString = edgeFilterString.substring(0, edgeFilterString.length - 1);
+
+        cy.style()
+            .selector('node').css(koBindingHandlersRelationshipGraph.defaultNodeCss)
+            .selector('edge').css(koBindingHandlersRelationshipGraph.defaultEdgeCss)
+            .selector('node' + nodeFilterString).css({
+                'background-color': '#FFAC59',
+                'content': 'data(name)',
+                'class': 'node datasetNode',
+                'font-family': 'helvetica',
+                'font-size': 14,
+                'text-outline-width': 3,
+                'text-outline-color': '#FFAC59',
+                'text-valign': 'center',
+                'color': '#fff',
+                'width': '40',
+                'height': '40',
+                'border-color': '#FFAC59'
+            })
+            .selector('edge' + edgeFilterString).css({
+                'line-color': '#FFAC59'
+            }).update();
+    };
+
+    koBindingHandlersRelationshipGraph.restoreToDefaultStyle = function (relGraphElem) {
+        var cy = $(relGraphElem).children('.relGraph').cytoscape('get');
+
+        cy.style()
+            .selector('node').css(koBindingHandlersRelationshipGraph.defaultNodeCss)
+            .selector('edge').css(koBindingHandlersRelationshipGraph.defaultEdgeCss)
+            .update();
     };
 
     return koBindingHandlersRelationshipGraph;

@@ -237,7 +237,7 @@
                 </div>
                 
                 <div class="graphTitle">Relationship Graph:</div>
-                <div data-bind="relationshipGraph: resultObj.allPaths"></div>
+                <div data-bind="relationshipGraph: paths"></div>
             </div>
         </div>
         <!-- /ko -->

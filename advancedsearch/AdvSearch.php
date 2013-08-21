@@ -1,4 +1,5 @@
 <?php
+set_time_limit (0);
 
 include_once("../DataImportWizard/UtilsForWizard.php");
 include_once("../DAL/ExternalDBHandlers/ExternalMSSQL.php");

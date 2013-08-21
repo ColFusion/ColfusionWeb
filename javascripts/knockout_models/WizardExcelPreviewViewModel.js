@@ -86,12 +86,17 @@ var WizardExcelPreviewProperties = {
             var page = self.previewPage();
             
             self.progressBarViewModel().isProgressing(true);
-            getEstimatedLoadingSeconds().done(function(estimatedSeconds) {
+            
+            // Start updating progress bar periodically until a page of data is downloaded.
+            getEstimatedLoadingSeconds().done(function (estimatedSeconds) {
+
                 var estimatedLoadingTimestamp = estimatedSeconds * 1000;
                 self.progressBarViewModel().start(estimatedLoadingTimestamp);
+                
                 getPreviewFromServer(rowsPerPage, page).always(function() {
                     self.progressBarViewModel().stop();
                 });
+                
             }).error(function() {
                 alert("Some errors occur at server, please refresh page and try again.");
             });
