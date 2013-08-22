@@ -10,6 +10,7 @@ include_once(mnminclude.'smartyvariables.php');
 
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/Neo4JDAO.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 
 check_referrer();
 
@@ -80,9 +81,12 @@ function delete_storylink($linkid) {
             $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($sql_array->driver, $sql_array->user_name, $sql_array->password, $sql_array->source_database, $sql_array->server_address, $sql_array->port);
             $dbHandler->dropDatabase();
         }
+
+        $queryEngine = new QueryEngine();
+        $queryEngine->simpleQuery->dropLinkedServerIfExists($sql_array->source_database);
     }
 
-//TODO Add some error checking and move Neo4j related stuff to neo4j class
+//TODO Add some error checking
 
     //delete the sourceinfo which should triget casding deleting of all related info except cached queries and visualization stuff.
     $query="DELETE FROM ".table_prefix."sourceinfo WHERE sid = $sid";

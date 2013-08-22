@@ -140,6 +140,13 @@ class SimpleQuery
         $MSSQLHandler->AddLinkedServer($driver, $host, $port, $database, $user, $password);
     }
 
+    public function dropLinkedServerIfExists($linkedServerName)
+    {
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+
+        $MSSQLHandler->dropLinkedServerIfExists($linkedServerName);
+    }
+
 // Store metadata about column.
     public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname)
     {

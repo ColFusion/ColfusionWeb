@@ -239,20 +239,9 @@ EOQ;
 
     public function AddLinkedServer($engine, $server, $port, $database, $user, $password) {
 
-        $dropIfExistQuery = "IF  EXISTS (SELECT srv.name FROM sys.servers srv WHERE srv.server_id != 0 AND srv.name = N'$database') 
-        EXEC master.dbo.sp_dropserver @server=N'$database', @droplogins='droplogins'";
-
+        $this->dropLinkedServerIfExists($database);
 
         $pdo = $this->GetConnection();
-
-        try {
-
-            $stmt = $pdo->prepare($dropIfExistQuery);
-            $res = $stmt->execute();
-        } catch (Exception $e) {
-            //var_dump($e);
-            throw new Exception($pdo->errorInfo());
-        }
 
         switch (strtolower($engine)) {
             case 'mysql': {
@@ -320,7 +309,22 @@ EOQ;
         }
     }
 
+    public function dropLinkedServerIfExists($linkedServerName)
+    {
+        $dropIfExistQuery = "IF  EXISTS (SELECT srv.name FROM sys.servers srv WHERE srv.server_id != 0 AND srv.name = N'$linkedServerName') 
+        EXEC master.dbo.sp_dropserver @server=N'$linkedServerName', @droplogins='droplogins'";
 
+        $pdo = $this->GetConnection();
+
+        try {
+
+            $stmt = $pdo->prepare($dropIfExistQuery);
+            $res = $stmt->execute();
+        } catch (Exception $e) {
+            //var_dump($e);
+            throw new Exception($pdo->errorInfo());
+        }
+    }
 
 }
 
