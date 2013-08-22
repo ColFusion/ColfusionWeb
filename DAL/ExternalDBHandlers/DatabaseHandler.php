@@ -46,6 +46,11 @@ abstract class DatabaseHandler
     abstract public function ExecuteCTASQuery($selectPart, $tableNameToCreate, $whatToInsert);
 
     /**
+     * Drops database if exists
+     */
+    abstract public function dropDatabase();
+
+    /**
      * Create a database for given name is not exists yet.
      * @param  string $database name of the database
      * @return dbHandler           new dbHandler which uses newly created database

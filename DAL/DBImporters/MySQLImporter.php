@@ -15,6 +15,7 @@ class MySQLImporter extends DatabaseImporter {
         $dbh->exec("CREATE DATABASE IF NOT EXISTS `$this->database`;USE `$this->database`;");
         $this->execImportQuery($filePath, $dbh);
     }
-}
+
+ }
 
 ?>

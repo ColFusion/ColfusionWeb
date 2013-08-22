@@ -2,11 +2,14 @@
 include_once('../Smarty.class.php');
 $main_smarty = new Smarty;
 
-include('../config.php');
-include(mnminclude.'html1.php');
-include(mnminclude.'link.php');
-include(mnminclude.'user.php');
-include(mnminclude.'smartyvariables.php');
+include_once('../config.php');
+include_once(mnminclude.'html1.php');
+include_once(mnminclude.'link.php');
+include_once(mnminclude.'user.php');
+include_once(mnminclude.'smartyvariables.php');
+
+require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
+require_once(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
 check_referrer();
 
@@ -30,6 +33,8 @@ function delete_storylink($linkid) {
     $query="SELECT * FROM " . table_links . " WHERE link_id = '$linkid'";
     if (! $result=mysql_query($query)) {error_page(mysql_error());}
     else {$sql_array = mysql_fetch_object($result); }
+
+//var_dump($sql_array);
 
     # delete the story link
     $query="DELETE FROM " . table_links . " WHERE link_id = '$linkid'";
@@ -58,6 +63,56 @@ function delete_storylink($linkid) {
     # delete additional categories
     $query="DELETE FROM ".table_additional_categories." WHERE ac_link_id = '$linkid'";
     if (! $result=mysql_query($query)) {error_page(mysql_error());}
+
+    $sid = $sql_array->link_title_url;
+
+    # delete target database if local
+    $query="SELECT * FROM ". table_prefix ."sourceinfo_DB WHERE sid = $sid";
+    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+    else {
+        $sql_array = mysql_fetch_object($result); 
+
+//var_dump($sql_array);
+
+        if ($sql_array->is_local == 1) {
+            // deleing the target db here.
+             
+            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($sql_array->driver, $sql_array->user_name, $sql_array->password, $sql_array->source_database, $sql_array->server_address, $sql_array->port);
+            $dbHandler->dropDatabase();
+        }
+    }
+
+    //delete the sourceinfo which should triget casding deleting of all related info except cached queries and visualization stuff.
+    $query="DELETE FROM ".table_prefix."sourceinfo WHERE sid = $sid";
+    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+
+    //now the only thing left is Neo4J, need to delete node and all realtionships.
+    // Connecting to the default port 7474 on localhost
+    $client = new Everyman\Neo4j\Client();
+
+    $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
+
+    $sourceFrom = $sourceIndex->queryOne("sid:$sid");
+
+//var_dump($sourceFrom);
+
+    if (isset($sourceFrom)) {
+        $rels = $sourceFrom->getRelationships();
+
+//var_dump($rels);
+
+        if (isset($rels) && count($rels) > 0) 
+        {
+            foreach ($rels as $key => $rel) {
+
+//var_dump($rel);
+
+                $rel->delete();
+            }
+        }
+
+        $sourceFrom->delete();
+    }
 
     // module system hook
     $vars = array('link_id' => $linkid);

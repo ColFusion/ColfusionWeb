@@ -224,6 +224,15 @@ EOQ;
 
     }
 
+    /**
+     * Drops database if exists
+     */
+    public function dropDatabase() 
+    {
+        $pdo = $this->GetConnection();
+        $pdo->exec("USE MASTER GO IF EXISTS(SELECT * FROM SYS.DATABASES WHERE NAME='{$this->database}') DROP DATABASE {$this->database} GO; ");
+    }
+
 // *******************************************************************
 // ADD LINKED SERVER
 // *******************************************************************
@@ -310,6 +319,8 @@ EOQ;
             throw new Exception($pdo->errorInfo());
         }
     }
+
+
 
 }
 

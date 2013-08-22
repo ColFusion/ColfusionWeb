@@ -154,6 +154,15 @@ class PostgreSQLHandler extends DatabaseHandler {
     {
 
     }
+
+     /**
+     * Drops database if exists
+     */
+    public function dropDatabase() 
+    {
+        $pdo = $this->GetConnection();
+        $pdo->exec("DROP DATABASE IF EXISTS \"{$this->database}\"; ");
+    }
 }
 
 ?>

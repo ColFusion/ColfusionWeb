@@ -196,4 +196,13 @@ class MySQLHandler extends DatabaseHandler
         }
     }
 
+
+    /**
+     * Drops database if exists
+     */
+    public function dropDatabase() 
+    {
+        $pdo = $this->GetConnection();
+        $pdo->exec("DROP SCHEMA IF EXISTS `{$this->database}`; ");
+    }
 }
