@@ -1,6 +1,6 @@
 <?php
 
-require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+require_once(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
 use Everyman\Neo4j\Node,
     Everyman\Neo4j\Index;

@@ -4,7 +4,7 @@ set_time_limit (0);
 include_once("../DataImportWizard/UtilsForWizard.php");
 include_once("../DAL/ExternalDBHandlers/ExternalMSSQL.php");
 
-require(realpath(dirname(__FILE__)) . "/../DAL/Neo4JDAO.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/Neo4JDAO.php");
 
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/RelationshipDAO.php');
