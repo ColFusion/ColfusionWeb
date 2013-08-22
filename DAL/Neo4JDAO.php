@@ -162,8 +162,8 @@ class Neo4JDAO
     {
     	$paths = array();
 
-    	$startNode = $this->getNode($node);
-        $endNode = $this->getNode($otherNode);
+    	$startNode = $this->getNode($sid1);
+        $endNode = $this->getNode($sid2);
 
         if (isset($startNode) && !isset($endNode)) 
         {
