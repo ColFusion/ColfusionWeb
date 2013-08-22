@@ -34,12 +34,12 @@ class Neo4JDAO
 
 	private function getNodeIndex()
 	{
-		return new Index($this->client, Index::TypeNode, nodeIndexName);
+		return new Index($this->client, Index::TypeNode, self::nodeIndexName);
 	}
 
 	private function getRelationshipIndex()
 	{
-		return new Index($this->client, Index::TypeRelationship, relationshipIndexName);
+		return new Index($this->client, Index::TypeRelationship, self::relationshipIndexName);
 	}
 
 	/**
