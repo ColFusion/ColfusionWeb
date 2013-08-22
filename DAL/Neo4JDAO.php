@@ -170,7 +170,7 @@ class Neo4JDAO
 		    $neo4jPaths = $startNode->findPathsTo($endNode)->setMaxDepth(5)->setAlgorithm(Everyman\Neo4j\PathFinder::AlgoAllSimple)->getPaths();
 
 		    foreach ($neo4jPaths as $i => $neo4jPath) {
-		        $path->setContext(Everyman\Neo4j\Path::ContextRelationship);
+		        $neo4jPath->setContext(Everyman\Neo4j\Path::ContextRelationship);
 
 		        $pathSteps = array();
 
