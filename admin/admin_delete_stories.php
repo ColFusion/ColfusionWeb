@@ -9,7 +9,7 @@ include_once(mnminclude.'user.php');
 include_once(mnminclude.'smartyvariables.php');
 
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
-require_once(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/Neo4JDAO.php");
 
 check_referrer();
 
@@ -82,37 +82,16 @@ function delete_storylink($linkid) {
         }
     }
 
+//TODO Add some error checking and move Neo4j related stuff to neo4j class
+
     //delete the sourceinfo which should triget casding deleting of all related info except cached queries and visualization stuff.
     $query="DELETE FROM ".table_prefix."sourceinfo WHERE sid = $sid";
     if (! $result=mysql_query($query)) {error_page(mysql_error());}
 
     //now the only thing left is Neo4J, need to delete node and all realtionships.
-    // Connecting to the default port 7474 on localhost
-    $client = new Everyman\Neo4j\Client();
+    $neo4JDAO = new Neo4JDAO();
 
-    $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
-
-    $sourceFrom = $sourceIndex->queryOne("sid:$sid");
-
-//var_dump($sourceFrom);
-
-    if (isset($sourceFrom)) {
-        $rels = $sourceFrom->getRelationships();
-
-//var_dump($rels);
-
-        if (isset($rels) && count($rels) > 0) 
-        {
-            foreach ($rels as $key => $rel) {
-
-//var_dump($rel);
-
-                $rel->delete();
-            }
-        }
-
-        $sourceFrom->delete();
-    }
+    $neo4JDAO->deleteNodeBySid($sid);
 
     // module system hook
     $vars = array('link_id' => $linkid);

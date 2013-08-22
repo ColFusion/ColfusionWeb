@@ -4,7 +4,7 @@ set_time_limit (0);
 include_once("../DataImportWizard/UtilsForWizard.php");
 include_once("../DAL/ExternalDBHandlers/ExternalMSSQL.php");
 
-require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+require(realpath(dirname(__FILE__)) . "/../DAL/Neo4JDAO.php");
 
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/RelationshipDAO.php');
@@ -106,8 +106,8 @@ class AdvSearch {
 	
 	private function getRelationshipToJoin($sids) {
 //TODO: move to neo4j handler class
- 		$client = new Everyman\Neo4j\Client();
-    	$sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');	
+
+		$neo4JDAO = new Neo4JDAO();
 
 		$allSearchRes = array();
     
@@ -127,7 +127,7 @@ class AdvSearch {
 // var_dump($targetSidsCopy);
 // echo "\n";
 
-	    	$res = $this->rec($sourceIndex, $node1Sid, $targetSidsCopy, "\t", array(), array());
+	    	$res = $this->rec($neo4JDAO, $node1Sid, $targetSidsCopy, "\t", array(), array());
 	    	
 	    	$oneSearchRes = new stdClass();
 	    	
@@ -154,7 +154,7 @@ class AdvSearch {
 	}
 
 	//TODO: move to other class for neo4j handler
-	private function rec($sourceIndex, $node, $list, $intend, $needToCheckAccumul, $resultAccumul) {
+	private function rec($neo4JDAO, $node, $list, $intend, $needToCheckAccumul, $resultAccumul) {
 
 // echo "$intend rec iteration:\n";
 // echo "$intend \t sid:{$node}\n";
@@ -181,42 +181,28 @@ class AdvSearch {
         $otherNode = array_pop($list);
 // echo "$intend \t otherNode:{$otherNode}\n";   
 
-        $startNode = $sourceIndex->queryOne("sid:{$node}");
-        $endNode = $sourceIndex->queryOne("sid:{$otherNode}");
-
-//var_dump($startNode);
-
-        $paths = new stdClass();
-
-		if (!isset($startNode) || !isset($endNode)) {
-			
-			$paths->paths = array(); 
-		}
-		else {
-        	$paths = $this->getAllPathsBetweenTwoNodes($startNode,  $endNode);
-    	}
+        $paths = $neo4JDAO->getAllPathsBetweenTwoNodes($node, $otherNode);
 
 // echo "$intend \t paths:";
 // var_dump($paths->paths);
 // echo "\n";
 
-
-        if (count($paths->paths) == 0) {
+        if (count($paths) == 0) {
                         
         	$needToCheck = array_merge($needToCheckAccumul, array($otherNode));
 
-            return $this->rec($sourceIndex, $node, $list, $intend . "\t", $needToCheck, $resultAccumul);
+            return $this->rec($neo4JDAO, $node, $list, $intend . "\t", $needToCheck, $resultAccumul);
         }
         else {
 
             if (count($resultAccumul) == 0) {
-                $resultAccumul =$paths->paths;
+                $resultAccumul = $paths;
             }
             else {
-            	$resultAccumul = $this->mergePaths($paths->paths, $resultAccumul);
+            	$resultAccumul = $this->mergePaths($paths, $resultAccumul);
             }       
 
-            return $this->rec($sourceIndex, $otherNode, $list, $intend . "\t", $needToCheckAccumul, $resultAccumul);
+            return $this->rec($neo4JDAO, $otherNode, $list, $intend . "\t", $needToCheckAccumul, $resultAccumul);
         }
     }
 
@@ -245,37 +231,7 @@ class AdvSearch {
         return $result;
     }
 
-    //TODO: move to other class for neo4j handler
-	private function getAllPathsBetweenTwoNodes($node1, $node2){
-
-	    $result = new stdClass;
-
-	    $result->node1 = $node1;
-	    $result->node2 = $node2;
-	    
-	    $paths = $node1->findPathsTo($node2)->setMaxDepth(5)->setAlgorithm(Everyman\Neo4j\PathFinder::AlgoAllSimple)->getPaths();
-
-	    $result->pathsNeo4j = $paths;
-	    $result->paths = array();
-
-	    foreach ($paths as $i => $path) {
-	        $path->setContext(Everyman\Neo4j\Path::ContextRelationship);
-
-	        $pathSteps = array();
-
-	        foreach ($path as $j => $rel) {
-	            $direction = $rel->getProperty('rel_id');
-
-	            $pathSteps[] = $direction;           
-	        }
-
-	        $result->paths[] = $pathSteps;
-	    }
-
-	    return $result;
-	}
-
-	// TODO: refactor created additional classesand use them
+	// TODO: refactor created additional classes and use them
 	private function getMoreInfoForEachRel($searchResults) {
 		global $db;
         
