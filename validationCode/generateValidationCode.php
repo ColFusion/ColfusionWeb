@@ -34,9 +34,6 @@ foreach ($emails as $email) {
 
     $newMsg = str_replace($vars, $vals, $msg);
 
-//    var_dump($vars);
- //   var_dump($vals);
-
     sendValidationCode($email, $validationCode, $newMsg);
 
     echo "$email <br/>";
@@ -60,34 +57,16 @@ function sendValidationCode($email, $validationCode, $msg) {
 
     $body = $msg;
 
-/*
-    "Dear user, 
-Welcome to Colfusion
-
-Before you login, please register with following email and validation code:
-
-     Email: $email
-     Validation Code: $validationCode
-
-Please contact us if you have any problems.
-
-Best Regards,
-Colfusion System Service";
-*/
-
-    $smtpinfo["host"] = "smtp.gmail.com";
-    $smtpinfo["port"] = "25";
+    $smtpinfo["host"] = "ssl://smtp.gmail.com";
+    $smtpinfo["port"] = "465";
     $smtpinfo["auth"] = true;
     $smtpinfo["username"] = "SaltSystemService@gmail.com";
     $smtpinfo["password"] = "robertcl0310";
 
-
-//echo $body;
-
-    // Create the mail object using the Mail::factory method
     $mail_object = & Mail::factory("smtp", $smtpinfo);
-
     $mail_object->send($recipients, $headers, $body);
+       
+    if (PEAR::isError($mail_object)) {print($mail_object->getMessage());}
 }
 
 ?>

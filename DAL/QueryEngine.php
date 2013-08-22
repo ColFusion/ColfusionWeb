@@ -422,6 +422,7 @@ FROM
 
 where
 		rel.creator = u.user_id
+        and rel.status = 0
 		and rel.rel_id = statOnVerdicts.rel_id
 		and rel.sid1 = siFrom.Sid
 		and rel.sid2 = siTo.Sid

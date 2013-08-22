@@ -84,7 +84,7 @@ class RelationshipDAO
             throw new Exception("You are not able to delete this relationship.");
         }
         
-        $delSql = "delete from colfusion_relationships where creator = '$userId' and rel_id='$relId'";
+        $delSql = "update colfusion_relationships set status = 1 where creator = '$userId' and rel_id='$relId'";
         $this->ezSql->query($delSql);
     }
 
