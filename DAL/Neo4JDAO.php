@@ -165,7 +165,7 @@ class Neo4JDAO
     	$startNode = $this->getNode($sid1);
         $endNode = $this->getNode($sid2);
 
-        if (isset($startNode) && !isset($endNode)) 
+        if (isset($startNode) && isset($endNode)) 
         {
 		    $neo4jPaths = $node1->findPathsTo($node2)->setMaxDepth(5)->setAlgorithm(Everyman\Neo4j\PathFinder::AlgoAllSimple)->getPaths();
 
