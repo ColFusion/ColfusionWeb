@@ -2,6 +2,7 @@
 
 require_once realpath(dirname(__FILE__)) . '/../config.php';
 require_once realpath(dirname(__FILE__)) . '/../DAL/RelationshipDAO.php';
+require_once realpath(dirname(__FILE__)) . '/../DAL/Neo4JDAO.php';
 
 if (!$current_user->authenticated)
     die('Please login to use this function.');
@@ -14,6 +15,9 @@ $relationshipDAO = new RelationshipDAO();
 $jsonResult = new stdClass();
 try {
     $relationshipDAO->deleteRelationship($relId, $userId);
+    $n4jDao = new Neo4JDAO();
+    $n4jDao->deleteRelationshipByRelId($relId);
+    
     $jsonResult->isSuccessful = true;
 } catch (Exception $e) {
     $jsonResult->isSuccessful = false;

@@ -2,12 +2,16 @@ function RelationshipViewModel(sid) {
     var self = this;
 
     self.sid = sid;
+    
+    // Properties for message control.
     self.isRelationshipDataLoading = ko.observable(false);
     self.isNoRelationshipData = ko.observable(false);
+    self.isMiningRelationshipsError = ko.observable(false);
+
     self.mineRelationshipsTable = ko.observable();
 
     self.isRelationshipInfoLoaded = {};
-    self.relationshipInfos = {};
+    self.relationshipInfos = {};  
     self.isError = {};
 
     self.removeRelationship = function (relId) {
@@ -29,9 +33,11 @@ function RelationshipViewModel(sid) {
 
         self.isRelationshipDataLoading(true);
         self.isNoRelationshipData(false);
+        self.isMiningRelationshipsError(false);
 
         dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function (data) {
-            if (!data.Control || !data.Control.cols || data.Control.cols.length === 0) {
+            console.log(data);
+            if (!data || !data.Control || !data.Control.cols || data.Control.cols.length === 0) {
                 // Show 'no data' text;
                 self.isRelationshipDataLoading(false);
                 self.isNoRelationshipData(true);
@@ -55,6 +61,10 @@ function RelationshipViewModel(sid) {
             }
 
             self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table('mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
+           
+        }).error(function() {
+            self.isMiningRelationshipsError(true);
+        }).always(function() {
             self.isRelationshipDataLoading(false);
         });
     };

@@ -6,7 +6,8 @@
                 <span> Relationships Mining In Projgress... </span>
                 <img src="images/ajax-loader-wt.gif" style="padding-left: 220px;"/>
             </div>
-            <div data-bind="visible: isNoRelationshipData" style="color: grey;">This dataset has no relationships yet</div>
+            <div data-bind="visible: isNoRelationshipData" style="color: grey;">This dataset has no relationship yet</div>
+            <div data-bind="visible: isMiningRelationshipsError" style="color: red;">Some errors occur when mining relationships.</div>
             <div data-bind="visible: !isNoRelationshipData(), with: mineRelationshipsTable" id="mineRelationshipsTableWrapper">
                 <table id="tfhover" class="tftable" border="1" style="width: 100%;">
                     <thead>

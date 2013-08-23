@@ -147,8 +147,7 @@ class Neo4JDAO
     	$rel = $this->relationshipIndex->queryOne("rel_id:$rel_id");
 
 	    if (isset($rel)) {
-    	    $rel->setProperty('cost', $cost)
-            	->save();
+    	    $rel->setProperty('cost', $cost)->save();
     	}
     }
 

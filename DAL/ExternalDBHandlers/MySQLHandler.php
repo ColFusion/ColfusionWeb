@@ -61,22 +61,12 @@ class MySQLHandler extends DatabaseHandler
 
     public function getTotalNumberTuplesInTable($table_name)
     {
-        
         $res = $this->prepareAndRunQuery("SELECT COUNT(*) as ct", "$table_name", null, null, null, null);
 
         if (is_object($res[0]))
             return $res[0]->ct;
         else
             return $res[0]["ct"];
-
-        // $pdo = $this->GetConnection();
-        // $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM `$table_name`");
-        // $stmt->execute();
-        // $row = $stmt->fetch(PDO::FETCH_BOTH);
-        // $tupleNum = (int) $row[0];
-        // $stmt->closeCursor();
-
-        // return $tupleNum;
     }
 
     // select - valid sql select part
@@ -118,11 +108,6 @@ class MySQLHandler extends DatabaseHandler
             $query .= " LIMIT " . $startPoint . "," . $perPage;
         }
 
-        //	$res = $pdo->query($query);
-        //	$result = array();
-        //	while (($row = $res->fetch(PDO::FETCH_ASSOC))) {
-        //		$result[] = $row;
-        //	}
         return $this->ExecuteQuery($query);
     }
 
@@ -157,13 +142,13 @@ class MySQLHandler extends DatabaseHandler
         $pdo = $this->GetConnection();
 
         $pdo->exec("CREATE DATABASE IF NOT EXISTS `$database`;USE `$database`;");
-        
+
         $this->database = $database;
 
         return $this;
     }
 
-     // TODO: implement
+    // TODO: implement
     /**
      * Create a table for given table name if it does not exist yet. The columns of the created table are given by the columns array.
      * @param  string $tableName name of the table
@@ -184,14 +169,15 @@ class MySQLHandler extends DatabaseHandler
 
         $query .= implode(", ", $columnsDefinition) . " ); ";
 
-// var_dump($columns);
+        // var_dump($columns);
         // var_dump($query);
 
         try {
             $pdo = $this->GetConnection();
 
             $pdo->exec($query);
-        } catch (PDOException $e) {
+        }
+        catch (PDOException $e) {
             throw new Exception("Error Processing Request " . $e->getMessage(), 1);
         }
     }
@@ -200,7 +186,7 @@ class MySQLHandler extends DatabaseHandler
     /**
      * Drops database if exists
      */
-    public function dropDatabase() 
+    public function dropDatabase()
     {
         $pdo = $this->GetConnection();
         $pdo->exec("DROP SCHEMA IF EXISTS `{$this->database}`; ");

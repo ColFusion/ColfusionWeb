@@ -21,17 +21,20 @@ function MineRelationships() {
     $result = $queryEngine->MineRelationships($_POST["sid"]);
     $columns = NULL;
 
-    foreach ($result as $r) {
-        $json_array["data"][] = $r;
+    if($result != null){
 
-        if ($columns === NULL) {
-            if (is_array($r))
-                $columns = implode(",", array_keys($r));
-            else
-                $columns = implode(",", array_keys(get_object_vars($r)));
+        foreach ($result as $r) {
+            $json_array["data"][] = $r;
+
+            if ($columns === NULL) {
+                if (is_array($r))
+                    $columns = implode(",", array_keys($r));
+                else
+                    $columns = implode(",", array_keys(get_object_vars($r)));
+            }
         }
     }
-
+    
     $json_array["Control"]["perPage"] = $perPage;
     $json_array["Control"]["totalPage"] = 40;
     $json_array["Control"]["pageNo"] = $pageNo;
@@ -54,4 +57,4 @@ function GetStoryStatus() {
     echo json_encode($result);
 }
 
-?>	
+?>
