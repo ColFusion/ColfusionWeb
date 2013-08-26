@@ -36,7 +36,7 @@ function RelationshipViewModel(sid) {
         self.isMiningRelationshipsError(false);
 
         dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function (data) {
-            console.log(data);
+
             if (!data || !data.Control || !data.Control.cols || data.Control.cols.length === 0) {
                 // Show 'no data' text;
                 self.isRelationshipDataLoading(false);

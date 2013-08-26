@@ -4,17 +4,31 @@ require_once realpath(dirname(__FILE__)) . '/../config.php';
 include_once (realpath(dirname(__FILE__)) . '/../datasetModel/Dataset.php');
 
 class DatasetFinder {
-
-    private $allDatasetInfo_sql = "select 
-        sid, title, entryDate, lastUpdated, userId, user_login , link_content as description 
-        from colfusion_sourceinfo sinfo 
-        inner join colfusion_users users on sinfo.UserId = users.user_id 
-        left join colfusion_links cl on cl.link_id = sid ";
+    
+    // Dataset can be 'draft' if not submitted.
+    // DatasetFinder only queries datasets with status 'queued' (submitted).
+    private $allDatasetInfo_sql = "select
+        sid, title, entryDate, lastUpdated, userId, user_login , link_content as description
+        from colfusion_sourceinfo sinfo
+        inner join colfusion_users users on sinfo.UserId = users.user_id
+        left join colfusion_links cl on cl.link_id = sid 
+        where Status = 'queued' ";
+    
     private $ezSql;
 
     public function __construct() {
         global $db;
         $this->ezSql = $db;
+    }
+
+    public function findDatasetInfoByUserId($userId){
+        $userId = mysql_real_escape_string($userId);
+        $sql = $this->allDatasetInfo_sql . " and UserId = '$userId'";
+        $dsInfos = $this->ezSql->get_results($sql);
+        foreach ($dsInfos as $dsInfo) {
+            $datasets[] = $this->mapDbColumnsToDataset($dsInfo);
+        }
+        return $datasets;
     }
 
     public function findDatasetInfoBySidOrName($searchTerm) {
@@ -33,14 +47,14 @@ class DatasetFinder {
 
     public function findDatasetInfoBySid($sid) {
         $sid = mysql_real_escape_string($sid);
-        $sql = $this->allDatasetInfo_sql . " where sid = '$sid'";
+        $sql = $this->allDatasetInfo_sql . " and sid = '$sid'";
         $dsInfo = $this->ezSql->get_row($sql);
         return $this->mapDbColumnsToDataset($dsInfo);
     }
 
     public function findDatasetInfoByName($dsName) {
         $dsName = mysql_real_escape_string($dsName);
-        $sql = $this->allDatasetInfo_sql . " where title like '%$dsName%'";
+        $sql = $this->allDatasetInfo_sql . " and title like '%$dsName%'";
         $dsInfos = $this->ezSql->get_results($sql);
         foreach ($dsInfos as $dsInfo) {
             $datasets[] = $this->mapDbColumnsToDataset($dsInfo);
@@ -62,7 +76,7 @@ class DatasetFinder {
         $dataset->userName = $dsInfo->user_login;
         $dataset->entryDate = $dsInfo->entryDate;
         $dataset->lastUpdated = $dsInfo->lastUpdated;
-        
+
         return $dataset;
     }
 

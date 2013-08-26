@@ -35,7 +35,6 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/hogan.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
 
-
 {literal}
     <style>
         #newRelationshipBtn {
@@ -143,41 +142,16 @@
 
 {literal}
 <div id="storyStatus">
-    <div style="padding-left: 10px;">
-        <span style="font-weight: bold;">Status:</span>
+    <div style="padding-left: 10px; padding-bottom: 8px;">
+        <span style="font-weight: bold;">Status ( refresh 
+        <span data-bind="text: lastStatusUpdatedTimeText" class="lastRefreshTime"></span>    
+        ):</span>
         <i data-bind="visible: isStatusShown, click: function () { isStatusShown(false) }" class="icon-collapse storyStatusCollapseIcon"></i>
         <i data-bind="visible: !isStatusShown(), click: function () { isStatusShown(true) }" class="icon-collapse-top storyStatusCollapseIcon"></i>
     </div>
-    <div data-bind="visible: isStatusShown" class="storyStatusTableListWrapper">
-        <div class="storyStatusTableListHeader">
-            <span class="statusHeader statusHeader-tableName">Table Name</span>
-            <span class="statusHeader statusHeader-records">Record Processed</span>
-            <span class="statusHeader statusHeader-status">Status</span>
-            <span class="statusHeader statusHeader-timeStart">Time Start</span>
-            <span class="statusHeader statusHeader-timeEnd">Time Elapse/Time End</span>
-        </div>
-        <ul data-bind="foreach: datasetStatus" class="storyStatusTableList" style="margin: 0;">
-            <li data-bind="with: $data.statusObj" class="storyStatus">
-                <span data-bind="text: tableName" class="statusTableName statusCol"></span>
-                <span class="statusRecordsProcessed statusCol">
-                    <span data-bind="text: numberProcessRecords"></span>
-                </span>
-                <span data-bind="style: { 'color': $root.getStatusTextColor(status) }" class="statusStatus statusCol">
-                    <span style="padding-right: 3px;">
-                        <i data-bind="attr: { 'class': $root.getStatusIcon(status) }"></i>
-                    </span>
-                    <span data-bind="visible: status != 'error', text: status"></span>
-                    <span data-bind="visible: ErrorMessage, text: ErrorMessage"
-                          class="statusErrorMessage statusCol"
-                          style="float: right;">                        
-                    </span>
-                </span>
-                <span data-bind="text: TimeStart" class="statusTimeStart statusCol"></span>
-                <span data-bind="visible: $parent.needRefreshing(), text: $parent.timeElapse" class="statusTimeEnd statusCol"></span>
-                <span data-bind="visible: !$parent.needRefreshing(), text: TimeEnd" class="statusTimeEnd statusCol"></span>
-            </li>
-        </ul>
-    </div>
+    {/literal}
+    {include file='storyStatusTableList.tpl'}
+    {literal}
 </div>
 {/literal}
 
@@ -209,23 +183,3 @@
     </div>
 {checkActionsTpl location="tpl_pligg_story_related_end"}
 {/if}
-
-{checkActionsTpl location="tpl_pligg_story_comments_start"}
-<div id="comments">
-    <form action="" method="post" id="thisform">
-        <h3><a name="comments" class="comments_title">{#PLIGG_Visual_Story_Comments#}</a></h3>
-        {checkActionsTpl location="tpl_pligg_story_comments_individual_start"}
-            {$the_comments}
-            {checkActionsTpl location="tpl_pligg_story_comments_individual_end"}
-            {if $user_authenticated neq ""}
-                {include file=$the_template."/comment_form.tpl"}
-            {else}
-            <br />
-        {checkActionsTpl location="anonymous_comment_form"}
-            <div align="center" class="login_to_comment">
-                <a href="{$login_url}">{#PLIGG_Visual_Story_LoginToComment#}</a> {#PLIGG_Visual_Story_Register#} <a href="{$register_url}">{#PLIGG_Visual_Story_RegisterHere#}</a>.
-            </div>
-        {/if}
-    </form>
-</div>
-{checkActionsTpl location="tpl_pligg_story_comments_end"}

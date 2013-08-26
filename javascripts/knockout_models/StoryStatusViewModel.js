@@ -3,38 +3,36 @@ To loose UpdateStatusViewModel's dependency on DataPreviewViewModel,
 we define a Mock DataPreviewViewModel to prevent error if there's no DataPreviewViewModel passed in UpdateStatusViewModel.
 */
 function MockDataPreviewViewModel() {
-    this.getTableList = function () {
+    this.getTablesList = function () {
     };
 }
 
 var StoryStatusProperties = {
-    DatasetStatus: function() {
+    DatasetStatus: function () {
         var self = this;
 
         self.statusObj = ko.observable();
         self.timeElapse = ko.observable(0);
-        self.needRefreshing = ko.observable(true);
 
-        self.isNeedRefreshing = function () {
-            return self.statusObj().status != 'error' && self.statusObj().status != 'success';
-        };
+        self.isNeedRefreshing = ko.computed(function () {
+            return self.statusObj() &&
+                   self.statusObj().status != 'error' && self.statusObj().status != 'success';
+        });
 
-        self.isReadyForLoading = function() {
+        self.isReadyForLoading = function () {
             return self.statusObj() &&
                 parseInt(self.statusObj().numberProcessRecords) >= 1000 || self.statusObj().status == 'success';
         };
 
-        self.tickTimeElapse = function() {
+        self.tickTimeElapse = function () {
             var timeStart = moment(self.statusObj().TimeStart);
             var timeElapseInSecond = (moment().valueOf() - timeStart.valueOf()) / 1000;
-            
+
             self.timeElapse(generalUtil.getTimerString(timeElapseInSecond));
             if (self.isNeedRefreshing()) {
-                setTimeout(function() {
+                setTimeout(function () {
                     self.tickTimeElapse();
                 }, 1000);
-            } else {
-                self.needRefreshing(false);
             }
         };
     }
@@ -48,19 +46,27 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
     var self = this;
 
     self.sid = sid;
-    self.dataPreviewViewModel = dataPreviewViewModel || new MockDataPreviewViewModel();
+    self.dataPreviewViewModel = dataPreviewViewModel !== undefined ? dataPreviewViewModel : new MockDataPreviewViewModel();
 
-    self.isStatusShown = ko.observable(true);
+    self.lastStatusUpdatedTime = ko.observable(moment());
+    
+    // Transform the offset between now and last refresh into seconds.
+    self.lastStatusUpdatedTimeText = ko.computed(function() {
+        var now = parseInt(moment().format('X'));
+        var lastUpdated = parseInt(self.lastStatusUpdatedTime().format('X'));
+        var offsetInSecond = parseInt((now - lastUpdated) / 1000);
+        return moment.duration(offsetInSecond, "seconds").humanize(true);
+    });
+
+    self.isStatusShown = ko.observable(false);
     self.isDataShown = ko.observable(false);
     self.isRefreshingUpdateStatus = ko.observable(true);
-    
+
     self.datasetStatus = ko.observableArray();
-    dataPreviewViewModel.isRefreshingUpdateStatus = self.isRefreshingUpdateStatus;
-    
+    self.dataPreviewViewModel.isRefreshingUpdateStatus = self.isRefreshingUpdateStatus;
+
     self.refreshUpdateStatus = function () {
         console.log("Refreshing Status");
-
-        $('#datasetDescription-lastRefresh').text(new Date().toString("yyyy-MM-dd HH:mm:ss"));
 
         return $.ajax({
             url: my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
@@ -69,13 +75,15 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
             type: 'post',
             dataType: 'json',
             success: function (data) {
-                
+
+                self.lastStatusUpdatedTime(moment());
+
                 if (self.datasetStatus().length != data.length) {
                     ko.utils.arrayForEach(data, function () {
                         self.datasetStatus.push(new StoryStatusProperties.DatasetStatus());
                     });
                 }
-                
+
                 for (var i = 0; i < data.length; i++) {
                     var dataStatus = self.datasetStatus()[i];
                     dataStatus.statusObj(data[i]);
@@ -91,7 +99,7 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
         console.log("load Data");
 
         var readyForLoading = self.datasetStatus() != null && self.datasetStatus().length > 0;
-        
+
         ko.utils.arrayForEach(self.datasetStatus(), function (dataStatus) {
             readyForLoading = readyForLoading && dataStatus.isReadyForLoading();
         });
@@ -138,6 +146,6 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
             return 'black';
         }
     };
-    
+
     autoRefreshUpdateStatus();
 }

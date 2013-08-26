@@ -241,11 +241,13 @@ var RelationshipModel = {
     },
     DataSet: function (sid) {
         var self = this;
+        
         self.sid = ko.observable(sid);
         self.name = ko.observable('');
         self.tableList = ko.observableArray();
         self.chosenTableName = ko.observable().extend({ withPrevious: 'option' });
-        // Does not trigger load table info event.
+        
+        // shownTableName does not trigger load table info event.
         self.shownTableName = ko.observable();
         self.currentTable = ko.observable();
         self.isLoadingTableInfo = ko.observable(false);
