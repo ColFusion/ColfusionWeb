@@ -3,8 +3,8 @@
 require_once realpath(dirname(__FILE__)) . '/../config.php';
 
 /**
-* Database operations performed by KTRExecutor
-*/
+ * Database operations performed by KTRExecutor
+ */
 class KTRExecutorDAO
 {
 
@@ -42,7 +42,8 @@ class KTRExecutorDAO
             //get eid returned from the insert
             $logID = mysql_insert_id();
 
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             throw new Exception("Error Processing Request. Could not execute the query", 1);
         }
 
@@ -62,7 +63,8 @@ class KTRExecutorDAO
         try {
             $this->ezSql->query($sql);
 
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             throw new Exception("Error Processing Request. Could not execute the query", 1);
         }
     }
@@ -80,7 +82,30 @@ class KTRExecutorDAO
         try {
             $this->ezSql->query($sql);
 
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
+            throw new Exception("Error Processing Request. Could not execute the query", 1);
+        }
+    }
+
+    public function updateExecutionInfoErrorMessage( $logID, $errorMessage)
+    {
+        $sql = "UPDATE " . table_prefix . "executeinfo SET ErrorMessage='$errorMessage' WHERE EID= $logID";
+        try {
+            $this->ezSql->query($sql);
+        }
+        catch (Exception $e) {
+            throw new Exception("Error Processing Request. Could not execute the query", 1);
+        }
+    }
+
+    public function updateExecutionInfoTimeEnd($logID)
+    {
+        $sql = "UPDATE " . table_prefix . "executeinfo SET TimeEnd=CURRENT_TIMESTAMP WHERE EID= $logID";
+        try {
+            $this->ezSql->query($sql);
+        }
+        catch (Exception $e) {
             throw new Exception("Error Processing Request. Could not execute the query", 1);
         }
     }
@@ -102,7 +127,8 @@ class KTRExecutorDAO
         try {
             $this->ezSql->query($sql);
 
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             throw new Exception("Error Processing Request. Could not execute the query", 1);
         }
     }
@@ -120,7 +146,8 @@ class KTRExecutorDAO
         try {
             return $this->ezSql->get_results($sql);
 
-        } catch (Exception $e) {
+        }
+        catch (Exception $e) {
             throw new Exception("Error Processing Request. Could not execute the query", 1);
         }
     }

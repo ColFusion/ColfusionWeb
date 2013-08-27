@@ -7,6 +7,14 @@ include_once('UtilsForWizard.php');
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandler.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporterFactory.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
+require_once(realpath(dirname(__FILE__)) . "/ExecutionManager.php");
+
+if(!$current_user->authenticated){
+    die('Please login to run this function.');
+}
+
+$userId = $current_user->user_id;
 
 $sid = $_POST['sid'];
 if (!isset($sid)) {
@@ -18,7 +26,7 @@ if (isset($_SESSION["dbHandler_$sid"])) {
 }
 
 $action = $_GET["action"];
-$action($sid, $dbHandler);
+$action($sid, $dbHandler, $userId);
 exit;
 
 function TestConnection($sid) {
@@ -58,7 +66,8 @@ function TestConnection($sid) {
         $json->isSuccessful = true;
         $json->message = "Connected successfully";
         echo json_encode($json);
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
         $json->isSuccessful = false;
         $json->message = $e->getMessage();
         echo json_encode($json);
@@ -70,7 +79,8 @@ function LoadDatabaseTables($sid, DatabaseHandler $dbHandler) {
         $tables = $dbHandler->loadTables();
         $json["isSuccessful"] = true;
         $json["data"] = $tables;
-    } catch (Exception $e) {
+    }
+    catch (Exception $e) {
         $json["isSuccessful"] = false;
     }
     echo json_encode($json);
@@ -86,22 +96,62 @@ function PrintTableForDataMatchingStep($sid, DatabaseHandler $dbHandler) {
 }
 
 //TODO: the logic should be moved to some other classes
-function Execute($sid, $dbHandler) {
-    global $driver;
+function Execute($sid, DatabaseHandler $dbHandler, $userId) {
 
     $inputData = $_POST;
-    $queryEngine = new QueryEngine();
 
-    $queryEngine->simpleQuery->addSourceDBInfo($sid, $dbHandler->getHost(), $dbHandler->getPort(), $dbHandler->getUser(), $dbHandler->getPassword(), $dbHandler->getDatabase(), $dbHandler->getDriver());
+    try{        
+        $queryEngine = new QueryEngine();
 
-    UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $inputData["dataMatchingUserInputs"]);
+        $queryEngine->simpleQuery->addSourceDBInfo($sid, $dbHandler->getHost(), $dbHandler->getPort(), $dbHandler->getUser(), $dbHandler->getPassword(), $dbHandler->getDatabase(), $dbHandler->getDriver());
+        UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $inputData["dataMatchingUserInputs"]);
+        $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
 
-    $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
+        $resultJson = new stdClass();
+        $resultJson->isSuccessful = true;
+        $resultJson->message = 'Success!';
+        echo json_encode($resultJson);
+        
+        // If a dump file is uploaded, start importing data in the background.
+        if(isset($_SESSION["dump_file_$sid"])){
+            ExecutionManager::callChildProcessToImportDumpFile($sid, $userId, $dbHandler, $_SESSION["dump_file_$sid"]);
+        }
+        unset($_SESSION["dump_file_$sid"]);      
+    }
+    catch(Exception $e){
+        $resultJson = new stdClass();
+        $resultJson->isSuccessful = false;
+        $resultJson->message = $e->getMessage();
+        echo json_encode($resultJson);
+    }
+}
 
-    $resultJson = new stdClass();
-    $resultJson->isSuccessful = true;
-    $resultJson->message = 'Success!';
-    echo json_encode($resultJson);
+// When a dump file is uploaded, last step runs this function.
+function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath){
+    
+    $ktrExeDao = new KTRExecutorDAO();
+    $tables = $dbHandler->loadTables();
+
+    $logIds = array();
+    foreach($tables as $table){
+        $logIds[] = $ktrExeDao->addExecutionInfoTuple($sid, $table, $userId);
+    }
+
+    try{
+        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbHandler->getDriver(), $sid, "colfusion");
+        $dbImporter->importDbData($filePath);
+
+        foreach($logIds as $logId){
+            $ktrExeDao->updateExecutionInfoTimeEnd($logId);
+            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'success');
+        }
+    }
+    catch(Exception $e){
+        foreach($logIds as $logId){
+            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'error');
+            $ktrExeDao->updateExecutionInfoErrorMessage($logId, $e->getMessage());
+        }
+    }
 }
 
 /* * ************************************************************************************************** */

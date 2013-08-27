@@ -134,7 +134,10 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 				} else if (strtolower($ext) == 'sql') {
 					try {
 						$dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbType, $sid, my_pligg_base_no_slash);
-						$dbImporter->importSqlFile($upload_path);
+						$dbImporter->importDbSchema($upload_path);
+                        
+                        // Store dump file path for the last step.
+                        $_SESSION["dump_file_$sid"] = $upload_path;
 					}
                     catch (Exception $e) {
 						$_SESSION["upload_file_$sid"]['error'] = $e->getMessage();

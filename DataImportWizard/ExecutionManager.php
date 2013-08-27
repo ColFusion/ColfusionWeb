@@ -9,8 +9,25 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
  */
 class ExecutionManager
 {
-
     public static function callChildProcessToExectueOneKTRTransformation($sid, $userID, $ktrManager)
+    {     
+        $script_url = my_pligg_base . '/DataImportWizard/execute_ktr_parallel.php';
+        $vars = array("ktrManager" => serialize($ktrManager));
+        $postData = http_build_query($vars);
+        
+        ExecutionManager::callChildProcess($script_url, $sid, $userID, $postData);      
+    }
+
+    public static function callChildProcessToImportDumpFile($sid, $userID, DatabaseHandler $dbHandler, $dumpFilePath)
+    {        
+        $script_url = my_pligg_base . '/DataImportWizard/import_dump_parallel.php';
+        $vars = array("dbHandler" => serialize($dbHandler), "dumpFilePath" => $dumpFilePath);
+        $postData = http_build_query($vars);
+        
+        ExecutionManager::callChildProcess($script_url, $sid, $userID, $postData);   
+    }
+
+    public static function callChildProcess($script_url, $sid, $userId, $postData)
     {
         // create socket for calling child script
         $socketToChild = fsockopen("localhost", 80);
@@ -18,12 +35,9 @@ class ExecutionManager
         $base = my_pligg_base;
 
         // HTTP-packet building; header first
-        $msgToChild = "POST $base/DataImportWizard/execute_ktr_parallel.php?&sid=$sid&userID=$userID HTTP/1.0\n";
+        $msgToChild = "POST $script_url?&sid=$sid&userID=$userId HTTP/1.0\n";
         $msgToChild .= "Host: localhost\n";
-
-        $vars = array("ktrManager" => serialize($ktrManager));
-
-        $postData = http_build_query($vars);
+        
         $msgToChild .= "Content-Type: application/x-www-form-urlencoded\r\n";
         $msgToChild .= "Content-Length: ".strlen($postData)."\n\n";
 
@@ -31,15 +45,13 @@ class ExecutionManager
         $msgToChild .= $postData;
 
 		//var_dump($socketToChild);
-		//var_dump($msgToChild);
 
         // send packet no oneself www-server - new process will be created to handle our query
         fwrite($socketToChild, $msgToChild);
 
         // wait and read answer from child
-        $data = fread($socketToChild, 5000);//stream_get_contents($socketToChild);
-
-		//var_dump($data);
+        $data = fread($socketToChild, 5000);
+        // echo stream_get_contents($socketToChild);
 
         // close connection to child
         fclose($socketToChild);

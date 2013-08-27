@@ -8,14 +8,30 @@ class MySQLImporter extends DatabaseImporter {
         parent::__construct($user, $password, $database, $host, $port, $engine);
     }
 
-    public function importSqlFile($filePath) {      
+    public function importDbSchema($filePath, $sqlDelimiter = "/;/"){
+
         $dbh = new PDO("mysql:host=$this->host;port=$this->port", $this->user, $this->password);
         $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         $dbh->exec("CREATE DATABASE IF NOT EXISTS `$this->database`;USE `$this->database`;");
-        $this->execImportQuery($filePath, $dbh);
+
+        $sql_query = $this->parseSqlCommands($filePath, '/(CREATE TABLE .*;)/i', $sqlDelimiter);
+
+        $this->execImportQuery($sql_query, $dbh);
     }
 
- }
+    public function importDbData($filePath, $sqlDelimiter = "/;/"){
+        
+        if(empty($filePath) || !file_exists($filePath)){
+            throw new Exception('File not found');
+        }
+        
+        $dbh = new PDO("mysql:host=$this->host;port=$this->port;dbname=$this->database;charset=utf8;", $this->user, $this->password);
+        $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+        $sql_query = $this->parseSqlCommands($filePath, '/(INSERT INTO .*;)/i', $sqlDelimiter);
+        $this->execImportQuery($sql_query, $dbh);
+    }
+}
 
 ?>
