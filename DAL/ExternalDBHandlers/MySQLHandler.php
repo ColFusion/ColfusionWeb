@@ -4,8 +4,6 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 
 class MySQLHandler extends DatabaseHandler
 {
-    private $tableStatusCache;
-    
     public function __construct($user, $password, $database, $host, $port = 3306)
     {
         parent::__construct($user, $password, $database, $host, $port, 'myssql');
@@ -29,14 +27,14 @@ class MySQLHandler extends DatabaseHandler
     public function loadTables()
     {
         $pdo = $this->GetConnection();
-        $stmt = $pdo->prepare("SHOW TABLES FROM `$this->database`");     
+        $stmt = $pdo->prepare("SHOW TABLES FROM `$this->database`");
         $stmt->execute();
 
         foreach ($stmt->fetchAll() as $row) {
             $tableNames[] = $row[0];
         }
         $stmt->closeCursor();
-    
+
         return $tableNames;
     }
 
@@ -59,22 +57,28 @@ class MySQLHandler extends DatabaseHandler
     {
         return $this->prepareAndRunQuery("select * ", "$table_name", null, null, $perPage, $pageNo);
     }
-    
-    
+
+
     // This function uses show table status.
     // The number of rows is estimated.
     public function getTotalNumberTuplesInTable($table_name)
     {
-        if(!isset($this->tableStatusCache)){
-            $pdo = $this->GetConnection();
-            $stmt = $pdo->prepare("SHOW TABLE STATUS");     
-            $stmt->execute();
-            foreach ($stmt->fetchAll() as $row) {
-                $this->tableStatusCache[$row->Name] = $row;
-            }
+        // FIXME: table_name seems to be wrapped by '[' and ']'.
+        // Here removing these chars.
+        if($table_name{0} == '['){
+            $table_name = substr($table_name, 1);
         }
         
-        return $this->tableStatusCache[$tableName]->Rows;
+        if($table_name{strlen($table_name) - 1} == ']'){
+            $table_name = substr($table_name, 0, strlen($table_name) - 1);
+        }
+                
+        $pdo = $this->GetConnection();
+        $stmt = $pdo->prepare("SHOW TABLE STATUS LIKE '$table_name'");
+        $stmt->execute();
+        $tableStatus = $stmt->fetch(PDO::FETCH_ASSOC);
+    
+        return $tableStatus["Rows"];
     }
 
     // select - valid sql select part
@@ -125,7 +129,7 @@ class MySQLHandler extends DatabaseHandler
     public function ExecuteQuery($query)
     {
         $pdo = $this->GetConnection();
-        
+
         $res = $pdo->query($query);
         $result = array();
         while (($row = $res->fetch(PDO::FETCH_ASSOC))) {

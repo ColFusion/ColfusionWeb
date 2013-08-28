@@ -347,24 +347,10 @@ class QueryEngine {
             return $result->ct;
         }
         else {
-            if ($this->GetSourceType($sid) == "database") {
-                return $this->GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $table_name);
-            } else {
-                return $this->GetTotalNumberTuplesInTableBySidAndNameFromFile($sid, $table_name);
-            }
+            return $this->GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $table_name);
         }
     }
-
-    public function GetTotalNumberTuplesInTableBySidAndNameFromFile($sid, $table_name) {
-        global $db;
-
-        $res = $db->query("call doJoinWithTime('" . $sid . "','" . mysql_real_escape_string($table_name) . "')");
-        $sql = "SELECT COUNT(*) FROM resultDoJoin ";
-        $totalTuple = $db->get_var($sql);
-
-        return $totalTuple;
-    }
-
+ 
     public function GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $table_name) {
         $externalDBCredentials = $this->GetExternalDBCredentialsBySid($sid);
 
@@ -464,7 +450,7 @@ EOQ;
         $neo4JDAO = new Neo4JDAO();
 
         $neo4JDAO->addRelationship($from["sid"], $to["sid"], $rel_id, 1 - $confidence);
-   }
+    }
 
     private function AddRelationshipsToNeo4jFromRelIdsArr($rel_ids) {
         if (!isset($rel_ids))
