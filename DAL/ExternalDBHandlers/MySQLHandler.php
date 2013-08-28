@@ -4,6 +4,8 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 
 class MySQLHandler extends DatabaseHandler
 {
+    private $tableStatusCache;
+    
     public function __construct($user, $password, $database, $host, $port = 3306)
     {
         parent::__construct($user, $password, $database, $host, $port, 'myssql');
@@ -27,15 +29,14 @@ class MySQLHandler extends DatabaseHandler
     public function loadTables()
     {
         $pdo = $this->GetConnection();
-
-        $stmt = $pdo->prepare("SHOW TABLES FROM `$this->database`");
+        $stmt = $pdo->prepare("SHOW TABLES FROM `$this->database`");     
         $stmt->execute();
 
         foreach ($stmt->fetchAll() as $row) {
             $tableNames[] = $row[0];
         }
         $stmt->closeCursor();
-
+    
         return $tableNames;
     }
 
@@ -58,15 +59,22 @@ class MySQLHandler extends DatabaseHandler
     {
         return $this->prepareAndRunQuery("select * ", "$table_name", null, null, $perPage, $pageNo);
     }
-
+    
+    
+    // This function uses show table status.
+    // The number of rows is estimated.
     public function getTotalNumberTuplesInTable($table_name)
     {
-        $res = $this->prepareAndRunQuery("SELECT COUNT(*) as ct", "$table_name", null, null, null, null);
-
-        if (is_object($res[0]))
-            return $res[0]->ct;
-        else
-            return $res[0]["ct"];
+        if(!isset($this->tableStatusCache)){
+            $pdo = $this->GetConnection();
+            $stmt = $pdo->prepare("SHOW TABLE STATUS");     
+            $stmt->execute();
+            foreach ($stmt->fetchAll() as $row) {
+                $this->tableStatusCache[$row->Name] = $row;
+            }
+        }
+        
+        return $this->tableStatusCache[$tableName]->Rows;
     }
 
     // select - valid sql select part
@@ -117,7 +125,7 @@ class MySQLHandler extends DatabaseHandler
     public function ExecuteQuery($query)
     {
         $pdo = $this->GetConnection();
-
+        
         $res = $pdo->query($query);
         $result = array();
         while (($row = $res->fetch(PDO::FETCH_ASSOC))) {
@@ -168,9 +176,6 @@ class MySQLHandler extends DatabaseHandler
         }
 
         $query .= implode(", ", $columnsDefinition) . " ); ";
-
-        // var_dump($columns);
-        // var_dump($query);
 
         try {
             $pdo = $this->GetConnection();

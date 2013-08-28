@@ -4,11 +4,15 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseH
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporterFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 
 $sid = $_GET["sid"];
 $userId = $_GET["userID"];
 $dbHandler = unserialize($_POST["dbHandler"]);
 $dumpFilePath = $_POST["dumpFilePath"];
+
+// The DB where dump file is imported.
+$dbName = "colfusion_external_$sid";
 
 // "disable partial output" or
 // "enable buffering" to give out all at once later
@@ -39,34 +43,32 @@ importDataFromDumpFile($sid, $dbHandler, $userId, $dumpFilePath);
 function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath){
 
     $ktrExeDao = new KTRExecutorDAO();
-    $tables = $dbHandler->loadTables();
+    $tableNames = $dbHandler->loadTables();
 
     $logIds = array();
-    foreach($tables as $table){
-        $logIds[] = $ktrExeDao->addExecutionInfoTuple($sid, $table, $userId);
+    foreach($tableNames as $tableName){
+        $logIds[$tableName] = $ktrExeDao->addExecutionInfoTuple($sid, $tableName, $userId);
     }
 
-    try{
-        echo "start import</br>";
-        
+    try{     
         $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbHandler->getDriver(), $sid, "colfusion");
         $dbImporter->importDbData($filePath);
     
-        echo "finish import</br>";
         foreach($logIds as $logId){
             $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'success');
         }
     }
     catch(Exception $e){
-        var_dump($e->getMessage());
         foreach($logIds as $logId){
             $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'error');
             $ktrExeDao->updateExecutionInfoErrorMessage($logId, $e->getMessage());
         }
     }
-
-    foreach($logIds as $logId){
-        $ktrExeDao->updateExecutionInfoTimeEnd($logId);
+    
+    $queryEngine = new QueryEngine();
+    foreach($logIds as $tableName => $logId){
+        $numProcessed = $queryEngine->GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $tableName);
+        $ktrExeDao->updateExecutionInfoTupleAfterPanTerminated($logId, 0, '', $numProcessed, 'success');
     }
 }
 

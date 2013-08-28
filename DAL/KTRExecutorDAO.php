@@ -99,7 +99,18 @@ class KTRExecutorDAO
         }
     }
 
-    public function updateExecutionInfoTimeEnd($logID)
+    public function updateExecutionInfoTimeEnd($logID, $numProcessed)
+    {
+        $sql = "UPDATE " . table_prefix . "executeinfo SET RecordsProcessed='$numProcessed' WHERE EID= $logID";
+        try {
+            $this->ezSql->query($sql);
+        }
+        catch (Exception $e) {
+            throw new Exception("Error Processing Request. Could not execute the query", 1);
+        }
+    }
+    
+    public function updateExecutionInfoNumProcessed($logID)
     {
         $sql = "UPDATE " . table_prefix . "executeinfo SET TimeEnd=CURRENT_TIMESTAMP WHERE EID= $logID";
         try {

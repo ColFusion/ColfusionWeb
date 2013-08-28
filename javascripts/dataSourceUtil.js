@@ -2,6 +2,8 @@ var dataSourceUtil = (function() {
     var dataSourceUtil = {};
     var dataSourceCache = new Persist.Store('colfusion_datasource');
 
+    // NOTICE: This function caches table list.
+    // If data source is changed manually, make sure the cache is also cleaned.
     dataSourceUtil.getTablesList = function(sid) {
         
         var tableListCache = dataSourceCache.get('tableList_' + sid);

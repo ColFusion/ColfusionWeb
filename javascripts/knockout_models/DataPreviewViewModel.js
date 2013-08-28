@@ -52,7 +52,7 @@ function DataPreviewViewModel(sid) {
     self.isError = ko.observable(false);
     self.isNoData = ko.observable(false);
 
-    self.setTableList = function(tableList) {
+    self.setTableList = function (tableList) {
         self.tableList($.map(tableList, function(tableName) {
             return new DataPreviewViewModelProperties.TableListItem(tableName);
         }));
@@ -60,7 +60,7 @@ function DataPreviewViewModel(sid) {
     // Get all tables of a data set and choose the first table.
 
     self.getTablesList = function() {
-        dataSourceUtil.getTablesList(self.sid).done(function(data) {
+        dataSourceUtil.getTablesList(self.sid).done(function (data) {
             self.setTableList(data);
             self.chooseTable(self.tableList()[0]);
         });

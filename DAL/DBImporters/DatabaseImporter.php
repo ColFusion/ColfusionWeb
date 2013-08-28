@@ -1,4 +1,5 @@
 <?php
+
 session_start();
 
 abstract class DatabaseImporter {
@@ -22,24 +23,28 @@ abstract class DatabaseImporter {
         $this->database = $database;
         $this->password = $password;
         $this->engine = $engine;
-
+        
         $this->sqlCommandCache = $_SESSION;
     }
 
     abstract public function importDbSchema($filePath, $sqlDelimiter = "/;/");
 
     abstract public function importDbData($filePath, $sqlDelimiter = "/;/");
-
+    
     protected function execImportQuery($sql_query, $pdo) {
-
+               
         foreach ($sql_query as $sql) {
             $sql .= ';';
             $sql = trim(preg_replace('/\n/', '', $sql));
             
             if (!empty($sql)) {
-                $pdo->exec($sql);
+                $this->execOneQuery($sql, $pdo);
             }
         }
+    }
+    
+    protected function execOneQuery($sql, $pdo){
+        $pdo->exec($sql);
     }
 
     protected function parseSqlCommands($filePath, $filter_pattern = "/*/", $sqlDelimiter = "/;/"){
@@ -63,7 +68,7 @@ abstract class DatabaseImporter {
 
             if(!empty($sql)){
                 $filtered_sqlCommands[] = $sql;
-            }
+            }                    
         }
 
         return $filtered_sqlCommands;
