@@ -251,8 +251,10 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
     if (!isset($_POST["dataMatchingUserInputs"])) {
         throw new Exception("Invalid arguments");
     }
-
+        
     foreach ($ktrManagers as $filename => &$ktrManager) {
+        $dataMatchingUserInputsForATable = array();
+        
         $baseHeader = $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'];
         $sheetNamesRowsColumns = $_SESSION["ktrArguments_$sid"][$filename]["sheetNamesRowsColumns"];
 

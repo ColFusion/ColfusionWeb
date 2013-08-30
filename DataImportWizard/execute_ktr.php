@@ -3,6 +3,7 @@
 include_once '../config.php';
 include_once(mnminclude . 'user.php');
 require_once(realpath(dirname(__FILE__)) . "/ExecutionManager.php");
+require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
 
 // parent sript, called by user request from browser
 

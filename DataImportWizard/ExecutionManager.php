@@ -44,8 +44,6 @@ class ExecutionManager
         // header done, glue with data
         $msgToChild .= $postData;
 
-		//var_dump($socketToChild);
-
         // send packet no oneself www-server - new process will be created to handle our query
         fwrite($socketToChild, $msgToChild);
 

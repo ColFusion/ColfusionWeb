@@ -48,8 +48,6 @@ class KTRManager {
         $this->updatedColAndStreamNames = $dataMatchingUserInputs;
         $this->updateTargetSchemaStepColumnAndStreamName($dataMatchingUserInputs);
 
-//var_dump($this); 
-
         file_put_contents($this->ktrFilePath, $this->ktrXml->asXML());
         unset($this->ktrXml);
     }
@@ -86,9 +84,6 @@ class KTRManager {
      *         engine - name of the dbms, e.g.: mysql, mssql,...
      */
     public function getConnectionInfo() {
- 
-//var_dump($this);
-
         return $this->connectionInfo;
     }
 
@@ -97,7 +92,6 @@ class KTRManager {
      * @return String table name - the name of the sql table in the target database.
      */
     public function getTableName() {
-
         return $this->tableName;
     }
 
@@ -107,7 +101,6 @@ class KTRManager {
      */
     public function getColumns()
     {
-        //var_dump($this);
         return $this->updatedColAndStreamNames;
     }
 
@@ -297,6 +290,7 @@ class KTRManager {
     }
 
     private function updateTargetSchemaStepColumnAndStreamName(array $columnNameAndStreamName) {
+
         $steps = $this->ktrXml->step;
 
         foreach ($steps as $step) {

@@ -283,7 +283,7 @@ var koBindingHandlersRelationshipGraph = (function () {
                 koBindingHandlersRelationshipGraph.highlightPath(pathModel, relGraphElem);
 
                 $('html, body').animate({
-                    scrollTop: $(relGraphElem).offset().top
+                    scrollTop: $(relGraphElem).offset().top - 50
                 }, 1000);
 
             } else {

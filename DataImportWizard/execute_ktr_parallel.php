@@ -21,8 +21,6 @@ set_time_limit(0);
 // it could be something useful like client ID or just "OK"
 echo "OKKKK";
 
-//var_dump($sid,$logId,$ktrManager, $db);
-
 // push buffer to parent
 ob_flush();
 
