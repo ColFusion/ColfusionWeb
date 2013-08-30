@@ -105,7 +105,7 @@ var koBindingHandlersRelationshipGraph = (function () {
     var koBindingHandlersRelationshipGraph = {};
 
     koBindingHandlersRelationshipGraph.defaultNodeCss = {
-        'content': 'data(name)',
+        'content': 'data(graphLabel)',
         'class': 'node datasetNode',
         'font-family': 'helvetica',
         'font-size': 14,
@@ -127,7 +127,7 @@ var koBindingHandlersRelationshipGraph = (function () {
 
     koBindingHandlersRelationshipGraph.getCyGraphElements = function (allPaths) {
 
-        var allDatasets = [];
+        var allDatasetTableCombs = [];
         $.each(allPaths, function (i, path) {
             for (var j = 0; j < path.relationships.length; j++) {
                 var relationship = path.relationships[j];
@@ -135,11 +135,20 @@ var koBindingHandlersRelationshipGraph = (function () {
                 relationship.sidFrom.name = relationship.sidFrom.sidTitle;
                 relationship.sidTo.name = relationship.sidTo.sidTitle;
 
-                allDatasets.push(relationship.sidFrom);
-                allDatasets.push(relationship.sidTo);
+                var fromDTComb = relationship.sidFrom;
+                fromDTComb.id = fromDTComb.sid + '(' + fromDTComb.tableName + ')';
+                fromDTComb.graphLabel = fromDTComb.sidTitle + ' (' + fromDTComb.tableName + ')';
+
+                var toDTComb = relationship.sidTo;
+                toDTComb.id = toDTComb.sid + '(' + toDTComb.tableName + ')';
+                toDTComb.graphLabel = toDTComb.sidTitle + ' (' + toDTComb.tableName + ')';
+
+                allDatasetTableCombs.push(fromDTComb);
+                allDatasetTableCombs.push(toDTComb);
             }
         });
-        var distinctDatasets = generalUtil.convertArrayToSet('sid', allDatasets);
+        var distinctDatasetTableCombs = generalUtil.convertArrayToSet('id', allDatasetTableCombs);
+        console.log(distinctDatasetTableCombs);
 
         var allRelationships = [];
         $.each(allPaths, function (i, path) {
@@ -149,8 +158,8 @@ var koBindingHandlersRelationshipGraph = (function () {
         });
         var distinctRelationships = generalUtil.convertArrayToSet('relId', allRelationships);
 
-        var nodes = $.map(distinctDatasets, function (dataset, i) {
-            dataset.id = String(dataset.sid);
+        var nodes = $.map(distinctDatasetTableCombs, function (dataset, i) {
+            // dataset.id = String(dataset.sid);
             return {
                 group: 'nodes',
                 data: dataset,
@@ -160,8 +169,8 @@ var koBindingHandlersRelationshipGraph = (function () {
 
         var edges = $.map(distinctRelationships, function (relationship) {
             relationship.id = String(relationship.relId);
-            relationship.source = String(relationship.sidFrom.sid);
-            relationship.target = String(relationship.sidTo.sid);
+            relationship.source = String(relationship.sidFrom.sid + '(' + relationship.sidFrom.tableName + ')');
+            relationship.target = String(relationship.sidTo.sid + '(' + relationship.sidTo.tableName + ')');
 
             return {
                 group: 'edges',
@@ -317,7 +326,7 @@ var koBindingHandlersRelationshipGraph = (function () {
             .selector('edge').css(koBindingHandlersRelationshipGraph.defaultEdgeCss)
             .selector('node' + nodeFilterString).css({
                 'background-color': '#FFAC59',
-                'content': 'data(name)',
+                'content': 'data(graphLabel)',
                 'class': 'node datasetNode',
                 'font-family': 'helvetica',
                 'font-size': 14,
