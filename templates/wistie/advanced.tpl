@@ -7,12 +7,12 @@
             <tr style="width: 100%">
                 <td style="width: 80px !important;">Search for: </td>
                 <td>
-                    <input data-bind="value: searchTerm, event: {keyup: function(model, e){if(e.keyCode == 13)model.search();}}"  
+                    <input data-bind="value: searchTerm, event: {keyup: function(model, e){if(e.keyCode == 13)model.search();}}"
                         data-required="true" type="text" id="search" style="width: 100%" />
                 </td>
             </tr>
         </table>
-        <table data-bind="foreach: filters" id="conditionTable" style="width: 100%; display: none;">
+        <table data-bind="foreach: whereConditions" id="conditionTable" style="width: 100%; display: none;">
             <tr style="width: 100%">
                 <td data-bind="text: $index() == 0? 'Where' : 'And'" style="width: 80px !important;">Where</td>
                 <td>
@@ -36,10 +36,10 @@
                 </td>
                 <td style="text-align: right;">
                     <!-- ko if: $index() == 0 -->
-                    <i data-bind="click: $parent.addFilter" class="icon-plus addFilterBtn"></i>
+                    <i data-bind="click: $parent.addWhereCondition" class="icon-plus addFilterBtn"></i>
                     <!-- /ko -->
                     <!-- ko ifnot: $index() == 0 -->
-                    <i data-bind="click: $parent.removeFilter" class="icon-remove-sign removeFilterBtn"></i>
+                    <i data-bind="click: $parent.removeWhereCondition" class="icon-remove-sign removeFilterBtn"></i>
                     <!-- /ko -->
                 </td>
             </tr>
@@ -55,8 +55,8 @@
             <tr>
                 <td colspan="2">
                     <input data-bind="click: search" type="button" value="Search" />
-                    <img data-bind="visible: isSearching" style="margin-left: 5px;" src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif"/>
-                </td>               
+                    <img data-bind="visible: isSearching" style="margin-left: 5px;" src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />                   
+                </td>
             </tr>
         </table>
     </form>
@@ -139,8 +139,37 @@
         <div class="stories pathResult">
             <div class="searchResultBody" style="overflow: auto;">
                 <div class="searchResultProfile">
+                    
+                    <div class="sliderFilterContainer">
+                        <div class="sliderFilterLabelContainer">                          
+                            <table id="sliderFilterLabelTable">
+                                <tr>
+                                    <td class="labelTitle">Avg Confidence</td>
+                                    <td class="gtMark">&gt;=</td>
+                                    <td data-bind="text: confidenceFilter()"></td>
+                                </tr>
+                                <tr>
+                                    <td class="labelTitle">Path Length</td>
+                                    <td class="gtMark" style="color: red">&lt;=</td>
+                                    <td data-bind="text: pathFilter()"></td>
+                                </tr>
+                                <tr>
+                                    <td class="labelTitle">Data Matching</td>
+                                    <td class="gtMark">&gt;=</td>
+                                    <td data-bind="text: dataMatchFilter() + '%'"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="sliderFilterSliderContainer">
+                            <div data-bind="slider: confidenceFilter, sliderOptions: {min: 0, max: 1, step: 0.1}" id="confidenceSliderFilter" class="sliderFilter"></div>
+                            <div data-bind="slider: pathFilter, sliderOptions: {value: 10, min: 0, max: 10, step: 1}" id="pathSliderFilter" class="sliderFilter"></div>
+                            <div data-bind="slider: dataMatchFilter, sliderOptions: {min: 0, max: 100, step: 10}" id="dataMatchSliderFilter" class="sliderFilter"></div>
+                        </div>
+                        <button data-bind="click: filterSearchResults" style="margin-top: 5px;">Refresh</button>
+                    </div>
+
                     <div data-bind="foreach: paths" class="paths">
-                        <div data-bind="with: pathObj" class="path">
+                        <div data-bind="visible: isFilterSatisfied, with: pathObj" class="path">
 
                             <div class="pathBody">
 
@@ -233,9 +262,9 @@
                             </div>
 
                         </div>
-                    </div>                   
+                    </div>
                 </div>
-                
+
                 <div class="graphTitle">Relationship Graph:</div>
                 <div data-bind="relationshipGraph: paths"></div>
             </div>
@@ -312,7 +341,7 @@
     .<span data-bind="text:  $data.tableName"></span>
 </script>
 
-<form id="dataMatchCheckingForm" target="_blank" method="post" action="{/literal}{$my_pligg_base}{literal}/dataMatchChecker/dataMatchChecker.php" style="display:none;">
+<form id="dataMatchCheckingForm" target="_blank" method="post" action="{/literal}{$my_pligg_base}{literal}/dataMatchChecker/dataMatchChecker.php" style="display: none;">
     <input type="hidden" name="fromSid" value="2122">
     <input type="hidden" name="toSid" value="2121">
     <input type="hidden" name="fromTable" value="s6.xlsx">

@@ -76,3 +76,36 @@
 .hideCommentText, .seeCommentText {
     margin-left: 280px !important;
 }
+
+.sliderFilter {
+    margin-bottom: 10px;
+}
+
+.sliderFilterContainer {
+    width: 51%;
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
+
+.sliderFilterLabelContainer {
+    float: left;
+    width: 50%;
+}
+
+.sliderFilterSliderContainer {
+    float: right;
+    width: 50%;
+    font-size: 0.8em;
+}
+
+#sliderFilterLabelTable td {
+    height: 20px;
+}
+
+.labelTitle {
+    padding-right: 10px;
+}
+
+.gtMark {
+    padding-right: 5px;
+}

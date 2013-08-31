@@ -15,6 +15,8 @@ $fromTransInput = $_POST["fromTransInput"];
 $toTransInput = $_POST["toTransInput"];
 $action = $_POST["action"];
 
+print_r($_POST);
+
 $transHandler = new TransformationHandler();
 $encodedFromTrans = $transHandler->encodeTransformationInput($fromSid, $fromTable, $fromTransInput);
 $fromCids = $transHandler->getWrappedCids($encodedFromTrans);

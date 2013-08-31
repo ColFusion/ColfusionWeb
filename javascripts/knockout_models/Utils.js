@@ -41,6 +41,7 @@ ko.bindingHandlers.slider = {
     init: function (element, valueAccessor, allBindingsAccessor) {
         var options = allBindingsAccessor().sliderOptions || {};
         $(element).slider(options);
+
         ko.utils.registerEventHandler(element, "slidechange", function (event, ui) {
             var observable = valueAccessor();
             observable(ui.value);
@@ -148,7 +149,6 @@ var koBindingHandlersRelationshipGraph = (function () {
             }
         });
         var distinctDatasetTableCombs = generalUtil.convertArrayToSet('id', allDatasetTableCombs);
-        console.log(distinctDatasetTableCombs);
 
         var allRelationships = [];
         $.each(allPaths, function (i, path) {
@@ -286,7 +286,7 @@ var koBindingHandlersRelationshipGraph = (function () {
         $(highlightPathBtn).click(function () {
 
             if (!$(this).hasClass('active')) {
-                
+
                 $(pathElems).find('.buttonPanel').find('.highlightPathBtn').removeClass('active');
                 $(this).addClass('active');
                 koBindingHandlersRelationshipGraph.highlightPath(pathModel, relGraphElem);
@@ -296,10 +296,10 @@ var koBindingHandlersRelationshipGraph = (function () {
                 }, 1000);
 
             } else {
-                
+
                 $(this).removeClass('active');
                 koBindingHandlersRelationshipGraph.restoreToDefaultStyle(relGraphElem);
-                
+
             }
 
         });

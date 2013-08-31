@@ -1,7 +1,8 @@
 ﻿var advDebug = false;
 
 var AdvancedSearchViewModelProperties = {
-    Filter: function () {
+
+    WhereCondition: function () {
         var self = this;
 
         self.variable = ko.observable();
@@ -42,16 +43,28 @@ var AdvancedSearchViewModelProperties = {
     PathSearchResult: function (resultObj) {
         var self = this;
 
+        self.confidenceFilter = ko.observable(0);
+        self.pathFilter = ko.observable(0);
+        self.dataMatchFilter = ko.observable(0);
+
         self.resultObj = resultObj;
         self.paths = ko.observableArray();
 
+        self.filterSearchResults = function () {
+            ko.utils.arrayForEach(self.paths(), function (path) {               
+                path.isFilterSatisfied(path.avgConfidence() >= self.confidenceFilter() && path.pathObj.sids.length >= self.pathFilter());
+            });
+        };
+
         $.each(resultObj.allPaths, function (i, pathObj) {
             self.paths.push(new AdvancedSearchViewModelProperties.Path(pathObj));
-        });            
+        });
     },
 
     Path: function (pathObj) {
         var self = this;
+
+        self.isFilterSatisfied = ko.observable(true);
 
         // Neo4j returns redundancy relationshps.
         // Here remove redundant ones.       
@@ -70,7 +83,7 @@ var AdvancedSearchViewModelProperties = {
         self.isPreviewShown = ko.observable(false);
         self.isMoreShown = ko.observable(false);
         self.isRelInfoShown = ko.observable(false);
-        
+
         self.dataPreviewViewModel = ko.observable();
 
         self.isRelationshipInfoLoaded = {};
@@ -122,7 +135,7 @@ var AdvancedSearchViewModelProperties = {
                 self.isError[relId](true);
             });
         }
-        
+
         self.openVisualizationPage = function (item, event) {
             $('#visualizationDatasetSerializeInput').val(JSON.stringify(self.pathObj));
             $('#visualizationDatasetSerializeForm').submit();
@@ -134,8 +147,8 @@ function AdvancedSearchViewModel() {
     var self = this;
 
     self.searchTerm = ko.observable();
-    self.filters = ko.observableArray();
-    self.filters.push(new AdvancedSearchViewModelProperties.Filter());
+    self.whereConditions = ko.observableArray();
+    self.whereConditions.push(new AdvancedSearchViewModelProperties.WhereCondition());
     self.category = ko.observable();
 
     self.isSearching = ko.observable(false);
@@ -143,12 +156,12 @@ function AdvancedSearchViewModel() {
     self.searchResults = ko.observableArray();
     self.isSearchError = ko.observable(false);
 
-    self.addFilter = function () {
-        self.filters.push(new AdvancedSearchViewModelProperties.Filter());
+    self.addWhereCondition = function () {
+        self.whereConditions.push(new AdvancedSearchViewModelProperties.WhereCondition());
     };
 
-    self.removeFilter = function () {
-        self.filters.remove(this);
+    self.removeWhereCondition = function () {
+        self.whereConditions.remove(this);
     };
 
     self.search = function () {
@@ -164,29 +177,29 @@ function AdvancedSearchViewModel() {
             return searchKey.trim();
         });
 
-        var filterVariables = $.map(self.filters(), function (filter) {
-            return filter.variable();
+        var whereConditionVariables = $.map(self.whereConditions(), function (whereCondition) {
+            return whereCondition.variable();
         });
 
-        var filterConditions = $.map(self.filters(), function (filter) {
-            return filter.condition();
+        var whereConditionConditions = $.map(self.whereConditions(), function (whereCondition) {
+            return whereCondition.condition();
         });
 
-        var filterValues = $.map(self.filters(), function (filter) {
-            return filter.value();
+        var whereConditionValues = $.map(self.whereConditions(), function (whereCondition) {
+            return whereCondition.value();
         });
 
         self.isSearching(true);
         self.isSearchError(false);
         self.isNoResultTextShown(false);
-        
+
         $.ajax({
             url: advDebug ? 'advSearch.json' : 'searchResult.php',
             data: {
                 "search[]": searchKeys,
-                "variable[]": filterVariables,
-                "select[]": filterConditions,
-                "condition[]": filterValues
+                "variable[]": whereConditionVariables,
+                "select[]": whereConditionConditions,
+                "condition[]": whereConditionValues
             },
             type: 'post',
             dataType: 'json',
@@ -199,15 +212,16 @@ function AdvancedSearchViewModel() {
                 });
                 self.isNoResultTextShown(true);
             },
-            error: function() {
+            error: function () {
                 self.isSearchError(true);
             }
-        }).always(function() {
+        }).always(function () {
             self.isSearching(false);
         });
     };
 
     // Adapt to story-page-based relationship info template.
-    self.removeRelationship = function() {
+    // TODO: implement.
+    self.removeRelationship = function () {
     };
 }
