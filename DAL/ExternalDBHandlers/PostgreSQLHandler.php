@@ -46,21 +46,14 @@ class PostgreSQLHandler extends DatabaseHandler {
     	return $this->prepareAndRunQuery("select * ", " $table_name ", null, null, null, $perPage, $pageNo);
     }
 
-    public function getTotalNumberTuplesInTable($table_name) {
-        $res = $this->prepareAndRunQuery("SELECT COUNT(*) as ct", "$table_name", null, null, null, null);
-
-        if (is_object($res[0]))
-            return $res[0]->ct;
-        else
-            return $res[0]["ct"];
-
-        // $pdo = $this->GetConnection();
-        // $stmt = $pdo->prepare("SELECT COUNT(*) as ct FROM \"$table_name\"");
-        // $stmt->execute();
-        // $row = $stmt->fetch(PDO::FETCH_BOTH);
-        // $tupleNum = (int) $row[0];
-        // $stmt->closeCursor();
-        // return $tupleNum;
+    public function getTotalNumberTuplesInTable($table_name) {     
+        $pdo = $this->GetConnection();
+        $stmt = $pdo->prepare("SELECT reltuples FROM pg_class WHERE relname = '$table_name';");
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_BOTH);
+        $tupleNum = (int) $row[0];
+        $stmt->closeCursor();
+        return $tupleNum;
     }
 
 
