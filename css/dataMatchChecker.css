@@ -92,13 +92,13 @@
 }
 
 #navListContainer .link .fromPart {
-    width: 50%;
+    width: 48.5%;
     float: left;
     background-color: #EFF3FB;
 }
 
 #navListContainer .link .toPart {
-    width: 50%;
+    width: 48.5%;
     float: right;
     background-color: #FFEEBB;
 }
