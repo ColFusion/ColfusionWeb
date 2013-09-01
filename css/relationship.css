@@ -1,4 +1,4 @@
-.relationshipInfo{
+.relationshipInfo {
     background-color: white;
 }
 
@@ -6,76 +6,99 @@
     width: 100%;
 }
 
-.relProfile td, .linkProfileTable td{
-    background-color: white;
-    border-width: 0;
-    border-color: white;
-    font-size: 14px !important;
-    padding: 5px;
-}
+    .relProfile td, .linkProfileTable td {
+        background-color: white;
+        border-width: 0;
+        border-color: white;
+        font-size: 14px !important;
+        padding: 5px;
+    }
 
-.relProfile .profileHeader{
+    .relProfile .profileHeader {
+        width: 15%;
+        vertical-align: top;
+        font-weight: bold;
+    }
+
+.linkProfileTable .linkProfileHeader {
     width: 15%;
-    vertical-align: top;
-    font-weight: bold;
 }
 
-.linkProfileTable .linkProfileHeader{
-    width: 15%;
-}
-
-.relProfile .profileContent{
+.relProfile .profileContent {
     width: 80%;
     word-break: break-all;
 }
 
-.linkProfileTable .linkProfileContent{
+.linkProfileTable .linkProfileContent {
     width: 75%;
 }
 
-.linkProfileContainer{
+.linkProfileContainer {
     overflow: auto;
     margin-top: 20px;
 }
 
-.linkProfileContainer .linkProfile {
-    width: 50%;
-}
+    .linkProfileContainer .linkProfile {
+        width: 48.5%;
+    }
 
-.linkProfileContainer .fromProfile{
-    float: left;
-}
+    .linkProfileContainer .fromProfile {
+        float: left;
+    }
 
-.linkProfileContainer .toProfile{
-    float: left;
-}
+    .linkProfileContainer .toProfile {
+        float: left;
+    }
 
 .linkProfileContent a {
     color: black;
 }
 
-.links {
-    padding: 0px 8px 18px 5px;
+.relationshipInfoContainer .links {
+    padding: 0 0 18px 5px;
     border-width: 0;
 }
 
-.links, .link{
+.relationshipInfoContainer .links, .relationshipInfoContainer .link {
     overflow: auto;
 }
 
-.links .link{
-    margin-top: 8px;
+    .links .link {
+        margin-top: 8px;
+    }
+
+    .link > div {
+        display: inline-block;
+        vertical-align: middle;
+    }
+
+.isUsedForMergeWrapper {
+    width: 2%;
 }
 
-.links .link .linkPart{
+.mergePercentageTextWrapper {
+    width: 4.5%;
+    height: 30px;
+    border: solid 1px #aaaaaa;
+}
+
+.mergePercentageText {
+    text-align: center;
+    padding-top: 8px;
+}
+
+.fromLinkPartWrapper, .toLinkPartWrapper {
+    width: 46%;
+}
+
+.links .link .linkPart {
     min-height: 35px;
     overflow: auto;
     display: table;
 }
 
-.links .link .fromPart{
-    width: 50.4%;
-    float: left;
+.links .link .fromPart {
+    width: 100%;
     background-color: #EFF3FB;
     -webkit-border-top-left-radius: 10px;
     -webkit-border-bottom-left-radius: 10px;
@@ -85,9 +108,8 @@
     border-bottom-left-radius: 10px;
 }
 
-.links .link .toPart{
-    width: 49.6%;
-    float:right;
+.links .link .toPart {
+    width: 100%;
     background-color: #FFEEBB;
     -webkit-border-top-right-radius: 10px;
     -webkit-border-bottom-right-radius: 10px;
@@ -97,7 +119,7 @@
     border-bottom-right-radius: 10px;
 }
 
-.links .link .linkPartText{
+.links .link .linkPartText {
     display: table-cell;
     vertical-align: middle;
     padding-left: 8px;
@@ -108,18 +130,18 @@
     background-color: #edeff4;
 }
 
-.seeCommentsContainer a{
-    display: inline-block;
-    margin-left: auto;
-    margin-right: auto;
-    color: #CC6600;
-    margin: 5px 0 0 380px;
-}
+    .seeCommentsContainer a {
+        display: inline-block;
+        margin-left: auto;
+        margin-right: auto;
+        color: #CC6600;
+        margin: 5px 0 0 380px;
+    }
 
-.seeCommentsContainer a:hover{
-    color: #E0A366;
-    cursor: pointer;
-}
+        .seeCommentsContainer a:hover {
+            color: #E0A366;
+            cursor: pointer;
+        }
 
 .comment {
     min-height: 60px;
@@ -130,7 +152,7 @@
     padding-bottom: 15px;
 }
 
-.confidenceContainer{
+.confidenceContainer {
     float: left;
     width: 8%;
     overflow: auto;
@@ -160,7 +182,7 @@
     margin-bottom: 0 !important;
 }
 
-.commentBody{
+.commentBody {
     float: right;
     width: 90.3%;
     overflow: auto;
@@ -179,27 +201,27 @@
     display: inline-block;
 }
 
-.userName{
+.userName {
     font-weight: bold;
 }
 
-.userName a {
-    color: black;
-}
+    .userName a {
+        color: black;
+    }
 
 .commentControlPanel {
     display: inline-block;
 }
 
-.commentControlPanel i{
-    margin-left: 4px;
-}
+    .commentControlPanel i {
+        margin-left: 4px;
+    }
 
-.commentControlPanel i:hover{
-    cursor: pointer;
-}
+        .commentControlPanel i:hover {
+            cursor: pointer;
+        }
 
-.commentTime{
+.commentTime {
     float: right;
     margin-right: 10px;
     color: grey;
@@ -221,7 +243,7 @@
     background-color: white;
 }
 
-.addCommentContainer{
+.addCommentContainer {
     height: 50px;
     border-bottom: solid 1px #dbdbdb;
     font-size: 14px;

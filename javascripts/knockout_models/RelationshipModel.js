@@ -27,7 +27,9 @@ var RelationshipModel = {
         self.fromDataset = ko.observable(createDatasetModel(relJson.fromDataset, relJson.fromTableName));
         self.toDataset = ko.observable(createDatasetModel(relJson.toDataset, relJson.toTableName));
 
-        self.links = ko.observableArray(relJson.links);
+        self.links = ko.observableArray($.map(relJson.links, function (linkObj) {
+            return new RelationshipModel.RelInfoLink(linkObj);
+        }));
 
         self.avgConfidence = ko.observable(relJson.avgConfidence);
 
@@ -101,7 +103,7 @@ var RelationshipModel = {
 
             var avgConfidence = totalConfidence / numOfFeedback;
             self.avgConfidence(avgConfidence);
-            
+
             var relationshipTableDom = $('#mineRelationshipsTableWrapper').find('#relationship_' + self.rid);
             $(relationshipTableDom).find('.numOfVerdicts').text(numOfFeedback);
             $(relationshipTableDom).find('.avgConfidence').text((avgConfidence * 100 / 100).toFixed(2));
@@ -241,12 +243,12 @@ var RelationshipModel = {
     },
     DataSet: function (sid) {
         var self = this;
-        
+
         self.sid = ko.observable(sid);
         self.name = ko.observable('');
         self.tableList = ko.observableArray();
         self.chosenTableName = ko.observable().extend({ withPrevious: 'option' });
-        
+
         // shownTableName does not trigger load table info event.
         self.shownTableName = ko.observable();
         self.currentTable = ko.observable();
@@ -368,8 +370,21 @@ var RelationshipModel = {
 
         self.mapFromRawDataColumn(rawDataColumn);
     },
+
+    // Link is for newRelationshipModel, RelInfoLink is for relationshipInfo
+    RelInfoLink: function (linkObj) {
+        var self = this;
+
+        self.isSelectedForMerge = ko.observable(true);
+
+        self.fromLinkPart = ko.observable(linkObj.fromPart);
+        self.toLinkPart = ko.observable(linkObj.toPart);
+    },
     Link: function (fromDataSet, toDataSet) {
         var self = this;
+
+        self.isSelectedForMerge = ko.observable(true);
+
         self.fromLinkPart = ko.observable(new RelationshipModel.LinkPart(fromDataSet));
         self.toLinkPart = ko.observable(new RelationshipModel.LinkPart(toDataSet));
     },

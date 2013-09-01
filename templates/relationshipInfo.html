@@ -8,9 +8,11 @@
             <td rowspan="2" style="vertical-align: top;">
                 <button data-bind="click: checkDataMatching" class="btn" style="width: 180px;">Check Data Matching</button>
             </td>
+            <!-- ko if: document.URL.indexOf('advanced.php') < 0 -->
             <td class="removeRelBtnWrapper" data-bind="visible: isOwned()" style="vertical-align: top;" rowspan="2">
                 <button data-bind="click: $root.removeRelationship.bind($data, rid)" class="btn btn-danger deleteRelBtn">Delete</button>
             </td>
+             <!-- /ko -->
         </tr>
         <tr>
             <td class="profileHeader">Creator:</td>
@@ -50,11 +52,21 @@
     </div>
     <div data-bind="foreach: links" class="links">
         <div class="link">
-            <div class="fromPart linkPart">
-                <span data-bind="text: fromPart" class="linkPartText"></span>
+            <div class="isUsedForMergeWrapper">
+                <input data-bind="checked: isSelectedForMerge" type="checkbox" class="isUsedForMerge" />
             </div>
-            <div class="toPart linkPart">
-                <span data-bind="text: toPart" class="linkPartText"></span>
+            <div class="fromLinkPartWrapper">
+                <div class="fromPart linkPart">
+                    <span data-bind="text: fromLinkPart" class="linkPartText"></span>
+                </div>
+            </div>
+            <div class="toLinkPartWrapper">
+                <div class="toPart linkPart">
+                    <span data-bind="text: toLinkPart" class="linkPartText"></span>
+                </div>
+            </div>
+            <div class="mergePercentageTextWrapper">
+                <div data-bind="bootstrapTooltip: '70%'" class="mergePercentageText">Percentage of matched data.</div>
             </div>
         </div>
     </div>

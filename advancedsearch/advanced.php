@@ -13,7 +13,20 @@
     <link rel="stylesheet" href="../css/relationship.css" />
     <link rel="stylesheet" href="../css/addRelationship.css" />
     <link rel="stylesheet" href="../css/relGraph.css" />
-      
+    <style>        
+        .fromLinkPartWrapper, .toLinkPartWrapper {
+            width: 45%;
+        }
+        
+        .mergePercentageTextWrapper {
+            width: 5%;
+        }
+        
+        .linkProfileContainer .linkProfile {
+            width: 48.1%;
+        }
+    </style>
+
     <script type="text/javascript" src="../javascripts/classify.min.js"></script>
     <script type="text/javascript" src="../javascripts/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="../javascripts/jquery-ui-1.10.3.custom.min.js"></script>

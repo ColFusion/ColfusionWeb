@@ -1,6 +1,13 @@
+/* 
+This binding handler init tooltip by using the content in elem as tooltip's text, 
+and replace the content with binding value.
+
+If 'tooltipDynamicValues' is specified (elem id-value pair object), 
+the original content will be replace with new value before moved into tooltip.
+*/ 
 ko.bindingHandlers.bootstrapTooltip = {
     init: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-
+     
         // Replace value in html using id
         var tooltipDynamicValues = allBindingsAccessor().tooltipDynamicValues || {};
         for (id in tooltipDynamicValues) {
