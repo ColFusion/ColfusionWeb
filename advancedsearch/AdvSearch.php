@@ -72,7 +72,6 @@ class AdvSearch {
 // var_dump($sids);
 // echo "\n";
 
-
 		$result = $this->getRelationshipToJoin($sids);
 
 		$result = $this->getMoreInfoForEachRel($result);
