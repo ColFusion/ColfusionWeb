@@ -86,7 +86,7 @@ class AdvSearch {
 		
 		$inCrit = implode("','", $chunks);
 
-		$sql = "select distinct di.sid from colfusion_dnameinfo di, colfusion_sourceinfo si where dname_chosen in ('$inCrit') or dname_original_name in ('$inCrit') and di.sid = si.sid and si.Status = 'queued';";
+		$sql = "select distinct di.sid from colfusion_dnameinfo di, colfusion_sourceinfo si where (dname_chosen in ('$inCrit') or dname_original_name in ('$inCrit')) and di.sid = si.sid and si.Status = 'queued';";
         
 //echo $sql;
 

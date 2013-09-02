@@ -53,6 +53,8 @@ class MergedDataSetQueryMaker {
            $result->finalQuery = $this->wrapInLimit($this->pageNo, $this->perPage, "(" . $result->finalQuery . ") as b");
         }
 
+//var_dump($result);
+
         return $result;
     }
 
@@ -116,7 +118,14 @@ class MergedDataSetQueryMaker {
         $result->fromQuery = " from " . $this->GetFromPartBySidAndTableArray($sidsAndTablesNeeded);
 
 
-        $result->whereJoinQuery = " where " . $this->GetWherePartFromRelationshipsArray($this->inputObj->relationships);
+        $joinPart = $this->GetWherePartFromRelationshipsArray($this->inputObj->relationships);
+
+        if (strlen($joinPart) > 0) {
+            $result->whereJoinQuery = " where " . $joinPart;
+        }
+        else {
+             $result->whereJoinQuery = " ";
+        }
 
         $result->whereUserConditions = "";
 
@@ -213,6 +222,15 @@ class MergedDataSetQueryMaker {
         $dataMatchingCheckerDAO = new DataMatchingCheckerDAO();
 
         foreach ($links as $key => $link) {
+
+            if (isset($relationship->selectedLinks)) { //no selected property might be setup because, in case we just use all links
+                $shouldBeIncluded = $this->isLinkSelected($link, $relationship->selectedLinks);
+
+                if (!$shouldBeIncluded) {
+                    continue;
+                }
+            }
+
             $condition = " [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$link->fromPart}] = [{$relationship->sidTo->tableName}{$relationship->sidTo->sid}].[{$link->toPart}] ";
 
             $encodeToDecodeMap = array($link->fromPartEncoded => $link->fromPart, $link->toPartEncoded => $link->toPart);
@@ -242,6 +260,20 @@ class MergedDataSetQueryMaker {
         }
 
         return implode(" and ", $conditionsArr);
+    }
+
+    private function isLinkSelected($link, $selectedLinks) 
+    {
+        if (!isset($selectedLinks))
+            return true;
+
+        foreach ($selectedLinks as $key => $selectedLink) {
+            if ($selectedLink->fromPartEncoded == $link->fromPartEncoded && $selectedLink->toPartEncoded == $link->toPartEncoded) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function getFromPartAsFromDatabase($sidAndTable) {
