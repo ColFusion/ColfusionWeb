@@ -119,14 +119,12 @@ var AdvancedSearchViewModelProperties = {
                     });
                 }
             });
-
-            console.log(dataObj);
-
+           
             if (!self.dataPreviewViewModel()) {
                 self.dataPreviewViewModel(new DataPreviewViewModel(-1));
                 self.dataPreviewViewModel().getTableDataByObject(dataObj, 10, 1);
             }
-
+            
             self.isPreviewShown(!self.isPreviewShown());
         };
 

@@ -15,7 +15,7 @@
     <link rel="stylesheet" href="../css/relGraph.css" />
     <style>        
         .fromLinkPartWrapper, .toLinkPartWrapper {
-            width: 45%;
+            width: 42%;
         }
         
         .mergePercentageTextWrapper {
