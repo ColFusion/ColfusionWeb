@@ -12,6 +12,8 @@ class DataMatcher
 {
 	
 	public function CheckDataMatching($from, $to) {
+
+		var_dump($from, $to);
 		$dataMatchExecutor = new DataMatchExecutor();
 
 		return $dataMatchExecutor->CheckDataMatching($from, $to);
@@ -21,11 +23,11 @@ class DataMatcher
     // source is an object {sid:, tableName, links:[]}
     // links are columns or transformations
     // $searchTerms is an associated array where keys are the links and values are search terms for associated links.
-    public function GetDistinctForColumns($source, $perPage, $pageNo, $searchTerms = null) {
+    public function GetDistinctForColumns($dataMatcherLinkOnePart, $perPage, $pageNo, $searchTerms = null) {
 
         $dataMatchExecutor = new DataMatchExecutor();
 
-		return $dataMatchExecutor->GetDistinctForColumns($source, $perPage, $pageNo, $searchTerms);
+		return $dataMatchExecutor->GetDistinctForColumns($dataMatcherLinkOnePart, $perPage, $pageNo, $searchTerms);
     }
 
     /**

@@ -16,7 +16,7 @@ class CheckdataMatchingQueryMaker {
     private $toQuery;
 
     public function __construct($from, $to) {
-        if (count($from->links) != count($to->links)) {
+        if (count($from->transformation) != count($to->transformation)) {
             throw new Exception("Number of links in from and to are not the same.");
         }
 
@@ -77,10 +77,10 @@ class CheckdataMatchingQueryMaker {
            
         SELECT value
         FROM [$linkedServerName]...[colfusion_synonyms_$direction] as syn
-        WHERE syn.sid = {$source1->sid} AND syn.tableName = '{$source1->tableName}' AND syn.transInput = '{$source1->links[0]}'
+        WHERE syn.sid = {$source1->sid} AND syn.tableName = '{$source1->tableName}' AND syn.transInput = '{$source1->transformation}'
               AND syn.syn_id in (SELECT syn_id
                                  FROM [$linkedServerName]...[colfusion_synonyms_$opositeDirection] as syn2
-                                 WHERE syn2.sid = {$source2->sid} AND syn2.tableName = '{$source2->tableName}' AND syn2.transInput = '{$source2->links[0]}'
+                                 WHERE syn2.sid = {$source2->sid} AND syn2.tableName = '{$source2->tableName}' AND syn2.transInput = '{$source2->transformation}'
                                 )
 EOQ;
     
@@ -119,11 +119,11 @@ EOQ;
         $columnNameAndAliasArray = array();
         $columnAliasArray = array();
 
-        foreach ($source->links as $key=>$link) {
+     //   foreach ($source->transformation as $key=>$transformation) {
             //TODO: fix, currently only one column, no transformation is supported.
             $ar = array("cid(", ")");                
-            $cidsArray[] = str_replace($ar, "", $link);
-            $columnName = $transHandler->decodeTransformationInput($link, true); // DALUtils::decodeLinkPart($link, $usedColumnNames);
+            $cidsArray[] = str_replace($ar, "", $source->transformation);
+            $columnName = $transHandler->decodeTransformationInput($source->transformation, true); // DALUtils::decodeLinkPart($link, $usedColumnNames);
             $columnNamesArray[] = "[" . $columnName . "]";
            // $columnAlias = "column$i";
             $i += 1;
@@ -134,7 +134,7 @@ EOQ;
                 $columnNameAndAliasArray[] = "[" . $columnName . "]";
 
             $columnAliasArray[] = $columnAlias;
-        }
+    //    }
 
         $result = new stdClass;
         $result->cids = implode(",", array_values($cidsArray));

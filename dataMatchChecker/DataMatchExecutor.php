@@ -72,9 +72,9 @@ class DataMatchExecutor
 	 // source is an object {sid:, tableName, links:[]}
     // links are columns or transformations
     // $searchTerms is an associated array where keys are the links and values are search terms for associated links.
-    public function GetDistinctForColumns($source, $perPage, $pageNo, $searchTerms = null) {
+    public function GetDistinctForColumns($dataMatcherLinkOnePart, $perPage, $pageNo, $searchTerms = null) {
 
-        $from = (object) array('sid' => $source->sid, 'tableName' => "[{$source->tableName}]");
+        $from = (object) array('sid' => $dataMatcherLinkOnePart->sid, 'tableName' => "[{$dataMatcherLinkOnePart->tableName}]");
         $fromArray = array($from);
 
         $transHandler = new TransformationHandler();
@@ -84,15 +84,15 @@ class DataMatchExecutor
 
         $whereArray = array();
 
-        foreach ($source->links as $key=>$link) {
+        foreach ($dataMatcherLinkOnePart->transformation as $key=>$transformation) {
 
-            $column = $transHandler->decodeTransformationInput($link, true);
+            $column = $transHandler->decodeTransformationInput($transformation, true);
             $columnNames[] = "[$column]";
             $columnNamesNoBrack[] = $column;
 
             if (isset($searchTerms)) {
-                if (isset($searchTerms[$link])) {
-                    $whereArray[] = " [$column] like '%" . $searchTerms[$link] . "%' ";
+                if (isset($searchTerms[$transformation])) {
+                    $whereArray[] = " [$column] like '%" . $searchTerms[$transformation] . "%' ";
                 }
             }
         }

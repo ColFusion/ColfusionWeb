@@ -7,6 +7,7 @@ header("Pragma: no-cache");
 
 include_once(realpath(dirname(__FILE__)) . '/../config.php');
 include_once(realpath(dirname(__FILE__)) . '/DataMatcher.php');
+include_once(realpath(dirname(__FILE__)) . '/DataMatcherLinkOnePart.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/TransformationHandler.php');
 
 if (!$current_user->authenticated)
@@ -16,27 +17,37 @@ $fromSid = $_POST["fromSid"];
 $fromTable = $_POST["fromTable"];
 $toSid = $_POST["toSid"];
 $toTable = $_POST["toTable"];
-$fromTransInput = $_POST["fromTransInput"];
-$toTransInput = $_POST["toTransInput"];
+$fromTransInput = $_POST["fromTransInput"]; //TODO FIXME this is not correct, we shoudl send tranformation values e.g. cid(), not decoded values, because what is there is a formula?Or make sure this approach works
+$toTransInput = $_POST["toTransInput"];  //TODO FIXME this is not correct, we shoudl send tranformation values e.g. cid(), not decoded values, because what is there is a formula?
 $action = $_POST["action"];
 
 //print_r($_POST);
 
 $transHandler = new TransformationHandler();
 $encodedFromTrans = $transHandler->encodeTransformationInput($fromSid, $fromTable, $fromTransInput);
-$fromCids = $transHandler->getWrappedCids($encodedFromTrans);
+//$fromCids = $transHandler->getWrappedCids($encodedFromTrans);
 $encodedToTrans = $transHandler->encodeTransformationInput($toSid, $toTable, $toTransInput);
-$toCids = $transHandler->getWrappedCids($encodedToTrans);
+//$toCids = $transHandler->getWrappedCids($encodedToTrans);
 
-$from = new stdClass;
+$from = new DataMatcherLinkOnePart();
 $from->sid = $fromSid;
 $from->tableName = $fromTable;
-$from->links = $fromCids; // size of this array should be equal to the size of array in To
+$from->transformation = $encodedFromTrans;
 
-$to = new stdClass;
+$to = new DataMatcherLinkOnePart();
 $to->sid = $toSid;
 $to->tableName = $toTable;
-$to->links = $toCids;
+$to->transformation = $encodedToTrans;
+
+// $from = new stdClass;
+// $from->sid = $fromSid;
+// $from->tableName = $fromTable;
+// $from->links = $fromCids; // size of this array should be equal to the size of array in To
+
+// $to = new stdClass;
+// $to->sid = $toSid;
+// $to->tableName = $toTable;
+// $to->links = $toCids;
 
 // Params for data-tables server-side processing.
 $pageLength = $_POST['pageLength'];
@@ -58,18 +69,18 @@ function getDistinctToTable($from, $to) {
     getDistinctTable($to);
 }
 
-function getDistinctTable($tableParams) {
+function getDistinctTable($dataMatcherLinkOnePart) {
 
     $pageLength = $_POST['iDisplayLength'];
     $page = ($_POST['iDisplayStart'] / $pageLength) + 1;
     $searchTerm = $_POST['sSearch'];
 
-    foreach ($tableParams->links as $link) {
-        $cidSearchTerm[$link] = $searchTerm;
-    }
+    //foreach ($dataMatcherLinkOnePart->transformation as $transformation) {
+        $cidSearchTerm[$dataMatcherLinkOnePart->transformation] = $searchTerm;
+    //}
 
     $dataMatcher = new DataMatcher();
-    $distinctTable = $dataMatcher->GetDistinctForColumns($tableParams, $pageLength, $page, $cidSearchTerm);
+    $distinctTable = $dataMatcher->GetDistinctForColumns($dataMatcherLinkOnePart, $pageLength, $page, $cidSearchTerm);
 
     $tableRows = array();
 
