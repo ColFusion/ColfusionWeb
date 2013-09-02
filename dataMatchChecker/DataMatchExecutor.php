@@ -14,7 +14,7 @@ class DataMatchExecutor
 	
 	public function CheckDataMatching($from, $to) 
 	{
-var_dump($from, $to);
+//var_dump($from, $to);
 
 		$checkDataMatchingQueryMaker = new CheckdataMatchingQueryMaker($from, $to);
 
@@ -23,7 +23,9 @@ var_dump($from, $to);
         $countOfMached = $checkDataMatchingQueryMaker->getCountOfMached();
         $countOfTotalDistinct = $checkDataMatchingQueryMaker->getCountOfTotalDistinct();
 
-var_dump(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+//var_dump(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+
+//var_dump($notMatchedInFrom, $notMatchedInTo, $countOfMached, $countOfTotalDistinct);
 
         $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
 
