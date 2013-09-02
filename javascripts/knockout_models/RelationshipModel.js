@@ -377,8 +377,10 @@ var RelationshipModel = {
 
         self.isSelectedForMerge = ko.observable(true);
 
-        self.fromLinkPart = ko.observable(linkObj.fromPart);
-        self.toLinkPart = ko.observable(linkObj.toPart);
+        self.fromPart = ko.observable(linkObj.fromPart);
+        self.toPart = ko.observable(linkObj.toPart);
+        self.fromPartEncoded = ko.observable(linkObj.fromPartEncoded);
+        self.toPartEncoded = ko.observable(linkObj.toPartEncoded);
     },
     Link: function (fromDataSet, toDataSet) {
         var self = this;
