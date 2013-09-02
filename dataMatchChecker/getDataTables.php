@@ -21,8 +21,6 @@ $fromTransInput = $_POST["fromTransInput"]; //TODO FIXME this is not correct, we
 $toTransInput = $_POST["toTransInput"];  //TODO FIXME this is not correct, we shoudl send tranformation values e.g. cid(), not decoded values, because what is there is a formula?
 $action = $_POST["action"];
 
-//print_r($_POST);
-
 $transHandler = new TransformationHandler();
 $encodedFromTrans = $transHandler->encodeTransformationInput($fromSid, $fromTable, $fromTransInput);
 //$fromCids = $transHandler->getWrappedCids($encodedFromTrans);
@@ -38,16 +36,6 @@ $to = new DataMatcherLinkOnePart();
 $to->sid = $toSid;
 $to->tableName = $toTable;
 $to->transformation = $encodedToTrans;
-
-// $from = new stdClass;
-// $from->sid = $fromSid;
-// $from->tableName = $fromTable;
-// $from->links = $fromCids; // size of this array should be equal to the size of array in To
-
-// $to = new stdClass;
-// $to->sid = $toSid;
-// $to->tableName = $toTable;
-// $to->links = $toCids;
 
 // Params for data-tables server-side processing.
 $pageLength = $_POST['pageLength'];

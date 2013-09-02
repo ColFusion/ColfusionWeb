@@ -51,7 +51,7 @@ var AdvancedSearchViewModelProperties = {
         self.paths = ko.observableArray();
 
         self.filterSearchResults = function () {
-            ko.utils.arrayForEach(self.paths(), function (path) {               
+            ko.utils.arrayForEach(self.paths(), function (path) {
                 path.isFilterSatisfied(path.avgConfidence() >= self.confidenceFilter() && path.pathObj.sids.length >= self.pathFilter());
             });
         };
@@ -97,9 +97,34 @@ var AdvancedSearchViewModelProperties = {
 
         self.togglePreview = function () {
 
+            var dataObj = self.pathObj;
+         
+            // If self.relationshipInfos[relId] is loaded, add selected link info.
+            // Otherwise do not send selected links, which means using all links.
+            ko.utils.arrayForEach(dataObj.relationships, function (relationship) {
+                
+                var relationshipInfo = self.relationshipInfos[relationship.relId];             
+
+                if (relationshipInfo) {
+                    console.log('add link');
+                    relationship.selectedLinks = [];
+
+                    ko.utils.arrayForEach(relationshipInfo().links(), function (relInfoLink) {
+                        if (relInfoLink.isSelectedForMerge()) {
+                            var selectedLink = {};
+                            selectedLink.fromPartEncoded = relInfoLink.fromPartEncoded();
+                            selectedLink.toPartEncoded = relInfoLink.toPartEncoded();
+                            relationship.selectedLinks.push(selectedLink);
+                        }
+                    });
+                }
+            });
+
+            console.log(dataObj);
+
             if (!self.dataPreviewViewModel()) {
                 self.dataPreviewViewModel(new DataPreviewViewModel(-1));
-                self.dataPreviewViewModel().getTableDataByObject(self.pathObj, 10, 1);
+                self.dataPreviewViewModel().getTableDataByObject(dataObj, 10, 1);
             }
 
             self.isPreviewShown(!self.isPreviewShown());
