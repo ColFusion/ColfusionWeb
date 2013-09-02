@@ -1,8 +1,8 @@
 <?php
 
-include(realpath(dirname(__FILE__)) . '/../config.php');
-include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
-include(realpath(dirname(__FILE__)) . '/ExecutionManager.php');
+require_once(realpath(dirname(__FILE__)) . '/../config.php');
+require_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+require_once(realpath(dirname(__FILE__)) . '/ExecutionManager.php');
 
 $action = $_GET["action"];
 

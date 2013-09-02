@@ -1,8 +1,10 @@
 <?php
 
-include_once '../config.php';
+require_once(realpath(dirname(__FILE__)) .  '/../config.php');
 require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
+
+require_once(realpath(dirname(__FILE__)) . '/../dataMatchChecker/DataMatcherLinkOnePart.php');
 
 /**
  * Run ktr and db import scripts in parallel.
@@ -27,10 +29,10 @@ class ExecutionManager
     }
 
     //TODO: this is called from DAL, see the comment for this class above about moving this whole class into other place
-    public static function callChildProcessToCacheDistinctColumnValues($transformation)
+    public static function callChildProcessToCacheDistinctColumnValues(DataMatcherLinkOnePart $dataMatcherLinkOnePartFrom, DataMatcherLinkOnePart $dataMatcherLinkOnePartTo)
     {
-        $script_url = my_pligg_base . '/DataImportWizard/import_dump_parallel.php';
-        $vars = array("transformation" => $transformation);
+        $script_url = my_pligg_base . '/dataMatchChecker/execute_cachingDistinctColumnValues_parallel.php';
+        $vars = array("dataMatcherLinkOnePartFrom" => serialize($dataMatcherLinkOnePartFrom), 'dataMatcherLinkOnePartTo' => serialize($dataMatcherLinkOnePartTo));
        
         ExecutionManager::callChildProcess($script_url, $vars);
     }
@@ -56,8 +58,10 @@ class ExecutionManager
         fwrite($socketToChild, $msgToChild);
 
         // wait and read answer from child
-        $data = fread($socketToChild, 5000);
+        $data = fread($socketToChild, 50000);
         // echo stream_get_contents($socketToChild);
+
+//var_dump($data);
 
         // close connection to child
         fclose($socketToChild);
@@ -113,6 +117,15 @@ class ExecutionManager
         }
 
         return $result;
+    }
+
+    public static function getExecutionStatusForOneTable($sid, $tableName) {
+        $res = self::getExecutionStatus($sid);
+
+        foreach ($res as $key => $oneTableInfo) {
+            if ($oneTableInfo->tableName == $tableName)
+                return $oneTableInfo;
+        }
     }
 }
 

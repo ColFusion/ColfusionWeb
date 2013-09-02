@@ -12,7 +12,7 @@ class DatasetFinder {
         from colfusion_sourceinfo sinfo
         inner join colfusion_users users on sinfo.UserId = users.user_id
         left join colfusion_links cl on cl.link_id = sid 
-        where  Status = 'queued'";
+        where  Status = 'queued' ";
     
     private $ezSql;
 
@@ -38,6 +38,10 @@ class DatasetFinder {
         }
 
         $dataset_name = $this->findDatasetInfoByName($searchTerm);
+
+        if (!isset($dataset_name))
+            return array();
+
         foreach ($dataset_name as $dataset) {
             $datasetsInfo["$dataset->sid"] = $dataset;
         }
@@ -58,9 +62,17 @@ class DatasetFinder {
     }
 
     public function findDatasetInfoByName($dsName) {
+
         $dsName = mysql_real_escape_string($dsName);
         $sql = $this->allDatasetInfo_sql . " and title like '%$dsName%'";
+
+//var_dump($sql);
+
         $dsInfos = $this->ezSql->get_results($sql);
+
+        if (!isset($dsInfos))
+            return null;
+
         foreach ($dsInfos as $dsInfo) {
             $datasets[] = $this->mapDbColumnsToDataset($dsInfo);
         }

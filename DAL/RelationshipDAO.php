@@ -71,6 +71,7 @@ class RelationshipDAO
         $relationship->name = $relInfo->name;
         $relationship->description = $relInfo->description;
         $relationship->creator = $relInfo->user_login;
+        $relationship->creatorId = $relInfo->user_id;
         $relationship->createdTime = $relInfo->creation_time;
 
         $datasetFinder = new DatasetFinder();
@@ -303,6 +304,17 @@ EOQ;
         $res = $this->ezSql->get_results($query);
 
         return $res;
+    }
+
+    public function getRelIdByTransformations($from, $to)
+    {
+        $query = "select rel_id from colfusion_relationships_columns where cl_from = '$from' and cl_to = '$to' limit 1";
+
+//var_dump($query);
+
+        //TODO: check here there is only one rel_id, other wire it might be problem.
+        
+        return  $this->ezSql->get_row($query);
     }
 }
 

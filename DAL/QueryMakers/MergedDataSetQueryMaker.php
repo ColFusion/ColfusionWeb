@@ -2,7 +2,6 @@
 
 
 include_once(realpath(dirname(__FILE__)) . "/FromFileQueryMaker.php");
-include_once(realpath(dirname(__FILE__)) . "/FromLinkedServerQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
 include_once(realpath(dirname(__FILE__)) . '/../TransformationHandler.php');
 include_once(realpath(dirname(__FILE__)) . '/../RelationshipDAO.php');

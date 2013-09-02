@@ -418,7 +418,7 @@ class QueryEngine {
 
         // triger background execution of data matching ration calcualtion.
         $dataMatcher = new DataMatcher();
-        $dataMatcher->calculateDataMatchingRatios($rel_id);
+        $dataMatcher->calculateDataMatchingRatios(array($rel_id));
     }
 }
 

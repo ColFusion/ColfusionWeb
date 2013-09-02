@@ -19,6 +19,9 @@ $synTo = $_POST["synTo"];
 $dao = new DataMatchingCheckerDAO();
 try {
     $dao->storeSynonym($sidFrom, $tableFrom, $fromTransInput, $synFrom, $sidTo, $tableTo, $toTransInput, $synTo, $userId);
+
+    //TODO TODO TODO TODO need to update data matching ratios in db in neo4j.
+
     $jsonResult["isSuccessful"] = true;
 }
 catch (SynonymExistedException $e) {

@@ -1,18 +1,11 @@
 <?php
 
-require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandler.php");
-require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
-require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporterFactory.php");
-require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
-require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
+require_once(realpath(dirname(__FILE__)) . "/DataMatchExecutor.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/RelationshipDAO.php");
+require_once(realpath(dirname(__FILE__)) . "/../DataImportWizard/ExecutionManager.php");
 
-$sid = $_GET["sid"];
-$userId = $_GET["userID"];
-$dbHandler = unserialize($_POST["dbHandler"]);
-$dumpFilePath = $_POST["dumpFilePath"];
-
-// The DB where dump file is imported.
-$dbName = "colfusion_external_$sid";
+$dataMatcherLinkOnePartFrom = unserialize($_POST["dataMatcherLinkOnePartFrom"]);
+$dataMatcherLinkOnePartTo = unserialize($_POST["dataMatcherLinkOnePartTo"]);
 
 // "disable partial output" or
 // "enable buffering" to give out all at once later
@@ -32,44 +25,53 @@ echo "OKKKK";
 //var_dump($sid,$logId,$ktrManager, $db);
 
 // push buffer to parent
+
 ob_flush();
 flush();
 
-// parent gets our answer and disconnects
-// but we can work "in background" :)
 
-importDataFromDumpFile($sid, $dbHandler, $userId, $dumpFilePath);
+$areDatasetsProcessed = checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo);
 
-function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath){
+$count = 0;
 
-    $ktrExeDao = new KTRExecutorDAO();
-    $tableNames = $dbHandler->loadTables();
+while (!$areDatasetsProcessed) {
+    sleep(20);
 
-    $logIds = array();
-    foreach($tableNames as $tableName){
-        $logIds[$tableName] = $ktrExeDao->addExecutionInfoTuple($sid, $tableName, $userId);
-    }
+    $areDatasetsProcessed = checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo);
 
-    try{     
-        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbHandler->getDriver(), $sid, "colfusion");
-        $dbImporter->importDbData($filePath);
-    
-        foreach($logIds as $logId){
-            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'success');
-        }
-    }
-    catch(Exception $e){
-        foreach($logIds as $logId){
-            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'error');
-            $ktrExeDao->updateExecutionInfoErrorMessage($logId, $e->getMessage());
-        }
-    }
-    
-    $queryEngine = new QueryEngine();
-    foreach($logIds as $tableName => $logId){
-        $numProcessed = $queryEngine->GetTotalNumberTuplesInTableBySidAndNameFromExternalDB($sid, $tableName);
-        $ktrExeDao->updateExecutionInfoTupleAfterPanTerminated($logId, 0, '', $numProcessed, 'success');
-    }
+    //TODO do something to make sure that process die if this checking happens for a log time.
+    $count += 1;
+
+    if ($count > 10000000)
+        die; //write this action in some log (e.g. in some db table);
 }
+
+callDataMatchingRatioComputation($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo);
+
+exit;
+
+
+function checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo)
+{
+    $statusFrom = ExecutionManager::getExecutionStatusForOneTable($dataMatcherLinkOnePartFrom->sid, $dataMatcherLinkOnePartFrom->tableName);
+    $statusTo = ExecutionManager::getExecutionStatusForOneTable($dataMatcherLinkOnePartTo->sid, $dataMatcherLinkOnePartTo->tableName);
+
+    if ($statusFrom->status == "error" || $statusTo->status == "error") {
+        die("datasets are in error");
+    }
+
+    if ($statusFrom->status == "success" && $statusTo->status == "success") {
+        return true;
+    }
+
+    return false;
+}
+
+function callDataMatchingRatioComputation($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo)
+{
+    $dataMatchExecutor = new DataMatchExecutor($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo);
+    $dataMatchExecutor->getDataMatchingRatios();
+}
+
 
 ?>

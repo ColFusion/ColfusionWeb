@@ -8,6 +8,7 @@ class Relationship{
     public $name;
     public $description;
     public $creator;
+    public $creatorId;
     public $createdTime;
     public $isOwned;
     

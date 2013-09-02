@@ -10,6 +10,14 @@ class DataMatchingCheckerDAO {
     const SynFromTable = "colfusion_synonyms_from";
     const SynToTable = "colfusion_synonyms_to";
 
+    //status values for relationships columns caching execution info
+    
+    const RelColCachExecInfoSt_Success = "success";
+    const RelColCachExecInfoSt_Failure = "failure";
+    const RelColCachExecInfoSt_InProgress = "in progress";
+    
+    //--------------------------------------------------------------
+
     private $ezSql;
     private $transformationHandler;
 
@@ -29,6 +37,7 @@ class DataMatchingCheckerDAO {
         $this->insertSynonymValues($synId, $toSid, $toTableName, $toTransInput, $toValue, $userId, DataMatchingCheckerDAO::SynToTable);
     }
 
+    //FIXME: in sql colfusion_ is prefix which can be set to different value. So here in sql we need to first get table prefix, which is set in config.php file.
     private function getNewSynonymId() {
         $sql = "select syn_id from colfusion_synonyms_from order by syn_id desc limit 1";
         $objSynId = $this->ezSql->get_row($sql);
@@ -82,8 +91,47 @@ AND ((syn_from.transInput = '$cid1' AND syn_to.transInput = '$cid2') OR (syn_fro
 
     }
 
-    
 
+    public function getRelationshipColumnCachingExecutionInfo($transformation)
+    {
+        $sql = "select * from colfusion_relationships_columns_cachingExecutionInfo where transformation = '$transformation'";
+        return $this->ezSql->get_row($sql);
+    }
+
+    public function setStartedRelationshipColumnCaching($transformation)
+    {
+        $sql = "insert into colfusion_relationships_columns_cachingExecutionInfo (transformation, status, timeStart) values ('$transformation', '" . DataMatchingCheckerDAO::RelColCachExecInfoSt_InProgress ."', CURRENT_TIMESTAMP) 
+        on duplicate key update status = '" . DataMatchingCheckerDAO::RelColCachExecInfoSt_InProgress . "', timeStart = CURRENT_TIMESTAMP;";
+       
+        $this->ezSql->query($sql);
+    }
+
+    public function setSuccessRelationshipColumnCaching($transformation)
+    {
+        $sql = "update colfusion_relationships_columns_cachingExecutionInfo set status = '" . DataMatchingCheckerDAO::RelColCachExecInfoSt_Success . "', timeEnd = CURRENT_TIMESTAMP, errorMessage = '' 
+        where transformation = '$transformation';";
+       
+        $this->ezSql->query($sql);
+    }
+
+    public function setFailureRelationshipColumnCaching($transformation, $errorMessage)
+    {
+        $sql = "update colfusion_relationships_columns_cachingExecutionInfo set status = '" . DataMatchingCheckerDAO::RelColCachExecInfoSt_Failure . "', timeEnd = CURRENT_TIMESTAMP, errorMessage = '$errorMessage'  
+        where transformation = '$transformation';";
+       
+        $this->ezSql->query($sql);
+    }
+
+    public function storeDataMatchingRatios($transformationFrom, $dataMatchingFromRatio, $transformationTo, $dataMatchingToRatio)
+    {
+
+      //  var_dump($transformationFrom, $dataMatchingFromRatio, $transformationTo, $dataMatchingToRatio);
+
+        $sql = "update colfusion_relationships_columns set dataMatchingFromRatio = $dataMatchingFromRatio, dataMatchingToRatio = $dataMatchingToRatio 
+                where cl_from = '$transformationFrom' and cl_to = '$transformationTo'";
+
+        $this->ezSql->query($sql);
+    }
 }
 
 ?>

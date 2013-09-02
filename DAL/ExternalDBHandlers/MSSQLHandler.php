@@ -172,16 +172,9 @@ EOQ;
         return $arrValues;
     }
 
-    public function ExecuteCTASQuery($selectPart, $tableNameToCreate, $whatToInsert) {
+    //TODO: add to interface
+    public function ExecuteNonQuery($query) {
         $pdo = $this->GetConnection();
-
-
-        $query = " $selectPart into $tableNameToCreate $whatToInsert ";
-
-        $query = str_replace("\\n", " ", $query);
-        $query = str_replace("\\'", "'", $query);
-        $query = str_replace("\\\"", "\"", $query);
-        
 
         try {
 
@@ -193,10 +186,20 @@ EOQ;
 
             $stmt->execute();
         } catch (PDOException $e) {
-            echo $e->getMessage();
-            exit;
+           // echo $e->getMessage();
+            throw new Exception("Error Processing Request. " . $e->getMessage(), 1);
+            
         }
+    }
 
+    public function ExecuteCTASQuery($selectPart, $tableNameToCreate, $whatToInsert) {
+        $query = " $selectPart into $tableNameToCreate $whatToInsert ";
+
+        $query = str_replace("\\n", " ", $query);
+        $query = str_replace("\\'", "'", $query);
+        $query = str_replace("\\\"", "\"", $query);
+        
+        $this->ExecuteNonQuery($query);
     }
 
     //TODO implement

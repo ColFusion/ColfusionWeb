@@ -43,21 +43,23 @@ $page = $_POST['page'];
 
 $action($from, $to);//, $page, $pageLength);
 
-function getDifferentAndSameValueTables($from, $to) {
+function getDifferentAndSameValueTables(DataMatcherLinkOnePart $from, DataMatcherLinkOnePart $to) {
+
+  //  var_dump("in getDataTables");
 
     $dataMatcher = new DataMatcher();
     echo json_encode($dataMatcher->CheckDataMatching($from, $to));
 }
 
-function getDistinctFromTable($from, $to) {
+function getDistinctFromTable(DataMatcherLinkOnePart $from, DataMatcherLinkOnePart $to) {
     getDistinctTable($from);
 }
 
-function getDistinctToTable($from, $to) {
+function getDistinctToTable(DataMatcherLinkOnePart $from, DataMatcherLinkOnePart $to) {
     getDistinctTable($to);
 }
 
-function getDistinctTable($dataMatcherLinkOnePart) {
+function getDistinctTable(DataMatcherLinkOnePart $dataMatcherLinkOnePart) {
 
     $pageLength = $_POST['iDisplayLength'];
     $page = ($_POST['iDisplayStart'] / $pageLength) + 1;

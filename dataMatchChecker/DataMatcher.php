@@ -4,6 +4,10 @@ include_once(realpath(dirname(__FILE__)) . '/../DAL/ExternalDBHandlers/MSSQLHand
 include_once(realpath(dirname(__FILE__)) . '/../DAL/TransformationHandler.php');
 
 include_once(realpath(dirname(__FILE__)) . '/DataMatchExecutor.php');
+include_once(realpath(dirname(__FILE__)) . '/DataMatcherLinkOnePart.php');
+
+include_once(realpath(dirname(__FILE__)) . '/../DataImportWizard/ExecutionManager.php');
+include_once(realpath(dirname(__FILE__)) . '/../DAL/RelationshipDAO.php');
 
 /**
 * Operations for data match checker
@@ -11,10 +15,10 @@ include_once(realpath(dirname(__FILE__)) . '/DataMatchExecutor.php');
 class DataMatcher
 {
 	
-	public function CheckDataMatching($from, $to) {
+	public function CheckDataMatching(DataMatcherLinkOnePart $from, DataMatcherLinkOnePart $to) {
 
-		var_dump($from, $to);
-		$dataMatchExecutor = new DataMatchExecutor();
+//		var_dump($from, $to);
+		$dataMatchExecutor = new DataMatchExecutor($from, $to);
 
 		return $dataMatchExecutor->CheckDataMatching($from, $to);
         
@@ -25,9 +29,7 @@ class DataMatcher
     // $searchTerms is an associated array where keys are the links and values are search terms for associated links.
     public function GetDistinctForColumns($dataMatcherLinkOnePart, $perPage, $pageNo, $searchTerms = null) {
 
-        $dataMatchExecutor = new DataMatchExecutor();
-
-		return $dataMatchExecutor->GetDistinctForColumns($dataMatcherLinkOnePart, $perPage, $pageNo, $searchTerms);
+      	return DataMatchExecutor::GetDistinctForColumns($dataMatcherLinkOnePart, $perPage, $pageNo, $searchTerms);
     }
 
     /**
@@ -41,6 +43,36 @@ class DataMatcher
     public function calculateDataMatchingRatios($rel_ids)
     {
 
+ //var_dump($rel_ids);
+
+ 		if (!isset($rel_ids) || count($rel_ids) == 0)
+ 			return;
+
+
+    	$relationshipDAO = new RelationshipDAO();
+
+    	foreach ($rel_ids as $key => $rel_id) {
+    		$rel = $relationshipDAO->getRelationship($rel_id); //this might too expensive, I don't need all infor about relationships, just sids, tablemes and links
+
+    		foreach ($rel->links as $key => $link) {
+
+    			$from = new DataMatcherLinkOnePart();
+				$from->sid = $rel->fromDataset->sid;
+				$from->tableName = $rel->fromTableName;
+				$from->transformation = $link->fromPartEncoded;
+
+				$to = new DataMatcherLinkOnePart();
+				$to->sid = $rel->toDataset->sid;
+				$to->tableName = $rel->toTableName;
+				$to->transformation = $link->toPartEncoded;
+
+//var_dump($from, $to);
+
+    			ExecutionManager::callChildProcessToCacheDistinctColumnValues($from, $to);
+    		}
+    	}
+
+    	
     }
 }
 

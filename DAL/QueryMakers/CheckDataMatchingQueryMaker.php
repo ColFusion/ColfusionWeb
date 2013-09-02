@@ -6,6 +6,7 @@ include_once(realpath(dirname(__FILE__)) . "/FromLinkedServerQueryMaker.php");
 include_once(realpath(dirname(__FILE__)) . "/../DALUtils.php");
 include_once(realpath(dirname(__FILE__)) . '/../TransformationHandler.php');
 include_once(realpath(dirname(__FILE__)) . "/../../config.php");
+include_once(realpath(dirname(__FILE__)) . '/../../dataMatchChecker/DataMatcherLinkOnePart.php');
 
 class CheckdataMatchingQueryMaker {
 
@@ -15,7 +16,7 @@ class CheckdataMatchingQueryMaker {
     private $fromQuery;
     private $toQuery;
 
-    public function __construct($from, $to) {
+    public function __construct(DataMatcherLinkOnePart $from, DataMatcherLinkOnePart $to) {
         if (count($from->transformation) != count($to->transformation)) {
             throw new Exception("Number of links in from and to are not the same.");
         }
@@ -27,13 +28,17 @@ class CheckdataMatchingQueryMaker {
         $this->toQuery = $this->prepareOneQuery($this->to);
     }
 
-    function prepareOneQuery($source) {
+    function prepareOneQuery(DataMatcherLinkOnePart $source) {
+
+//var_dump('in prepareOneQuery');
 
         $columns = $this->GetColumnsFromSource($source);
 
         if (DALUtils::GetSourceType($source->sid) == "database"){
 
-            return FromLinkedServerQueryMaker::MakeQueryOneTable($source, $columns);
+            $fromLinkedServerQueryMaker = new FromLinkedServerQueryMaker($source, $columns);
+
+            return $fromLinkedServerQueryMaker->MakeQueryOneTable();
         }
         else {
 
@@ -42,6 +47,9 @@ class CheckdataMatchingQueryMaker {
     }
 
     public function MakeOrUpdateFromAndToQuery($forseUpdate = false) {
+
+//var_dump($this->fromQuery, $forseUpdate);
+
         if (!isset($this->fromQuery) || $forseUpdate)
             $this->fromQuery = $this->prepareOneQuery($this->from);
 
@@ -104,6 +112,34 @@ EOQ;
         $this->MakeOrUpdateFromAndToQuery($forseUpdate);
 
         return "select count(*) as ct from (" . $this->toQuery . " union " . $this->fromQuery . ") as t";
+    }
+
+    public function getCountOfNotMachedInFromQuery($forseUpdate = false)
+    {
+        $this->MakeOrUpdateFromAndToQuery($forseUpdate);
+
+        return "select count(*) as ct from (" . $this->getNotMachedInFromQuery() . " ) as temp ";
+    }
+
+    public function getCountOfNotMachedInToQuery($forseUpdate = false)
+    {
+        $this->MakeOrUpdateFromAndToQuery($forseUpdate);
+
+        return "select count(*) as ct from (" . $this->getNotMachedInToQuery() . " ) as temp ";
+    }
+
+    public function getCountOfDistinctInFromQuery($forseUpdate = false)
+    {
+        $this->MakeOrUpdateFromAndToQuery($forseUpdate);
+
+        return "select count(*) as ct from (" . $this->fromQuery . " ) as temp ";
+    }
+
+    public function getCountOfDistinctInToQuery($forseUpdate = false)
+    {
+        $this->MakeOrUpdateFromAndToQuery($forseUpdate);
+
+        return "select count(*) as ct from (" . $this->toQuery . " ) as temp ";
     }
 
     // source has sid, links (array of cids) and table name.
