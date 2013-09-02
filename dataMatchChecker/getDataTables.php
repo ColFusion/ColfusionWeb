@@ -6,7 +6,7 @@ header("Cache-Control: post-check=0, pre-check=0", false);
 header("Pragma: no-cache");
 
 include_once(realpath(dirname(__FILE__)) . '/../config.php');
-include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+include_once(realpath(dirname(__FILE__)) . '/DataMatcher.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/TransformationHandler.php');
 
 if (!$current_user->authenticated)
@@ -20,7 +20,7 @@ $fromTransInput = $_POST["fromTransInput"];
 $toTransInput = $_POST["toTransInput"];
 $action = $_POST["action"];
 
-print_r($_POST);
+//print_r($_POST);
 
 $transHandler = new TransformationHandler();
 $encodedFromTrans = $transHandler->encodeTransformationInput($fromSid, $fromTable, $fromTransInput);
@@ -45,8 +45,9 @@ $page = $_POST['page'];
 $action($from, $to);//, $page, $pageLength);
 
 function getDifferentAndSameValueTables($from, $to) {
-    $queryEngine = new QueryEngine();
-    echo json_encode($queryEngine->CheckDataMatching($from, $to));
+
+    $dataMatcher = new DataMatcher();
+    echo json_encode($dataMatcher->CheckDataMatching($from, $to));
 }
 
 function getDistinctFromTable($from, $to) {
@@ -58,6 +59,7 @@ function getDistinctToTable($from, $to) {
 }
 
 function getDistinctTable($tableParams) {
+
     $pageLength = $_POST['iDisplayLength'];
     $page = ($_POST['iDisplayStart'] / $pageLength) + 1;
     $searchTerm = $_POST['sSearch'];
@@ -66,8 +68,8 @@ function getDistinctTable($tableParams) {
         $cidSearchTerm[$link] = $searchTerm;
     }
 
-    $queryEngine = new QueryEngine();
-    $distinctTable = $queryEngine->GetDistinctForColumns($tableParams, $pageLength, $page, $cidSearchTerm);
+    $dataMatcher = new DataMatcher();
+    $distinctTable = $dataMatcher->GetDistinctForColumns($tableParams, $pageLength, $page, $cidSearchTerm);
 
     $tableRows = array();
 
@@ -81,9 +83,7 @@ function getDistinctTable($tableParams) {
                     }
                     else {
                         $tableRow[] = $rowObj[$column];
-                    }
-
-                    
+                    }                    
                 }
                 $tableRows[] = $tableRow;
             }

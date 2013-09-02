@@ -1,0 +1,6 @@
+CREATE TABLE `colfusion_relationships_columns_cachingExecutionInfo` (
+  `transformation` VARCHAR(255) NOT NULL,
+  `status` TEXT NULL,
+  `timeStart` TIMESTAMP NULL,
+  `timeEnd` TIMESTAMP NULL,
+  PRIMARY KEY (`transformation`));

@@ -82,6 +82,8 @@ AND ((syn_from.transInput = '$cid1' AND syn_to.transInput = '$cid2') OR (syn_fro
 
     }
 
+    
+
 }
 
 ?>

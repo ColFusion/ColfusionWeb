@@ -2,6 +2,8 @@
 
 require_once(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
+require_once(realpath(dirname(__FILE__)) . "/RelationshipDAO.php");
+
 use Everyman\Neo4j\Node,
     Everyman\Neo4j\Index;
 
@@ -102,6 +104,38 @@ class Neo4JDAO
 
         $this->relationshipIndex->add($rel, 'rel_id',  $rel_id);
         $this->relationshipIndex->save();
+    }
+
+    /**
+     * Add neo4j relationship and nodes if needed by colfusion relationship id.
+     * @param [type] $rel_id colfusion relationships id.
+     */
+    public function addRelationshipByRelId($rel_id)
+    {
+
+        $relationshipDao = new RelationshipDAO();
+
+        $relationship = $relationshipDao->getRelationship($rel_id);
+
+//var_dump($relationship);
+
+        $confidence = $relationshipDao->getRelationshipAverageConfidenceByRelId($rel_id);
+
+        $this->addRelationship($relationship->fromDataset->sid, $relationship->toDataset->sid, $rel_id, 1 - $confidence); 
+    }
+
+    /**
+     * Add neo4j relatiosnhps and nodes if needed by array of colufsion relationships ids.
+     * @param [type] $rel_ids array of colufsion relationships ids.
+     */
+    public function addRelationshipsByRelIds($rel_ids)
+    {
+        if (!isset($rel_ids))
+            return;
+
+        foreach ($rel_ids as $key => $rel_id) {
+            $this->addRelationshipByRelId($rel_id);
+        }
     }
 
     /**

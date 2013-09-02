@@ -8,6 +8,7 @@ require_once(realpath(dirname(__FILE__)) . "/PostgreSQLHandler.php");
 class DatabaseHandlerFactory {
        
     public static function createDatabaseHandler($engine, $user, $password, $database, $host, $port) {
+        //var_dump($engine);
         switch (strtolower($engine)) {
             case 'mysql':
                 return new MySQLHandler($user, $password, $database, $host, $port);

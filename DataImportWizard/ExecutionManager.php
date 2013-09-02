@@ -5,37 +5,45 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 
 /**
- * Run ktr and db import scripts in parallel
+ * Run ktr and db import scripts in parallel.
+ * TODO: probably should be moved to other place and used as a mechanism to do parallel exicutions. For example caching distinct values for column is done in parallel too.
  */
 class ExecutionManager
 {
     public static function callChildProcessToExectueOneKTRTransformation($sid, $userID, $ktrManager)
     {
         $script_url = my_pligg_base . '/DataImportWizard/execute_ktr_parallel.php';
-        $vars = array("ktrManager" => serialize($ktrManager));
-        $postData = http_build_query($vars);
-
-        ExecutionManager::callChildProcess($script_url, $sid, $userID, $postData);
+        $vars = array("sid" => $sid, "userID" => $userID, "ktrManager" => serialize($ktrManager));
+        
+        ExecutionManager::callChildProcess($script_url, $vars);
     }
 
     public static function callChildProcessToImportDumpFile($sid, $userID, DatabaseHandler $dbHandler, $dumpFilePath)
     {
         $script_url = my_pligg_base . '/DataImportWizard/import_dump_parallel.php';
-        $vars = array("dbHandler" => serialize($dbHandler), "dumpFilePath" => $dumpFilePath);
-        $postData = http_build_query($vars);
-
-        ExecutionManager::callChildProcess($script_url, $sid, $userID, $postData);
+        $vars = array("sid" => $sid, "userID" => $userID, "dbHandler" => serialize($dbHandler), "dumpFilePath" => $dumpFilePath);
+       
+        ExecutionManager::callChildProcess($script_url, $vars);
     }
 
-    public static function callChildProcess($script_url, $sid, $userId, $postData)
+    //TODO: this is called from DAL, see the comment for this class above about moving this whole class into other place
+    public static function callChildProcessToCacheDistinctColumnValues($transformation)
     {
+        $script_url = my_pligg_base . '/DataImportWizard/import_dump_parallel.php';
+        $vars = array("transformation" => $transformation);
+       
+        ExecutionManager::callChildProcess($script_url, $vars);
+    }
+
+    public static function callChildProcess($script_url, $vars)
+    {
+        $postData = http_build_query($vars);
+
         // create socket for calling child script
         $socketToChild = fsockopen("localhost", 80);
 
-        $base = my_pligg_base;
-
         // HTTP-packet building; header first
-        $msgToChild = "POST $script_url?&sid=$sid&userID=$userId HTTP/1.0\n";
+        $msgToChild = "POST $script_url HTTP/1.0\n";
         $msgToChild .= "Host: localhost\n";
 
         $msgToChild .= "Content-Type: application/x-www-form-urlencoded\r\n";

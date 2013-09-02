@@ -17,6 +17,45 @@ class RelationshipDAO
         $this->ezSql = $db;
     }
 
+     /**
+     * Adds colfusion relationship between two stories. 
+     * @param [type] $user_id     id of the user who adds new relationships.
+     * @param [type] $name        name of the relationship.
+     * @param [type] $description short textual description for new relationship.
+     * @param [type] $from        object containing info about From dataset sid and columns of the relationships from From dataset. TODO: create a class for that object.
+     * @param [type] $to          object containing info about To dataset sid and columns of the relationships from To dataset. TODO: the class class as for From should be used.
+     * @param [type] $confidence  confidence value for the relationship.
+     * @param [type] $comment     shor textual comment for the relationship.
+     *
+     * @return [type] id of newly added relationship.
+     */
+    public function addRelationship($user_id, $name, $description, $from, $to, $confidence, $comment)
+    {
+        $sql = "INSERT INTO %srelationships (name, description, creator, creation_time, sid1, sid2, tableName1, tableName2) VALUES ('%s', '%s', %d, CURRENT_TIMESTAMP, %d, %d, '%s', '%s')";
+        $sql = sprintf($sql, table_prefix, $name, $description, $user_id, $from["sid"], $to["sid"], $from["tableName"], $to["tableName"]);
+        $rs = $this->ezSql->query($sql);
+
+        $rel_id = mysql_insert_id();
+
+        $numberOfLinks = count($from["columns"]);
+
+        for ($i = 0; $i < $numberOfLinks; $i++) {
+            $sql = "INSERT INTO %srelationships_columns (rel_id, cl_from, cl_to) VALUES (%d, '%s', '%s')";
+
+            $fromCol = mysql_real_escape_string($from["columns"][$i]);
+            $toCol = mysql_real_escape_string($to["columns"][$i]);
+
+            $sql = sprintf($sql, table_prefix, $rel_id, $fromCol, $toCol);
+            $rs = $this->ezSql->query($sql);
+        }
+
+        $sql = "INSERT INTO %suser_relationship_verdict (rel_id, user_id, confidence, comment, `when`) VALUES (%d, %d, %f, '%s', CURRENT_TIMESTAMP)";
+        $sql = sprintf($sql, table_prefix, $rel_id, $user_id, $confidence, $comment);
+        $rs = $this->ezSql->query($sql);
+
+        return $rel_id;
+    }
+
     public function getRelationship($relId) {
         $sql = "SELECT name, description, user_id, user_login, sid1, sid2, tableName1, tableName2, creation_time 
             FROM  `colfusion_relationships` CR INNER JOIN  `colfusion_users` U ON CR.creator = U.user_id 
@@ -35,8 +74,8 @@ class RelationshipDAO
         $relationship->createdTime = $relInfo->creation_time;
 
         $datasetFinder = new DatasetFinder();
-        $fromDataset = $datasetFinder->findDatasetInfoBySid($relInfo->sid1);
-        $toDataset = $datasetFinder->findDatasetInfoBySid($relInfo->sid2);
+        $fromDataset = $datasetFinder->findDatasetInfoBySid($relInfo->sid1, true);
+        $toDataset = $datasetFinder->findDatasetInfoBySid($relInfo->sid2, true);
 
         $relationship->fromDataset = $fromDataset;
         $relationship->toDataset = $toDataset;
@@ -55,6 +94,8 @@ class RelationshipDAO
         $linksSql = "select cl_from, cl_to from `colfusion_relationships_columns` where rel_id = '" . mysql_real_escape_string($relId) . "'";
         $linkInfos = $this->ezSql->get_results($linksSql);
 
+
+        //TODO: remove it. Seemslike useless stuff.
         foreach ($linkInfos as $linkInfo) {
             $rawLinkParts[] = $linkInfo->cl_from;
             $rawLinkParts[] = $linkInfo->cl_to;
@@ -202,6 +243,67 @@ class RelationshipDAO
         return $this->ezSql->get_row($sql)->avgconf;
     }
 
+    /**
+     * Mine new relationships for given sid.
+     * @param  [type] $sid sid of the story for which need to do mining of new relationshipsю
+     * @return [type]      array of rel_id which were added.
+     */
+    public function mineRelationships($sid)
+    {
+        // relationships which existed before mining for given sid.
+        $relsForCurrentSidBeforeMining = $this->getRelIdsForSid($sid);
+        if (!isset($relsForCurrentSidBeforeMining))
+            $relsForCurrentSidBeforeMining = array ();
+
+        //do the mining TODO: this might take long time, think about execution in background.
+        $res = $this->ezSql->query("call doRelationshipMining('" . $sid . "')");
+
+        // get all realtionships for given sid including existed before mining and just mined.
+        $relsForCurrentSidAfterMining = $this->getRelIdsForSid($sid);
+        if (!isset($relsForCurrentSidAfterMining))
+            $relsForCurrentSidAfterMining = array ();
+
+        // find relationships which were just added by mining.
+        $diff = array_diff($relsForCurrentSidAfterMining, $relsForCurrentSidBeforeMining);
+
+        return $diff;
+    }
+
+    /**
+     * [getAllRelationshipInfoBySid description]
+     * @param  [type] $sid [description]
+     * @return [type]      [description]
+     */
+    public function getAllRelationshipInfoBySid($sid)
+    {
+        $query = <<< EOQ
+                SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
+       siFrom.sid as sidFrom, siTo.sid as sidTo,
+       siFrom.Title as titleFrom, siTo.Title as titleTo,
+       rel.tableName1 as tableNameFrom, rel.tableName2 as tableNameTo,
+       statOnVerdicts.numberOfVerdicts, statOnVerdicts.numberOfApproved, statOnVerdicts.numberOfReject,
+       statOnVerdicts.numberOfNotSure, statOnVerdicts.avgConfidence
+
+FROM
+    colfusion_relationships as rel,
+    colfusion_users as u,
+    colfusion_sourceinfo as siFrom,
+    colfusion_sourceinfo as siTo,
+    statOnVerdicts
+
+where
+        rel.creator = u.user_id
+        and rel.status = 0
+        and rel.rel_id = statOnVerdicts.rel_id
+        and rel.sid1 = siFrom.Sid
+        and rel.sid2 = siTo.Sid
+        and (rel.sid1 = $sid or rel.sid2 = $sid)
+EOQ;
+
+        $res = $this->ezSql->get_results($query);
+
+        return $res;
+    }
 }
 
 function testRelDAO() {

@@ -2,8 +2,8 @@
 
 require_once(realpath(dirname(__FILE__)) . "/KTRExecutor.php");
 
-$sid = $_GET["sid"];
-$userID = $_GET["userID"];
+$sid = $_POST["sid"];
+$userID = $_POST["userID"];
 $ktrManager = unserialize($_POST["ktrManager"]);
 
 // "disable partial output" or 

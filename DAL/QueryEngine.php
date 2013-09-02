@@ -1,19 +1,18 @@
 <?php
 
-//include_once('../config.php');
-include_once(realpath(dirname(__FILE__)) . "/../config.php");
-include_once('SimpleQuery.php');
-include_once('ExternalDBHandlers/ExternalDBs.php');
+require_once(realpath(dirname(__FILE__)) . "/../config.php");
+require_once('SimpleQuery.php');
+require_once('ExternalDBHandlers/ExternalDBs.php');
 
-include_once(realpath(dirname(__FILE__)) . '/QueryMakers/CheckDataMatchingQueryMaker.php');
-include_once(realpath(dirname(__FILE__)) . '/QueryMakers/MergedDataSetQueryMaker.php');
+require_once(realpath(dirname(__FILE__)) . '/QueryMakers/MergedDataSetQueryMaker.php');
 
-include_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
-include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
-include_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
-include_once(realpath(dirname(__FILE__)) . '/RelationshipDAO.php');
+require_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
+require_once(realpath(dirname(__FILE__)) . '/../DAL/LinkedServerCred.php');
+require_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
+require_once(realpath(dirname(__FILE__)) . '/RelationshipDAO.php');
 
-include_once(realpath(dirname(__FILE__)) . '/Neo4JDAO.php');
+require_once(realpath(dirname(__FILE__)) . '/Neo4JDAO.php');
+require_once(realpath(dirname(__FILE__)) . '/../dataMatchChecker/DataMatcher.php');
 
 class QueryEngine {
 
@@ -33,8 +32,6 @@ class QueryEngine {
         //TODO: fix it, transformation should also accept sybmols in which to enclose table and column names
 
         $transHandler = new TransformationHandler();
-
-
 
         if (count($from) == 1) { // then we don't need to do any joins.
 
@@ -312,8 +309,6 @@ class QueryEngine {
 
         $queryInfo = $mergedDatasetQuery->GetQuery();
 
-
-
         $externalDBCredentials = new stdClass();
 
         $externalDBCredentials->driver = $queryInfo->serverInfo->driver;
@@ -370,198 +365,60 @@ class QueryEngine {
         return DALUtils::GetFileNameBySid($sid);
     }
 
-    //TODO: look at timeout issue which might appear here when the realtionshp mining store procedure might take long time.
+    /**
+     * Mine new relationships for given sid and returns all inforamtion about all realtiosnhips for given sid.
+     * Also after mining new relatiosnhips are added into neo4j and triggers background calculation of datamathcing ratios for newsly mined relationships.
+     *   
+     * @param [type] $sid sid of the story for which mining should be performed.
+     */
     public function MineRelationships($sid) {
-        global $db;
-
         $relationshipDao = new RelationshipDAO();
 
-        $relsForCurrentSidBeforeMining = $relationshipDao->getRelIdsForSid($sid);
+        // get ids of relationships which were minded (not existed before) for given sid.
+        $newRelsMined = $relationshipDao->mineRelationships($sid);
 
-        if (!isset($relsForCurrentSidBeforeMining))
-            $relsForCurrentSidBeforeMining = array ();
+//var_dump($newRelsMined);
 
-        $res = $db->query("call doRelationshipMining('" . $sid . "')");
+        // if there were any new raltiosnihps mined, we need to add them to Neo4j and trigger background computation of datamatching ratios.
+        if (isset($newRelsMined)) {
 
-        $relsForCurrentSidAfterMining = $relationshipDao->getRelIdsForSid($sid);
-        if (!isset($relsForCurrentSidAfterMining))
-            $relsForCurrentSidAfterMining = array ();
+            // add those just mined relationships to neo4j
+            $neo4JDAO = new Neo4JDAO();           
+            $neo4JDAO->addRelationshipsByRelIds($newRelsMined);
 
-        $diff = array_diff($relsForCurrentSidAfterMining, $relsForCurrentSidBeforeMining);
+            // triger background execution of data matching ration calcualtion.
+            $dataMatcher = new DataMatcher();
+            $dataMatcher->calculateDataMatchingRatios($newRelsMined);
+        }
 
-        $this->AddRelationshipsToNeo4jFromRelIdsArr($diff);
-
-        $query = <<< EOQ
-                SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
-	   siFrom.sid as sidFrom, siTo.sid as sidTo,
-	   siFrom.Title as titleFrom, siTo.Title as titleTo,
-	   rel.tableName1 as tableNameFrom, rel.tableName2 as tableNameTo,
-	   statOnVerdicts.numberOfVerdicts, statOnVerdicts.numberOfApproved, statOnVerdicts.numberOfReject,
-	   statOnVerdicts.numberOfNotSure, statOnVerdicts.avgConfidence
-
-FROM
-	colfusion_relationships as rel,
-	colfusion_users as u,
-	colfusion_sourceinfo as siFrom,
-	colfusion_sourceinfo as siTo,
-	statOnVerdicts
-
-where
-		rel.creator = u.user_id
-        and rel.status = 0
-		and rel.rel_id = statOnVerdicts.rel_id
-		and rel.sid1 = siFrom.Sid
-		and rel.sid2 = siTo.Sid
-		and (rel.sid1 = $sid or rel.sid2 = $sid)
-EOQ;
-
-
-
-        $res = $db->get_results($query);
+        // get info to display in Relatiosnhips table of all relationships for given sid.
+        $res = $relationshipDao->getAllRelationshipInfoBySid($sid);
 
         return $res;
     }
 
+    /**
+     * Adds colfusion relationship between two stories. Also addes neo4j relationship and nodes if needed. And trigres backgroun computatio of datamatching ratios.
+     * @param [type] $user_id     id of the user who adds new relationships.
+     * @param [type] $name        name of the relationship.
+     * @param [type] $description short textual description for new relationship.
+     * @param [type] $from        object containing info about From dataset sid and columns of the relationships from From dataset. TODO: create a class for that object.
+     * @param [type] $to          object containing info about To dataset sid and columns of the relationships from To dataset. TODO: the class class as for From should be used.
+     * @param [type] $confidence  confidence value for the relationship.
+     * @param [type] $comment     shor textual comment for the relationship.
+     */
     public function AddRelationship($user_id, $name, $description, $from, $to, $confidence, $comment) {
-        global $db;
-
-        $sql = "INSERT INTO %srelationships (name, description, creator, creation_time, sid1, sid2, tableName1, tableName2) VALUES ('%s', '%s', %d, CURRENT_TIMESTAMP, %d, %d, '%s', '%s')";
-        $sql = sprintf($sql, table_prefix, $name, $description, $user_id, $from["sid"], $to["sid"], $from["tableName"], $to["tableName"]);
-        $rs = $db->query($sql);
-
-        $rel_id = mysql_insert_id();
-
-        $countTotal = count($from["columns"]);
-
-        for ($i = 0; $i < $countTotal; $i++) {
-            $sql = "INSERT INTO %srelationships_columns (rel_id, cl_from, cl_to) VALUES (%d, '%s', '%s')";
-
-            $fromCol = mysql_real_escape_string($from["columns"][$i]);
-            $toCol = mysql_real_escape_string($to["columns"][$i]);
-
-            $sql = sprintf($sql, table_prefix, $rel_id, $fromCol, $toCol);
-            $rs = $db->query($sql);
-        }
-
-        $sql = "INSERT INTO %suser_relationship_verdict (rel_id, user_id, confidence, comment, `when`) VALUES (%d, %d, %f, '%s', CURRENT_TIMESTAMP)";
-        $sql = sprintf($sql, table_prefix, $rel_id, $user_id, $confidence, $comment);
-        $rs = $db->query($sql);
-
-        $neo4JDAO = new Neo4JDAO();
-
-        $neo4JDAO->addRelationship($from["sid"], $to["sid"], $rel_id, 1 - $confidence);
-    }
-
-    private function AddRelationshipsToNeo4jFromRelIdsArr($rel_ids) {
-        if (!isset($rel_ids))
-            return;
-
+        // Add new relationshp in to colfusion
         $relationshipDao = new RelationshipDAO();
+        $rel_id = $relationshipDao->addRelationship($user_id, $name, $description, $from, $to, $confidence, $comment);
 
+        // add newly created relationshiop to neo4j.
         $neo4JDAO = new Neo4JDAO();
+        $neo4JDAO->addRelationshipByRelId($rel_id);
 
-        foreach ($rel_ids as $key => $rel_id) {
-            $relstionship = $relationshipDao->getRelationship($rel_id);
-
-            $confidence = $relationshipDao->getRelationshipAverageConfidenceByRelId($rel_id);
-
-            $neo4JDAO->addRelationship($relstionship->fromDataset->sid, $relstionship->toDataset->sid, $rel_id, 1 - $confidence);
-        }
-    }
-
-    public function CheckDataMatching($from, $to) {
-
-        $checkDataMatchingQueryMaker = new CheckdataMatchingQueryMaker($from, $to);
-
-        $notMatchedInFrom = $checkDataMatchingQueryMaker->getNotMachedInFromQuery();
-        $notMatchedInTo = $checkDataMatchingQueryMaker->getNotMachedInToQuery();
-        $countOfMached = $checkDataMatchingQueryMaker->getCountOfMached();
-        $countOfTotalDistinct = $checkDataMatchingQueryMaker->getCountOfTotalDistinct();
-
-        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
-
-        $result = new stdClass;
-
-        $result->notMatchedInFrom = $notMatchedInFrom;
-        $result->notMatchedInTo = $notMatchedInTo;
-        $result->countOfMached = $countOfMached;
-        $result->countOfTotalDistinct = $countOfTotalDistinct;
-
-
-        $columnsFrom = $checkDataMatchingQueryMaker->GetColumnsFromSource($from);
-        $columnsTo = $checkDataMatchingQueryMaker->GetColumnsFromSource($to);
-
-        $result->notMatchedInFromData = new stdClass;
-
-        $ar = array("[", "]");
-        $columnNames = str_replace($ar, "", $columnsFrom->columnNames);
-
-
-        $result->notMatchedInFromData->columns = explode(",", $columnNames);
-        $result->notMatchedInFromData->columnsAliases = explode(",", $columnsFrom->columnAliases);
-        $result->notMatchedInFromData->rows = $MSSQLHandler->ExecuteQuery($notMatchedInFrom);
-
-        $columnNames = str_replace($ar, "", $columnsTo->columnNames);
-
-
-        $result->notMatchedInToData = new stdClass;
-        $result->notMatchedInToData->columns = explode(",", $columnNames);
-        $result->notMatchedInToData->columnsAliases = explode(",", $columnsTo->columnAliases);
-        $result->notMatchedInToData->rows = $MSSQLHandler->ExecuteQuery($notMatchedInTo);
-
-        $result->countOfMachedData = new stdClass;
-        $result->countOfMachedData->columns = array("ct");
-        $result->countOfMachedData->rows = $MSSQLHandler->ExecuteQuery($countOfMached);
-
-        $result->countOfTotalDistinctData = new stdClass;
-        $result->countOfTotalDistinctData->columns = array("ct");
-        $result->countOfTotalDistinctData->rows = $MSSQLHandler->ExecuteQuery($countOfTotalDistinct);
-
-        return $result;
-    }
-
-    // source is an object {sid:, tableName, links:[]}
-    // links are columns or transformations
-    // $searchTerms is an associated array where keys are the links and values are search terms for associated links.
-    public function GetDistinctForColumns($source, $perPage, $pageNo, $searchTerms = null) {
-
-        $from = (object) array('sid' => $source->sid, 'tableName' => "[{$source->tableName}]");
-        $fromArray = array($from);
-
-        $transHandler = new TransformationHandler();
-
-        $columnNames = array();
-        $columnNamesNoBrack = array();
-
-        $whereArray = array();
-
-        foreach ($source->links as $key=>$link) {
-
-            $column = $transHandler->decodeTransformationInput($link, true);
-            $columnNames[] = "[$column]";
-            $columnNamesNoBrack[] = $column;
-
-            if (isset($searchTerms)) {
-                if (isset($searchTerms[$link])) {
-                    $whereArray[] = " [$column] like '%" . $searchTerms[$link] . "%' ";
-                }
-            }
-        }
-
-        $columns = implode(",", array_values($columnNames));
-
-
-        $where = null;
-
-        if (count($whereArray) > 0)
-            $where = "where " . implode(" and ", array_values($whereArray));
-
-        $result = new stdClass;
-        $result->columns = $columnNamesNoBrack;
-        $result->rows = $this->doQuery("SELECT distinct $columns", $fromArray, $where, null, null, $perPage, $pageNo);
-        $result->totalRows = $this->doQuery("SELECT COUNT(distinct $columns) as ct", $fromArray, $where, null, null, null, null);
-
-        return $result;
+        // triger background execution of data matching ration calcualtion.
+        $dataMatcher = new DataMatcher();
+        $dataMatcher->calculateDataMatchingRatios($rel_id);
     }
 }
 

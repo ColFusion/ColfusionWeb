@@ -6,8 +6,8 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporter
 require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 
-$sid = $_GET["sid"];
-$userId = $_GET["userID"];
+$sid = $_POST["sid"];
+$userId = $_POST["userID"];
 $dbHandler = unserialize($_POST["dbHandler"]);
 $dumpFilePath = $_POST["dumpFilePath"];
 

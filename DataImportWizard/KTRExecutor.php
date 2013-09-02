@@ -16,6 +16,8 @@ class KTRExecutor
     private $userId; //user id who triggered the transformation.
     private $ktrManager; //ktr manager which holds all information about the transformation.
 
+    private $ktrExecutorDAO;
+
     /**
      * Sets some private variables and initialize dao.
      * @param         $sid        sid for which the data will be loaded.

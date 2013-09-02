@@ -13,7 +13,7 @@ if(isset($isTesting) && $isTesting) return;
 ini_set('include_path', '.');
 
 define('LOG_FILE','cache/log.php');
-error_reporting(E_ALL ^ E_WARNING ^ E_STRICT ^ E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 ini_set('display_errors', 1);
 ini_set('error_log','cache/log.php');
 

@@ -468,6 +468,8 @@ function AddRelationship() {
 
 	echo json_encode($queryEngine->AddRelationship($current_user->user_id, $name, $description, $from, $to, $confidence, $comment));
 }
+
+//TODO: why this is here. Should be deleted
 function CheckDataMatching() {
 	$from = $_POST["from"];
 	$to = $_POST["to"];
