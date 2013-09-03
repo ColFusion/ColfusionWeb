@@ -52,7 +52,7 @@ var AdvancedSearchViewModelProperties = {
 
         self.filterSearchResults = function () {
             ko.utils.arrayForEach(self.paths(), function (path) {
-                path.isFilterSatisfied(path.avgConfidence() >= self.confidenceFilter() && path.pathObj.sids.length >= self.pathFilter());
+                path.isFilterSatisfied(path.avgConfidence() >= self.confidenceFilter() && path.pathObj.sids.length <= self.pathFilter());
             });
         };
 
