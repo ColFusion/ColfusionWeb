@@ -156,7 +156,7 @@ $counter = 0;
             
         }
 
-        return $selectPart . $fromParm .  $where;
+        return $selectPart . $fromParm . $where;
     }
 
     private static function wrapInLimit($startPoint, $perPage, $table) {
