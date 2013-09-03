@@ -104,18 +104,18 @@ class DataMatchExecutor
 
         $whereArray = array();
 
-        foreach ($dataMatcherLinkOnePart->transformation as $key=>$transformation) {
+      //  foreach ($dataMatcherLinkOnePart->transformation as $key=>$transformation) {
 
-            $column = $transHandler->decodeTransformationInput($transformation, true);
+            $column = $transHandler->decodeTransformationInput($dataMatcherLinkOnePart->transformation, true);
             $columnNames[] = "[$column]";
             $columnNamesNoBrack[] = $column;
 
             if (isset($searchTerms)) {
-                if (isset($searchTerms[$transformation])) {
-                    $whereArray[] = " [$column] like '%" . $searchTerms[$transformation] . "%' ";
+                if (isset($searchTerms[$dataMatcherLinkOnePart->transformation])) {
+                    $whereArray[] = " [$column] like '%" . $searchTerms[$dataMatcherLinkOnePart->transformation] . "%' ";
                 }
             }
-        }
+      //  }
 
         $columns = implode(",", array_values($columnNames));
 
