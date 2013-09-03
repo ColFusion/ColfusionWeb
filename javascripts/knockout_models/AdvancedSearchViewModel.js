@@ -106,7 +106,6 @@ var AdvancedSearchViewModelProperties = {
                 var relationshipInfo = self.relationshipInfos[relationship.relId];             
 
                 if (relationshipInfo) {
-                    console.log('add link');
                     relationship.selectedLinks = [];
 
                     ko.utils.arrayForEach(relationshipInfo().links(), function (relInfoLink) {
@@ -126,6 +125,12 @@ var AdvancedSearchViewModelProperties = {
             }
             
             self.isPreviewShown(!self.isPreviewShown());
+        };
+
+        self.refreshPreview = function () {
+            self.isPreviewShown(false);
+            self.dataPreviewViewModel(null);
+            self.togglePreview();
         };
 
         /*

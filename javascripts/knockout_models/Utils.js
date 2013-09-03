@@ -27,7 +27,7 @@ ko.bindingHandlers.bootstrapTooltip = {
         $(element).tooltip(options);
     },
     update: function (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
-        $(element).html(valueAccessor());
+        $(element).html(ko.unwrap(valueAccessor()));
     }
 };
 

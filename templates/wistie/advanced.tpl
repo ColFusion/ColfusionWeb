@@ -124,7 +124,7 @@
                 </div>
             </div>
 
-            <div data-bind="visible: isDataPreviewTableShown" class="dataPreviewContainer">
+            <div data-bind="visible: isDataPreviewTableShown" class="dataPreviewContainer">               
                 <div data-bind="visible: !dataPreviewViewModel() || dataPreviewViewModel().isLoading()" style="padding-top: 10px; padding-left: 30px;">Loading...</div>
                 <!-- ko if: dataPreviewViewModel() -->
                 <div data-bind="template: { name: 'dataPreviewViewModel-template', data: dataPreviewViewModel}">
@@ -220,6 +220,11 @@
                             </div>
 
                             <div data-bind="visible: $parent.isPreviewShown()" class="pathDataPreview dataPreviewContainer">
+                                <div data-bind="visible: $parent.dataPreviewViewModel() && !$parent.dataPreviewViewModel().isLoading()" style="margin-top: 5px;">
+                                    <button data-bind="click: $parent.refreshPreview" class="btn" title="Refresh Preview Data">
+                                        <i class="icon-refresh"></i>
+                                    </button>                                 
+                                </div>
                                 <div data-bind="visible: !$parent.dataPreviewViewModel() || $parent.dataPreviewViewModel().isLoading()" style="padding-top: 10px; padding-left: 30px;">Loading...</div>
                                 <!-- ko if: $parent.dataPreviewViewModel() -->
                                 <div data-bind="template: { name: 'dataPreviewViewModel-template', data: $parent.dataPreviewViewModel}">

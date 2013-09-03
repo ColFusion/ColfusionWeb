@@ -381,6 +381,10 @@ var RelationshipModel = {
         self.toPart = ko.observable(linkObj.toPart);
         self.fromPartEncoded = ko.observable(linkObj.fromPartEncoded);
         self.toPartEncoded = ko.observable(linkObj.toPartEncoded);
+
+        self.dataMatchingRatio = ko.observable(linkObj.dataMatchingRatio);
+        self.fromRatio = ko.observable(linkObj.fromRatio || 'N/A');
+        self.toRatio = ko.observable(linkObj.toRatio || 'N/A');
     },
     Link: function (fromDataSet, toDataSet) {
         var self = this;
