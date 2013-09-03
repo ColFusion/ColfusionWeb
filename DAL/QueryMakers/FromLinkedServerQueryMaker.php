@@ -95,7 +95,7 @@ $counter = 0;
 
             $dataMatchingCheckerDAO->setSuccessRelationshipColumnCaching($this->source->transformation);
         } catch (Exception $e) {
-            $dataMatchingCheckerDAO->setFailureRelationshipColumnCaching($this->source->transformation, $e->getMessage());
+            $dataMatchingCheckerDAO->setFailureRelationshipColumnCaching($this->source->transformation, $e->getMessage() . "Query:" . $queryToCach);
         }
     }
 

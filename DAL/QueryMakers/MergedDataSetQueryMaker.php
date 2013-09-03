@@ -44,6 +44,8 @@ class MergedDataSetQueryMaker {
 
         $allPartsOfQuery = $this->getAllPartsOfQuery();
         
+
+        
 //var_dump($allPartsOfQuery);
 
         $result = $this->getActualQuery($allPartsOfQuery);
