@@ -8,3 +8,7 @@ CREATE TABLE `colfusion_relationships_columns_cachingExecutionInfo` (
   ALTER TABLE `colfusion_relationships_columns_cachingExecutionInfo` 
 ADD COLUMN `errorMessage` TEXT NULL AFTER `timeEnd`;
 
+
+
+ALTER TABLE `colfusion`.`colfusion_relationships_columns_cachingExecutionInfo` 
+ADD COLUMN `query` TEXT NULL AFTER `errorMessage`;

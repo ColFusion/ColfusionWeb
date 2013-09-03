@@ -89,13 +89,18 @@ $counter = 0;
         $dataMatchingCheckerDAO = new DataMatchingCheckerDAO();
 
         try {
+
+            $dataMatchingCheckerDAO->setQueryRelationshipColumnCaching($this->source->transformation, $queryToCleanCach);
+
             $dbHandler->ExecuteNonQuery($queryToCleanCach);
+
+            $dataMatchingCheckerDAO->setQueryRelationshipColumnCaching($this->source->transformation, $queryToCach);
 
             $dbHandler->ExecuteNonQuery($queryToCach);
 
             $dataMatchingCheckerDAO->setSuccessRelationshipColumnCaching($this->source->transformation);
         } catch (Exception $e) {
-            $dataMatchingCheckerDAO->setFailureRelationshipColumnCaching($this->source->transformation, $e->getMessage() . "Query:" . $queryToCach);
+            $dataMatchingCheckerDAO->setFailureRelationshipColumnCaching($this->source->transformation, $e->getMessage());
         }
     }
 

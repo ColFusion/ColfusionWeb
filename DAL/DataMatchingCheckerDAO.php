@@ -122,6 +122,14 @@ AND ((syn_from.transInput = '$cid1' AND syn_to.transInput = '$cid2') OR (syn_fro
         $this->ezSql->query($sql);
     }
 
+    public function setQueryRelationshipColumnCaching($transformation, $query)
+    {
+        $sql = "update colfusion_relationships_columns_cachingExecutionInfo set query = '$query'  
+        where transformation = '$transformation';";
+       
+        $this->ezSql->query($sql);
+    }
+
     public function storeDataMatchingRatios($transformationFrom, $dataMatchingFromRatio, $transformationTo, $dataMatchingToRatio)
     {
 
