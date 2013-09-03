@@ -16,7 +16,7 @@ ko.bindingHandlers.jqueryPagedEditable = {
             "bSort": false,
             "bProcessing": true,
             "bServerSide": true,
-            "sAjaxSource": "../dataMatchChecker/getDataTables.php",
+            "sAjaxSource": "../dataMatchChecker/getDataTables.php?timestamp=" + new Date().getTime(),
             "aaSorting": [],
             "fnServerData": function(sSource, aoData, fnCallback) {
                 for (var key in tableParams) {
@@ -33,6 +33,7 @@ ko.bindingHandlers.jqueryPagedEditable = {
                     data: aoData,
                     type: 'post',
                     dataType: 'json',
+                    cache: false,
                     success: function(json) {
                         /* Do whatever additional processing you want on the callback, then tell DataTables */
                         var columns = json.aoColumns;
@@ -183,7 +184,7 @@ function DataMatchCheckerViewModel() {
         params.action = 'getDifferentAndSameValueTables';
 
         return  $.ajax({
-            url: '../dataMatchChecker/getDataTables.php',
+            url: '../dataMatchChecker/getDataTables.php?timestamp=' + new Date().getTime(),
             type: 'post',
             dataType: 'json',
             data: params,
@@ -259,7 +260,7 @@ function DataMatchCheckerViewModel() {
         });
     };
 
-    function updateTables(synFrom, synTo) {     
+    function updateTables(synFrom, synTo) { 
         var oldFromTable = self.differentValueFromTable();
         var oldToTable = self.differentValueToTable();
                
