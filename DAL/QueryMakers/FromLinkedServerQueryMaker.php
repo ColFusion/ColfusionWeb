@@ -129,6 +129,7 @@ $counter = 0;
 
         $selectPart = " insert into {$this->mssqlTableNameForCachedValues} select distinct '{$this->source->transformation}', $columnNameAndAlias ";
         $fromParm = " from ";
+        $where = " where $columnNameAndAlias is not NULL ";
 
         if ($result->server_address === "tycho.exp.sis.pitt.edu") {
             $fromParm .= " [$linkedServerName].[dbo].[{$tableName}] as [{$tableName}{$this->source->sid}] ";
@@ -155,7 +156,7 @@ $counter = 0;
             
         }
 
-        return $selectPart . $fromParm;
+        return $selectPart . $fromParm .  $where;
     }
 
     private static function wrapInLimit($startPoint, $perPage, $table) {

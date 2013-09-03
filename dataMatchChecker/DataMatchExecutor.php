@@ -181,14 +181,14 @@ class DataMatchExecutor
 		
 //var_dump(is_numeric($result->countOfDistinctInFrom), is_numeric($result->countOfNotMachedInFrom));
 
-		if (is_numeric($result->countOfDistinctInFrom) && is_numeric($result->countOfNotMachedInFrom)) {
+		if (is_numeric($result->countOfDistinctInFrom) && is_numeric($result->countOfNotMachedInFrom) && $result->countOfDistinctInFrom != "0") {
         	$result->dataMatchingFromRatio = (floatval($result->countOfDistinctInFrom) - floatval($result->countOfNotMachedInFrom)) / floatval($result->countOfDistinctInFrom);
         }
         else {
         	$result->dataMatchingFromRatio = "NULL";
         }
 
-        if (is_numeric($result->countOfDistinctInTo) && is_numeric($result->countOfNotMachedInTo)) {
+        if (is_numeric($result->countOfDistinctInTo) && is_numeric($result->countOfNotMachedInTo) && $result->countOfDistinctInTo != "0") {
         	$result->dataMatchingToRatio = (floatval($result->countOfDistinctInTo) - floatval($result->countOfNotMachedInTo)) / floatval($result->countOfDistinctInTo);
         }
         else {

@@ -116,6 +116,8 @@ AND ((syn_from.transInput = '$cid1' AND syn_to.transInput = '$cid2') OR (syn_fro
 
     public function setFailureRelationshipColumnCaching($transformation, $errorMessage)
     {
+        $errorMessage = mysql_real_escape_string($errorMessage);
+
         $sql = "update colfusion_relationships_columns_cachingExecutionInfo set status = '" . DataMatchingCheckerDAO::RelColCachExecInfoSt_Failure . "', timeEnd = CURRENT_TIMESTAMP, errorMessage = '$errorMessage'  
         where transformation = '$transformation';";
        
@@ -124,8 +126,9 @@ AND ((syn_from.transInput = '$cid1' AND syn_to.transInput = '$cid2') OR (syn_fro
 
     public function setQueryRelationshipColumnCaching($transformation, $query)
     {
-        $sql = "update colfusion_relationships_columns_cachingExecutionInfo set query = '$query'  
-        where transformation = '$transformation';";
+        $query = mysql_real_escape_string($query);
+
+        $sql = "update colfusion_relationships_columns_cachingExecutionInfo set query = '$query' where transformation = '$transformation';";
        
         $this->ezSql->query($sql);
     }
