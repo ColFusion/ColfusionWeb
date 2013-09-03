@@ -249,6 +249,18 @@ class RelationshipDAO
         return $this->ezSql->get_row($sql)->avgconf;
     }
 
+    public function getRelationshipAverageDataMatchingRatios($rel_id)
+    {
+        $rel_id = mysql_real_escape_string($rel_id);
+        
+
+        $sql = "select avg(dataMatchingFromRatio) as avgFrom, avg(dataMatchingToRatio) as avgTo
+            from colfusion_relationships_columns 
+            where rel_id = $rel_id";
+
+        return $this->ezSql->get_row($sql);
+    }
+
     /**
      * Mine new relationships for given sid.
      * @param  [type] $sid sid of the story for which need to do mining of new relationshipsю

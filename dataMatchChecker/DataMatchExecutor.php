@@ -218,7 +218,10 @@ class DataMatchExecutor
 
     	if (isset($rel)) {
     		if ($rel->creator == "ColfusionAgent") {
-    			$relationshipDAO->updateComment($rel_id, $rel->creatorId, max($dataMatchingFromRatio, $dataMatchingToRatio), "Based on data matching ratio");
+
+                $avgOfDataMatchingRatiosOfSides = $relationshipDAO->getRelationshipAverageDataMatchingRatios($rel_id);
+
+    			$relationshipDAO->updateComment($rel_id, $rel->creatorId, max($avgOfDataMatchingRatiosOfSides->avgFrom, $avgOfDataMatchingRatiosOfSides->avgTo), "Based on data matching ratio");
 
     			$avgConfidence = $relationshipDAO->getRelationshipAverageConfidenceByRelId($rel_id);
 	    		$n4jDao = new Neo4JDAO();
