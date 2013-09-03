@@ -217,7 +217,7 @@ class QueryEngine {
             $fromArray = array($from);
             $select = "select * ";// . implode(", ", $selectAr);
 
-            return $this->doQuery($select, $fromArray, null, null, null, null, null);
+            return $this->doQuery($select, $fromArray, null, null, null, $perPage, $pageNo);
         }
         else {
             if ($this->GetSourceType($sid) == "database") {
