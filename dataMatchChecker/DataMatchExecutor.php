@@ -2,7 +2,7 @@
 
 
 require_once(realpath(dirname(__FILE__)) . '/../DAL/ExternalDBHandlers/MSSQLHandler.php');
-require_once(realpath(dirname(__FILE__)) . '/../DAL/QueryMakers/CheckdataMatchingQueryMaker.php');
+require_once(realpath(dirname(__FILE__)) . '/../DAL/QueryMakers/CheckDataMatchingQueryMaker.php');
 require_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/LinkedServerCred.php');
 include_once(realpath(dirname(__FILE__)) . '/DataMatcherLinkOnePart.php');
