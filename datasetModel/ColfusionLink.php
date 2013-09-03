@@ -6,7 +6,6 @@
         public $fromPartEncoded;
         public $toPartEncoded;
         
-        public $dataMatchingRatio;
         public $fromRatio;
         public $toRatio;
     }

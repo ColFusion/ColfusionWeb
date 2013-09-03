@@ -95,12 +95,11 @@ class RelationshipDAO
         $linksSql = "select cl_from, cl_to from `colfusion_relationships_columns` where rel_id = '" . mysql_real_escape_string($relId) . "'";
         $linkInfos = $this->ezSql->get_results($linksSql);
         
-        $linkRatioSql = "select cl_from, cl_to, dataMatchingRatio, dataMatchingFromRatio, dataMatchingToRatio from colfusion_relationships_columns where rel_id = $relId";
+        $linkRatioSql = "select cl_from, cl_to, dataMatchingFromRatio, dataMatchingToRatio from colfusion_relationships_columns where rel_id = $relId";
         $linkRatios = $this->ezSql->get_results($linkRatioSql);
         $linkRatioValues = array();
         
         foreach($linkRatios as $linkRatio){
-            $linkRatioValues["{$linkRatio->cl_from}_{$linkRatio->cl_to}"]['dataMatchingRatio'] = $linkRatio->dataMatchingRatio;
             $linkRatioValues["{$linkRatio->cl_from}_{$linkRatio->cl_to}"]['fromRatio'] = $linkRatio->dataMatchingFromRatio;
             $linkRatioValues["{$linkRatio->cl_from}_{$linkRatio->cl_to}"]['toRatio'] = $linkRatio->dataMatchingToRatio;
         }
@@ -114,7 +113,6 @@ class RelationshipDAO
             $link->fromPartEncoded = $linkInfo->cl_from;
             $link->toPartEncoded = $linkInfo->cl_to;
             
-            $link->dataMatchingRatio = $linkRatioValues["{$link->fromPartEncoded}_{$link->toPartEncoded}"]['dataMatchingRatio'];
             $link->fromRatio = $linkRatioValues["{$link->fromPartEncoded}_{$link->toPartEncoded}"]['fromRatio'];
             $link->toRatio = $linkRatioValues["{$link->fromPartEncoded}_{$link->toPartEncoded}"]['toRatio'];
                           
