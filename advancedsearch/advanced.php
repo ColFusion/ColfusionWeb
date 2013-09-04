@@ -21,10 +21,6 @@
         .mergePercentageTextWrapper {
             width: 5%;
         }
-        
-        .linkProfileContainer .linkProfile {
-            width: 48.1%;
-        }
     </style>
 
     <script type="text/javascript" src="../javascripts/classify.min.js"></script>

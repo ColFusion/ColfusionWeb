@@ -169,9 +169,8 @@
                     </div>
 
                     <div data-bind="foreach: paths" class="paths">
-                        <div data-bind="visible: isFilterSatisfied, with: pathObj" class="path">
-
-                            <div class="pathBody">
+                        <div data-bind="visible: isFilterSatisfied" class="path">
+                            <div data-bind="with: pathObj" class="pathBody">
 
                                 <div class="buttonPanel" style="float: right;">
                                     <button data-bind="click: $parent.openVisualizationPage" class="btn" title="Visualization">
@@ -219,20 +218,20 @@
                                 </div>
                             </div>
 
-                            <div data-bind="visible: $parent.isPreviewShown()" class="pathDataPreview dataPreviewContainer">
-                                <div data-bind="visible: $parent.dataPreviewViewModel() && !$parent.dataPreviewViewModel().isLoading()" style="margin-top: 5px;">
-                                    <button data-bind="click: $parent.refreshPreview" class="btn" title="Refresh Preview Data">
+                            <div data-bind="visible: isPreviewShown()" class="pathDataPreview dataPreviewContainer">
+                                <div data-bind="visible: dataPreviewViewModel() && !dataPreviewViewModel().isLoading()" style="margin-top: 5px;">
+                                    <button data-bind="click: refreshPreview" class="btn" title="Refresh Preview Data">
                                         <i class="icon-refresh"></i>
                                     </button>                                 
                                 </div>
-                                <div data-bind="visible: !$parent.dataPreviewViewModel() || $parent.dataPreviewViewModel().isLoading()" style="padding-top: 10px; padding-left: 30px;">Loading...</div>
-                                <!-- ko if: $parent.dataPreviewViewModel() -->
-                                <div data-bind="template: { name: 'dataPreviewViewModel-template', data: $parent.dataPreviewViewModel}">
+                                <div data-bind="visible: !dataPreviewViewModel() || dataPreviewViewModel().isLoading()" style="padding-top: 10px; padding-left: 30px;">Loading...</div>
+                                <!-- ko if: dataPreviewViewModel() -->
+                                <div data-bind="template: { name: 'dataPreviewViewModel-template', data: dataPreviewViewModel}">
                                 </div>
                                 <!-- /ko -->
                             </div>
 
-                            <div data-bind="visible: $parent.isMoreShown()" class="pathDetail" style="margin-top: 10px; width: 99%;">
+                            <div data-bind="visible: isMoreShown()" class="pathDetail" style="margin-top: 10px; width: 99%;">
                                 <div style="color: black;">Relationships: </div>
                                 <table class="pathRelTable tftable">
                                     <tr>
@@ -240,25 +239,25 @@
                                         <th>To</th>
                                         <th>Confidence</th>
                                     </tr>
-                                    <tbody data-bind="foreach: relationships">
+                                    <tbody data-bind="foreach: pathObj.relationships">
                                         <tr>
                                             <td data-bind="template: { name: 'relInfo-template', data: sidFrom }"></td>
                                             <td data-bind="template: { name: 'relInfo-template', data: sidTo }"></td>
                                             <td data-bind="text: confidence, attr: { id:  'relConfidence_' + relId, 'class': 'relConfidence_' + relId }"></td>
                                             <td>
-                                                <span data-bind="click: $parents[1].showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId, 'class': 'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
+                                                <span data-bind="click: $parent.showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId, 'class': 'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
                                             </td>
                                         </tr>
                                         <tr data-bind="attr: { id:  'mineRelRec_' + relId }" style="display: none;">
                                             <td class="relationshipInfo" colspan="5">
-                                                <div data-bind="attr: { id: 'relInfoLoadingIcon_' + relId }, visible: !$parents[1].isError[relId]()" class="relInfoLoadingIcon" style="text-align: center;">
+                                                <div data-bind="attr: { id: 'relInfoLoadingIcon_' + relId }, visible: !$parent.isError[relId]()" class="relInfoLoadingIcon" style="text-align: center;">
                                                     <img src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />
                                                 </div>
-                                                <div data-bind="attr: { id: 'relInfoErrorMessage_' + relId }, visible: $parents[1].isError[relId]()" style="text-align: center;">
+                                                <div data-bind="attr: { id: 'relInfoErrorMessage_' + relId }, visible: $parent.isError[relId]()" style="text-align: center;">
                                                     <span style="color: red;">Failed to load relationship information.</span>
                                                 </div>
-                                                <div data-bind="if: $parents[1].isRelationshipInfoLoaded[relId]() && !$parents[1].isError[relId]()">
-                                                    <div data-bind="with: $parents[1].relationshipInfos[relId]">{/literal}{include file='relationshipInfo.html'}{literal}</div>
+                                                <div data-bind="if: $parent.isRelationshipInfoLoaded[relId]() && !$parent.isError[relId]()">
+                                                    <div data-bind="with: $parent.relationshipInfos[relId]">{/literal}{include file='relationshipInfo.html'}{literal}</div>
                                                 </div>
                                             </td>
                                         </tr>

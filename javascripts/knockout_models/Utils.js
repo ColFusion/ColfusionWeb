@@ -156,6 +156,7 @@ var koBindingHandlersRelationshipGraph = (function () {
             }
         });
         var distinctDatasetTableCombs = generalUtil.convertArrayToSet('id', allDatasetTableCombs);
+        console.log(distinctDatasetTableCombs);
 
         var allRelationships = [];
         $.each(allPaths, function (i, path) {
@@ -282,6 +283,8 @@ var koBindingHandlersRelationshipGraph = (function () {
 
     koBindingHandlersRelationshipGraph.addHighlightPathButton = function (i, pathModel, relGraphElem) {
 
+        console.log('addHighlight');
+
         var pathElems = $(relGraphElem).parent().find('.path');
         var highlightPathBtn = $(
             '<button class="highlightPathBtn btn">' +
@@ -317,8 +320,8 @@ var koBindingHandlersRelationshipGraph = (function () {
         var cy = $(relGraphElem).children('.relGraph').cytoscape('get');
 
         var nodeFilterString = "";
-        $.each(pathObj.sids, function (i, sid) {
-            nodeFilterString += "[sid='" + sid + "'],";
+        $.each(pathObj.relationships, function (i, relationship) {
+            nodeFilterString += "[id='" + relationship.sidFrom.id + "'],[id='" + relationship.sidTo.id + "'],";
         });
         nodeFilterString = nodeFilterString.substring(0, nodeFilterString.length - 1);
 

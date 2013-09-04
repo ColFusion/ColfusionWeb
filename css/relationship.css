@@ -38,16 +38,14 @@
     margin-top: 20px;
 }
 
-    .linkProfileContainer .linkProfile {
-        width: 48.5%;
-    }
-
     .linkProfileContainer .fromProfile {
         float: left;
+        width: 50.7%;
     }
 
     .linkProfileContainer .toProfile {
         float: left;
+        width: 49.2%;
     }
 
 .linkProfileContent a {
