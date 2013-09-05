@@ -42,12 +42,18 @@ function TestConnection($sid) {
         $userName = $importSettings['user'];
         $password = $importSettings['password']; // controls how many tuples shown on each page
         $port = $importSettings['port'];
+
+        $isLocal = 1;
+        $linkedServerName = $database;
     } else {
         $userName = $_POST['userName'];
         $password = $_POST['password']; // controls how many tuples shown on each page
         $port = $_POST['port'];
         $serverName = $_POST['serverName'];
         $database = $_POST['database'];
+
+        $isLocal = 0;
+        $linkedServerName = my_pligg_base_no_slash . "_external_$sid";
     }
 
     $serverName = $serverName ? $serverName : 'a fail host';
@@ -55,9 +61,9 @@ function TestConnection($sid) {
 
     try {
         if ($port) {
-            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName, $port);
+            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName, $port, $isLocal, $linkedServerName);
         } else {
-            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName);
+            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName, null, $isLocal, $linkedServerName);
         }
         $dbHandler->setDriver($driver);
         $dbHandler->getConnection();
@@ -103,7 +109,7 @@ function Execute($sid, DatabaseHandler $dbHandler, $userId) {
     try{        
         $queryEngine = new QueryEngine();
 
-        $queryEngine->simpleQuery->addSourceDBInfo($sid, $dbHandler->getHost(), $dbHandler->getPort(), $dbHandler->getUser(), $dbHandler->getPassword(), $dbHandler->getDatabase(), $dbHandler->getDriver());
+        $queryEngine->simpleQuery->addSourceDBInfo($sid, $dbHandler->getHost(), $dbHandler->getPort(), $dbHandler->getUser(), $dbHandler->getPassword(), $dbHandler->getDatabase(), $dbHandler->getDriver(), $dbHandler->getIsImpoted(), $dbHandler->getLinkedServerName());
         UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $inputData["dataMatchingUserInputs"]);
         $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
 

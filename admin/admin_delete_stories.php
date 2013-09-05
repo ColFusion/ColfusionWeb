@@ -78,12 +78,12 @@ function delete_storylink($linkid) {
         if ($sql_array->is_local == 1) {
             // deleing the target db here.
              
-            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($sql_array->driver, $sql_array->user_name, $sql_array->password, $sql_array->source_database, $sql_array->server_address, $sql_array->port);
+            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($sql_array->driver, $sql_array->user_name, $sql_array->password, $sql_array->source_database, $sql_array->server_address, $sql_array->port, $sql_array->is_local, $sql_array->linked_server_name);
             $dbHandler->dropDatabase();
         }
 
         $queryEngine = new QueryEngine();
-        $queryEngine->simpleQuery->dropLinkedServerIfExists($sql_array->source_database);
+        $queryEngine->simpleQuery->dropLinkedServerIfExists($sql_array->linked_server_name);
     }
 
 //TODO Add some error checking

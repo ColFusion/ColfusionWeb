@@ -90,7 +90,7 @@ class KTRExecutor
         // KTR manager has target database info.
         $databaseConnectionInfo = $this->ktrManager->getConnectionInfo();
 
-        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($databaseConnectionInfo->engine, $databaseConnectionInfo->username, $databaseConnectionInfo->password, null, $databaseConnectionInfo->server, $databaseConnectionInfo->port);
+        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($databaseConnectionInfo->engine, $databaseConnectionInfo->username, $databaseConnectionInfo->password, null, $databaseConnectionInfo->server, $databaseConnectionInfo->port, null, null);
 
         // DATABASE
         $dbHandler = $dbHandler->createDatabaseIfNotExist($databaseConnectionInfo->database);
@@ -119,7 +119,7 @@ class KTRExecutor
 
         $queryEngine = new QueryEngine();
 
-        $queryEngine->simpleQuery->addSourceDBInfo($this->sid, $databaseConnectionInfo->server, $databaseConnectionInfo->port, $databaseConnectionInfo->username, $databaseConnectionInfo->password, $databaseConnectionInfo->database, $databaseConnectionInfo->engine);
+        $queryEngine->simpleQuery->addSourceDBInfo($this->sid, $databaseConnectionInfo->server, $databaseConnectionInfo->port, $databaseConnectionInfo->username, $databaseConnectionInfo->password, $databaseConnectionInfo->database, $databaseConnectionInfo->engine, 1, $databaseConnectionInfo->database);
 
         // TODO: I don't know why I do it here.
         $queryEngine->simpleQuery->setSourceTypeBySid($this->sid, 'database');

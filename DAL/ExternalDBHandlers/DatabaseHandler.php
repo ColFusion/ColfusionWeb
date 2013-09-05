@@ -9,7 +9,30 @@ abstract class DatabaseHandler
     protected $database;
     protected $driver;
 
-    public function __construct($user, $password, $database, $host, $port, $driver)
+    /**
+     *
+     * 1 - means database was created from dump file and is stored on our server,
+     * 0 - means that database was submitted as remote database and the data is stored somewhere not on our server.
+     *
+     * Correspond to is_local in colfusion_sourceinfo_DB table.
+     * 
+     * @var [type] 
+     */
+    protected $isImported; 
+
+    /**
+     * Stores linked server name of the database. 
+     * This value will be different only for remotely submitted databases because we
+     * give collusion internal name for them when create a linked server. 
+     *
+     * Correspond to linked_server_name.
+     * 
+     * @var [type]
+     */
+    protected $linkedServerName;
+
+
+    public function __construct($user, $password, $database, $host, $port, $driver, $isImported, $linkedServerName)
     {
         $this->host = $host;
         $this->port = $port;
@@ -17,6 +40,9 @@ abstract class DatabaseHandler
         $this->database = $database;
         $this->password = $password;
         $this->driver = $driver;
+
+        $this->isImported = $isImported;
+        $this->linkedServerName = $linkedServerName;
     }
 
     public function setDriver($driver)
@@ -95,6 +121,33 @@ abstract class DatabaseHandler
     public function getPassword()
     {
         return $this->password;
+    }
+
+    /**
+     * 1 - means database was created from dump file and is stored on our server,
+     * 0 - means that database was submitted as remote database and the data is stored somewhere not on our server.
+     *
+     * Correspond to is_local in colfusion_sourceinfo_DB table.
+     * 
+     * @return [type] [description]
+     */
+    public function getIsImpoted()
+    {
+        return $this->isImported;
+    }
+
+    /**
+     * Stores linked server name of the database. 
+     * This value will be different only for remotely submitted databases because we
+     * give collusion internal name for them when create a linked server. 
+     *
+     * Correspond to linked_server_name.
+     *  
+     * @return [type] [description]
+     */
+    public function getLinkedServerName()
+    {
+        return $this->linkedServerName;
     }
 
 }

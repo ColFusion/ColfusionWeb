@@ -33,7 +33,7 @@ class FromLinkedServerQueryMaker {
     {
         $database = MSSQL_RC_DB_DATABASE;
 
-        $query = "select value as {$this->columnsToSelect->columnNameAndAlias} from [$database].[dbo].[$this->mssqlTableNameForCachedValues] where transformation = '{$this->source->transformation}'";
+        $query = "select ltrim(rtrim(value)) as {$this->columnsToSelect->columnNameAndAlias} from [$database].[dbo].[$this->mssqlTableNameForCachedValues] where transformation = ltrim(rtrim('{$this->source->transformation}')) ";
 
         return $query;
     }
@@ -82,7 +82,7 @@ $counter = 0;
         $queryToCleanCach = $this->prepareQueryToCleanCacheDistinctValues();
         $queryToCach = $this->prepareQueryToCacheDistinctValues();
 
-        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler("mssql", MSSQL_CQS_DB_USER, MSSQL_CQS_DB_PASSWORD, MSSQL_RC_DB_DATABASE, MSSQL_CQS_DB_HOST, MSSQL_CQS_DB_PORT);
+        $dbHandler = DatabaseHandlerFactory::createDatabaseHandler("mssql", MSSQL_CQS_DB_USER, MSSQL_CQS_DB_PASSWORD, MSSQL_RC_DB_DATABASE, MSSQL_CQS_DB_HOST, MSSQL_CQS_DB_PORT, null, null);
 
 //var_dump($queryToCleanCach, $queryToCach, $dbHandler);
 
@@ -106,7 +106,7 @@ $counter = 0;
 
     private function prepareQueryToCleanCacheDistinctValues()
     {
-        $query = "delete from {$this->mssqlTableNameForCachedValues} where transformation = '{$this->source->transformation}'";
+        $query = "delete from {$this->mssqlTableNameForCachedValues} where transformation = ltrim(rtrim('{$this->source->transformation}')) ";
 
         return $query;
     }
@@ -119,7 +119,7 @@ $counter = 0;
 
         $result = $db->get_row($query);
 
-        $linkedServerName = $result->source_database;
+        $linkedServerName = $result->linked_server_name;
 
         $cids = $this->columnsToSelect->cids;
         $columnNameAndAlias = $this->columnsToSelect->columnNameAndAlias;
@@ -127,7 +127,7 @@ $counter = 0;
         
         $tableName = $this->source->tableName;
 
-        $selectPart = " insert into {$this->mssqlTableNameForCachedValues} select distinct '{$this->source->transformation}', $columnNameAndAlias ";
+        $selectPart = " insert into {$this->mssqlTableNameForCachedValues} select distinct ltrim(rtrim('{$this->source->transformation}')), ltrim(rtrim($columnNameAndAlias)) ";
         $fromParm = " from ";
         $where = " where $columnNameAndAlias is not NULL ";
 

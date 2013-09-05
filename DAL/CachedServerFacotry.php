@@ -12,7 +12,7 @@ class CachedServerFacotry {
 
             case 'mssql':
             case 'sql server':
-                return DatabaseHandlerFactory::createDatabaseHandler($engine, MSSQL_CQS_DB_USER, MSSQL_CQS_DB_PASSWORD, MSSQL_CQS_DB_DATABASE, MSSQL_CQS_DB_HOST, MSSQL_CQS_DB_PORT);
+                return DatabaseHandlerFactory::createDatabaseHandler($engine, MSSQL_CQS_DB_USER, MSSQL_CQS_DB_PASSWORD, MSSQL_CQS_DB_DATABASE, MSSQL_CQS_DB_HOST, MSSQL_CQS_DB_PORT, null, null);
                 break;
             case 'postgresql':
                

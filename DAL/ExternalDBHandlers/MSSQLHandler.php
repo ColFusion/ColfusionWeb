@@ -4,8 +4,8 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 
 class MSSQLHandler extends DatabaseHandler {
 
-    public function __construct($user, $password, $database, $host, $port = 1433) {
-        parent::__construct($user, $password, $database, $host, $port, 'mssql');
+    public function __construct($user, $password, $database, $host, $port = 1433, $isImported, $linkedServerName) {
+        parent::__construct($user, $password, $database, $host, $port, 'mssql', $isImported, $linkedServerName);
     }
 
     public function getConnection() {
@@ -240,9 +240,9 @@ EOQ;
 // ADD LINKED SERVER
 // *******************************************************************
 
-    public function AddLinkedServer($engine, $server, $port, $database, $user, $password) {
+    public function AddLinkedServer($engine, $server, $port, $database, $user, $password, $linkedServerName) {
 
-        $this->dropLinkedServerIfExists($database);
+        $this->dropLinkedServerIfExists($linkedServerName);
 
         $pdo = $this->GetConnection();
 
@@ -282,7 +282,7 @@ EOQ;
 
 //echo 'connected\n';
 
-        $query = "exec sp_addlinkedserver @server = N'$database', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr';";
+        $query = "exec sp_addlinkedserver @server = N'$linkedServerName', @srvproduct = N'$srvproduct', @provider = N'$provider', @provstr =N'$provstr';";
 
 
 //echo $query;
@@ -299,7 +299,7 @@ EOQ;
 
         if ($res !== false) {
 
-            $query = "exec sp_addlinkedsrvlogin @rmtsrvname = N'$database', @locallogin = N'remoteUserTest', @rmtuser = N'$user', @rmtpassword = N'$password', @useself = N'False';";
+            $query = "exec sp_addlinkedsrvlogin @rmtsrvname = N'$linkedServerName', @locallogin = N'remoteUserTest', @rmtuser = N'$user', @rmtpassword = N'$password', @useself = N'False';";
 
             $stmt = $pdo->prepare($query);
             $res = $stmt->execute();

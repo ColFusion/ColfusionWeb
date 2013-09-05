@@ -83,12 +83,12 @@ class CheckdataMatchingQueryMaker {
 
         $query = <<<EOQ
            
-        SELECT value
+        SELECT ltrim(rtrim(value))
         FROM [$linkedServerName]...[colfusion_synonyms_$direction] as syn
-        WHERE syn.sid = {$source1->sid} AND syn.tableName = '{$source1->tableName}' AND syn.transInput = '{$source1->transformation}'
+        WHERE syn.sid = {$source1->sid} AND ltrim(rtrim(syn.tableName)) = ltrim(rtrim('{$source1->tableName}')) AND syn.transInput = ltrim(rtrim('{$source1->transformation}'))
               AND syn.syn_id in (SELECT syn_id
                                  FROM [$linkedServerName]...[colfusion_synonyms_$opositeDirection] as syn2
-                                 WHERE syn2.sid = {$source2->sid} AND syn2.tableName = '{$source2->tableName}' AND syn2.transInput = '{$source2->transformation}'
+                                 WHERE syn2.sid = {$source2->sid} AND syn2.tableName = '{$source2->tableName}' AND syn2.transInput = ltrim(rtrim('{$source2->transformation}'))
                                 )
 EOQ;
     

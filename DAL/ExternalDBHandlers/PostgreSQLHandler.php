@@ -4,8 +4,8 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 
 class PostgreSQLHandler extends DatabaseHandler {
 
-    public function __construct($user, $password, $database, $host, $port = 5432) {
-        parent::__construct($user, $password, $database, $host, $port, 'postgresql');
+    public function __construct($user, $password, $database, $host, $port = 5432, $isImported, $linkedServerName) {
+        parent::__construct($user, $password, $database, $host, $port, 'postgresql', $isImported, $linkedServerName);
     }
 
     public function getConnection() {

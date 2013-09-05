@@ -98,8 +98,11 @@ class SimpleQuery
     }
 
 // Store info about external source db.
-    public function addSourceDBInfo($sid, $server, $port, $user, $password, $database, $driver)
+    public function addSourceDBInfo($sid, $server, $port, $user, $password, $database, $driver, $isImported, $linkedServerName)
     {
+
+//var_dump($sid, $server, $port, $user, $password, $database, $driver, $isImported, $linkedServerName);
+
         global $db;
 
         $sid = $db->escape($sid);
@@ -109,14 +112,16 @@ class SimpleQuery
         $password = $db->escape($password);
         $database = $db->escape($database);
         $driver = $db->escape($driver);
+        $isImported = $db->escape($isImported);
+        $linkedServerName = $db->escape($linkedServerName);
 
-        $sql = "INSERT INTO %ssourceinfo_DB (sid, server_address, port, user_name, password, source_database, driver) VALUES (%d, '%s', %d, '%s', '%s', '%s', '%s') 
+        $sql = "INSERT INTO %ssourceinfo_DB (sid, server_address, port, user_name, password, source_database, driver, is_local, linked_server_name) VALUES (%d, '%s', %d, '%s', '%s', '%s', '%s', %d, '%s') 
                 ON DUPLICATE KEY UPDATE server_address = values(server_address), port = values(port), user_name = values(user_name), 
-                password = values(password), source_database = values(source_database), driver = values(driver)";
-        $sql = sprintf($sql, table_prefix, $sid, $server, $port, $user, $password, $database, $driver);
+                password = values(password), source_database = values(source_database), driver = values(driver), is_local = values(is_local), linked_server_name = values(linked_server_name)";
+        $sql = sprintf($sql, table_prefix, $sid, $server, $port, $user, $password, $database, $driver, $isImported, $linkedServerName);
         $db->query($sql);
 
-        $this->addLinkedServer($server, $port, $user, $password, $database, $driver);
+        $this->addLinkedServer($server, $port, $user, $password, $database, $driver, $linkedServerName);
     }
 
     public function getSourceDBInfo($sid)
@@ -128,21 +133,21 @@ class SimpleQuery
         return $db->get_row($sql);
     }
 
-    private function addLinkedServer($server, $port, $user, $password, $database, $driver)
+    private function addLinkedServer($server, $port, $user, $password, $database, $driver, $linkedServerName)
     {
-        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT, null, null);
 
         if ($server == "localhost")
             $host = COLFUSION_HOST;
         else
             $host = $server;
 
-        $MSSQLHandler->AddLinkedServer($driver, $host, $port, $database, $user, $password);
+        $MSSQLHandler->AddLinkedServer($driver, $host, $port, $database, $user, $password, $linkedServerName);
     }
 
     public function dropLinkedServerIfExists($linkedServerName)
     {
-        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT, null, null);
 
         $MSSQLHandler->dropLinkedServerIfExists($linkedServerName);
     }

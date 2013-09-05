@@ -46,7 +46,7 @@ class DataMatchExecutor
 
 //var_dump($notMatchedInFrom, $notMatchedInTo, $countOfMached, $countOfTotalDistinct);
 
-        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+        $MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT, null, null);
 
         $result = new stdClass;
 
@@ -150,7 +150,7 @@ class DataMatchExecutor
 
 //var_dump($countOfNotMachedInFromQuery, $countOfNotMachedInToQuery, $countOfDistinctInFromQuery, $countOfDistinctInToQuery);
 
-		$MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT);
+		$MSSQLHandler = new MSSQLHandler(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD, MSSQLWLS_DB_NAME, MSSQLWLS_DB_HOST, MSSQLWLS_DB_PORT, null, null);
 
 
 		$countOfNotMachedInFrom = $MSSQLHandler->ExecuteQuery($countOfNotMachedInFromQuery);

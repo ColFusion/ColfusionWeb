@@ -317,6 +317,8 @@ class QueryEngine {
         $externalDBCredentials->source_database = $queryInfo->serverInfo->database;
         $externalDBCredentials->server_address = $queryInfo->serverInfo->server_address;
         $externalDBCredentials->port = $queryInfo->serverInfo->port;
+        $externalDBCredentials->is_local = null;
+        $externalDBCredentials->linked_server_name = null;
 
         return ExternalDBs::ExecuteQuery($queryInfo->finalQuery, $externalDBCredentials);
     }

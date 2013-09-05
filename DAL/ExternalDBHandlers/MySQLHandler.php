@@ -4,9 +4,9 @@ require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
 
 class MySQLHandler extends DatabaseHandler
 {
-    public function __construct($user, $password, $database, $host, $port = 3306)
+    public function __construct($user, $password, $database, $host, $port = 3306, $isImported, $linkedServerName)
     {
-        parent::__construct($user, $password, $database, $host, $port, 'myssql');
+        parent::__construct($user, $password, $database, $host, $port, 'myssql', $isImported, $linkedServerName);
     }
 
     public function getConnection()
