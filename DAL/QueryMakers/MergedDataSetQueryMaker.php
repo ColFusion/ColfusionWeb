@@ -209,7 +209,10 @@ class MergedDataSetQueryMaker {
         $conditionsArr = array();
 
         foreach ($relationships as $key => $relationship) {
-            $conditionsArr[] = $this->GetCondisionsByRelationship($relationship);
+            $res = $this->GetCondisionsByRelationship($relationship);
+
+            if (strLen($res) > 1)
+                $conditionsArr[] = $res;
         }
 
         return implode(" and ", $conditionsArr);
