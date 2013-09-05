@@ -147,7 +147,7 @@ EOQ;
         // get string names of columns which are involved in the links
    
         $transHandler = new TransformationHandler();
-
+ 
         $i = 0;
 
         $cidsArray = array();
