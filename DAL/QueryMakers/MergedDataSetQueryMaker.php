@@ -211,7 +211,7 @@ class MergedDataSetQueryMaker {
         foreach ($relationships as $key => $relationship) {
             $res = $this->GetCondisionsByRelationship($relationship);
 
-            if (strLen($res) > 1)
+            if (strlen($res) > 1)
                 $conditionsArr[] = $res;
         }
 
