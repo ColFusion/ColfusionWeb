@@ -8,6 +8,7 @@ include_once(realpath(dirname(__FILE__)) . '/../TransformationHandler.php');
 include_once(realpath(dirname(__FILE__)) . "/../../config.php");
 include_once(realpath(dirname(__FILE__)) . '/../../dataMatchChecker/DataMatcherLinkOnePart.php');
 
+// CheckdataMatchingQueryMaker can only run on MSSQL.
 class CheckdataMatchingQueryMaker {
 
     private $from;

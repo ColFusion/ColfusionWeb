@@ -60,6 +60,13 @@ ko.bindingHandlers.slider = {
             var observable = valueAccessor();
             observable(ui.value);
         });
+        
+        // Initial value in option seems not work.
+        // Here manually trigger slider event to change init value.
+        if (options.value) {
+            $(element).slider("option", "value", options.value);
+            $(element).trigger('slidechange', { handle: 'a.ui-slider-handle ui-state-default ui-corner-all ui-state-focus ui-state-hover', value: options.value});
+        }
     },
     update: function (element, valueAccessor) {
         var value = ko.utils.unwrapObservable(valueAccessor());
@@ -156,7 +163,6 @@ var koBindingHandlersRelationshipGraph = (function () {
             }
         });
         var distinctDatasetTableCombs = generalUtil.convertArrayToSet('id', allDatasetTableCombs);
-        console.log(distinctDatasetTableCombs);
 
         var allRelationships = [];
         $.each(allPaths, function (i, path) {

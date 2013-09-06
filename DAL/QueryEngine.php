@@ -84,9 +84,6 @@ class QueryEngine {
 
         global $db;
 
-        // 		$sql = "select source_type from colfusion_sourceinfo where sid = $from";
-        // 		$rst = $db->get_results($sql);
-
         if ($this->GetSourceType($from) == "database") {
 
             $sql = "select * from colfusion_sourceinfo_DB where sid = $from";

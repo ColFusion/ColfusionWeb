@@ -52,7 +52,9 @@ var AdvancedSearchViewModelProperties = {
 
         self.filterSearchResults = function () {
             ko.utils.arrayForEach(self.paths(), function (path) {
-                path.isFilterSatisfied(path.avgConfidence() >= self.confidenceFilter() && path.pathObj.sids.length <= self.pathFilter());
+                path.isFilterSatisfied(path.avgConfidence() >= self.confidenceFilter()
+                    && path.pathObj.sids.length <= self.pathFilter()
+                    && path.avgDataMatchingRatio() >= self.dataMatchFilter() / 100);
             });
         };
 
@@ -71,14 +73,8 @@ var AdvancedSearchViewModelProperties = {
         pathObj.relationships = generalUtil.convertArrayToSet("relId", pathObj.relationships);
 
         self.pathObj = pathObj;
-        self.avgConfidence = ko.computed(function () {
-            var confidence = 0;
-            $.each(self.pathObj.relationships, function (i, rel) {
-                confidence += Number(rel.confidence);
-            });
-
-            return confidence / self.pathObj.relationships.length;
-        });
+        self.avgConfidence = ko.observable(pathObj.avgConfidence);
+        self.avgDataMatchingRatio = ko.observable(pathObj.avgDataMatchingRatio);
 
         self.isPreviewShown = ko.observable(false);
         self.isMoreShown = ko.observable(false);
@@ -98,12 +94,12 @@ var AdvancedSearchViewModelProperties = {
         self.togglePreview = function () {
 
             var dataObj = self.pathObj;
-         
+
             // If self.relationshipInfos[relId] is loaded, add selected link info.
             // Otherwise do not send selected links, which means using all links.
             ko.utils.arrayForEach(dataObj.relationships, function (relationship) {
-                
-                var relationshipInfo = self.relationshipInfos[relationship.relId];             
+
+                var relationshipInfo = self.relationshipInfos[relationship.relId];
 
                 if (relationshipInfo) {
                     relationship.selectedLinks = [];
@@ -118,12 +114,12 @@ var AdvancedSearchViewModelProperties = {
                     });
                 }
             });
-           
+
             if (!self.dataPreviewViewModel()) {
                 self.dataPreviewViewModel(new DataPreviewViewModel(-1));
                 self.dataPreviewViewModel().getTableDataByObject(dataObj, 10, 1);
             }
-            
+
             self.isPreviewShown(!self.isPreviewShown());
         };
 
