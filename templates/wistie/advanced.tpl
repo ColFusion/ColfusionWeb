@@ -215,6 +215,10 @@
                                         <span style="color: black;">Average Confidence: </span>
                                         <span data-bind="text: Number($parent.avgConfidence()).toFixed(2)" class="pathTitleText"></span>
                                     </div>
+                                    <div>
+                                        <span style="color: black;">Average Data overlap: </span>
+                                        <span data-bind="text: Number($parent.avgDataMatchingRatio()).toFixed(2)" class="pathTitleText"></span>
+                                    </div>                                    
                                 </div>
                             </div>
 
