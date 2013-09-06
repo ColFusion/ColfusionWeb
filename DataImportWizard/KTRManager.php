@@ -224,9 +224,9 @@ class KTRManager {
                     $field->addChild('type', 'String');
                     $field->addChild('length', '-1');
                     $field->addChild('precision', '-1');
-                    $field->addChild('trim_type', 'none');
+                    $field->addChild('trim_type', 'both');
                     $field->addChild('repeat', 'N');
-                    $field->addChild('format');
+                    $field->addChild('format', '#');
                     $field->addChild('currency');
                     $field->addChild('decimal');
                     $field->addChild('group');
