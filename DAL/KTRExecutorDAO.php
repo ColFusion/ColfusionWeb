@@ -58,6 +58,8 @@ class KTRExecutorDAO
      */
     public function updateExecutionInfoTupleCommand( $logID,  $command)
     {
+        $command = mysql_real_escape_string($command);  
+
         $sql = "UPDATE " . table_prefix . "executeinfo SET pan_command = '$command' WHERE Eid = $logID";
 
         try {
@@ -77,6 +79,8 @@ class KTRExecutorDAO
      */
     public function updateExecutionInfoTupleStatus( $logID,  $status)
     {
+
+        $status = mysql_real_escape_string($status); 
         $sql = "UPDATE " . table_prefix . "executeinfo SET status = '$status' WHERE Eid = $logID";
 
         try {
@@ -90,6 +94,8 @@ class KTRExecutorDAO
 
     public function updateExecutionInfoErrorMessage( $logID, $errorMessage)
     {
+        $errorMessage = mysql_real_escape_string($errorMessage); 
+
         $sql = "UPDATE " . table_prefix . "executeinfo SET ErrorMessage='$errorMessage' WHERE EID= $logID";
         try {
             $this->ezSql->query($sql);
@@ -132,6 +138,9 @@ class KTRExecutorDAO
      */
     public function updateExecutionInfoTupleAfterPanTerminated( $logID,  $returnVar,  $errorMessage,  $numProcessed,  $status)
     {
+        $errorMessage = mysql_real_escape_string($errorMessage); 
+        $status = mysql_real_escape_string($status); 
+
         $sql = "UPDATE " . table_prefix . "executeinfo SET ExitStatus=$returnVar, ErrorMessage='$errorMessage',
                 RecordsProcessed='$numProcessed', TimeEnd=CURRENT_TIMESTAMP, status = '$status' WHERE EID= $logID";
 
