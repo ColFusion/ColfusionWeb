@@ -281,6 +281,7 @@ class AdvSearch {
 					$onePathResult = new stdClass();
 
 					$totalConfidence = 0;
+					$totalDataMatchinRatio = 0;
 					$onePathSidTitles = array();
 					$onePathSids = array();
 					$onePathRelIds = array();
@@ -334,14 +335,18 @@ class AdvSearch {
 						$onePathOneRelation->relId = $oneRel;
 						$onePathOneRelation->relName = $moreInfo->name;
 						$onePathOneRelation->confidence = $this->getRelationshipCofidence($oneRel);
+						$onePathOneRelation->dataMatchingRatio = $this->getRelationshipDataMatchingRatio($oneRel);
 
 						$onePathRelationships[] = $onePathOneRelation; 
 
 						$totalConfidence += $onePathOneRelation->confidence;
 
+						$totalDataMatchinRatio += $onePathOneRelation->dataMatchingRatio;
+
 					}
 
 					$onePathResult->avgConfidence = $totalConfidence / count($onePath);
+					$onePathResult->avgDataMatchingRatio = $totalDataMatchinRatio / count($onePath);
 					$onePathResult->relationships = $onePathRelationships;
 					$onePathResult->sidTitles = $onePathSidTitles;
 					$onePathResult->sids = $onePathSids;
@@ -487,6 +492,13 @@ class AdvSearch {
 	private function getRelationshipCofidence($rel_id){
 		$relDAO = new RelationshipDAO();
 		return $relDAO->getRelationshipAverageConfidenceByRelId($rel_id);
+	}
+
+	private function getRelationshipDataMatchingRatio($rel_id) {
+		$relationshipDAO = new RelationshipDAO();
+
+		return $relationshipDAO->getRelationshipAverageConfidenceByRelId($rel_id);
+
 	}
 
 }

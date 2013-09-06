@@ -208,26 +208,26 @@ class DataMatchExecutor
 
 //var_dump($this->from->transformation, $this->to->transformation);
 
-    	$relationshipDAO = new RelationshipDAO();
-    	$res = $relationshipDAO->getRelIdByTransformations($this->from->transformation, $this->to->transformation);
-    	$rel_id = $res->rel_id;
+//     	$relationshipDAO = new RelationshipDAO();
+//     	$res = $relationshipDAO->getRelIdByTransformations($this->from->transformation, $this->to->transformation);
+//     	$rel_id = $res->rel_id;
 
-    	$rel = $relationshipDAO->getRelationship($rel_id);
+//     	$rel = $relationshipDAO->getRelationship($rel_id);
 
-//var_dump($rel_id, $rel);
+// //var_dump($rel_id, $rel);
 
-    	if (isset($rel)) {
-    		if ($rel->creator == "ColfusionAgent") {
+//     	if (isset($rel)) {
+//     		if ($rel->creator == "ColfusionAgent") {
 
-                $avgOfDataMatchingRatiosOfSides = $relationshipDAO->getRelationshipAverageDataMatchingRatios($rel_id);
+//                 $avgOfDataMatchingRatiosOfSides = $relationshipDAO->getRelationshipAverageDataMatchingRatios($rel_id);
 
-    			$relationshipDAO->updateComment($rel_id, $rel->creatorId, max($avgOfDataMatchingRatiosOfSides->avgFrom, $avgOfDataMatchingRatiosOfSides->avgTo), "Based on data matching ratio");
+//     			$relationshipDAO->updateComment($rel_id, $rel->creatorId, max($avgOfDataMatchingRatiosOfSides->avgFrom, $avgOfDataMatchingRatiosOfSides->avgTo), "Based on data matching ratio");
 
-    			$avgConfidence = $relationshipDAO->getRelationshipAverageConfidenceByRelId($rel_id);
-	    		$n4jDao = new Neo4JDAO();
-	    		$n4jDao->updateCostByRelId($rel_id, 1 - $avgConfidence);
-    		}
-    	}
+//     			$avgConfidence = $relationshipDAO->getRelationshipAverageConfidenceByRelId($rel_id);
+// 	    		$n4jDao = new Neo4JDAO();
+// 	    		$n4jDao->updateCostByRelId($rel_id, 1 - $avgConfidence);
+//     		}
+//     	}
     }
 }
 
