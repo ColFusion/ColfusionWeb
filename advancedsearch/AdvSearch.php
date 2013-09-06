@@ -497,7 +497,9 @@ class AdvSearch {
 	private function getRelationshipDataMatchingRatio($rel_id) {
 		$relationshipDAO = new RelationshipDAO();
 
-		return $relationshipDAO->getRelationshipAverageConfidenceByRelId($rel_id);
+		$res = $relationshipDAO->getRelationshipAverageDataMatchingRatios($rel_id);
+
+		return max($res->avgFrom, $res->avgTo);
 
 	}
 
