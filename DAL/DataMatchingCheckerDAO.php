@@ -31,10 +31,29 @@ class DataMatchingCheckerDAO {
         if ($this->isMappingExisted($userId, $fromSid, $fromTableName, $fromTransInput, $fromValue, $toSid, $toTableName, $toTransInput, $toValue)) {
             throw new SynonymExistedException("You have already defined this mapping");
         }
-
+        
+        // A mapping has an synId stored in both SynFromTable and SynToTable.
         $synId = $this->getNewSynonymId();
         $this->insertSynonymValues($synId, $fromSid, $fromTableName, $fromTransInput, $fromValue, $userId, DataMatchingCheckerDAO::SynFromTable);
         $this->insertSynonymValues($synId, $toSid, $toTableName, $toTransInput, $toValue, $userId, DataMatchingCheckerDAO::SynToTable);
+    }
+    
+    public function getLinkSynonyms($fromSid, $fromTableName, $fromTransInput, $toSid, $toTableName, $toTransInput){
+        $query = "SELECT f.syn_id, f.userId, f.sid as fromSid, f.tableName as fromTableName, f.value as fromValue, 
+        t.sid as toSid, t.tableName as toTableName, t.value as toValue 
+        FROM colfusion_synonyms_from f INNER JOIN colfusion_synonyms_to t ON f.syn_id=t.syn_id;";
+        
+        return $this->ezSql->get_results($query);
+    }
+    
+    public function deleteSynonym($synId, $userId){
+        $this->deleteSynonymFromOneTable($synId, $userId, DataMatchingCheckerDAO::SynFromTable);
+        $this->deleteSynonymFromOneTable($synId, $userId, DataMatchingCheckerDAO::SynToTable);
+    }
+    
+    private function deleteSynonymFromOneTable($synId, $userId, $tableName){
+        $query = "DELETE FROM $tableName WHERE syn_id=$synId and userId = $userId;";
+        $this->ezSql->query($query);
     }
 
     //FIXME: in sql colfusion_ is prefix which can be set to different value. So here in sql we need to first get table prefix, which is set in config.php file.

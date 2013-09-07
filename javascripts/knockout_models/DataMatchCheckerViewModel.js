@@ -23,11 +23,6 @@ ko.bindingHandlers.jqueryPagedEditable = {
                     aoData.push({"name": key, "value": tableParams[key]});
                 }
 
-                console.log(sSource);
-                console.log(JSON.stringify(aoData));
-
-                
-
                 $.ajax({
                     url: sSource,
                     data: aoData,
@@ -127,6 +122,7 @@ function DataMatchCheckerViewModel() {
 
     self.isLoadingData = ko.observable(false);
     self.currentLink = ko.observable();
+    self.currentLinkSynonyms = ko.observableArray();
 
     self.isDistinctTablesShown = ko.observable(false);
 
@@ -151,14 +147,15 @@ function DataMatchCheckerViewModel() {
     self.isAddingSynonym = ko.observable(false);
     self.addingSynonymMessage = ko.observable();
 
-    self.loadLinkData = function() {
+    self.loadLinkData = function(linkObject) {
 
-        // this = Link
-        self.currentLink(this);
+        // this = Object with structure like RelationshipModel.Link 
+        // (You can view this object with vars unwrapped from observable in RelationshipModel.Link)
+        self.currentLink(linkObject);
         setDistinctTableParams();
 
         self.isLoadingData(true);
-        $.when(loadValueTables()).then(function() {
+        $.when(loadValueTables(), loadLinkSynonyms()).then(function() {
             self.isLoadingData(false);
         }, function() {
             self.isLoadingData(false);
@@ -195,8 +192,25 @@ function DataMatchCheckerViewModel() {
                 self.countOfMatchedData(data.countOfMachedData.rows[0].ct);
                 self.countOfTotalDistinctData(data.countOfTotalDistinctData.rows[0].ct);
             }
-        }).always(function() {
-            self.isLoadingData(false);
+        });
+    }
+
+    function loadLinkSynonyms() {
+        return $.ajax({
+            url: '../dataMatchChecker/getLinkSynonyms.php?timestamp=' + new Date().getTime(),
+            type: 'post',
+            dataType: 'json',
+            data: {
+                fromSid: self.fromDataset().sid,
+                fromTableName: self.fromDataset().shownTableName,
+                fromTranInput: self.currentLink().fromLinkPart.transInput,
+                toSid: self.toDataset().sid,
+                toTableName: self.toDataset().shownTableName,
+                toTranInput: self.currentLink().toLinkPart.transInput,
+            },
+            success: function (data) {
+                self.currentLinkSynonyms(data);
+            }
         });
     }
 
@@ -246,7 +260,7 @@ function DataMatchCheckerViewModel() {
             data: data,
             success: function(jsonResponse) {
                 if (jsonResponse.isSuccessful) {
-                    updateTables(self.synFrom(), self.synTo());
+                    removeSynonymFromDifferentValueTables(self.synFrom(), self.synTo());
                     self.synFrom('');
                     self.synTo('');
                 } else {
@@ -260,7 +274,27 @@ function DataMatchCheckerViewModel() {
         });
     };
 
-    function updateTables(synFrom, synTo) { 
+    self.deleteSynonym = function () {
+
+        // this = element in self.currentLinkSynonyms()
+        var synId = this.syn_id;
+        self.currentLinkSynonyms.remove(this);
+      
+        return $.ajax({
+            url: 'deleteSynonym.php',
+            type: 'post',
+            dataType: 'json',
+            data: { synId: synId },
+            success: function(data){
+                // Reload link to refresh data tables.
+                if (data.isSuccessful) {
+                    self.loadLinkData(self.currentLink());
+                }
+            }
+        });        
+    };
+
+    function removeSynonymFromDifferentValueTables(synFrom, synTo) {
         var oldFromTable = self.differentValueFromTable();
         var oldToTable = self.differentValueToTable();
                
@@ -270,9 +304,7 @@ function DataMatchCheckerViewModel() {
         self.countOfMatchedData(Number(self.countOfMatchedData()) + 1);
     }
 
-    function isValueInTable(table, value) {
-        return true;
-
+    function isValueInTable(table, value) {       
         for (var i = 0; i < table.getCells().length; i++) {
             var row = table.getCells()[i];
             for (var j = 0; j < row.length; j++) {
@@ -289,6 +321,10 @@ function DataMatchCheckerViewModel() {
     function removeValueInTable(oldTable, value, replaceColIndex) {
         replaceColIndex = replaceColIndex === undefined ? 0 : replaceColIndex;
         var newCells = [];
+
+        if (!oldTable) {
+            return newCells;
+        }
 
         $.each(oldTable.getCells(), function (i, row) {
             if (row[replaceColIndex] != null && value != null

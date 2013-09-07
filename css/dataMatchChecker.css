@@ -1,8 +1,8 @@
-#relInfoWrapper{
+#relInfoWrapper {
     border-bottom: solid 1px #dddddd;
 }
 
-#relInfoHeader{
+#relInfoHeader {
     text-align: center;
     height: 23px;
     text-transform: uppercase;
@@ -20,19 +20,19 @@
     overflow: auto;
 }
 
-#relInfoContainer table{
-    font-size: 12px;
-}
+    #relInfoContainer table {
+        font-size: 12px;
+    }
 
-.relProfile{
+.relProfile {
     padding-right: 10px;
 }
 
-.relProfile .profileHeader {
-    width: 90px;
-    vertical-align: top;
-    font-weight: bold;
-}
+    .relProfile .profileHeader {
+        width: 90px;
+        vertical-align: top;
+        font-weight: bold;
+    }
 
 .profileContent {
     word-break: break-word;
@@ -43,38 +43,38 @@
     padding-right: 10px;
 }
 
-.linkProfileTable{
+.linkProfileTable {
     word-break: break-all;
 }
 
-.linkProfileTable td{
-    vertical-align: top;
-}
+    .linkProfileTable td {
+        vertical-align: top;
+    }
 
 #navListContainer {
     float: left;
     width: 25%;
 }
 
-#navListContainer .selected{
-    border: solid;
-    border-width: 1px 0 1px 0;
-}
+    #navListContainer .selected {
+        border: solid;
+        border-width: 1px 0 1px 0;
+    }
 
-#navListContainer .link {
-    min-height: 30px;
-    overflow: auto;
-    display: table;
-    width: 100%;
-}
+    #navListContainer .link {
+        min-height: 30px;
+        overflow: auto;
+        display: table;
+        width: 100%;
+    }
 
 .linkLi {
     margin-bottom: 5px;
 }
 
-.linkLi:hover {
-    opacity: 0.7;
-}
+    .linkLi:hover {
+        opacity: 0.7;
+    }
 
 .linkPart {
     min-height: 30px;
@@ -103,7 +103,7 @@
     background-color: #FFEEBB;
 }
 
-#navListContainer .nav-list a{
+#navListContainer .nav-list a {
     padding: 0;
     width: 100%;
     margin: 0;
@@ -139,9 +139,9 @@
     background-color: #dbdbdb;
 }
 
-.accordion-heading a{
-    color: black;
-}
+    .accordion-heading a {
+        color: black;
+    }
 
 .linkDataContainer {
     width: 90%;
@@ -151,14 +151,14 @@
     margin-bottom: 40px;
 }
 
-/* Search input */
-.linkDataContainer label input{
-    width: 150px;
-    -webkit-border-radius: 0;
-    -moz-border-radius: 0;
-}
+    /* Search input */
+    .linkDataContainer label input {
+        width: 150px;
+        -webkit-border-radius: 0;
+        -moz-border-radius: 0;
+    }
 
-.linkDataTable thead{
+.linkDataTable thead {
     background-color: #dddddd;
 }
 
@@ -173,4 +173,20 @@
 
 .linkDataTable form {
     margin-bottom: 0 !important;
+}
+
+.synonymMappingTable {
+    font-size: 1em;
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;
+}
+
+    .synonymMappingTable td {
+        border: solid 1px #aaaaaa;
+        padding: 5px;
+    }
+
+.icon-remove-sign:hover {
+    cursor: pointer;
 }

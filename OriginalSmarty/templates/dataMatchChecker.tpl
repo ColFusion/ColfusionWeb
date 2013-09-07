@@ -81,7 +81,7 @@
                 <li class="nav-header"><span style="margin-left: 15px;">Links</span></li>
                 <!-- /ko -->
                 <li class="linkLi">
-                    <a data-bind="click: $root.loadLinkData">
+                    <a data-bind="click: $root.loadLinkData.bind($data, $data)">
                         <table class="link">
                             <tr>
                                 <td data-bind="text: fromLinkPart.transInput" class="fromPart linkPart linkPartText"></td>
@@ -103,15 +103,50 @@
             <div class="addSynonymPanel">
                 <div class="addSynonymInputWrapper">
                     Value 
-                        <input data-bind="value: synFrom" type="text" class="synonymInput fromSynonymInput" />
+                    <input data-bind="value: synFrom" type="text" class="synonymInput fromSynonymInput" />
                     in <span style="font-weight: bold;">From</span> part is equal to value 
-                        <input data-bind="value: synTo" type="text" class="synonymInput toSynonymInput" />
+                    <input data-bind="value: synTo" type="text" class="synonymInput toSynonymInput" />
                     in <span style="font-weight: bold;">To</span> part.
-                        <button data-bind="click: saveSynonym" class="btn addSynonymBtn">Add</button>
+                    <button data-bind="click: saveSynonym" class="btn addSynonymBtn">Add</button>
                     <img data-bind="visible: isAddingSynonym" src="../images/ajax-loader.gif" style="margin: -8px 0 0 5px;" />
                     <div style="color: red;">
                         <i data-bind="visible: addingSynonymMessage" class="icon-remove-sign" style="padding-right: 3px;"></i>
                         <span data-bind="text: addingSynonymMessage"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordionWrapper" style="margin-top: 10px;">
+                <div class="accordion" id="synonymAccordion">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle" data-toggle="collapse" data-parent="#synonymAccordion" href="#synonymAccordionBody">Synonyms 
+                            </a>
+                        </div>
+                        <div id="synonymAccordionBody" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <div data-bind="visible: currentLinkSynonyms().length == 0">
+                                    No synonym is defined in this link.
+                                </div>
+                                <table data-bind="visible: currentLinkSynonyms().length > 0" class="synonymMappingTable">
+                                    <thead>
+                                        <tr>
+                                            <th>Value in From Part</th>
+                                            <th>Value in To Part</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody data-bind="foreach: currentLinkSynonyms">
+                                        <tr>
+                                            <td data-bind="text: fromValue"></td>
+                                            <td data-bind="text: toValue"></td>
+                                            <td data-bind="visible: isOwned" style="text-align: center;">
+                                                <i data-bind="click: $parent.deleteSynonym" class="icon-remove-sign" title="Delete this synonym"></i>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
