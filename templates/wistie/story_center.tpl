@@ -132,7 +132,8 @@
                 <table class="fileList" id="attachmentList">
                     <tr id="attachmentLoadingIcon">
                         <td>
-                            <img src="{$my_pligg_base}/images/ajax-loader.gif" /></td>
+                            <img src="{$my_pligg_base}/images/ajax-loader.gif" />
+                        </td>
                     </tr>
                 </table>
             </td>
