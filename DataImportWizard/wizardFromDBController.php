@@ -53,7 +53,15 @@ function TestConnection($sid) {
         $database = $_POST['database'];
 
         $isLocal = 0;
-        $linkedServerName = my_pligg_base_no_slash . "_external_$sid";
+
+        if ($serverName == "tycho.exp.sis.pitt.edu") {
+            $linkedServerName = $database;
+        }
+        else {
+            $linkedServerName = my_pligg_base_no_slash . "_external_$sid";
+        }
+
+        
     }
 
     $serverName = $serverName ? $serverName : 'a fail host';
