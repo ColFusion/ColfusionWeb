@@ -32,6 +32,7 @@ if(isset($_GET['category']) && sanitize($_GET['category'], 3) != '')
 }
 
 $main_smarty->assign('sid', $_GET['title']);
+$main_smarty->assign('isAuthenticated', $current_user->authenticated);
 
 if($requestID > 0 && enable_friendly_urls == true){
 	// if we're using friendly urls, don't call /story.php?id=XX  or /story/XX/

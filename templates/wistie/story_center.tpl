@@ -159,7 +159,9 @@
 <div id="dataPreviewContainer"></div>
 
 {include file='relationships.tpl'}
+{if $isAuthenticated}
 {include file='addRelationships.tpl'}
+{/if}
 {literal}
     <script type="text/javascript">
         $(function () {
