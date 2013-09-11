@@ -263,6 +263,7 @@ function DataMatchCheckerViewModel() {
                     removeSynonymFromDifferentValueTables(self.synFrom(), self.synTo());
                     self.synFrom('');
                     self.synTo('');
+                    loadLinkSynonyms();
                 } else {
                     self.addingSynonymMessage((jsonResponse.message) ? jsonResponse.message : 'Some errors occur when adding the values' );
                 }

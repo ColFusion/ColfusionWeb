@@ -246,10 +246,14 @@
         fileManager.loadSourceAttachments(sid, $("#attachmentList"));          
         });
 
-        function submitDataSubmissionForm(){
-        if($('#thisform').parsley('validate')){
-        document.forms['thisform'].submit();
-        }
+        function submitDataSubmissionForm() {
+            $('#thisform').parsley({
+                'excluded': 'input[type=radio], input[type=checkbox]'
+            });
+            
+            if($('#thisform').parsley('validate')){
+                document.forms['thisform'].submit();
+            }
         }     
     </script>
 

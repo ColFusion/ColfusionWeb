@@ -49,7 +49,7 @@ function makeNewRelationshipModelCompatibleToRelationshipModel(relationModel) {
 function createDataMatchCheckerViewModel(newRelationModel) {
     var dataMatchCheckerViewModel = new DataMatchCheckerViewModel();
     dataMatchCheckerViewModel.name(newRelationModel.name);
-    dataMatchCheckerViewModel.description(newRelationModel.content);
+    dataMatchCheckerViewModel.description(newRelationModel.description);
     dataMatchCheckerViewModel.fromDataset(newRelationModel.fromDataSet);
     dataMatchCheckerViewModel.toDataset(newRelationModel.toDataSet);
     dataMatchCheckerViewModel.links(newRelationModel.links);
