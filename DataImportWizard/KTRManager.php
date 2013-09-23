@@ -226,7 +226,7 @@ class KTRManager {
                     $field->addChild('precision', '-1');
                     $field->addChild('trim_type', 'both');
                     $field->addChild('repeat', 'N');
-                    $field->addChild('format', '#');
+                    $field->addChild('format', '0.##############;-0.##############');
                     $field->addChild('currency');
                     $field->addChild('decimal');
                     $field->addChild('group');
