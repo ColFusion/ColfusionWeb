@@ -4,6 +4,8 @@ require_once(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
 require_once(realpath(dirname(__FILE__)) . "/RelationshipDAO.php");
 
+require_once(realpath(dirname(__FILE__)) . "/../conf/neo4j.php");
+
 use Everyman\Neo4j\Node,
     Everyman\Neo4j\Index;
 
@@ -29,7 +31,8 @@ class Neo4JDAO
 	private function getClient()
 	{
 		// Connecting to the default port 7474 on localhost
-        $client = new Everyman\Neo4j\Client();
+        // NEO4J_HOST, NEO4J_PORT are defined in /conf/neo4j.php file. 
+        $client = new Everyman\Neo4j\Client(NEO4J_HOST, NEO4J_PORT);
 
         return $client;
 	}

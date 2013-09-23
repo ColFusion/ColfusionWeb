@@ -3,17 +3,21 @@
 
     require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
+    require_once(realpath(dirname(__FILE__)) . "/../conf/neo4j.php");
+
  //   error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
  //   ini_set('display_errors', 1);
 
 
    // Connecting to the default port 7474 on localhost
-    $client = new Everyman\Neo4j\Client();
+    $client = new Everyman\Neo4j\Client(NEO4J_HOST, NEO4J_PORT);
 
-    //print_r($client->getServerInfo());
+    print_r($client->getServerInfo());
 
 
-    $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
+exit;
+
+//    $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
    // $sourceIndex->save();
 
 /*    for ($i=1; $i <= 7; $i++) { 
@@ -25,6 +29,7 @@
     }
 
  
+
 
 
     
