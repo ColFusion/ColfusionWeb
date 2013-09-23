@@ -68,10 +68,10 @@
 	{elseif preg_match('/search.php$/',$templatelite.server.SCRIPT_NAME)}	
 		<title>{#PLIGG_Visual_Search_SearchResults#} '{if $get.search}{$get.search}{else}{$get.date}{/if}' | {#PLIGG_Visual_Name#}</title>
         
-    <!------------------------------------------------------------------>
+   
 	{elseif preg_match('/searchbycategory.php$/',$templatelite.server.SCRIPT_NAME)}	
 		<title>Search by Category | {#PLIGG_Visual_Name#}</title>
-    <!------------------------------------------------------------------->
+   
     
 	{elseif preg_match('/groups.php$/',$templatelite.server.SCRIPT_NAME)}	
 		{if $get.page>1}

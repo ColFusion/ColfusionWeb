@@ -8,3 +8,5 @@ delete from colfusion_sourceinfo;
 delete from colfusion_synonyms_from;
 delete from colfusion_synonyms_to;
 delete from colfusion_links;
+delete from colfusion_relationships_columns_cachingExecutionInfo;
+delete from colfusion_cached_queries_info;
