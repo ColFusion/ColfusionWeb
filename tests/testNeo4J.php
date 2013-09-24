@@ -15,7 +15,7 @@
     print_r($client->getServerInfo());
 
 
-exit; 
+exit;  
 
 //    $sourceIndex = new Everyman\Neo4j\Index\NodeIndex($client, 'sources');
    // $sourceIndex->save();
