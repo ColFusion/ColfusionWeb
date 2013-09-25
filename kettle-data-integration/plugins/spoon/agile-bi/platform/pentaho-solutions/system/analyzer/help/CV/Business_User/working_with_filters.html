@@ -83,8 +83,8 @@ td.nodatacellright {
          <ul>
             <li><a href="#0">What Is a Filter?</a></li>
             <li><a href="#1">About Pentaho Filters</a></li>
-            <li><a href="#filters_on_text_fields">Text Field Filters</a></li>
-            <li><a href="#filters_on_number_fields">Numeric Filters</a></li>
+            <li><a href="#filters_on_text_fields">Level Field Filters</a></li>
+            <li><a href="#filters_on_number_fields">Measure  Filters</a></li>
             <li><a href="#4">Viewing and Editing a Filter</a></li>
             <li><a href="#5">Adding a Filter</a></li>
             <li><a href="#6">How Filters Work Together</a></li>
@@ -95,27 +95,33 @@ td.nodatacellright {
 		 <p><strong>Example 1:</strong> This report shows sales by product line. The filter on Quarter restricts the data so that only sales for the 4th quarter in 2006 are shown.</p>
          <p><strong>Example 2:</strong> If we add a regional filter of Europe, then the report only displays data pertaining to European sales in the 4th quarter of 2006.</p>
          <p><strong>Example 3:</strong> We can also add a filter on a field that is displayed in the report. If we add a filter on the Product Line field to exclude Surfing, then the report only displays data pertaining to European sales in the 4th quarter of 2006 that are not in the surfing product line.</p>
-         <h2 class="line"><a name="1"></a>About Pentaho Filters</h2>
+         
+		 
+		 <h2 class="line"><a name="1"></a>About Pentaho Filters</h2>
          <p>Pentaho Analyzer offers the following options for filtering reports:</p>
          <ul>
-            <li><b>Filtering Text Fields:</b> Text fields contain non-numeric information, so you can choose to include or exclude certain values at will. Time Periods, Names, Types, and Categories are examples of text field groups; Product Line is an example of a specific text field.</li> 
-            <li><b>Filtering Number Fields:</b> Number fields include numeric information. Sales Revenue is an example of a number field. You can create a numeric filter using <strong>Greater/Less Than</strong> or <strong>Top Ten</strong>.</li>
+            <li><b>Filtering Level Fields:</b> Level fields contain non-numeric information, so you can choose to include or exclude certain values at will. Time Periods, Names, Types, and Categories are examples of Level field groups; Product Line is an example of a specific level field.</li> 
+            <li><b>Filtering Measure Fields:</b> Measure fields include numeric information. Sales Revenue is an example of a measure field. You can create a numeric filter using <strong>Greater/Less Than</strong> or <strong>Top Ten</strong>.</li>
          </ul>
-         <h2 class="line"><a name="filters_on_text_fields"></a>Text Field Filters</h2>
-         <p>The dialog box for filters on text fields lets you choose between two types of filters:</p>
+         
+		 
+		 <h2 class="line"><a name="filters_on_text_fields"></a>Level Field Filters</h2>
+         <p>The dialog box for filters on level fields lets you choose between two types of filters:</p>
          <ul>
-           <li><strong>Selecting from a list of values</strong>. Pentaho will display a list of values, and you choose to <strong>include</strong> or <strong>exclude</strong> certain values </li>
+           <li><strong>Selecting from a list of values</strong>. Analyzer will display a list of values, and you choose to <strong>include</strong> or <strong>exclude</strong> certain values </li>
            <li><strong>Match part of a string</strong>. You type in part of the name (string) that the name <strong>Contains</strong> or <strong>Does not Contain</strong> </li>
          </ul>
          <p><strong>Note:</strong> Typically, the list of possible values contains <strong>all</strong> available values although sometimes the list is narrowed down due to a filter on another field that is part of the same field hierarchy. (See <a href="working_with_fields.html#about_field_hierarchies">About Field Hierarchies</a>). This makes it easier for you to browse only  values that are relevant. For example, if you have the filter <strong>Year=2006</strong>, then the filter dialog for <strong>Quarters</strong> will only contain four checkboxes - the four quarters for 2006.</p>
          <p>When you filter on time periods you have three options:</p>
          <ul>
-           <li><strong>Commonly Used Time Periods </strong>. Pentaho will display common time periods. A great thing about these pre-set choices are that they dynamically change as time goes by so if you set &quot;current quarter&quot; you don't have to change your filter every new quarter. </li>
+           <li><strong>Commonly Used Time Periods </strong>. Analyzer will display common time periods. A great thing about these pre-set choices are that they dynamically change as time goes by so if you set &quot;current quarter&quot; you don't have to change your filter every new quarter. </li>
            <li><strong>Select a range</strong>. Lets you define a range.</li>
-           <li><strong>Specifically choose time periods</strong>. Use this option when the other options are not sufficient. Here you can choose to include or exclude any time period. </li>
+           <li><strong>Select from a list</strong>. Use this option when the other options are not sufficient. Here you can choose to include or exclude any time period. </li>
          </ul>
-         <h2 class="line"><a name="filters_on_number_fields"></a>Numeric Filters</h2>
-         <p>You can restrict report data by applying conditions (e.g. <strong>Show me all product lines with sales revenue greater than 500</strong>) to number fields. There are two flavors of the numeric filter:</p>
+         
+		 
+		 <h2 class="line"><a name="filters_on_number_fields"></a>Measure Filters</h2>
+         <p>You can restrict report data by applying conditions (e.g. <strong>Show me all product lines with sales revenue greater than 500</strong>) to measure fields. There are two flavors of the numeric filter:</p>
          <ul>
          <li>Greater/Less Than...</li>
         <li>Top 10, etc...</li>
@@ -127,8 +133,8 @@ td.nodatacellright {
          </ul>
          <p>When you create a numeric filter, you specify:</p>
          <ul>
-            <li>One or more number fields. You cannot select a calculated field (such as % of, Rank, Running Sum, etc.).</li>
-            <li>One text field, which indicates the values the numeric filter will filter. <strong>Note:</strong> If you remove the text field from the report later, the numeric filter also is removed.</li>
+            <li>One or more measure fields. You cannot select a calculated field (such as % of, Rank, Running Sum, etc.).</li>
+            <li>One level field, which indicates the values the numeric filter will filter. <strong>Note:</strong> If you remove the level field from the report later, the numeric filter also is removed.</li>
          </ul>
          <p><strong>Example 1:</strong> The following report shows sales by region and product line without a numeric filter:</p>
          <div class="img">
@@ -137,7 +143,9 @@ td.nodatacellright {
          <p>Compare this to a filter that applies to each Region. The filter below removes regions.</p>
          <div class="img">
             <img src="../../images/content/working_with_filters/img_8.jpg" width="284" height="178" alt="image 8" border="0">         </div>
-         <h2 class="line"><a name="4"></a>Viewing and Editing Filters</h2>
+        
+
+		<h2 class="line"><a name="4"></a>Viewing and Editing Filters</h2>
          <p>To view the filters that are applied to a report, click the <strong>Show Filters</strong> button to display the <strong>Filters</strong> pane.</p>
          <p>To edit an existing filter, click the <strong>Edit filter</strong> symbol next to the filter in the <b>Filters</b> pane.</p>     
          <h2 class="line"><a name="5"></a>Adding a Filter</h2>
@@ -147,16 +155,20 @@ td.nodatacellright {
             <li><strong> Method 2:</strong> From the <strong>Available Fields</strong> pane, find the field you want to filter and drag the field into the <b>Filters</b> pane OR to the &quot;(+) 0 Filter in Use&quot; area.</li>           
             <li><strong>Method 3:</strong> In the Available Fields pane, find the field you want to filter and right click on the field, and select <b>Filter</b>.           </li>
          </ul>
-         <h2 class="line"><a name="6"></a>How Filters Work Together</h2>
+       
+	   
+	   <h2 class="line"><a name="6"></a>How Filters Work Together</h2>
          <p>Filters are applied in the following order:</p>
         <ol>
-        <li>Text field filters, such as <strong>Product Line = Snow Sports</strong> or <strong>Time Period = 2006 Q4</strong>. (Note that the order between these filters is irrelevant.)</li>
+        <li>Level field filters, such as <strong>Product Line = Snow Sports</strong> or <strong>Time Period = 2006 Q4</strong>. (Note that the order between these filters is irrelevant.)</li>
         <li><strong>Greater/Less Than</strong> component of numeric filters. This filter will <em>further restrict</em> the data.</li>
         <li><strong>Top Ten</strong> component of numeric filters. This filter will <em>even further restrict</em> the data.</li>
         </ol>
-         <p>Another way to express this is: All text field filters are applied first (#1) creating a first &quot;invisible&quot; version of the report. Second, Greater/Less than filters are applied on this invisible report (#2), and -- finally -- based on this report, the Top 10 filter is applied (#3). </p>
+         <p>Another way to express this is: All level field filters are applied first (#1) creating a first &quot;invisible&quot; version of the report. Second, Greater/Less than filters are applied on this invisible report (#2), and -- finally -- based on this report, the Top 10 filter is applied (#3). </p>
          
-		  <h2 class="line"><a name="when_the_report_returns_no_data"></a>When Your Report Does Not Display Any Data</h2>
+	
+	
+	<h2 class="line"><a name="when_the_report_returns_no_data"></a>When Your Report Does Not Display Any Data</h2>
       <p>Please refer to the section <a href="working_with_fields.html#when_the_report_returns_no_data">When your Report Does Not Display Any_Data</a> in the Fields chapter.</p>
  </td>
   </tr>

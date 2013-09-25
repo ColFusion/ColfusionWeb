@@ -23,6 +23,8 @@ pre, code {font:1.1em monospace;*font-size:100%;}
  */
 body * {}
 
+body, html { width:100%; height:100%; margin:0; padding:0; overflow:hidden; }
+
 /* Font sizes (px vs. percentage)
 	11 	85
 	12 	92
@@ -47,7 +49,6 @@ body * {}
 body {
 	margin: 0 0 0 0;
 	padding: 0 0 0 0;
-	min-width: 750px;
 }
 
 div,table,tr,td {
@@ -333,4 +334,48 @@ h1#clearView {
 
 .legal .legalButtons {
 	padding-top:15px;
+}
+
+.dijitTooltip{
+    background-color: #dddddd;
+    padding: 4px;
+    border: 1px solid #808080;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+.dijitTooltipContainer {
+    border:none !important;
+    background-color: #dddddd !important;
+}
+
+/* common menu styles */
+.pentaho-menu .pentaho-menuitem img.dijitMenuItemIcon {
+  width: 11px;
+  height: 10px;
+  padding-right: 3px;
+  margin-left: 5px;
+}
+
+.pentaho-menu .pentaho-menuitem {
+  height: 25px;
+}
+
+.pentaho-menu .pentaho-menuitem .dijitMenuItemLabel {
+  font-size: 11px;
+}
+.pentaho-menu .pentaho-menuitem .dijitMenuArrowCell {
+  padding-left: 3px;
+}
+.pentaho-menuitem .dijitMenuExpand {
+  width: 5px;
+  height: 9px;
+  background-image: url(../images/submenu_off.gif);
+  background-position: center center;
+  margin-right: 3px;
+}
+
+/* ANALYZER-1152 */
+.IE #theDialog {
+  position: fixed !important;
 }

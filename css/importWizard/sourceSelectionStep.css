@@ -1,0 +1,15 @@
+#sourceSelectionWrapper {
+    overflow-y: scroll;
+    height: 315px;
+    margin-top: 10px;
+}
+
+.sourceWorksheetSettingsWrapper {
+    margin-bottom: 10px;
+}
+
+.sourceName {
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #eeeeee;
+}

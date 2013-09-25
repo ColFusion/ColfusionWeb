@@ -221,6 +221,7 @@ pentaho.pda.model.mql.prototype.discoverModelDetail = function() {
 				element.formatMask = this.getNodeText( colnodes[idx2], 'formatMask' );
 				element.selectedAggregation = this.getNodeText( colnodes[idx2], 'selectedAggType' );
 				element.defaultAggregation = this.getNodeText( colnodes[idx2], 'defaultAggType' );
+				element.hiddenForUser = this.getNodeText( colnodes[idx2], 'hiddenForUser' );
 				element.parent = category;
 				element.isQueryElement = true;
                                 element.category = category;
@@ -629,7 +630,8 @@ pentaho.pda.query.mql.prototype.createCondition = function() {
             "operator" : null,
             "value" : null,
             "combinationType" : pentaho.pda.Column.OPERATOR_TYPES.AND,
-            "parameterized": false
+            "parameterized": false,
+            "selectedAggType": null
         }
         return condition;
     }
@@ -672,7 +674,7 @@ pentaho.pda.query.mql.prototype.addSortById = function( columnId, orderType ) {
         return null;
     }
     
-pentaho.pda.query.mql.prototype.addConditionById = function(columnId, operator, value, combinationType, parameterized) {
+pentaho.pda.query.mql.prototype.addConditionById = function(columnId, operator, value, combinationType, parameterized, selectedAggType) {
         var column = this.model.getColumnById( columnId );
         if(column != null) {
             var condition = this.createCondition();
@@ -686,6 +688,9 @@ pentaho.pda.query.mql.prototype.addConditionById = function(columnId, operator, 
                 condition.value = [ value ];
             }
             condition.combinationType = combinationType;
+            if (selectedAggType && column.defaultAggregation !== selectedAggType && pentaho.pda.Column.AGG_TYPE_MAP[selectedAggType]) {
+                condition.selectedAggType = selectedAggType;
+            }
             this.addCondition( condition );
             return condition;
         }
@@ -758,7 +763,12 @@ pentaho.pda.query.mql.prototype.serialize = function() {
         xml += '</selections>\n';
         xml += '<constraints>\n';
         for( var idx=0; idx<this.state.conditions.length; idx++ ) {
+          if(this.state.conditions[idx].value.indexOf('::mql::') == 0){
+            xml += this.getMQLFilterXML(this.state.conditions[idx].value.replace('::mql::',''));
+          }
+          else{
             xml += this.getFilterXML( this.state.conditions[idx], this.state.parameters );
+          }
         }
         xml += '</constraints>\n';
         xml += '<orders>\n';
@@ -782,7 +792,7 @@ pentaho.pda.query.mql.prototype.getParameterXML = function( parameter ) {
         }
         if (   column.dataType === pentaho.pda.Column.DATA_TYPES.STRING
             || column.dataType === pentaho.pda.Column.DATA_TYPES.UNKNOWN) {
-            defaultValue = this.encodeXmlAttribute(defaultValue);
+            defaultValue = this.encodeXmlAttribute(defaultValue) || '';
         }
         xml += defaultValue;
         xml += '" name="'+parameter.name;
@@ -800,6 +810,9 @@ pentaho.pda.query.mql.prototype.encodeXmlAttribute = function(value) {
 }
 
 pentaho.pda.query.mql.prototype.getParameterValueString = function ( column, value ) {
+        if (value == null || value == '') {
+            return '';
+        }
         if( value.constructor.toString().indexOf("Array") != -1 ) {
             // we have an array of values
             var str = '';
@@ -859,65 +872,82 @@ pentaho.pda.query.mql.prototype.getFilterXML = function( filter, parameters ) {
         var xml = '';
         xml += '<constraint>\n';
         xml += '<operator>'+filter.combinationType+'</operator>\n';
-        xml += '<condition><![CDATA['+this.getFilterConditionString( filter.column, filter.category, filter.operator, filter.value, filter.parameterized, parameters )+']]></condition>\n';
+        xml += '<condition><![CDATA['+this.getFilterConditionString( filter.column, filter.category, filter.operator, filter.value, filter.parameterized, parameters, filter.selectedAggType )+']]></condition>\n';
         xml += '</constraint>\n';
         return xml;
     }
 
-pentaho.pda.query.mql.prototype.getFilterConditionString = function( columnId, category, operator, value, parameterized, parameters ) {
+pentaho.pda.query.mql.prototype.getMQLFilterXML = function(mqlCondition) {
+  var combinationType = 'AND';
+  var xml = '';
+  xml += '<constraint>\n';
+  xml += '<operator>'+combinationType+'</operator>\n';
+  xml += '<condition><![CDATA['+mqlCondition+']]></condition>\n';
+  xml += '</constraint>\n';
+  return xml;
+}    
+
+pentaho.pda.query.mql.prototype.getFilterConditionString = function( columnId, category, operator, value, parameterized, parameters, aggregationType ) {
         operator = operator.toUpperCase();
         var column = this.model.getColumnById( columnId );
+        var operand = '[' + category + '.' + columnId + (aggregationType ? '.' + aggregationType : '') + ']';
         var isArrayValues = value.constructor.toString().indexOf("Array") != -1;
         if( operator == pentaho.pda.Column.CONDITION_TYPES.LIKE ) {
-            return 'LIKE(['+category+'.'+columnId+'];"%'+this.getFilterValueString(column, value, parameterized, parameters)+'%")'; 
+            return 'LIKE('+operand+';"%'+this.getFilterValueString(column, value, parameterized, parameters)+'%")'; 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.EQUAL && (!isArrayValues || value.length == 1)) {
-            return 'EQUALS(['+category+'.'+columnId+'];'+this.getFilterValueString(column, value, parameterized, parameters) + ')'; 
+            return 'EQUALS('+operand+';'+this.getFilterValueString(column, value, parameterized, parameters) + ')'; 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.EQUAL && isArrayValues) {
-            return 'IN(['+category+'.'+columnId+'];'+this.getFilterValueString(column, value, parameterized, parameters)+")"; 
+            return 'IN('+operand+';'+this.getFilterValueString(column, value, parameterized, parameters)+")"; 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.LESS_THAN ) {
-            return '['+category+'.'+columnId+'] <'+this.getFilterValueString(column, value, parameterized, parameters); 
+            return operand+' <'+this.getFilterValueString(column, value, parameterized, parameters); 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.LESS_THAN_OR_EQUAL ) {
-            return '['+category+'.'+columnId+'] <='+this.getFilterValueString(column, value, parameterized, parameters); 
+            return operand+' <='+this.getFilterValueString(column, value, parameterized, parameters); 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.MORE_THAN ) {
-            return '['+category+'.'+columnId+'] >'+this.getFilterValueString(column, value, parameterized, parameters); 
+            return operand+' >'+this.getFilterValueString(column, value, parameterized, parameters); 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.MORE_THAN_OR_EQUAL ) {
-            return '['+category+'.'+columnId+'] >='+this.getFilterValueString(column, value, parameterized, parameters); 
+            return operand+' >='+this.getFilterValueString(column, value, parameterized, parameters); 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.CONTAINS) {
-            return 'CONTAINS(['+category+'.'+columnId+'];'+this.getFilterValueString(column, value, parameterized, parameters)+")"; 
+            return 'CONTAINS('+operand+';'+this.getFilterValueString(column, value, parameterized, parameters)+")"; 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.NOT_CONTAINS) {
-            return 'NOT(CONTAINS(['+category+'.'+columnId+'];'+this.getFilterValueString(column, value, parameterized, parameters)+"))"; 
+            return 'NOT(CONTAINS('+operand+';'+this.getFilterValueString(column, value, parameterized, parameters)+"))"; 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.BEGINSWITH) {
-            return 'BEGINSWITH(['+category+'.'+columnId+'];'+this.getFilterValueString(column, value, parameterized, parameters)+")"; 
+            return 'BEGINSWITH('+operand+';'+this.getFilterValueString(column, value, parameterized, parameters)+")"; 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.ENDSWITH) {
-            return 'ENDSWITH(['+category+'.'+columnId+'];'+this.getFilterValueString(column, value, parameterized, parameters)+")"; 
+            return 'ENDSWITH('+operand+';'+this.getFilterValueString(column, value, parameterized, parameters)+")"; 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.IS_NULL) {
-            return 'ISNA(['+category+'.'+columnId+'])'; 
+            return 'ISNA('+operand+')'; 
         }
         else if( operator == pentaho.pda.Column.CONDITION_TYPES.NOT_NULL) {
-            return 'NOT(ISNA(['+category+'.'+columnId+']))'; 
+            return 'NOT(ISNA('+operand+'))'; 
         }
     }
     
 pentaho.pda.query.mql.prototype.getFilterValueString = function( column, value, parameterized, parameters ) {
-
+        if (value == null) {
+            return '';
+        }
         if (parameterized) {
           // If this filter is parameterized it's value is the name of the parameter
           // see if we have parameters
           for(var idx=0; idx<parameters.length; idx++) {
               if( parameters[idx].name === value[0] ) {
                   // this has a parameter
-                  return '[param:'+parameters[idx].name+']';
+                  var param = '[param:'+parameters[idx].name+']';
+                  if( column.dataType == pentaho.pda.Column.DATA_TYPES.DATE ) {
+                    param = 'DATEVALUE('+param+')';
+                  }
+                  return param;
               }
           }
           throw new Error("unable to find parameter '" + value + "' for condition on column " + column + ".");
@@ -936,6 +966,9 @@ pentaho.pda.query.mql.prototype.getFilterValueString = function( column, value, 
         }
         if( column.dataType == pentaho.pda.Column.DATA_TYPES.NUMERIC ) {
             return ''+value;
+        }
+        if( column.dataType == pentaho.pda.Column.DATA_TYPES.DATE ) {
+            return 'DATEVALUE("'+value+'")';
         }
         if( column.dataType == pentaho.pda.Column.DATA_TYPES.BOOLEAN ) {
             return ''+value;

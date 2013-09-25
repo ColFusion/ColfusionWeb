@@ -1178,7 +1178,7 @@ function PathExpr(filter, rel) {
 PathExpr.prototype.evaluate = function(ctx) {
   var nodes = this.filter.evaluate(ctx).nodeSetValue();
   var nodes1 = [];
-  for (var i = 0; i < nodes.length; ++i) {
+  for (var i = 0; i < nodes.length; ++i) {
     var nodes0 = this.rel.evaluate(ctx.clone(nodes[i], i, nodes)).nodeSetValue();
     for (var ii = 0; ii < nodes0.length; ++ii) {
       nodes1.push(nodes0[ii]);

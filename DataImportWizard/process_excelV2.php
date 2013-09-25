@@ -1,10 +1,5 @@
 <?php
 
-/** Error reporting */
-error_reporting(E_ALL ^ E_STRICT);
-ini_set('display_errors', TRUE);
-ini_set('display_startup_errors', TRUE);
-
 define('EOL', (PHP_SAPI == 'cli') ? PHP_EOL : '<br />');
 
 /** Include PHPExcel */

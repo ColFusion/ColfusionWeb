@@ -144,6 +144,8 @@ class PHPExcel_Reader_CSV extends PHPExcel_Reader_Abstract implements PHPExcel_R
 	 */
 	protected function _skipBOM()
 	{
+		$fileHandle = $this->_fileHandle;
+		
 		rewind($fileHandle);
 
 		switch ($this->_inputEncoding) {

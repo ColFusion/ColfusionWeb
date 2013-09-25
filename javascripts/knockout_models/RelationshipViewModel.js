@@ -2,28 +2,51 @@ function RelationshipViewModel(sid) {
     var self = this;
 
     self.sid = sid;
-
+    
+    // Properties for message control.
     self.isRelationshipDataLoading = ko.observable(false);
     self.isNoRelationshipData = ko.observable(false);
+    self.isMiningRelationshipsError = ko.observable(false);
+
     self.mineRelationshipsTable = ko.observable();
 
     self.isRelationshipInfoLoaded = {};
-    self.relationshipInfos = {};
+    self.relationshipInfos = {};  
+    self.isError = {};
 
-    self.mineRelationships = function(perPage, pageNo) {
-        //$('#relationshipMiningInProgress').show();
+    self.removeRelationship = function (relId) {
+        delete self.relationshipInfos[relId];
+        $('tr[id="relationship_' + relId + '"]').add('#mineRelRec_' + relId).remove();
+        if ($('.relationshipInfoRow').length === 0) {
+            self.isNoRelationshipData(true);
+        }
+
+        $.ajax({
+            url: my_pligg_base + '/datasetController/deleteRelationship.php',
+            type: 'POST',
+            dataType: 'json',
+            data: { relId: relId }
+        });
+    };
+
+    self.mineRelationships = function (perPage, pageNo) {
+
         self.isRelationshipDataLoading(true);
         self.isNoRelationshipData(false);
+        self.isMiningRelationshipsError(false);
 
-        dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function(data) {
-            //  $('#relationshipMiningInProgress').hide();
+        dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function (data) {
 
-            if (!data.Control || !data.Control.cols || data.Control.cols.length === 0) {
+            if (!data || !data.Control || !data.Control.cols || data.Control.cols.length === 0) {
                 // Show 'no data' text;
                 self.isRelationshipDataLoading(false);
                 self.isNoRelationshipData(true);
                 return;
             }
+
+            $.each(data.data, function (i, relObj) {
+                self.isError[relObj.rel_id] = ko.observable(false);
+            });
 
             self.isNoRelationshipData(false);
             // Controls.
@@ -32,39 +55,49 @@ function RelationshipViewModel(sid) {
             var currentPage = data.Control.pageNo;
 
             var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
-            for(var i=0 ; i<data.data.length ; i++){
+
+            for (var i = 0; i < data.data.length; i++) {
                 self.isRelationshipInfoLoaded[data.data[i].rel_id] = ko.observable(false);
             }
+
             self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table('mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
+           
+        }).error(function() {
+            self.isMiningRelationshipsError(true);
+        }).always(function() {
             self.isRelationshipDataLoading(false);
         });
     };
 
-    self.showMoreClicked = function(rel_id) {
-        $('#mineRelRec_' + rel_id).toggle();
-        if ($('#mineRelRec_' + rel_id).css("display") === "none") {
-            $('#mineRelRecSpan_' + rel_id).text("More...");
+    /*
+        "More/Less" is a text cell in Data Table, so we cannot use observable to toggle those words.
+        (Dom manipulation is required.)
+    */
+    self.showMoreClicked = function (rel_id, relRow, event) {
+        self.isError[rel_id](false);
+
+        var mineRelDom = $(event.target).parents('tr').next('tr');
+
+        $(mineRelDom).toggle();
+        if ($(mineRelDom).css("display") === "none") {
+            $(event.target).text("More...");
         } else {
-            $('#mineRelRecSpan_' + rel_id).text("Less");
+            $(event.target).text("Less");
             if (!self.relationshipInfos[rel_id]) {
-                loadRelationshipInfo(rel_id);
+                $(mineRelDom).find('.relInfoLoadingIcon').show();
+                loadRelationshipInfo(rel_id, mineRelDom);
             }
         }
     };
 
-    function loadRelationshipInfo(relId) {
-        $.ajax({
-            url: 'datasetController/relationshipInfo.php',
-            data: {relId: relId},
-            type: 'POST',
-            dataType: 'json',
-            success: function(data) {
-                self.relationshipInfos[data.rid] = ko.observable(new RelationshipModel.Relationship(data));
-                self.isRelationshipInfoLoaded[data.rid](true);
-            },
-            error: function(jqXHR, statusCode, errMessage) {
-                alert(errMessage);
-            }
+    function loadRelationshipInfo(relId, mineRelDom) {
+        dataSourceUtil.loadRelationshipInfo(relId).done(function (data) {
+            self.relationshipInfos[data.rid] = ko.observable(new RelationshipModel.Relationship(data));
+            self.isRelationshipInfoLoaded[data.rid](true);
+            $(mineRelDom).find('.relInfoLoadingIcon').hide();
+        }).error(function (jqXHR, statusCode, errMessage) {
+            alert(errMessage);
+            self.isError[relId](true);
         });
     }
 }

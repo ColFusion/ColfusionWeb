@@ -2,52 +2,44 @@
 <title>Analyzer Alert</title>
 
 <head>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js"></script>
-	<script language="javascript" type="text/javascript" src="webcontext.js"></script>
-    <script type="text/javascript">
-        //<![CDATA[
-        //override theme
-        var phoConfig = {
-          theme_resources : { core: ["mainStyles.css", "jquery.jscrollpane.js","jquery.mousewheel.js", "mwheelIntent.js"]}
-        };
-        //]]>
-	</script>
-    <script language="javascript" src="/pentaho-style/style/ThemeResources.js"></script>
-</head>  
+  <link rel="stylesheet" type="text/css" media="all"   href="styles/common.css" />
+  <link rel="stylesheet" type="text/css" media="all"   href="styles/content.css" />
+  <link rel="stylesheet" type="text/css" media="all" href="styles/report/selectArea.css" />
+  <link rel="stylesheet" type="text/css" href="../common-ui/resources/web/dojo/dijit/themes/claro/claro.css"/>
+  <link rel="stylesheet" type="text/css" href="styles/dojoThemeOverrides.css"/>
+  <script language="javascript" type="text/javascript" src="webcontext.js?context=analyzer"></script>
 
+  <script type="text/javascript">
+    $.extend(djConfig, {
+      parseOnLoad: true,
+      baseUrl: "../common-ui/resources/web/dojo/dojo/"
+    });
+    var cv = {};
+  </script>
+  <script type="text/javascript" src="../common-ui/resources/web/dojo/dojo/dojo-all.js"></script>
+  <script type="text/javascript">
+    dojo.registerModulePath("analyzer", "../../../../../analyzer/scripts/dojo/analyzer");
+  </script>
+  <script type="text/javascript" src="scripts/cv/common.js"></script>
+  <script type="text/javascript">
+    djConfig.isDebug = true;
+  </script>
+</head>
 
 <body>
-	<script type="text/javascript">      
-      // Check to see if we're running in PUC, if not add the standard background.
-      if(!window.parent || !window.parent.mantle_initialized){
-        document.getElementsByTagName("body")[0].className += " pentaho-page-background";
-      }
-    </script>
-<script type="text/javascript" src="scripts/dojo/dojo.js"></script>
-<script type="text/javascript" src="scripts/cv/common.js"></script>
-<script type="text/javascript">
-    <!--
-    if (typeof cv != "undefined") {
-        dojo.hostenv.setModulePrefix('clearview.widget','../widget');
-        cv.contextPath = "";
-    }
-    -->
-</script>
-<link rel="stylesheet" type="text/css" media="all"   href="styles/common.css" /> 
-<link rel="stylesheet" type="text/css" media="all"   href="styles/content.css" /> 
-<link rel="stylesheet" type="text/css" media="all" href="styles/report/selectArea.css" />   
-
+  
 <div style="height:75px; clear:both"></div>
 
 <div class="selectAreaWizard pentaho-dialog" style="position: relative;">
-	<div id="dialogTitle" style="cursor:default;" class="Caption">@{selectSchemaTitle}</div>
+	<div id="dialogTitle" style="cursor:default;" class="Caption"></div>
 	<div class="dialog-content" style="padding-bottom: 8px">
 		<div id="message" class="analysisArea clearfix">
 		</div>
 	</div>
 	<div class="controls clearfix">
 	    <div class="buttons">
-	    	<button id="btnCancel" class="pentaho-button">@{btnLabelBack}</button>
+	        <button id="btnBack" class="pentaho-button hidden">@{btnLabelBack}</button>
+	        <button id="btnOK" class="pentaho-button hidden">OK</button>
 	    </div>
     </div>
 </div>
@@ -56,9 +48,15 @@
 	
 <script type="text/javascript">
     
-    dojo.event.connect(dojo.byId("btnCancel"), "onclick", function() {
+    dojo.connect(dojo.byId("btnBack"), "onclick", function() {
     	history.go(-1);
     });
+    
+    dojo.connect(dojo.byId("btnOK"), "onclick", function() {
+        if(window.parent && window.parent.closeTab)
+            window.parent.closeTab();
+    });
+    
 
     dojo.addOnLoad(function() { 
         // ${init}
@@ -68,15 +66,15 @@
     {
         document.getElementById("dialogTitle").innerHTML = title;
         document.getElementById("message").innerHTML = message;
-        if (!showBack)
-            document.getElementById("btnCancel").style.visibility = 'hidden';
+        if (showBack)
+            dojo.removeClass(dojo.byId("btnBack"), "hidden");
     }
 
     function showInformation(title, message)
     {
         document.getElementById("dialogTitle").innerHTML = title;
         document.getElementById("message").innerHTML = message;
-        document.getElementById("btnCancel").style.visibility = 'hidden';
+        dojo.removeClass(dojo.byId("btnOK"), "hidden");
     }
     
 </script>

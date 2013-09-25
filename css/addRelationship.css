@@ -1,0 +1,200 @@
+#newRelationshipBtn{
+    font-size: 20px;
+}
+
+#newRelationshipBtn:hover{
+    cursor: pointer;
+}
+
+#newRelContainer {
+    background-color: white;
+    padding: 15px;
+    padding-top: 4px;
+    overflow: auto;
+    border: solid 1px #cfcfcf;
+}
+
+#relDescriptionContainer {
+    padding: 20px 0 20px 0;
+}
+
+#newRelDesTable {
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.desTitle {
+    width:100px;
+}
+
+
+.dataSetTitle {
+    font-weight: bold;
+    margin-left: 11px;
+}
+
+.dataSetTable {
+    width: 100%;
+    height: 150px;
+    background-color: #eeeeee;
+}
+
+#fromDataSet, #toDataSet {
+    padding: 10px;
+}
+
+.dataSetDesTable td {
+    height: 35px;
+}
+
+.sidInput {
+    width: 220px !important;
+}
+
+.btn.add-on {
+    height: 30px !important;
+}
+
+.dataSetDesTable select {
+    width: 248px;
+}
+
+.dataSetDesTable {
+    margin-bottom: 10px;
+}
+
+.dataSetDesTitle{
+    width: 60px; 
+}
+
+#dataSetMatchContainer {
+    min-height: 220px;
+    overflow: visible;
+}
+
+.tableInfoTableWrapper{
+    min-height: 50px;
+}
+
+.tableInfoTable {
+    font-size: 12px;
+    text-align: left;
+}
+
+.tableInfoTable th{
+    background-color: #eeeeee;
+}
+
+.tableInfoTable td{
+    border: solid 1px;
+    border-width: 0 0 1px 0;
+}
+
+.datasetSearchLoadingText {
+    font-size: 10px;
+}
+
+/* Typeahead style for relationship page */
+
+.dataSetWrapper .tt-dropdown-menu {
+    width: 330px;
+}
+
+.tt-hint {
+    width: 220px !important;
+}
+
+.dataSetWrapper  .twitter-typeahead {
+    margin-top: 10px;
+}
+
+#relationshipTransformationContainer .dataColumnSuggestion{
+    width: 350px;
+}
+
+.byText{
+    color: grey;
+    margin-right: 8px;
+}
+
+.dataColumnSuggestion-Name {
+    float: left;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.dataColumnSuggestion-dataSetName {
+    float: right;
+    font-size: 12px;
+    font-style: italic;
+}
+
+.dataColumnSuggestion-Description {
+    color: grey !important;
+    font-size: 14px;
+    word-wrap: break-word;
+}
+
+#relationshipTransformationContainer .dataColumnSuggestion-Description {
+    color: grey;
+}
+
+#relationshipTransformationContainer .byText{
+    display: none;
+}
+
+/* Typeahead style end */
+
+#confidenceContainer {
+    min-height: 110px;
+    overflow: auto;
+}
+
+#confidenceSliderContainer {
+    width: 48%;
+    float: left;
+    padding-left: 10px;
+    margin-top: 20px;
+}
+
+#confidenceText {
+    height: 25px;
+    display: inline-block;
+}
+
+.confidenceDesTable {
+    font-size: 12px;
+    color: grey;
+}
+
+#confidenceSlider {
+    width: 95%;
+    margin-top: 3px;
+    margin-bottom: 3px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.confidenceDesTable td {
+    width: 145px;
+}
+
+#confidenceComment {
+    float: right;
+    width: 49%;
+    margin-top: 20px;
+}
+
+.icon-remove-sign:hover{
+    color: red;
+    cursor: pointer;
+}
+
+.addLinkColumnBtn{
+    font-size: 20px;
+}
+
+.addLinkColumnBtn:hover{
+    cursor: pointer;
+}

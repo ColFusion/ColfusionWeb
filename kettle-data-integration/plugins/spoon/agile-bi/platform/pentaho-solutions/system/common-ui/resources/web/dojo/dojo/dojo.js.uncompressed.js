@@ -271,7 +271,7 @@ dojo.global = {
 =====*/
 	dojo.locale = d.config.locale;
 
-	var rev = "$Rev: 23917 $".match(/\d+/);
+	var rev = "$Rev: 24595 $".match(/\d+/);
 
 /*=====
 	dojo.version = function(){
@@ -295,7 +295,7 @@ dojo.global = {
 	}
 =====*/
 	dojo.version = {
-		major: 0, minor: 0, patch: 0, flag: "dev",
+		major: 4, minor: 8, patch: 0, flag: "-GA",
 		revision: rev ? +rev[0] : NaN,
 		toString: function(){
 			with(d.version){
@@ -1550,12 +1550,14 @@ if(typeof window != 'undefined'){
 		}
 
 		d._isDocumentOk = function(http){
-			var stat = http.status || 0;
+			var stat = http.status || 0,
+				lp = location.protocol;
 			return (stat >= 200 && stat < 300) || 	// Boolean
 				stat == 304 ||			// allow any 2XX response code
 				stat == 1223 ||			// get it out of the cache
 								// Internet Explorer mangled the status code
-				!stat; // OR we're Titanium/browser chrome/chrome extension requesting a local file
+				// Internet Explorer mangled the status code OR we're Titanium/browser chrome/chrome extension requesting a local file
+				(!stat && (lp == "file:" || lp == "chrome:" || lp == "chrome-extension:" || lp == "app:"));
 		}
 
 		//See if base tag is in use.
@@ -4646,13 +4648,11 @@ dojo.provide("dojo._base.event");
 			if(!node){return;}
 			name = del._normalizeEventName(name);
 			fp = del._fixCallback(name, fp);
-			var oname = name;
 			if(
 								!dojo.isIE &&
 								(name == "mouseenter" || name == "mouseleave")
 			){
 				var ofp = fp;
-				//oname = name;
 				name = (name == "mouseenter") ? "mouseover" : "mouseout";
 				fp = function(e){
 					if(!dojo.isDescendant(e.relatedTarget, node)){
@@ -4708,7 +4708,7 @@ dojo.provide("dojo._base.event");
 			return evt;
 		},
 		_setKeyChar: function(evt){
-			evt.keyChar = evt.charCode ? String.fromCharCode(evt.charCode) : '';
+			evt.keyChar = evt.charCode >= 32 ? String.fromCharCode(evt.charCode) : '';
 			evt.charOrCode = evt.keyChar || evt.keyCode;
 		},
 		// For IE and Safari: some ctrl-key combinations (mostly w/punctuation) do not emit a char code in IE
@@ -5089,7 +5089,8 @@ dojo.provide("dojo._base.event");
 				var k=evt.keyCode;
 				// These are Windows Virtual Key Codes
 				// http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/WinUI/WindowsUserInterface/UserInput/VirtualKeyCodes.asp
-				var unprintable = k!=13 && k!=32 && k!=27 && (k<48||k>90) && (k<96||k>111) && (k<186||k>192) && (k<219||k>222);
+				var unprintable = (k!=13 || (dojo.isIE >= 9 && !dojo.isQuirks)) && k!=32 && k!=27 && (k<48||k>90) && (k<96||k>111) && (k<186||k>192) && (k<219||k>222);
+
 				// synthesize keypress for most unprintables and CTRL-keys
 				if(unprintable||evt.ctrlKey){
 					var c = unprintable ? 0 : k;
@@ -5107,7 +5108,9 @@ dojo.provide("dojo._base.event");
 					// simulate a keypress event
 					var faux = del._synthesizeEvent(evt, {type: 'keypress', faux: true, charCode: c});
 					kp.call(evt.currentTarget, faux);
-					evt.cancelBubble = faux.cancelBubble;
+					if(dojo.isIE < 9 || (dojo.isIE && dojo.isQuirks)){
+						evt.cancelBubble = faux.cancelBubble;
+					}
 					evt.returnValue = faux.returnValue;
 					_trySetKeyCode(evt, faux.keyCode);
 				}
@@ -5724,7 +5727,7 @@ if(dojo.isIE){
 	};
 
 		dojo._getOpacity =
-			d.isIE ? function(node){
+			d.isIE < 9 ? function(node){
 			try{
 				return af(node).Opacity / 100; // Number
 			}catch(e){
@@ -5751,7 +5754,7 @@ if(dojo.isIE){
 	=====*/
 
 	dojo._setOpacity =
-				d.isIE ? function(/*DomNode*/node, /*Number*/opacity){
+				d.isIE < 9 ? function(/*DomNode*/node, /*Number*/opacity){
 			var ov = opacity * 100, opaque = opacity == 1;
 			node.style.zoom = opaque ? "" : 1;
 

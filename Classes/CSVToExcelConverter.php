@@ -5,19 +5,25 @@ require_once('PHPExcel.php');
 class CSVToExcelConverter {
 
     /**
-     * Read given csv file and write all rows to given xls file 
-     *  
-     * @param string $csv_file Resource path of the csv file 
-     * @param string $xls_file Resource path of the excel file 
-     * @param string $csv_enc Encoding of the csv file, use utf8 if null 
-     * @throws Exception 
+     * Read given csv file and write all rows to given xls file
+     *
+     * @param string $csv_file Resource path of the csv file
+     * @param string $xls_file Resource path of the excel file
+     * @param string $csv_enc Encoding of the csv file, use utf8 if null
+     * @throws Exception
      */
     public static function convert($csv_file, $xls_file, $csv_enc = null) {
-        //set cache 
-        $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
-        PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
 
-        //open csv file 
+        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+            $cacheMethod = PHPExcel_CachedObjectStorageFactory:: cache_to_discISAM;
+            $cacheSettings = array( 'dir' => 'E:/PHPExcel_cache');
+            PHPExcel_Settings::setCacheStorageMethod($cacheMethod, $cacheSettings);
+        } else {
+            $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_phpTemp;
+            PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
+        }
+
+        //open csv file
         $objReader = new PHPExcel_Reader_CSV();
         $objReader->setDelimiter(CSVToExcelConverter::guessDelimiter($csv_file));
         if ($csv_enc != null)
@@ -25,19 +31,19 @@ class CSVToExcelConverter {
         $objPHPExcel_CSV = $objReader->load($csv_file);
         $in_sheet = $objPHPExcel_CSV->getActiveSheet();
 
-        //open excel file 
+        //open excel file
         $objPHPExcel_XLSX = new PHPExcel();
         $out_sheet = $objPHPExcel_XLSX->getActiveSheet();
         $out_sheet->setTitle('File Content');
 
-        //row index start from 1 
+        //row index start from 1
         $row_index = 0;
         foreach ($in_sheet->getRowIterator() as $row) {
             $row_index++;
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);
 
-            //column index start from 0 
+            //column index start from 0
             $column_index = -1;
             foreach ($cellIterator as $cell) {
                 $column_index++;
@@ -45,7 +51,7 @@ class CSVToExcelConverter {
             }
         }
 
-        //write excel file 
+        //write excel file
         $objWriter = new PHPExcel_Writer_Excel2007($objPHPExcel_XLSX);
         $objWriter->save($xls_file);
     }

@@ -8,7 +8,7 @@ $datasetsInfo = $datasetFinder->findDatasetInfoBySidOrName($searchTerm);
 
 foreach($datasetsInfo as $datasetInfo){
     $datasetInfo->source_key = $datasetInfo->title . "#" . $datasetInfo->sid;
-    $datasetInfo->content = $datasetInfo->content == null ? 'This dataset has no description' : $datasetInfo->content; 
+    $datasetInfo->description = $datasetInfo->description == null ? 'This dataset has no description' : $datasetInfo->description; 
 }
 
 echo json_encode($datasetsInfo);

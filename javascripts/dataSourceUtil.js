@@ -2,6 +2,8 @@ var dataSourceUtil = (function() {
     var dataSourceUtil = {};
     var dataSourceCache = new Persist.Store('colfusion_datasource');
 
+    // NOTICE: This function caches table list.
+    // If data source is changed manually, make sure the cache is also cleaned.
     dataSourceUtil.getTablesList = function(sid) {
         
         var tableListCache = dataSourceCache.get('tableList_' + sid);
@@ -10,7 +12,7 @@ var dataSourceUtil = (function() {
         } else {
             return $.ajax({
                 type: 'POST',
-                url: "visualization/VisualizationAPI.php?action=GetTablesList",
+                url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTablesList",
                 data: {'sid': sid},
                 dataType: 'json'
             }).pipe(function(data) {
@@ -24,7 +26,7 @@ var dataSourceUtil = (function() {
     dataSourceUtil.getTableInfo = function(sid, tableName) {
         return $.ajax({
             type: 'POST',
-            url: "visualization/VisualizationAPI.php?action=GetTableInfo",
+            url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableInfo",
             data: {'sid': sid, 'table_name': tableName},
             dataType: 'json'
         });
@@ -33,8 +35,17 @@ var dataSourceUtil = (function() {
     dataSourceUtil.getTableDataBySidAndName = function(sid, tableName, perPage, pageNo) {
         return $.ajax({
             type: 'POST',
-            url: "visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
+            url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
             data: {'sid': sid, 'table_name': tableName, 'perPage': perPage, 'pageNo': pageNo},
+            dataType: 'json'
+        });
+    };
+    
+    dataSourceUtil.getTableDataByObject = function (object, perPage, pageNo) {
+        return $.ajax({
+            type: 'POST',
+            url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
+            data: { 'sid': JSON.stringify(object), 'table_name': 'object', 'perPage': perPage, 'pageNo': pageNo },
             dataType: 'json'
         });
     };
@@ -42,7 +53,7 @@ var dataSourceUtil = (function() {
     dataSourceUtil.mineRelationship = function(sid, perPage, pageNo) {
         return $.ajax({
             type: 'POST',
-            url: "DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
+            url: my_pligg_base + "/DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
             data: {'sid': sid, 'perPage': perPage, 'pageNo': pageNo},
             dataType: 'json'
         });
@@ -51,7 +62,7 @@ var dataSourceUtil = (function() {
     dataSourceUtil.checkDataMatching = function(fromData, toData) {
         return $.ajax({
             type: 'POST',
-            url: "visualization/VisualizationAPI.php?action=CheckDataMatching",
+            url: my_pligg_base + "/visualization/VisualizationAPI.php?action=CheckDataMatching",
             data: {
                 "from": fromData,
                 "to": toData,
@@ -85,6 +96,15 @@ var dataSourceUtil = (function() {
         obj.columns = cols;
         obj.rows = rows;
         return obj;
+    };
+
+    dataSourceUtil.loadRelationshipInfo = function(relId) {
+        return $.ajax({
+            url: my_pligg_base + '/datasetController/relationshipInfo.php',
+            data: { relId: relId },
+            type: 'POST',
+            dataType: 'json'           
+        });
     };
 
     return dataSourceUtil;

@@ -1,7 +1,7 @@
 <?php
 include($_SERVER['DOCUMENT_ROOT']."/classes/upload/upload_class.php"); //classes is the map where the class file is stored (one above the root)
 $folder = $_SERVER['DOCUMENT_ROOT']."/files/";
-error_reporting(E_ALL);
+
 function select_files($dir) {
 	// removed in ver 1.01 the globals 
 	$teller = 0;

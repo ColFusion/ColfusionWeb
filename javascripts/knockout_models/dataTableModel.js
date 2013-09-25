@@ -21,10 +21,24 @@ var DataPreviewViewModelProperties = {
         self.headers = ko.observableArray($.map(cols, function(header) {
             return new DataPreviewViewModelProperties.Header(header);
         }));
+
         self.rows = ko.observableArray($.map(rows, function(row) {
             return new DataPreviewViewModelProperties.Row(row);
         }));
+
         self.rawData = ko.observableArray(rawData);
+
+        self.getCells = function() {
+            var cells = [];
+            $.each(self.rows(), function(index, row) {
+                cells.push(row.cells());
+            });
+            return cells;
+        };
+
+        self.addRow = function(row) {
+            self.rows.push(new DataPreviewViewModelProperties.Row(row));
+        };
     }
 };
 function DataPreviewViewModel(sid) {
@@ -33,6 +47,7 @@ function DataPreviewViewModel(sid) {
     self.tableList = ko.observableArray();
     self.currentTable = ko.observable();
     self.isLoading = ko.observable(false);
+    self.isError = ko.observable(false);
     self.isNoData = ko.observable(false);
 
     self.setTableList = function(tableList) {
@@ -52,10 +67,10 @@ function DataPreviewViewModel(sid) {
     self.getTableDataBySidAndName = function(tableName, perPage, pageNo) {
         self.isLoading(true);
         self.isNoData(false);
+        self.isError(false);
 
         dataSourceUtil.getTableDataBySidAndName(self.sid, tableName, perPage, pageNo).done(function(data) {
             if (!data.Control || !data.Control.cols || data.Control.cols.length === 0) {
-                self.isLoading(false);
                 self.isNoData(true);
                 self.currentTable(null);
                 return;
@@ -68,15 +83,23 @@ function DataPreviewViewModel(sid) {
 
             var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
             self.currentTable(new DataPreviewViewModelProperties.Table(tableName, transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
+            self.isError(false);
+        }).error(function() {
+            self.isError(true);
+        }).always(function() {
             self.isLoading(false);
         });
     };
-   
+
     self.chooseTable = function(tableListItem) {
+        if (self.isLoading())
+            return;
+
         // Unchoose all list items.
         $(self.tableList()).each(function(index, tableListItem) {
             tableListItem.isChoosen(false);
         });
+
         // Choose clicked item.
         tableListItem.isChoosen(true);
         var tableName = tableListItem.tableName();

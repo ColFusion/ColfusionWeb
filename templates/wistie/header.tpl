@@ -1,6 +1,5 @@
 <!-- START HEADER.TPL -->
 <head>
-<script type="text/javascript" src="{$my_pligg_base}/templates/wistie/js/jquery.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/wistie/js/script.js"></script>
  <!-- <link href="templates/wistie/js/style1.css" rel="stylesheet" type="text/css"> -->
 
@@ -11,6 +10,7 @@
 
 <!-- TOP MENU -->
 <div id="login">
+
         {if $user_authenticated eq true} 
         <div>
             <ul>
@@ -36,7 +36,7 @@
 
 <!-- BANNER -->
 <div id="banner">
-        <a id="webname" href="{$my_base_url}{$my_pligg_base}">{#PLIGG_Visual_Name#}</a>
+        <a id="webname" href="{$my_base_url}{$my_pligg_base}">{#PLIGG_Visual_Name#} </a>
 
         <!--div id="rss_slogan">{#PLIGG_Visual_RSS_Description#}</div-->
         
@@ -96,7 +96,7 @@
 
 	   <!-- <li ><a href="{$my_base_url}{$my_pligg_base}/user_guide.php" target="_blank">How to contribute</a></li> -->
 	    <li ><a href="{$my_base_url}{$my_pligg_base}/phpBB3" target="_blank">Forum</a></li>
-	    <li ><a href="{$my_base_url}{$my_pligg_base}/wiki" target="_blank">Help</a></li>
+	    <li ><a href="{$my_base_url}{$my_pligg_base}/wiki" target="_blank">Wiki</a></li>
         <!--<li><a href="{$my_base_url}{$my_pligg_base}/visualization/dashboard.php" >Visualization</a></li>-->
 
       <!--  <li {if $pagename eq "advanced search"}class="current"{/if}><a href="{$my_base_url}{$my_pligg_base}/advancedsearch/advanced.php" >Adv Search</a></li> -->

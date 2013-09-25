@@ -1,6 +1,6 @@
 <?php
 
-include_once (realpath(dirname(__FILE__)) . '/Link.php');
+include_once (realpath(dirname(__FILE__)) . '/ColfusionLink.php');
 include_once (realpath(dirname(__FILE__)) . '/Comment.php');
 
 class Relationship{
@@ -8,7 +8,9 @@ class Relationship{
     public $name;
     public $description;
     public $creator;
+    public $creatorId;
     public $createdTime;
+    public $isOwned;
     
     public $fromDataset;
     public $toDataset;

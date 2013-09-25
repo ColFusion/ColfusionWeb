@@ -4,16 +4,31 @@ require_once realpath(dirname(__FILE__)) . '/../config.php';
 include_once (realpath(dirname(__FILE__)) . '/../datasetModel/Dataset.php');
 
 class DatasetFinder {
-
-    private $allDatasetInfo_sql = "select 
-        sid, title, entryDate, lastUpdated, userId, user_login 
-        from colfusion_sourceinfo sinfo 
-        inner join colfusion_users users on sinfo.UserId = users.user_id ";
+    
+    // Dataset can be 'draft' if not submitted.
+    // DatasetFinder only queries datasets with status 'queued' (submitted).
+    private $allDatasetInfo_sql = "select
+        sid, title, entryDate, lastUpdated, userId, user_login , link_content as description
+        from colfusion_sourceinfo sinfo
+        inner join colfusion_users users on sinfo.UserId = users.user_id
+        left join colfusion_links cl on cl.link_id = sid 
+        where  Status = 'queued' ";
+    
     private $ezSql;
 
     public function __construct() {
         global $db;
         $this->ezSql = $db;
+    }
+
+    public function findDatasetInfoByUserId($userId){
+        $userId = mysql_real_escape_string($userId);
+        $sql = $this->allDatasetInfo_sql . " and UserId = '$userId'";
+        $dsInfos = $this->ezSql->get_results($sql);
+        foreach ($dsInfos as $dsInfo) {
+            $datasets[] = $this->mapDbColumnsToDataset($dsInfo);
+        }
+        return $datasets;
     }
 
     public function findDatasetInfoBySidOrName($searchTerm) {
@@ -23,6 +38,10 @@ class DatasetFinder {
         }
 
         $dataset_name = $this->findDatasetInfoByName($searchTerm);
+
+        if (!isset($dataset_name))
+            return array();
+
         foreach ($dataset_name as $dataset) {
             $datasetsInfo["$dataset->sid"] = $dataset;
         }
@@ -30,39 +49,34 @@ class DatasetFinder {
         return array_values($datasetsInfo);
     }
 
-    public function findDatasetInfoBySid($sid) {
+    public function findDatasetInfoBySid($sid, $includeDraft = false) {
         $sid = mysql_real_escape_string($sid);
-        $sql = $this->allDatasetInfo_sql . "where sid = '$sid'";
+
+        $sql = $this->allDatasetInfo_sql . " and sid = '$sid'";
+
+        if ($includeDraft)
+            $sql = str_replace("Status = 'queued'", "(Status = 'queued' or Status = 'draft')", $sql);
+
         $dsInfo = $this->ezSql->get_row($sql);
         return $this->mapDbColumnsToDataset($dsInfo);
     }
 
     public function findDatasetInfoByName($dsName) {
+
         $dsName = mysql_real_escape_string($dsName);
-        $sql = $this->allDatasetInfo_sql . "where title like '%$dsName%'";
+        $sql = $this->allDatasetInfo_sql . " and title like '%$dsName%'";
+
+//var_dump($sql);
+
         $dsInfos = $this->ezSql->get_results($sql);
+
+        if (!isset($dsInfos))
+            return null;
+
         foreach ($dsInfos as $dsInfo) {
             $datasets[] = $this->mapDbColumnsToDataset($dsInfo);
         }
         return $datasets;
-    }
-
-    private function mapDatasetToDbColumns($dataset) {
-        if ($dataset == null) {
-            return null;
-        }
-
-        $dsInfo = new stdClass();
-
-        $dsInfo->link_id = $dataset->sid;
-        $dsInfo->link_title = $dataset->title;
-        $dsInfo->link_summary = $dataset->content;
-        $dsInfo->user_id = $dataset->userId;
-        $dsInfo->user_login = $dataset->userName;
-        $dsInfo->link_date = $dataset->entryDate;
-        $dsInfo->link_modified = $dataset->lastUpdated;
-
-        return $dsInfo;
     }
 
     private function mapDbColumnsToDataset($dsInfo) {
@@ -74,7 +88,7 @@ class DatasetFinder {
 
         $dataset->sid = $dsInfo->sid;
         $dataset->title = $dsInfo->title;
-        // $dataset->content = $dsInfo->content;
+        $dataset->description = $dsInfo->description;
         $dataset->userId = $dsInfo->userId;
         $dataset->userName = $dsInfo->user_login;
         $dataset->entryDate = $dsInfo->entryDate;

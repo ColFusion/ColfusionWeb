@@ -1,4 +1,8 @@
 <?php
+
+// $isTestting is defined in test cases, which prevents dependency on Pligg.
+if(isset($isTesting) && $isTesting) return;
+
 // The source code packaged with this file is Free Software, Copyright (C) 2005 by
 // Ricardo Galli <gallir at uib dot es>.
 // It's licensed under the AFFERO GENERAL PUBLIC LICENSE unless stated otherwise.
@@ -9,8 +13,8 @@
 ini_set('include_path', '.');
 
 define('LOG_FILE','cache/log.php');
-error_reporting(E_ALL ^ E_NOTICE ^ E_WARNING);
-ini_set('display_errors','Off');
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+ini_set('display_errors', 1);
 ini_set('error_log','cache/log.php');
 
 // experimental caching
@@ -84,6 +88,9 @@ if ($my_base_url == ''){
 	define('my_base_url', $my_base_url);
 	define('my_pligg_base', $my_pligg_base);
 }
+
+$pathWithoutSlash = strtolower(substr($my_pligg_base, 1));
+define('my_pligg_base_no_slash', $pathWithoutSlash);
 
 define('urlmethod', $URLMethod);
 
@@ -187,5 +194,7 @@ function loadCategoriesForCache($clear_cache = false) {
 	$db->un_cache($sql);
 	return $db->get_results($sql);
 }
+
+error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
 
 ?>

@@ -537,8 +537,7 @@ class Template_Lite {
 
 		$name = ($this->encode_file_name) ? md5((($this->_resource_type == 1) ? $this->template_dir.$file : $this->_resource_type . "_" . $file)).'.php' : str_replace(".", "_", str_replace("/", "_", $this->_resource_type . "_" . $file)).'.php';
 
-		$this->_error_level = $this->debugging ? error_reporting() : error_reporting(error_reporting() & ~E_NOTICE);
-//		$this->_error_level = error_reporting(E_ALL);
+		$this->_error_level = $this->debugging ? error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT) : error_reporting(E_ALL ^ E_NOTICE ^ E_STRICT);
 
 		if (!$this->force_compile && $this->cache && $this->_is_cached($file, $cache_id))
 		{

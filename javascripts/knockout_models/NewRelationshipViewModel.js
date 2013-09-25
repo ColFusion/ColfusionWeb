@@ -1,26 +1,3 @@
-ko.bindingHandlers.slider = {
-    init: function(element, valueAccessor, allBindingsAccessor) {
-        var options = allBindingsAccessor().sliderOptions || {};
-        $(element).slider(options);
-        ko.utils.registerEventHandler(element, "slidechange", function(event, ui) {
-            var observable = valueAccessor();
-            observable(ui.value);
-        });
-        ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-            $(element).slider("destroy");
-        });
-        ko.utils.registerEventHandler(element, "slide", function(event, ui) {
-            var observable = valueAccessor();
-            observable(ui.value);
-        });
-    },
-    update: function(element, valueAccessor) {
-        var value = ko.utils.unwrapObservable(valueAccessor());
-        if (isNaN(value))
-            value = 0;
-        $(element).slider("value", value);
-    }
-};
 var typeahead_template = '<div class="dataColumnSuggestion">' +
         '<div style="overflow: auto; margin-bottom: 5px;">' +
         '<p class="dataColumnSuggestion-Name">' +
@@ -43,7 +20,7 @@ ko.bindingHandlers.searchDatasetTypeahead = {
         var search_typeahead_tpl = typeahead_template
                 .replace("{{dname_chosen}}", "{{title}}")
                 .replace("{{dataset_name}}", "{{userName}}")
-                .replace("{{dname_value_description}}", "{{content}}");
+                .replace("{{dname_value_description}}", "{{description}}");
 
         var dataSet = valueAccessor();
         $(element).parent().next('button').prop("disabled", true);
@@ -52,12 +29,21 @@ ko.bindingHandlers.searchDatasetTypeahead = {
             var code = event.keyCode || event.which;
             if (code != 13) { //Enter keycode
                 $(this).parent().next('button').prop("disabled", true);
+                $(element).parents('.dataSetDesTable').find('.datasetSearchLoadingNotification').show();
             }
         }).typeahead({
             name: 'datasets',
-            prefetch: {
-                url: 'datasetController/findDataset.php',
-                ttl: 10 * 60 * 1000 // cache 10 mins
+            remote: {
+                url: 'datasetController/findDataset.php?searchTerm=%QUERY',
+                cache: true,
+                maxParallelRequests: 2,
+                filter: function(data) {
+                    $('.datasetSearchLoadingNotification').hide();
+                    if (data === null) {
+                        return [];
+                    }
+                    return data;
+                }
             },
             valueKey: 'source_key',
             template: search_typeahead_tpl,
@@ -66,6 +52,8 @@ ko.bindingHandlers.searchDatasetTypeahead = {
             dataSet.sid(datum.sid);
             dataSet.name(datum.title);
             $(this).parent().next('button').prop("disabled", false);
+        }).bind('typeahead:opened', function() {
+            $(element).parents('.dataSetDesTable').find('.datasetSearchLoadingNotification').hide();
         });
     },
     update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -113,7 +101,6 @@ ko.bindingHandlers.multipleTypeahead = {
         var dropdownListSource = $.map(rawDataColumns, function(rawObj, index) {
             return rawObj.dname_chosen;
         });
-        console.log(dropdownListSource);
 
         function split(val) {
             return val.split(/\s+/);
@@ -173,6 +160,7 @@ function NewRelationshipViewModel() {
     self.toDataSet = ko.observable(new RelationshipModel.DataSet());
     self.confidenceValue = ko.observable(0);
     self.confidenceComment = ko.observable('');
+
     /* Properties for link. */
     self.links = ko.observableArray();
 
@@ -181,9 +169,10 @@ function NewRelationshipViewModel() {
     self.isAddingRelationship = ko.observable(false);
     self.isAddingSuccessful = ko.observable(false);
     self.isAddingFailed = ko.observable(false);
-    self.isPerformingDataMatchingCheck = ko.observable('');
-    self.dataMatchingCheckResult = ko.observable('');
     /**************************************************/
+
+    /* Used to pass data to dataMatchChecker.php */
+    self.persistStore = new Persist.Store('NewRelationshipViewModel');
 
     self.fromDataSet().currentTable.subscribe(function(newValue) {
         resetLinks();
@@ -218,12 +207,7 @@ function NewRelationshipViewModel() {
         self.isAddingFailed(false);
         var fromDateColumns = getSentFromData();
         var toDateColumns = getSentToData();
-        console.log(self.name());
-        console.log(self.description());
-        console.log(fromDateColumns);
-        console.log(toDateColumns);
-        console.log(self.confidenceValue());
-        console.log(self.confidenceComment());
+
         $.ajax({
             type: 'POST',
             url: "visualization/VisualizationAPI.php?action=AddRelationship",
@@ -238,7 +222,7 @@ function NewRelationshipViewModel() {
             success: function(data) {
                 self.isAddingRelationship(false);
                 self.isAddingSuccessful(true);
-                dataPreviewViewModel.mineRelationships(10, 1);
+                relationshipViewModel.mineRelationships(10, 1);
                 setTimeout(function() {
 
                     reset();
@@ -261,15 +245,15 @@ function NewRelationshipViewModel() {
     };
 
     self.checkDataMatching = function() {
-        self.isPerformingDataMatchingCheck(true);
 
-        dataSourceUtil.checkDataMatching(getSentFromData(), getSentToData()).done(function(data) {
-            self.isPerformingDataMatchingCheck(false);
-            self.dataMatchingCheckResult(data);
-        }).error(function() {
-            self.isPerformingDataMatchingCheck(false);
-            self.dataMatchingCheckResult('Some errors occur when performing data checking.');
-        });
+        self.fromDataSet().name($('#fromDataSet').find('input.sidInput').val());
+     
+        $('#dataMatchCheckingForm input[name="fromSid"]').val(self.fromDataSet().sid());
+        $('#dataMatchCheckingForm input[name="toSid"]').val(self.toDataSet().sid());
+        $('#dataMatchCheckingForm input[name="fromTable"]').val(self.fromDataSet().chosenTableName());
+        $('#dataMatchCheckingForm input[name="toTable"]').val(self.toDataSet().chosenTableName());
+        $('#dataMatchCheckingForm input[name="relSerializedString"]').val(ko.toJSON(self));
+        $('#dataMatchCheckingForm').submit();
     };
 
     self.testDataEncoding = function() {
@@ -282,6 +266,8 @@ function NewRelationshipViewModel() {
         resetDatasets();
         resetConfidence();
         resetLinks();
+        self.isAddingSuccessful(false);
+        self.isAddingFailed(false);
     }
 
     function resetRelDescription() {
@@ -290,8 +276,7 @@ function NewRelationshipViewModel() {
     }
 
     function resetDatasets() {
-        self.fromDataSet(new RelationshipModel.DataSet(self.fromDataSet().sid()));
-        self.fromDataSet().loadTableList();
+        self.fromDataSet().currentTable(null);
         self.toDataSet(new RelationshipModel.DataSet());
     }
 

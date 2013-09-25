@@ -14,19 +14,13 @@
 	<!--link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/dropdown-default.css" media="screen" /-->
     <!------------------------------------------------------------------------>
     
-    
-	<!--[if lt IE 7]>
-	<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/jquery/jquery.js"></script>
-    
-    <!--script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/jquery/jquery.dropdown.js"></script-->
-    
-
-	<![endif]-->
+    	
     <script src="{$my_pligg_base}/templates/{$the_template}/js/image-slider.js" type="text/javascript"></script>
-
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
+	
+	{if not $no_jquery_in_pligg}
+		<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
+	{/if}
     <script src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
-
 
 	{if $Voting_Method eq 2}
 	<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/star_rating/star.css" media="screen" />
@@ -74,10 +68,10 @@
 	{elseif preg_match('/search.php$/',$templatelite.server.SCRIPT_NAME)}	
 		<title>{#PLIGG_Visual_Search_SearchResults#} '{if $get.search}{$get.search}{else}{$get.date}{/if}' | {#PLIGG_Visual_Name#}</title>
         
-    <!------------------------------------------------------------------>
+   
 	{elseif preg_match('/searchbycategory.php$/',$templatelite.server.SCRIPT_NAME)}	
 		<title>Search by Category | {#PLIGG_Visual_Name#}</title>
-    <!------------------------------------------------------------------->
+   
     
 	{elseif preg_match('/groups.php$/',$templatelite.server.SCRIPT_NAME)}	
 		{if $get.page>1}

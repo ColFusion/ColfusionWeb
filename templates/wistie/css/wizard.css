@@ -7,6 +7,15 @@ body{
     font-size: 12px;
     margin: 0;
 }
+
+.wizard-cards .tab-pane {
+    color: #707070;
+}
+
+body .nav.nav-tabs {
+    margin-bottom: 0;
+}
+
 #raws{
     width: 60px;
 }
@@ -108,8 +117,7 @@ div[id^=sugmoreDiv]{
 }
 
 #uploadBtn{
-    margin-top: -10px;
-    margin-bottom: 10px;
+    margin-top: -3px;
 }
 
 #uploadWidgetCover{
@@ -119,13 +127,13 @@ div[id^=sugmoreDiv]{
     padding-left: 10px;
     min-width: 150px;
     display: inline-block;
-    margin-left: -173px;
+    margin-left: -21%;
 }
 
 #uploadProgressBar{
     width: 200px;
     float: right;
-    margin: 0 470px 0 0;
+    margin: 5px 455px 0 0;
     border-radius: 0;
     height: 13px;
 }
@@ -138,13 +146,13 @@ div[id^=sugmoreDiv]{
 
 #uploadProgressText {
     float: right;
-    margin: -34px 425px 0 0;
+    margin: -27px 413px 0 0;
 }
 
 #uploadMessage{
-    margin-top: -10px;
     font-size: 14px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    margin-top: 5px;
 }
 
 .nav{
@@ -169,10 +177,28 @@ div[id^=sugmoreDiv]{
     margin-bottom: 0;
 }
 
+#sourceSettingNavList{
+    float: left;
+    width: 5%;   
+    margin-top: 10px;
+    padding: 0;
+}
+
+#sourceSelectionNavContents {
+    float: right;
+    width: 94.5%;
+}
+
+#previewFiles{
+    height: 340px;
+    overflow-y: auto;
+}
+
 .previewTable{
     color: black;
     font-weight: normal;
     white-space: nowrap;
+    overflow-y: auto;
 }
 
 .previewTable td, .previewTable th{
@@ -194,27 +220,43 @@ div[id^=sugmoreDiv]{
     cursor: pointer;
 }
 
-loadingProgressContainer{
-    width: 100%;
-}
-
-#previewProgressBar, .loadingTextWrapper {
+#previewProgressBar, #dataMatchingPreviewProgressBar, .loadingTextWrapper {
     width: 300px;
     margin-left: auto;
     margin-right: auto;
 
 }
 
-#previewProgressBar{
+#previewProgressBar, #dataMatchingPreviewProgressBar{
     -webkit-border-radius: 0;
     height: 13px;
 }
 
-#previewProgressBar .bar{
+#previewProgressBar .bar, #dataMatchingPreviewProgressBar .bar{
     background-color: grey;
     background-image: linear-gradient(to bottom,#aaaaaa,#aaaaaa);
 }
 
 #schemaMatchinTable {
     margin-top: 10px;
+}
+
+.datasetTypeWrapper {
+    margin-bottom: 15px;
+}
+
+#upload_form {
+    margin-top: 15px;
+}
+
+#uploadPanel {
+    margin-top: 10px;
+}
+
+.filenameList{
+    list-style-type: none;
+}
+
+.filenameList li{
+    list-style-type: none;
 }

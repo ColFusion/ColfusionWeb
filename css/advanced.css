@@ -1,0 +1,111 @@
+﻿#advancedsearch table {
+    vertical-align: middle;
+}
+
+    #advancedsearch table input, table select {
+        margin-bottom: 0 !important;
+    }
+
+#advancedsearch td {
+    height: 40px;
+}
+
+.addFilterBtn:hover, .removeFilterBtn:hover {
+    cursor: pointer;
+}
+
+.tableNameText, .columnText {
+    color: black;
+}
+
+.searchResultFooter {
+    display: inline-block;
+}
+
+.tooltipColTitle {
+    width: 100px;
+}
+
+.tooltip .tooltipContent {
+    color: white !important;
+}
+
+.sourceText {
+    font-weight: normal !important;
+    text-decoration: none;
+    color: #707070 !important;
+}
+
+.paths {
+    font-size: 12px;
+}
+
+.path {
+    margin-bottom: 10px;
+    overflow: auto;
+}
+
+.pathBody {
+    overflow: auto;
+}
+
+.confidenceSliderContainer {
+    width: 50%;
+    float: left;
+}
+
+.confidenceComment {
+    width: 48%;
+    float: right;
+}
+
+.confidenceCommentText, .confidenceCommentTextarea {
+    margin-left: 10px;
+}
+
+.yourCommentEditor {
+    padding-bottom: 5px;
+    overflow: auto;
+    padding-top: 10px;
+}
+
+.confidenceDesTable {
+    width: 100%;
+}
+
+.hideCommentText, .seeCommentText {
+    margin-left: 280px !important;
+}
+
+.sliderFilter {
+    margin-bottom: 10px;
+}
+
+.sliderFilterContainer {
+    width: 51%;
+    padding-top: 10px;
+    padding-bottom: 15px;
+}
+
+.sliderFilterLabelContainer {
+    float: left;
+    width: 50%;
+}
+
+.sliderFilterSliderContainer {
+    float: right;
+    width: 50%;
+    font-size: 0.8em;
+}
+
+#sliderFilterLabelTable td {
+    height: 20px;
+}
+
+.labelTitle {
+    padding-right: 10px;
+}
+
+.gtMark {
+    padding-right: 5px;
+}

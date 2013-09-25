@@ -18,21 +18,21 @@
 			<input type=radio name="FT_filterType" id="FT_filterTypePreset" value="FILTER_PRESET">
 				@{dlgAttributeFilterTimeLabel} 
 				<span class="filterOpLink">
-				<a href="#" id="FT_filterOp_PRESET_EQUAL" class="underline hidden">@{dlgAttributeFilterIs}</a>
-				<a href="#" id="FT_filterOp_PRESET_NOT_EQUAL" class="underline hidden">@{dlgAttributeFilterIsNot}</a>
+				<a href="javascript:" id="FT_filterOp_PRESET_EQUAL" class="underline hidden">@{dlgAttributeFilterIs}</a>
+				<a href="javascript:" id="FT_filterOp_PRESET_NOT_EQUAL" class="underline hidden">@{dlgAttributeFilterIsNot}</a>
 				</span>
 			</input><br/>
 			<input type=radio name="FT_filterType" id="FT_filterTypeSelect" value="FILTER_PICKLIST">
 				@{dlgAttributeFilterSelectLabel} 
 				<span class="filterOpLink">
-				(<a href="#" id="FT_filterOp_EQUAL" class="underline">@{dlgAttributeFilterIncludes}</a>, <a href="#" id="FT_filterOp_NOT_EQUAL" class="underline">@{dlgAttributeFilterExcludes}</a>)
+				(<a href="javascript:" id="FT_filterOp_EQUAL" class="underline">@{dlgAttributeFilterIncludes}</a>, <a href="javascript:" id="FT_filterOp_NOT_EQUAL" class="underline">@{dlgAttributeFilterExcludes}</a>)
 				</span>
 			</input><br/>
 			<input type=radio name="FT_filterType" id="FT_filterTypeRange" value="FILTER_RANGE">
 				@{dlgAttributeFilterRangeLabel} 
 				<span class="filterOpLink">
-				(<a href="#" id="FT_filterOp_BETWEEN" class="underline">@{filterConditionOperators_BETWEEN}</a>, <a href="#" id="FT_filterOp_AFTER" class="underline">@{dlgAttributeFilterAfter}</a>, 
-				<a href="#" id="FT_filterOp_BEFORE" class="underline">@{dlgAttributeFilterBefore}</a>)
+				(<a href="javascript:" id="FT_filterOp_BETWEEN" class="underline">@{filterConditionOperators_BETWEEN}</a>, <a href="javascript:" id="FT_filterOp_AFTER" class="underline">@{dlgAttributeFilterAfter}</a>, 
+				<a href="javascript:" id="FT_filterOp_BEFORE" class="underline">@{dlgAttributeFilterBefore}</a>)
 				</span>
 			</input>
 			<p/>
@@ -42,13 +42,13 @@
 			<input type=radio name="FT_filterType" id="FT_filterTypeSelect" value="FILTER_PICKLIST">
 				@{dlgAttributeFilterSelectLabel} 
 				<span class="filterOpLink">
-				(<a href="#" id="FT_filterOp_EQUAL" class="underline">@{dlgAttributeFilterIncludes}</a>, <a href="#" id="FT_filterOp_NOT_EQUAL" class="underline">@{dlgAttributeFilterExcludes}</a>)
+				(<a href="javascript:" id="FT_filterOp_EQUAL" class="underline">@{dlgAttributeFilterIncludes}</a>, <a href="javascript:" id="FT_filterOp_NOT_EQUAL" class="underline">@{dlgAttributeFilterExcludes}</a>)
 				</span>
 			</input><br/>
 			<input type=radio name="FT_filterType" id="FT_filterTypeMatch" value="FILTER_MATCH">
 				@{dlgAttributeFilterMatchLabel} 
 				<span class="filterOpLink">
-				(<a href="#" id="FT_filterOp_CONTAIN" class="underline">@{dlgAttributeFilterContains}</a>, <a href="#" id="FT_filterOp_NOT_CONTAIN" class="underline">@{dlgAttributeFilterNotContains}</a>)
+				(<a href="javascript:" id="FT_filterOp_CONTAIN" class="underline">@{dlgAttributeFilterContains}</a>, <a href="javascript:" id="FT_filterOp_NOT_CONTAIN" class="underline">@{dlgAttributeFilterNotContains}</a>)
 				</span>
 			</input>
 			<p/>
@@ -117,7 +117,7 @@
 <!--
 		<tr><td class="FT_expressionOr">or</td><td><input type="text" id="FT_expression_1" class="FT_expression"></td><td class="FT_removeExp" id="FT_exp_remove_1">&nbsp;</td></tr>
 -->
-		<tr><td></td><td class="filterOpLink">[+] <a href="#" id="FT_exp_add" class="underline">@{dlgAttributeFilterAddAnother}</a></td><td>&nbsp;</td></tr>
+		<tr><td></td><td class="filterOpLink">[+] <a href="javascript:" id="FT_exp_add" class="underline">@{dlgAttributeFilterAddAnother}</a></td><td>&nbsp;</td></tr>
 
 		</table>
 		

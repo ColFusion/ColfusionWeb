@@ -1,0 +1,32 @@
+﻿#datasetList {
+    margin: 10px;
+}
+
+.datasetContainer {
+    padding: 10px;
+    border-bottom: solid 1px #dbdbdb;
+}
+
+.datasetTitle {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+    .datasetTitle a {
+        text-decoration: none;
+        color: #4a9bea;
+    }
+
+.createdTimeText {
+    padding-bottom: 15px;
+    padding-top: 8px;
+}
+
+.descriptionText {
+    color: black;
+    padding-bottom: 15px;
+}
+
+.statusText {
+    padding-bottom: 8px;
+}

@@ -1,6 +1,5 @@
 <?php
 
-error_reporting(E_ALL ^ E_STRICT);
 set_time_limit(0);
 ini_set('session.gc_maxlifetime', 3 * 60 * 60);
 
@@ -30,50 +29,52 @@ else
     $phase = 0;
 
 $sid = getSid();
-$dataSource_filename = $_SESSION['raw_file_name']["$sid"];
 $dataSource_dir = "upload_raw_data/$sid/";
 $dataSource_dirPath = mnmpath . $dataSource_dir;
-$dataSource_filePath = $dataSource_dirPath . $dataSource_filename;
-$dataSource_filePath = str_replace('\\', '/', $dataSource_filePath);
+$excelFileMode = $_SESSION["excelFileMode_$sid"];
 
 switch ($phase) {
     case 0:
 // When submit btn in step1 is clicked, the function executes.
-        createTemplate();
+        createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode);
         break;
     case 1:
 // when jump to step 3, this function is called.
-        add_sheets();
+        addSheetsSettings($sid, $dataSource_dirPath);
+        match_schema($sid);
         break;
     case 2:
-// when jump to step 4, this function is called.
-        match_schema();
         break;
     case 3:
-// Step 2 - get sheet name.
-        printSheet();
+        // Step 2 - get sheet name.
+        printSheet($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 4:
-// Step 2 - get start column.
-        dynamic_column();
         break;
-    case 5:      
+    case 5:
         // When submit btn in step4 is clicked, this is called.
-        add_normalizer();
-        unsetFileResources();
+        add_normalizer($sid, $dataSource_dir, $dataSource_dirPath);
+        unsetFileResources($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 6:
-        display_excel_table();
+        display_excel_table($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 7:
         get_sid();
         break;
     case 8:
-        loadExcelPreview();
-        getExcelPreview();
+        getFileSources($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 9:
-        estimateLoadingProgress();
+        $filenames = $_SESSION["ktrArguments_$sid"]["filenames"];
+        $totalSeconds = 0;
+        foreach ($filenames as $filename) {
+            $totalSeconds += estimateLoadingProgress($dataSource_dirPath . $filename);
+        }
+        echo $totalSeconds;
+        break;
+    case 10:
+        getExcelPreview($sid, $dataSource_dirPath);
         break;
 }
 exit;
@@ -85,119 +86,130 @@ function getSid() {
     else if (isset($_GET["sid"]))
         $sid = $_GET["sid"];
     else {
-        echo json_encode("no sid");
-        die();
+        die("Source not specified.");
     }
 
     return $sid;
 }
 
-function createTemplate() {
-    global $dataSource_filename, $dataSource_filePath, $dataSource_dir, $dataSource_dirPath, $sid;
+function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode) {
 
-    $ext = strtolower(pathinfo($dataSource_filename, PATHINFO_EXTENSION));
-    if ($ext == 'xls' || $ext == 'xlsx') {
-        $tmpDir = 'excel-to-target_schema.ktr';
-    } else if ($ext == 'csv') {
-        $tmpDir = 'csv_to_target_schema.ktr';
+    $template = 'excel-to-database.ktr'; //'excel-to-target_schema.ktr';
+    $newDir = mnmpath . "temp/$sid";
+    if (!file_exists($newDir)) {
+        mkdir($newDir);
     }
 
-    $newDir = mnmpath . "temp/" . getSid() . '.ktr';
-    copy($tmpDir, $newDir);
+    if ($excelFileMode == 'append') {
+        $ktrFilePath = "$newDir/$sid.ktr";
+        if (!file_exists($ktrFilePath)) {
+            copy($template, $ktrFilePath);
+        }
+        
+        foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
+            if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
+                $filenames[] = $dataSource_filename;
+                $filePaths[] = $dataSource_dirPath . $dataSource_filename;
+                $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
+            }
+        }
 
-    foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
-        if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
-            $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
+        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid);
+    } else {
+        foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
+            if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
+                $filenames[] = $dataSource_filename;
+                $filePath = $dataSource_dirPath . $dataSource_filename;
+                $filePaths[] = $filePath;
+                $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
+                $ktrFilePath = "$newDir/$dataSource_filename.ktr";
+                if (!file_exists($ktrFilePath)) {
+                    copy($template, $ktrFilePath);
+                }
+                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid);
+            }
         }
     }
-    
-    $ktrManager = new KTRManager($tmpDir, $newDir);
-    $_SESSION["ktrArguments"]["$sid"]["ktrManager"] = serialize($ktrManager);
-    $_SESSION["ktrArguments"]["$sid"]["fileUrls"] = $fileURLs;
+
+    $_SESSION["ktrArguments_$sid"]["ktrManagers"] = serialize($ktrManagers);
+    $_SESSION["ktrArguments_$sid"]["filenames"] = $filenames;
+    $_SESSION["ktrArguments_$sid"]["filePaths"] = $filePaths;
+    $_SESSION["ktrArguments_$sid"]["fileUrls"] = $fileURLs;
 }
 
-function add_file($newDir, $filePath) {
-    $ktr = simplexml_load_file($newDir);
-    $steps = $ktr->step;
+function getFileSources($sid) {
 
-    foreach ($steps as $step) {
-        $name = $step->name;
-        if ($name == 'CSV file input') {
-// delete the sheet node when user go back
-            unset($step->filename);
-            $step->addChild('filename', $filePath);
+    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
+    if (isset($ktrManagers)) {
+        $json["isSuccessful"] = true;
+        foreach ($ktrManagers as $ktrManager) {
+            $paths = $ktrManager->getFilePaths();
+            $json["data"][] = getSheets($paths[0]);
         }
-        file_put_contents($newDir, $ktr->asXML());
+    } else {
+        $json["isSuccessful"] = false;
     }
 
-    display_csv();
+    echo json_encode($json);
 }
 
-function display_csv() {
-    global $dataSource_filename, $dataSource_filePath;
-
-    $content = str_replace("\n", "\r", file_get_contents($dataSource_filePath));
-    file_put_contents($dataSource_filePath, $content);
-    $file_handle = fopen($dataSource_filePath, "r");
-
-    $line_of_text = fgetcsv($file_handle, 1024, "\r");
-
-    $baseHeader = explode(",", $line_of_text[0]);
-    $_SESSION['$baseHeader'] = $baseHeader;
-
-    foreach ($line_of_text as $value) {
-        echo $value . "<br/>";
-    }
-
-    fclose($file_handle);
-}
-
-function loadExcelPreview() {
-    global $sid, $dataSource_filePath;
-    
+function getExcelPreview($sid, $dataSource_dirPath) {
+    $filename = $_POST['filename'];
+    $filePath = $dataSource_dirPath . $filename;
     $previewRowsPerPage = $_POST['previewRowsPerPage'];
     $previewPage = $_POST['previewPage'];
-
-    $PHPExcel = new PreviewExcelProcessor($dataSource_filePath, $previewPage, $previewRowsPerPage);
-    $_SESSION['excelPreviewPage']["$sid"] = $previewPage;
-    $_SESSION['excelPreviewRowsPerPage']["$sid"] = $previewRowsPerPage;
-    $_SESSION['excelPreview']["$sid"] = serialize($PHPExcel);
+    loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage);
+    echo json_encode(getSingleExcelPreview($sid, $filename));
 }
 
-function getExcelPreview() {
-    global $sid;
-    $PHPExcel = unserialize($_SESSION['excelPreview']["$sid"]);
-    echo json_encode($PHPExcel->getCellData());
+function loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage) {
+    $filename = pathinfo($filePath, PATHINFO_BASENAME);
+    $PHPExcel = new PreviewExcelProcessor($filePath, $previewPage, $previewRowsPerPage);
+    $_SESSION["excelPreviewPage_$sid"][$filename] = $previewPage;
+    $_SESSION["excelPreviewRowsPerPage_$sid"][$filename] = $previewRowsPerPage;
+    $_SESSION["excelPreview_$sid"][$filename] = serialize($PHPExcel);
+    return $PHPExcel;
 }
 
-function printSheet() {
-    global $dataSource_filePath;
-    echo json_encode(Process_excel::getSheetName($dataSource_filePath));
+function getSingleExcelPreview($sid, $filename) {
+    $PHPExcel = unserialize($_SESSION["excelPreview_$sid"][$filename]);
+    return $PHPExcel->getCellData();
 }
 
-function dynamic_column() {
-    
+function getSheets($filePath) {
+    $filename = pathinfo($filePath, PATHINFO_BASENAME);
+    $sheets = Process_excel::getSheetName($filePath);
+
+    $sheetNames = new stdClass();
+    $sheetNames->filename = $filename;
+    $sheetNames->worksheets = $sheets;
+
+    return $sheetNames;
 }
 
-function add_sheets() {
-    global $dataSource_filename, $dataSource_filePath, $sid;
+function addSheetsSettings($sid, $dataSource_dirPath) {
+    $sheetsRanges = $_POST["sheetsRanges"];
+    foreach ($sheetsRanges as $filename => $sheetsRange) {
+        $fileUrl = $dataSource_dirPath . $filename;
+        $baseheader = addSheetSettings($sheetsRange, $fileUrl, $sid);
+    }
+}
 
-    $newDir = mnmpath . "temp/" . getSid() . '.ktr';
-    $sheetsRange = $_POST["sheetsRange"];
+function addSheetSettings($sheetsRange, $dataSource_filePath, $sid) {
 
     foreach ($sheetsRange as $sheetName => $settings) {
         $arr_sheet_name[] = $sheetName;
         $arr_start_row[] = $settings['startRow'];
         $arr_start_column[] = $settings['startColumn'];
     }
-
+    $filename = pathinfo($dataSource_filePath, PATHINFO_BASENAME);
     $sheets = array($arr_sheet_name, $arr_start_row, $arr_start_column);
 
-//check the headers from different sheets
-    if (isReloadNeeded($arr_start_row)) {
+    //check the headers from different sheets
+    if (isReloadNeeded($filename, $arr_start_row)) {
         $process = new MatchSchemaExcelProcessor($dataSource_filePath, $sheetsRange);
     } else {
-        $process = unserialize($_SESSION['excelPreview']["$sid"]);
+        $process = unserialize($_SESSION["excelPreview_$sid"][pathinfo($dataSource_filePath, PATHINFO_BASENAME)]);
     }
 
     $base_sheetNameNumber = Process_excel::getSheetNameIndex($dataSource_filePath, $sheets[0][0]);
@@ -210,30 +222,66 @@ function add_sheets() {
             exit("<div style=\"color:red\">Please choose the right row and column to get the same headers from different sheets</div>");
     }
 
-    if (isset($baseHeader)) {
-        $data[$arr_sheet_name[0]] = $baseHeader;
+    $sheetHeader[$arr_sheet_name[0]] = $baseHeader;
 
-        $_SESSION["ktrArguments"]["$sid"]['baseHeader'] = $data;
-        //TODO: get rid of it later.
-        $_SESSION['sheetZero'] = $arr_sheet_name[0];
+    $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'] = $baseHeader;
+    $_SESSION["ktrArguments_$sid"][$filename]["sheetNamesRowsColumns"] = $sheets;
 
-        // each column name in option value will be prefixed with word file.
-        echo UtilsForWizard::PrintTableForSchemaMatchingStep($data);
-    } else {
-        echo "please reload";
-    }
-
-    $_SESSION["ktrArguments"]["$sid"]["sheetNamesRowsColumns"] = $sheets;
+    // each column name in option value will be prefixed with word file.
+    return $sheetHeader[$arr_sheet_name[0]];
 }
 
-function isReloadNeeded($headerRows) {
+function match_schema($sid) {
+
+    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
+    foreach ($ktrManagers as $filename => $ktrManager) {
+        $filename_baseheaders[$filename] = $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'];
+    }
+
+    $_SESSION["ktrArguments_$sid"]["ktrManagers"] = serialize($ktrManagers);
+    echo UtilsForWizard::PrintTableForDataMatchingStep($filename_baseheaders);
+}
+
+function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
+
+    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
+
+    $dataMatchingUserInputs = $_POST["dataMatchingUserInputs"];
+
+    if (!isset($_POST["dataMatchingUserInputs"])) {
+        throw new Exception("Invalid arguments");
+    }
+        
+    foreach ($ktrManagers as $filename => &$ktrManager) {
+        $dataMatchingUserInputsForATable = array();
+        
+        $baseHeader = $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'];
+        $sheetNamesRowsColumns = $_SESSION["ktrArguments_$sid"][$filename]["sheetNamesRowsColumns"];
+
+        $replaceCount = 1;
+        foreach ($dataMatchingUserInputs as &$value) {
+            if ($value["tableName"] == $filename) {
+                $value["originalDname"] = str_replace("$filename.", '', $value["originalDname"], $replaceCount);
+                $dataMatchingUserInputsForATable[] = $value;
+            }
+        }
+
+        $ktrManager->createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputsForATable);
+    }
+
+    $_SESSION["ktrArguments_$sid"]["ktrManagers"] = serialize($ktrManagers);
+
+    UtilsForWizard::processDataMatchingUserInputsWithTableNameStoreDB($sid, $_POST["dataMatchingUserInputs"]);
+}
+
+function isReloadNeeded($filename, $headerRows) {
     global $sid;
-    if (isset($_SESSION['excelPreviewPage']["$sid"], $_SESSION['excelPreviewRowsPerPage']["$sid"])) {
-        $loadedPage = $_SESSION['excelPreviewPage']["$sid"];
-        $perPage = $_SESSION['excelPreviewRowsPerPage']["$sid"];
+    if (isset($_SESSION["excelPreviewPage_$sid"][$filename], $_SESSION["excelPreviewRowsPerPage_$sid"][$filename])) {
+        $loadedPage = $_SESSION["excelPreviewPage_$sid"][$filename];
+        $perPage = $_SESSION["excelPreviewRowsPerPage_$sid"][$filename];
         $isReloadNeeded = false;
         foreach ($headerRows as $headerRow) {
-            $isReloadNeeded = $isReloadNeeded || !($headerRow > ($loadedPage - 1) * $perPage && $headerRow <= $loadedPage * $perPage);
+            $isReloadNeeded = $isReloadNeeded || !(((int) $headerRow > ((int) $loadedPage - 1) * (int) $perPage) && ((int) $headerRow <= (int) $loadedPage * (int) $perPage));
         }
         return $isReloadNeeded;
     } else {
@@ -241,9 +289,7 @@ function isReloadNeeded($headerRows) {
     }
 }
 
-function estimateLoadingProgress() {
-    global $dataSource_filePath;
-
+function estimateLoadingProgress($dataSource_filePath) {
     $ext = pathinfo($dataSource_filePath, PATHINFO_EXTENSION);
     $sampleFilePath = $ext == 'xlsx' ? "loadingTimeSample.xlsx" : "loadingTimeSample.xls";
 
@@ -255,124 +301,25 @@ function estimateLoadingProgress() {
     $PHPExcelReader->load($sampleFilePath);
     $sampleEnd = time();
     $sampleLoadTime = $sampleEnd - $sampleStart;
+    $sampleLoadTime = $sampleLoadTime > 0.015 ? $sampleLoadTime : 0.015;
 
     $targetFileSize = (float) filesize($dataSource_filePath);
     $sampleFileSize = (float) filesize($sampleFilePath);
+       
     $estimatedSeconds = ($sampleLoadTime * $targetFileSize / $sampleFileSize);
     $estimatedSeconds = $ext == 'xlsx' ? $estimatedSeconds * 4 : $estimatedSeconds;
-
-    echo $estimatedSeconds;
+    
+    // Loading time does not increase in linear pattern when the file is small.
+    // So the loading time is timed with an arbitrary number. 
+    echo $estimatedSeconds * 10;
 }
 
-function match_schema() {
-    global $sid;
+function unsetFileResources($sid, $dataSource_dir, $dataSource_dirPath) {
 
-    $ktrManager = unserialize($_SESSION["ktrArguments"]["$sid"]["ktrManager"]);
-
-    $spd = $_POST["schemaMatchingUserInputs"]["spd"];
-    $spd2 = $_POST["schemaMatchingUserInputs"]["spd2"];
-    $drd = $_POST["schemaMatchingUserInputs"]["drd"];
-    $drd2 = $_POST["schemaMatchingUserInputs"]["drd2"];
-    $start = $_POST["schemaMatchingUserInputs"]["start"];
-    $start2 = $_POST["schemaMatchingUserInputs"]["start2"];
-    $end = $_POST["schemaMatchingUserInputs"]["end"];
-    $end2 = $_POST["schemaMatchingUserInputs"]["end2"];
-    $location = $_POST["schemaMatchingUserInputs"]["location"];
-    $location2 = $_POST["schemaMatchingUserInputs"]["location2"];
-    $aggrtype = $_POST["schemaMatchingUserInputs"]["aggrtype"];
-    $aggrtype2 = $_POST["schemaMatchingUserInputs"]["aggrtype2"];
-
-    if ($spd != "" && $spd != "other") {
-        $spd = UtilsForWizard::stripWordUntilFirstDot($spd);
-        $ktrManager->updateColumnAndStreamName('Spd', $spd);
-    } else if ($spd2 != "") {
-        $ktrManager->addConstants('Spd_from_input', $spd2, 'Date', 'yyyy/MM/dd');
-        $ktrManager->updateColumnAndStreamName('Spd', 'Spd_from_input');
-    }
-
-    if ($drd != "" && $drd != "other") {
-        $drd = UtilsForWizard::stripWordUntilFirstDot($drd);
-        $ktrManager->updateColumnAndStreamName('Drd', $drd);
-    } else if ($drd2 != "") {
-        $ktrManager->addConstants('Drd_from_input', $drd2, 'Date', 'yyyy/MM/dd');
-        $ktrManager->updateColumnAndStreamName('Drd', 'Drd_from_input');
-    }
-
-    if ($start != "" && $start != "other") {
-        $start = UtilsForWizard::stripWordUntilFirstDot($start);
-        $ktrManager->updateColumnAndStreamName('Start', $start);
-    } else if ($start2 != "") {
-        $ktrManager->addConstants('Start_from_input', $start2, 'Date', 'yyyy/MM/dd');
-        $ktrManager->updateColumnAndStreamName('Start', 'Start_from_input');
-    }
-
-    if ($end != "" && $end != "other") {
-        $end = UtilsForWizard::stripWordUntilFirstDot($end);
-        $ktrManager->updateColumnAndStreamName('End', $end);
-    } else if ($end2 != "") {
-        $ktrManager->addConstants('End_from_input', $end2, 'Date', 'yyyy/MM/dd');
-        $ktrManager->updateColumnAndStreamName('End', 'End_from_input');
-    }
-
-    if ($location != "" && $location != "other") {
-        $location = UtilsForWizard::stripWordUntilFirstDot($location);
-        $ktrManager->updateColumnAndStreamName('Location', $location);
-    } else if ($location2 != "") {
-        $ktrManager->addConstants('Location_from_input', $location2, 'String', '');
-        $ktrManager->updateColumnAndStreamName('Location', 'Location_from_input');
-    }
-
-    if ($aggrtype != "" && $aggrtype != "other") {
-        $aggrtype = UtilsForWizard::stripWordUntilFirstDot($aggrtype);
-        $ktrManager->updateColumnAndStreamName('AggrType', $aggrtype);
-    } else if ($aggrtype2 != "") {
-        $ktrManager->addConstants('AggrType_from_input', $aggrtype2, 'String', '');
-        $ktrManager->updateColumnAndStreamName('AggrType', 'AggrType_from_input');
-    }
-
-    $no_need_Array = array($spd, $drd, $start, $end, $location, $aggrtype);
-    $normalizer_header = array_diff(reset($_SESSION["ktrArguments"]["$sid"]['baseHeader']), $no_need_Array);
-
-    // Should be more complicated like the case with DB to take care of different sheets names
-    $data[$_SESSION['sheetZero']] = $normalizer_header;
-    $_SESSION['$normalizer_header'] = $data;		
-
-    $_SESSION["ktrArguments"]["$sid"]["ktrManager"] = serialize($ktrManager);
-    echo UtilsForWizard::PrintTableForDataMatchingStep($data);
-}
-
-function add_normalizer() {
-    global $db, $sid;
-
-    $ktrManager = unserialize($_SESSION["ktrArguments"]["$sid"]["ktrManager"]);
-    $fileUrls = $_SESSION["ktrArguments"]["$sid"]["fileUrls"];
-    $sheetNamesRowsColumns = $_SESSION["ktrArguments"]["$sid"]["sheetNamesRowsColumns"];
-    $baseHeader = $_SESSION["ktrArguments"]["$sid"]['baseHeader'];
-    $dataMatchingUserInputs = $_POST["dataMatchingUserInputs"];
-
-    if (isset($_POST["dataMatchingUserInputs"])) {
-
-        foreach ($dataMatchingUserInputs as &$value) {
-            $value["originalDname"] = UtilsForWizard::stripWordUntilFirstDot($value["originalDname"]);
-        }
-
-        $ktrManager->createTemplate($fileUrls, $sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs);
-        unset($_SESSION["ktrArguments"]["$sid"]);
-
-        UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $_POST["schemaMatchingUserInputs"]);
-        UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $_POST["dataMatchingUserInputs"]);        
-    } else {
-        echo "error";
-    }
-}
-
-function unsetFileResources() {
-    global $sid;
-
-    unset($_SESSION['excelPreviewPage']["$sid"]);
-    unset($_SESSION['excelPreviewRowsPerPage']["$sid"]);
-    unset($_SESSION['excelPreview']["$sid"]);
-    unset($_SESSION['raw_file_name']["$sid"]);
+    unset($_SESSION["excelPreviewPage_$sid"]);
+    unset($_SESSION["excelPreviewRowsPerPage_$sid"]);
+    unset($_SESSION["excelPreview_$sid"]);
+    unset($_SESSION["raw_file_name_$sid"]);
 }
 
 ?>

@@ -8,24 +8,31 @@ var wizardFromDB = (function() {
     wizardFromDB.database = "";
     wizardFromDB.port = "";
     wizardFromDB.driver = "";
+    wizardFromDB.isImport = false;
 
     /*************/
 
     /* Functions */
 
     // Get all actions form friends.
-    wizardFromDB.TestDBConnection = function(container, server, user, password, port, driver, database) {
-        $.ajax({
+    wizardFromDB.TestDBConnection = function(container, server, user, password, port, driver, database, isImport) {
+        $('#testDBConnectionResultMsg').css('color', '#707070').text('Connecting...');
+        return $.ajax({
             type: 'POST',
             url: my_pligg_base + "/DataImportWizard/wizardFromDBController.php?action=TestConnection",
-            data: {'serverName': server, 'userName': user, 'password': password, 'port': port, 'driver': driver, 'database': database},
-            success: function(JSON_Response) {
-
-                $('#testDBConnectionResultMsg').text(JSON_Response);
-                if (JSON_Response == "Connected successfully") {
+            data: {'serverName': server,
+                'userName': user,
+                'password': password,
+                'port': port,
+                'driver': driver,
+                'database': database,
+                'isImport': isImport
+            },
+            success: function(data) {
+                $('#testDBConnectionResultMsg').css('color', data.isSuccessful ? 'green' : 'red').text(data.message);
+                if (data.isSuccessful) {
                     wizard.enableNextButton();
                 }
-
             },
             dataType: 'json',
             async: false
@@ -33,76 +40,62 @@ var wizardFromDB = (function() {
     };
 
     // Get all actions form friends.
-    wizardFromDB.LoadDatabaseTables = function(container, server, user, password, database, port, driver) {
+    wizardFromDB.LoadDatabaseTables = function(server, user, password, database, port, driver, isImport) {
         wizardFromDB.server = server;
         wizardFromDB.user = user;
         wizardFromDB.password = password;
         wizardFromDB.database = database;
         wizardFromDB.port = port;
         wizardFromDB.driver = driver;
+        wizardFromDB.isImport = isImport;
 
-
-        $.ajax({
+        return $.ajax({
             type: 'POST',
             url: my_pligg_base + "/DataImportWizard/wizardFromDBController.php?action=LoadDatabaseTables",
-            data: {'serverName': server, 'userName': user, 'password': password, 'database': database, 'port': port, 'driver': driver},
-            success: function(JSON_Response) {
-
-                container.empty();
-
-                var el = "<p>Tables in selected database:</p><div style='height: 80%; overflow-y: scroll;'>";
-
-                for (var i = 0; i < JSON_Response.data.length; i++) {
-                    el += "<label style='display: inline;'><input type='checkbox' name='table[]' value='" + JSON_Response.data[i] + "'/>" + JSON_Response.data[i] + "</lable><br/>";
-
-                }
-
-                el += "</div>"
-                container.append(el);
-
+            data: {'serverName': server,
+                'userName': user,
+                'password': password,
+                'database': database,
+                'port': port,
+                'driver': driver,
+                'isImport': isImport
             },
-            dataType: 'json',
-            async: false
+            dataType: 'json'
         });
     };
 
     wizardFromDB.passSelectedTablesFromDisplayOptionStep = function() {
 
-        var dataToSend = {'selectedTables[]': getSelectedTables(), 'serverName': wizardFromDB.server, "userName": wizardFromDB.user, "password": wizardFromDB.password,
-            "database": wizardFromDB.database, 'port': wizardFromDB.port, 'driver': wizardFromDB.driver};
+        var dataToSend = {
+            'selectedTables[]': getSelectedTables(),
+            'serverName': wizardFromDB.server,
+            "userName": wizardFromDB.user,
+            "password": wizardFromDB.password,
+            "database": wizardFromDB.database,
+            'port': wizardFromDB.port,
+            'driver': wizardFromDB.driver,
+            'isImport': wizardFromDB.isImport
+        };
 
-        // alert(JSON.stringify(dataToSend));
-        $.ajax({type: 'POST',
-            url: my_pligg_base + '/DataImportWizard/wizardFromDBController.php?action=PrintTableForSchemaMatchingStep',
-            data: dataToSend,
-            success: function(data) {
-                importWizard.showSchemaMatchingStep(data);
-            }
-        });
-    }
+        return getTableForDataMatchingStep(dataToSend);
+    };
 
-    wizardFromDB.passSchemaMatchinInfo = function() {
-        var dataToSend = {"schemaMatchingUserInputs": importWizard.getSchemaMatchingUserInputs()};
-
-        // alert(JSON.stringify(dataToSend));
-        $.ajax({type: 'POST',
+    function getTableForDataMatchingStep(dataToSend) {
+        return $.ajax({type: 'POST',
             url: my_pligg_base + '/DataImportWizard/wizardFromDBController.php?action=PrintTableForDataMatchingStep',
-            data: dataToSend,
-            success: function(data) {
-                importWizard.showDataMatchingStep(data);
-            }
+            data: dataToSend
         });
     }
 
-    wizardFromDB.excuteFromDB = function() {
+    wizardFromDB.executeFromDB = function() {
 
         var dataToSend = {
             'sid': $('#sid').val(),
             'server': wizardFromDB.server, "user": wizardFromDB.user, "password": wizardFromDB.password, 'database': wizardFromDB.database,
             'port': wizardFromDB.port, 'driver': wizardFromDB.driver,
             'selectedTables[]': getSelectedTables(),
-            'schemaMatchingUserInputs': importWizard.getSchemaMatchingUserInputs(),
-            'dataMatchingUserInputs': importWizard.getDataMatchingUserInputs()
+            'dataMatchingUserInputs': importWizard.getDataMatchingUserInputs(),
+            'isImport': wizardFromDB.isImport
         };
 
         return $.ajax({type: 'POST',
@@ -122,15 +115,19 @@ var wizardFromDB = (function() {
     }
 
     wizardFromDB.setDefaultAdvancedSettingsByServerName = function(container, selectedValue) {
-        switch (selectedValue) {
-            case "0":
+        switch (selectedValue.toLowerCase()) {
+            case "mysql":
                 container.val(3306);
                 break;
-            case "1":
+            case "mssql":
+            case "sql server":
                 container.val(1433);
                 break;
+            case "postgresql":
+                container.val(5432);
+                break;
         }
-    }
+    };
 
     /*************/
 

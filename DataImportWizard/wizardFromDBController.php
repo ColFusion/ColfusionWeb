@@ -1,148 +1,187 @@
 <?php
-	include_once('../config.php');
-	include_once('../DAL/QueryEngine.php');
-	include_once('../DAL/ExternalDBHandlers/ExternalDBs.php');
-	include_once('UtilsForWizard.php');
-  
-	$action = $_GET["action"];
-		
-	$action();
-		
-	exit;
 
+include_once('../config.php');
+include_once('../DAL/QueryEngine.php');
+include_once('../DAL/ExternalDBHandlers/ExternalDBs.php');
+include_once('UtilsForWizard.php');
+require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandler.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporterFactory.php");
+require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
+require_once(realpath(dirname(__FILE__)) . "/ExecutionManager.php");
 
-    function TestConnection() {
-	    // get submitted form information from dashboard.php
-		$serverName = $_POST['serverName']; 
-	    $userName = $_POST['userName'];
-	    $password = $_POST['password']; // controls how many tuples shown on each page
-	    $port = $_POST['port'];
-	    $driver = $_POST['driver'];
-	    $database = $_POST['database'];
-	    
-	    // TODO: This should not return json. The resul of this call should be transformed to json here and trhen returned.
-	    ExternalDBs::TestConnection($serverName, $userName, $password, $port, $driver, $database);
-	}
+if(!$current_user->authenticated){
+    die('Please login to run this function.');
+}
 
-	function LoadDatabaseTables() {
-	    // get submitted form information from dashboard.php
-		$serverName = $_POST['serverName']; 
-	    $userName = $_POST['userName'];
-	    $password = $_POST['password']; // controls how many tuples shown on each page
-	    $database = $_POST['database']; 
-	    $port = $_POST['port'];
-	    $driver = $_POST['driver'];
-	  
-	    echo json_encode(ExternalDBs::LoadDatabaseTables($serverName, $userName, $password, $port, $driver, $database));
-	}
-	
-	function PrintTableForSchemaMatchingStep() {
-		$serverName = $_POST['serverName'];
-		$userName = $_POST['userName'];
-		$password = $_POST['password']; // controls how many tuples shown on each page
-		$database = $_POST['database'];
-		$port = $_POST['port'];
-		$driver = $_POST['driver'];
-		$selectedTables = $_POST["selectedTables"];
-		
-		$tablesColumns = ExternalDBs::GetColumnsForSelectedTables($serverName, $userName, $password, $port, $driver, $database, $selectedTables);
-			
-		$_SESSION['baseHeader'] = $tablesColumns;
+$userId = $current_user->user_id;
 
-		echo UtilsForWizard::PrintTableForSchemaMatchingStep($tablesColumns);		
-	}
-	
-	function PrintTableForDataMatchingStep() {
-		$spd = $_POST["schemaMatchingUserInputs"]["spd"];
-		$drd = $_POST["schemaMatchingUserInputs"]["drd"];
-		$start = $_POST["schemaMatchingUserInputs"]["start"];
-		$end = $_POST["schemaMatchingUserInputs"]["end"];
-		$location = $_POST["schemaMatchingUserInputs"]["location"];
-		$aggrtype = $_POST["schemaMatchingUserInputs"]["aggrtype"];
-		
-		$baseHeader = $_SESSION['baseHeader'];
-		
-		if ($spd != "" && $spd != "other"){
-			$tableName = UtilsForWizard::getWordUntilFirstDot($spd);
-			$spd = UtilsForWizard::stripWordUntilFirstDot($spd);
-			$baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($spd));			 		
-		}
-		
-		if ($drd != "" && $drd != "other"){
-			$tableName = UtilsForWizard::getWordUntilFirstDot($drd);
-			$drd = UtilsForWizard::stripWordUntilFirstDot($drd);
-			$baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($drd));	
-		}
-		
-		if ($start != "" && $start != "other"){
-			$tableName = UtilsForWizard::getWordUntilFirstDot($start);
-			$start = UtilsForWizard::stripWordUntilFirstDot($start);
-			$baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($start));	
-		}
-			
-		if ($end != "" && $end != "other"){
-			$tableName = UtilsForWizard::getWordUntilFirstDot($end);
-			$end = UtilsForWizard::stripWordUntilFirstDot($end);
-			$baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($end));
-		}
-			
-		if ($location != "" && $location != "other"){
-			$tableName = UtilsForWizard::getWordUntilFirstDot($location);
-			$location = UtilsForWizard::stripWordUntilFirstDot($location);
-			$baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($location));
-		}
-		
-		if ($aggrtype != "" && $aggrtype != "other") {
-			$tableName = UtilsForWizard::getWordUntilFirstDot($aggrtype);
-			$aggrtype = UtilsForWizard::stripWordUntilFirstDot($aggrtype);
-			$baseHeader[$tableName] = array_diff($baseHeader[$tableName], array($aggrtype));
-		}
-					
-		$_SESSION['$normalizer_header'] = $baseHeader;
-				
-		echo UtilsForWizard::PrintTableForDataMatchingStep($baseHeader);
-	}
-	
-	//TODO: the logic should be moved to some other classes
-	function Execute() {
-		global $db;
-		
-		$inputData = $_POST;
+$sid = $_POST['sid'];
+if (!isset($sid)) {
+    die('Source not specified.');
+}
 
-		$sid = getSid();
-		$queryEngine = new QueryEngine();
-		
-		$queryEngine->simpleQuery->addSourceDBInfo($sid, $inputData["server"], $inputData["port"], $inputData["user"], 
-													$inputData["password"], $inputData["database"], $inputData["driver"]);
-				
-		UtilsForWizard::processSchemaMatchingUserInputsStoreDB($sid, $inputData["schemaMatchingUserInputs"]);
-		UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $inputData["dataMatchingUserInputs"]);
-		
-		$queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');		
-		
-                $resultJson = new stdClass();
-                $resultJson->isSuccessful = true;
-                $resultJson->message = 'Success!';
-		echo json_encode($resultJson);		
-	}
+if (isset($_SESSION["dbHandler_$sid"])) {
+    $dbHandler = unserialize($_SESSION["dbHandler_$sid"]);
+}
 
-	
-	/*****************************************************************************************************/
+$action = $_GET["action"];
+$action($sid, $dbHandler, $userId);
+exit;
 
-	
-	
-	function getSid() {
-			// determine which step of the submit process we are on
-		if(isset($_POST["sid"]))
-			$sid = $_POST["sid"];
-		else if(isset($_GET["sid"]))
-			$sid = $_GET["sid"];
-		else {
-			echo json_encode("no sid");
-			die();
-		}
+function TestConnection($sid) {
 
-		return $sid;
-	}
+    $isImport = $_POST['isImport'];
+    $driver = strtolower($_POST['driver']);
+
+    if ($isImport == 'true') {
+        $importSettings = DatabaseImporterFactory::$importSettings[$driver];
+
+        $serverName = 'localhost';
+        $database = my_pligg_base_no_slash . "_external_$sid";
+        $userName = $importSettings['user'];
+        $password = $importSettings['password']; // controls how many tuples shown on each page
+        $port = $importSettings['port'];
+
+        $isLocal = 1;
+        $linkedServerName = $database;
+    } else {
+        $userName = $_POST['userName'];
+        $password = $_POST['password']; // controls how many tuples shown on each page
+        $port = $_POST['port'];
+        $serverName = $_POST['serverName'];
+        $database = $_POST['database'];
+
+        $isLocal = 0;
+
+        if ($serverName == "tycho.exp.sis.pitt.edu") {
+            $linkedServerName = $database;
+        }
+        else {
+            $linkedServerName = my_pligg_base_no_slash . "_external_$sid";
+        }
+
+        
+    }
+
+    $serverName = $serverName ? $serverName : 'a fail host';
+    $json = new stdClass();
+
+    try {
+        if ($port) {
+            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName, $port, $isLocal, $linkedServerName);
+        } else {
+            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($driver, $userName, $password, $database, $serverName, null, $isLocal, $linkedServerName);
+        }
+        $dbHandler->setDriver($driver);
+        $dbHandler->getConnection();
+        $_SESSION["dbHandler_$sid"] = serialize($dbHandler);
+
+        $json->isSuccessful = true;
+        $json->message = "Connected successfully";
+        echo json_encode($json);
+    }
+    catch (Exception $e) {
+        $json->isSuccessful = false;
+        $json->message = $e->getMessage();
+        echo json_encode($json);
+    }
+}
+
+function LoadDatabaseTables($sid, DatabaseHandler $dbHandler) {
+    try {
+        $tables = $dbHandler->loadTables();
+        $json["isSuccessful"] = true;
+        $json["data"] = $tables;
+    }
+    catch (Exception $e) {
+        $json["isSuccessful"] = false;
+    }
+    echo json_encode($json);
+}
+
+function PrintTableForDataMatchingStep($sid, DatabaseHandler $dbHandler) {
+    $selectedTables = $_POST["selectedTables"];
+    $tablesColumns = $dbHandler->getColumnsForSelectedTables($selectedTables);
+    $baseHeader = $tablesColumns;
+    $_SESSION['$normalizer_header'] = $baseHeader;
+
+    echo UtilsForWizard::PrintTableForDataMatchingStep($baseHeader);
+}
+
+//TODO: the logic should be moved to some other classes
+function Execute($sid, DatabaseHandler $dbHandler, $userId) {
+
+    $inputData = $_POST;
+
+    try{        
+        $queryEngine = new QueryEngine();
+
+        $queryEngine->simpleQuery->addSourceDBInfo($sid, $dbHandler->getHost(), $dbHandler->getPort(), $dbHandler->getUser(), $dbHandler->getPassword(), $dbHandler->getDatabase(), $dbHandler->getDriver(), $dbHandler->getIsImpoted(), $dbHandler->getLinkedServerName());
+        UtilsForWizard::processDataMatchingUserInputsStoreDB($sid, $inputData["dataMatchingUserInputs"]);
+        $queryEngine->simpleQuery->setSourceTypeBySid($sid, 'database');
+
+        $resultJson = new stdClass();
+        $resultJson->isSuccessful = true;
+        $resultJson->message = 'Success!';
+        echo json_encode($resultJson);
+        
+        // If a dump file is uploaded, start importing data in the background.
+        if(isset($_SESSION["dump_file_$sid"])){
+            ExecutionManager::callChildProcessToImportDumpFile($sid, $userId, $dbHandler, $_SESSION["dump_file_$sid"]);
+        }
+        unset($_SESSION["dump_file_$sid"]);      
+    }
+    catch(Exception $e){
+        $resultJson = new stdClass();
+        $resultJson->isSuccessful = false;
+        $resultJson->message = $e->getMessage();
+        echo json_encode($resultJson);
+    }
+}
+
+// When a dump file is uploaded, last step runs this function.
+function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath){
+    
+    $ktrExeDao = new KTRExecutorDAO();
+    $tables = $dbHandler->loadTables();
+
+    $logIds = array();
+    foreach($tables as $table){
+        $logIds[] = $ktrExeDao->addExecutionInfoTuple($sid, $table, $userId);
+    }
+
+    try{
+        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbHandler->getDriver(), $sid, "colfusion");
+        $dbImporter->importDbData($filePath);
+
+        foreach($logIds as $logId){
+            $ktrExeDao->updateExecutionInfoTimeEnd($logId);
+            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'success');
+        }
+    }
+    catch(Exception $e){
+        foreach($logIds as $logId){
+            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'error');
+            $ktrExeDao->updateExecutionInfoErrorMessage($logId, $e->getMessage());
+        }
+    }
+}
+
+/* * ************************************************************************************************** */
+
+function getSid() {
+    // determine which step of the submit process we are on
+    if (isset($_POST["sid"]))
+        $sid = $_POST["sid"];
+    else if (isset($_GET["sid"]))
+        $sid = $_GET["sid"];
+    else {
+        echo json_encode("no sid");
+        die();
+    }
+
+    return $sid;
+}
 
 ?>

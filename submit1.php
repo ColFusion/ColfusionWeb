@@ -7,7 +7,7 @@ set_time_limit(120);
 // You can get copies of the licenses here:
 // 		http://www.affero.org/oagpl.html
 // AFFERO GENERAL PUBLIC LICENSE is also included in the file called "COPYING".
-include('config.php');
+include_once('config.php');
 
 include_once('Smarty.class.php');
 $main_smarty = new Smarty;
@@ -18,7 +18,7 @@ include(mnminclude.'tags.php');
 include(mnminclude.'user.php');
 include(mnminclude.'smartyvariables.php');
 
-include('DAL/QueryEngine.php');
+include_once('DAL/QueryEngine.php');
 
 if (!$_COOKIE['referrer'])
 	check_referrer();
@@ -39,8 +39,12 @@ $main_smarty->assign('navbar_where', $navwhere);
 $main_smarty->assign('posttitle', $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Submit'));
 $main_smarty = do_sidebar($main_smarty);
 
+
 //to check anonymous mode activated
 global $current_user;
+
+
+
 if($current_user->authenticated != TRUE)
 {
 	$vars = '';
@@ -50,6 +54,8 @@ if($current_user->authenticated != TRUE)
 }
 
 
+
+
 // determine which step of the submit process we are on
 $phase = isset($_POST["phase"]) && is_numeric($_POST["phase"]) ? $_POST["phase"] : 0;
 
@@ -57,6 +63,9 @@ $phase = isset($_POST["phase"]) && is_numeric($_POST["phase"]) ? $_POST["phase"]
 if($phase == 0 && Submit_Show_URL_Input == false) {
 	$phase = 1;
 }
+
+
+
 switch ($phase) {
 	case 0:
 		// Link to this page, before starting submit process.

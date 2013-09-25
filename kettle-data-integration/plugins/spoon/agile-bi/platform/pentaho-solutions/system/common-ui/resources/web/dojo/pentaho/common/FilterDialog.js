@@ -9,7 +9,7 @@ dojo.declare(
     "pentaho.common.FilterDialog",
      [pentaho.common.Dialog],
 {
-  templatePath: new dojo.moduleUrl('pentaho.common', 'FilterDialog.html'),
+  templatePath: dojo.moduleUrl('pentaho.common', 'FilterDialog.html'),
   widgetsInTemplate: true,
   filterType: "PICKLIST",
   currentFilter: null,
@@ -23,6 +23,7 @@ dojo.declare(
 
   _reauthenticateCallback: null,
 
+  _preSaveCallback: undefined,
   _onSuccessCallback: undefined,
   _onCancelCallback: undefined,
 
@@ -38,7 +39,7 @@ dojo.declare(
 
   postCreate: function() {
     this.inherited(arguments);
-    Messages.addBundle('pentaho.common','messages');
+    pentaho.common.Messages.addUrlBundle('pentaho.common',CONTEXT_PATH+'i18n?plugin=common-ui&name=resources/web/dojo/pentaho/common/nls/messages');
     // Capture all attempts to close the dialog and redirect them
     dojo.connect(this.typePicklistCombinationTypeLinksIncludeLink, "onclick", this, function() {
       this._setPicklistCombinationTypeLink(pentaho.pda.Column.OPERATOR_TYPES.AND);
@@ -118,6 +119,19 @@ dojo.declare(
     this._initParameterUI();
   },
 
+  /**
+   * Register a callback function for checking if the filter can be saved at all or not.
+   * The function should accept the following parameters: 
+   *   dialog: this filter dialog
+   *   filter: the current filter being edited
+   *   saveCallback: the function to call if this filter should be saved
+   *
+   * The reason this pre-save callback must call the saveCallback instead of returning a result is to allow for prompting of the user
+   */
+  registerPreSaveCallback: function(f) {
+    this._preSaveCallback = f;
+  },
+
   // Register a callback function for handling reauthentication which itself takes a callback function when authentication is successful
   registerReauthenticateCallback: function(f) {
     this._reauthenticateCallback = f;
@@ -167,6 +181,7 @@ dojo.declare(
         list.options[0] = opt;
         for(var idx=0; idx<fields.length; idx++) {
             opt = new Option( fields[idx].name, fields[idx].id );
+            opt.title = fields[idx].name;
 			list.options[list.length] = opt;
         }
   },
@@ -267,6 +282,15 @@ dojo.declare(
   },
 
   save: function() {
+    if (this._preSaveCallback) {
+      this._preSaveCallback.call(this, this, this.currentFilter, this._save.bind(this));
+    } else {
+      this._save();
+    }
+  },
+
+  // Internal save function to be called by a preSaveCallback if it exists
+  _save: function() {
     switch (this.filterType) {
       case "PICKLIST":
         if (!this._savePicklistContainer()) {
@@ -285,17 +309,12 @@ dojo.declare(
 
     this._scrubFilterValues(this.currentFilter);
 
-    var parameterName = this.parameterNameInput.get("value");
+    var parameterName = this.getParameterName();
     if (parameterName) {
-      parameterName = dojo.trim(parameterName).replace(/[^a-zA-Z]/g, "");
-      if (parameterName.length > 0) {
         this.currentFilter.parameterName = parameterName;
       } else {
         this.currentFilter.parameterName = null;
       }
-    } else {
-      this.currentFilter.parameterName = null;
-    }
 
     if (this._onSuccessCallback) {
       try {
@@ -306,6 +325,14 @@ dojo.declare(
     }
     this.hide();
     return true;
+  },
+
+  getParameterName: function() {
+    var parameterName = this.parameterNameInput.get("value");
+    if (parameterName) {
+      parameterName = dojo.trim(parameterName).replace(/[^a-zA-Z0-9 ]/g, "");
+    }
+    return parameterName.length > 0 ? parameterName : undefined;
   },
 
   cancel: function() {
@@ -330,7 +357,9 @@ dojo.declare(
     var idx = 0;
     dojo.forEach(values, function(value) {
       if (value != null) {
-        this.containerNode.options[idx++] = new Option(value, value);
+        var opt =  new Option(value, value);
+        opt.title = value;
+        this.containerNode.options[idx++] = opt;
       }
     }, this.picklistUsedValues);
 
@@ -351,7 +380,8 @@ dojo.declare(
     dojo.empty(this.picklistAvailableValues.domNode);
     var sel = this.picklistAvailableValues.domNode;
     dojo.forEach(values, function (result, idx) {
-      this.containerNode.options[idx] = new Option(result, result)
+      this.containerNode.options[idx] = new Option(result, result);
+      this.containerNode.options[idx].title = result;
     }, this.picklistAvailableValues);
     this.picklistLoaded = true;
   },
@@ -484,10 +514,21 @@ dojo.declare(
         dojo.addClass(this.matchValueInputDate.domNode, "filterDialogHidden");
         break;
     }
+
+    dojo.empty(this.matchAggType);
+    dojo.forEach(this.currentColumn.availableAggregations, function(aggType, idx) {
+      this.options[idx] = new Option(pentaho.pda.Column.AGG_TYPES_STRINGS[aggType], aggType);
+      this.options[idx].title = aggType;
+    }, this.matchAggType);
+    if (this.currentFilter.selectedAggType) {
+      this.matchAggType.value = this.currentFilter.selectedAggType;
+    }
+
     dojo.empty(this.matchComparator);
     var dataType = this.currentColumn.dataType === pentaho.pda.Column.DATA_TYPES.UNKNOWN ? pentaho.pda.Column.DATA_TYPES.STRING : this.currentColumn.dataType;
     dojo.forEach(pentaho.pda.Column.COMPARATOR[dataType], function(cArray, idx) {
       this.options[idx] = new Option(cArray[0], cArray[1]);
+      this.options[idx].title = cArray[0];
     }, this.matchComparator);
     this.matchComparator.value = this.currentFilter.operator;
     this._matchComparatorChanged();
@@ -495,6 +536,7 @@ dojo.declare(
 
   _saveMatchContainer: function() {
     this.currentFilter.operator = this.matchComparator.value;
+    this.currentFilter.selectedAggType = this.matchAggType.value;
     this.currentFilter.combinationType = pentaho.pda.Column.OPERATOR_TYPES.AND;
     if (!this._matchOperatorRequiresValue()) {
       this.currentFilter.value = [""];
@@ -574,8 +616,9 @@ dojo.declare(
   /**
    * Build the textual representation of a filter for display on the Filter Panel.
    * @param filter
+   * @param prompt Is this filter controlled by a prompt? If so the value portion of the filter text will indicate it is controlled by that prompt.
    */
-  buildFilterText: function(filter) {
+  buildFilterText: function(filter, prompt) {
     var column = this.datasource.getColumnById(filter.column);
     var friendlyOperator = filter.operator;
     if (filter.combinationType != pentaho.pda.Column.OPERATOR_TYPES.AND || (filter.operator == pentaho.pda.Column.CONDITION_TYPES.EQUAL && dojo.isArray(filter.value) && filter.value.length > 1)) {
@@ -603,6 +646,15 @@ dojo.declare(
       }
     }
     var values = "";
+
+    var aggregation = ' ';
+    if (filter.selectedAggType) {
+      aggregation = ' (' + pentaho.pda.Column.AGG_TYPES_STRINGS[filter.selectedAggType] + ') ';
+    }
+
+    if (prompt) {
+      values = this.getLocaleString('FilterTextValueFromPrompt', filter.parameterName);
+    } else {
     if (filter.value != undefined) {
       if (filter.value.length > 10) {
         values = filter.value.length + " values";
@@ -615,7 +667,8 @@ dojo.declare(
         }, this);
       }
     }
-    return column.name + " " + friendlyOperator + " " + values;
+    }
+    return column.name + aggregation + friendlyOperator + " " + values;
   },
 
   showErrorDialog: function(message) {

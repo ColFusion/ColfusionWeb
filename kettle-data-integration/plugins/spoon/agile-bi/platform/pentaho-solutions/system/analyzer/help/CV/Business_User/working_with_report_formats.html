@@ -21,7 +21,6 @@
          <ul>
             <li><a href="#0">About Report Formats</a></li>
             <li><a href="#1">Switching Report Formats</a></li>
-            <li><a href="#2">Differences Between Charts and Tables</a></li>
             <li><a href="#3">Automatic Field Rearrangement When Switching the Report Format</a></li>
             <li><a href="#4">Hiding Number Fields When Viewing Charts</a></li>
          </ul>
@@ -31,12 +30,20 @@
             <li>Table</li>
             <li>Standard Charts:
                <ul>
-                  <li>Bar (vertical or horizontal)</li>
-                  <li>Stacked Bar (vertical or horizontal)</li>
-                  <li>100% Stacked Bar (vertical or horizontal)</li>
-                  <li>Line</li>
-                  <li>Pie</li>
-                  <li>Stacked Area</li>
+                  <li>Column</li>
+<li>Stacked Column</li>
+<li>100% Stacked Column</li>
+<li>Column-Line Combo</li>
+<li></li>Bar 
+<li>Stacked Bar </li>
+<li>100% Stacked Bar</li> 
+<li>Line</li>
+<li>Pie</li>
+<li>Area</li>
+<li>Scatter</li>
+<li>Heat Grid</li>
+<li>Geo Map</li>
+</li>
                </ul>
             </li>
          </ul>
@@ -46,21 +53,16 @@
          <ul>
             <li>Click the chart icon, located in the upper right corner of the report, and select a chart format from the menu.</li>
             <li>Click the <b>Show as Chart</b> or <strong>Show as Table</strong> button, located in the upper right corner of the report, to toggle between the table format and the default chart format. <strong>Note:</strong> Depending on the current format of the report, only one of the buttons (<strong>Show as Table</strong> OR <strong>Show as Chart</strong>) is available at a time.</li>
-         </ul>
-         <h2 class="line"><a name="2"></a>Differences Between Charts and Tables</h2>
-         <p>The table format provides somewhat more functionality than the chart format. The following capabilities are available only in the table format:</p>
-         <ul>
-            <li>Visibility of totals (grand totals, subtotals, etc.).</li>
-            <li>Ability to click on a cell of data to drill-down, filter, etc.</li>
-         </ul>
-         <h2 class="line"><a name="4"></a>Hiding Number Fields When Viewing Charts</h2>
-         <p>When you present your data using a chart (e.g. line chart), you often want to display only the most important number field (e.g. Profit) to avoid cluttering the chart. However, you might want to be able switch back to the table format to get the exact numbers and view some additional number fields (e.g. Revenue, Cost). Pentaho supports this by allowing you to hide number fields in the chart formats.</p>     
-         <p>Select one of the following methods to hide a number field in the chart format:</p>
+         </ul>         
+		 
+         <h2 class="line"><a name="4"></a>Hiding Measure Fields When Viewing Charts</h2>
+         <p>When you present your data using a chart (e.g. line chart), you often want to display only the most important measure field(s) (e.g. Profit) to avoid cluttering the chart. However, you might want to be able switch back to the table format to get the exact numbers and view some additional measure fields (e.g. Revenue, Cost). Analyzer supports this by allowing you to hide measure fields in the chart formats.</p>     
+         <p>Select one of the following methods to hide a measure field in the chart format:</p>
          <ul>
             <li>If you currently are viewing the report in table format, click the field you want to hide on the report and select <b>Hide from Chart</b> from the menu.</li>
-            <li>If you currently are viewing the report in a chart format, click the field button in the <b><a href="working_with_fields.html#3">Arrange Fields pane</a></b> and select <b>Show on Chart</b> from the menu.</li>
+            <li>If you currently are viewing the report in a chart format, click the field button in the <b><a href="working_with_fields.html#3">Field Layout panel</a></b> and select <b>Show on Chart</b> from the menu.</li>
          </ul>
-         <p>In the Arrange Fields pane, fields that currently are hidden are <font color="#666666">gray</font> in color (as opposed to the <font color="#0000FF">blue</font> color of visible fields).</p>
+         <p>In the Field Layout panel, fields that currently are hidden are <font color="#666666">gray</font> in color (as opposed to the <font color="#0000FF">blue</font> color of visible fields).</p>
          <p>To show a field again, click the field you want to make visible and select <b>Show on Chart</b> from the menu.</p>
       </td>
    <tr>

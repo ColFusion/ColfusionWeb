@@ -1,14 +1,14 @@
 <?php
 
 set_time_limit(0);
-include(realpath(dirname(__FILE__)) . '/../config.php');
-include(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
+include_once(realpath(dirname(__FILE__)) . '/../config.php');
+include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
-$action = $_GET["action"];
-
-$action();
-
-exit;
+header('Content-type: text/html; charset=utf-8');
+if(isset($_GET["action"])){
+    $action = $_GET["action"];
+    $action();
+}
 
 // Expects sid in post
 function GetTablesList() {
@@ -17,21 +17,28 @@ function GetTablesList() {
     echo json_encode($queryEngine->GetTablesList($_POST["sid"]));
 }
 
-// Simple case, expects sid and table_name in post
-// also numberof tuples per page: perPage
-// and page number: pageNo
-function GetTableDataBySidAndName() {
-    $queryEngine = new QueryEngine();
-
+function GetTableDataBySidAndName(){
     $sid = $_POST["sid"];
     $table_name = $_POST["table_name"];
     $perPage = $_POST["perPage"];
     $pageNo = $_POST["pageNo"];
+    
+    if (is_string($sid)) {
+        $sid = json_decode($sid);
+    }
+    
+    echo json_encode(GetTableData($sid, $table_name, $perPage, $pageNo));
+}
 
-    $result = $queryEngine->GetTableDataBySidAndName($sid, $table_name, $perPage, $pageNo);
+// Simple case, expects sid and table_name in post
+// also numberof tuples per page: perPage
+// and page number: pageNo
+function GetTableData($sid, $table_name, $perPage, $pageNo) {
+    
+    $queryEngine = new QueryEngine();
+    $result = $queryEngine->GetTableDataBySidAndName($sid, "[$table_name]", $perPage, $pageNo);
 
     $columns = NULL;
-
     foreach ($result as $r) {
         $json_array["data"][] = $r;
 
@@ -43,17 +50,18 @@ function GetTableDataBySidAndName() {
         }
     }
 
-    $totalTuple = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, $table_name);
+    $totalTuple = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[$table_name]");
     $totalPage = ceil($totalTuple / $perPage);
 
     $json_array["Control"]["perPage"] = $perPage;
     $json_array["Control"]["totalPage"] = $totalPage;
     $json_array["Control"]["pageNo"] = $pageNo;
     $json_array["Control"]["cols"] = $columns;
-
-    echo json_encode($json_array);
+    
+    return $json_array;
 }
 
+//TODO: refactor so the input is send as an objec as for visualization with oneSid atribute included
 function GetTableInfo(){
 	
 	
@@ -66,6 +74,7 @@ function GetTableInfo(){
     echo json_encode($result[$tableName]);
 }
 
+//TODO: refactor so the input is send as an objec as for visualization with oneSid atribute included
 function GetTablesInfo(){
     $queryEngine = new QueryEngine();
     $sid = $_POST["sid"];
@@ -91,6 +100,7 @@ function AddRelationship() {
 	echo json_encode($queryEngine->AddRelationship($current_user->user_id, $name, $description, $from, $to, $confidence, $comment));
 }
 
+//TODO, FIXME: why is here?
 function CheckDataMatching() {
 	$from = $_POST["from"];
 	$to = $_POST["to"];
@@ -99,22 +109,4 @@ function CheckDataMatching() {
 	
 	echo json_encode($queryEngine->CheckDataMatching($from, $to));
 }
-
-// Expects in POST:
-// sid(s) - could be comma separated sids
-// For each sid provide following data strucutre:
-// sid: {[
-//        table_name : [columns],
-//		 ]},
-// where: condition here in form:
-//                  column: value
-//                  operator: value
-//                  expression: value
-// perPage: value,
-// pageNo: value
-//function GetTableDataBySidAndName() {
-//	$queryEngine = new QueryEngine();
-//
-	//	echo json_encode($queryEngine->GetTableDataBySidAndName($_POST["sid"], $_POST["table_name"]));
-//}
 ?>	

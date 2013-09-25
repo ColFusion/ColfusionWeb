@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
-	<buildpathentry excluding="kettle-data-integration/|downloads/|xinzhu/lib/|Classes/|register-wrapper/|user_guide/|upload_raw_data/|libs/|languages/|database_scripts/|cache/|avatars/|admin/|3rdparty/|xinzhu/" kind="src" path=""/>
+	<buildpathentry kind="src" path=""/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
 </buildpath>

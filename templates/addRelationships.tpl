@@ -47,12 +47,16 @@
                     <table class="dataSetDesTable">
                     <tr>
                     <td class="dataSetDesTitle">Dataset: </td>                       
-                    <td>
-                    <div class="input-append" style="margin-top: -10px;">
+                    <td class="datasetSearchInput">
+                    <div class="input-append" style="margin-top: -10px;margin-bottom: 0;">
                     <input type="text" class="sidInput" data-bind="searchDatasetTypeahead: $data"/>
                     <button class="btn add-on searchDatasetBtn" data-bind="click: loadTableList" style="margin-top: 10px;">Search</button>
                     </div>
                     </td>
+                    <td class="datasetSearchLoadingNotification" style="display: none;">
+                    <img class="datasetSearchLoadingIcon" src="images/ajax-loader.gif"/>
+                    <span class="datasetSearchLoadingText">Searching...</span>
+                    </td>                 
                     </tr>
                     <tr data-bind="style:{ visibility: tableList().length > 1 ? 'visible' : 'hidden'}">
                     <td class="dataSetDesTitle">Table: </td>
@@ -60,13 +64,13 @@
                     <select data-bind='options: tableList, 
                     optionsCaption: "Select a table", 
                     value: chosenTableName'
-                    style="width: 290px;">                                                     
+                    style="width: 290px;margin-bottom: 0;">                                                     
                     </select>
                     </td>
                     </tr>
                     </table>
                     <div data-bind="visible: isLoadingTableInfo()" style="padding: 30px 0 0 200px;">
-                        <img src="images/ajax-loader.gif" />
+                    <img src="images/ajax-loader.gif" />
                     </div>
                     <div class="tableInfoTableWrapper">
                     <table class="tableInfoTable" data-bind="with: currentTable">              
@@ -105,18 +109,10 @@
                                 <td colspan="3" style="padding: 0 10px 0 10px">
                                     <button type="button" data-bind="click: addLink" class="btn" >
                                         Add row
-                                    </button>
+                                    </button>                                  
                                     <button type="button" data-bind="click: checkDataMatching" class="btn" >
                                         Check data matching
-                                    </button>
-                                    <button type="button" data-bind="click: testDataEncoding" class="btn" >
-                                        Test Data Encoding
-                                    </button>
-                                    <span data-bind="visible: isPerformingDataMatchingCheck">
-                                        <img  src="images/ajax-loader.gif"/>
-                                        <span>Performing data matching in selected columns...</span>
-                                    </span>
-                                    <span data-bind="text: dataMatchingCheckResult"></span>                            
+                                    </button>                                                  
                                 </td>
                             </tr>
                         </tfoot>
@@ -150,7 +146,7 @@
                                 <td style="text-align: right">Confident</td>
                             </tr>
                         </table>
-                        <div id="confidenceSlider" data-bind="slider: confidenceValue, sliderOptions: {min: -1, max: 1, step: 0.1}"></div>
+                        <div id="confidenceSlider" data-bind="slider: confidenceValue, sliderOptions: {min: 0, max: 1, step: 0.1}"></div>
                         <table class="confidenceDesTable">
                             <tr>
                                 <td>0</td>
@@ -173,7 +169,16 @@
                 </div>   
             </div>
         </form>
-    </div>   
+    </div>  
+{/literal}
+<form id="dataMatchCheckingForm" target="_blank" method="post" action="dataMatchChecker/dataMatchChecker.php" style="display:none;">
+    <input type="hidden" name="fromSid"/>
+    <input type="hidden" name="toSid"/>
+    <input type="hidden" name="fromTable"/>
+    <input type="hidden" name="toTable"/>
+    <input typle="hidden" name="relSerializedString"/>
+</form>
+{literal}
     <script type="text/javascript">
         var newRelationshipViewModel = new NewRelationshipViewModel();
 
