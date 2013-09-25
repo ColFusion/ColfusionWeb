@@ -1,14 +1,28 @@
-<div id="sliderFrame">
-    <div id="slider">
-        <a href="{$my_base_url}{$my_pligg_base}/advancedsearch.php"><img src="{$my_pligg_base}/templates/{$the_template}/images/home_business.jpg" alt="Business" />
-        <a href="{$my_base_url}{$my_pligg_base}/advancedsearch.php"><img src="{$my_pligg_base}/templates/{$the_template}/images/home_edu.jpg" alt="Education" />
-        <a href="{$my_base_url}{$my_pligg_base}/sadvancedsearch.php"><img src="{$my_pligg_base}/templates/{$the_template}/images/home_gov.jpg" alt="Government" />
-        <a href="{$my_base_url}{$my_pligg_base}/advancedsearch.php"><img src="{$my_pligg_base}/templates/{$the_template}/images/home_life_sciences.jpg" alt="Life Sciences" />
-        <a href="{$my_base_url}{$my_pligg_base}/advancedsearch.php"><img src="{$my_pligg_base}/templates/{$the_template}/images/home_tech.jpg" alt="Technology" />
-    </div>
-    <div id="htmlcaption" style="display: none;">
-        <em>HTML</em> caption. Back to <a href="http://www.menucool.com/">Menucool</a>.
-    </div>
-    <!--Note: For non-licensed slider, the hidden link below is required. Otherwise the slider will have only one slice transition effect.-->
-    <a id="mcis" href="http://www.menucool.com/slider/content-slider">Content Slider that allows any HTML content or text</a>
-</div>
+<p class="homePageIntroText">
+    <i><strong>Col*Fusion (Collaborative Data Fusion)</strong></i> is an advanced infrastructure for systematic accumulation, integration and utilization of <i>historical data</i>. It aims to support large-scale interdisciplinary research, where a comprehensive picture of the subject requires large amounts of historical data from disparate data sources from a variety of disciplines. As an example, consider the task of exploring long-term and short-term social changes, which requires consolidation of a comprehensive set of data on social-scientific, health, and environmental dynamics. While there are numerous historical data sets available from various groups worldwide, the existing data sources are principally oriented toward regional comparative efforts rather than global applications. They vary widely both in content and format, and cannot be easily integrated and maintained by small groups of developers.  Devising efficient and scalable methods for integration of the existing and emerging historical data sources is a considerable research challenge.
+</p>
+<p class="homePageIntroText">
+    <i>Col*Fusion</i> addresses this challenge by utilizing the collective intelligence of research communities to “crowdsource” he large-scale historical data integration task.  It engages a large community of researches to share their data, collectively resolve the data heterogeneities, and harmonize their efforts in data reliability assessment and data fusion. <i>Col*Fusion</i> efficiently distributes the task of data integration among the data contributors and enables continuous growth of a global historical repository. 
+</p>
+
+<p class="homePageIntroText">
+    To get started visit our <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki" target="_blank">Wiki</a> and <a href="http://colfusion.exp.sis.pitt.edu/colfusion/phpBB3" target="_blank">Forum</a>. Also watch video tutorials: 
+</p>
+<table style="width: 100%;">
+    <tr>
+        <td align="center">
+            <video width="420" height="315" controls>
+                <source src="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/4/4b/ColFusionFirst_h264_vlc_secondtry.ogg" type="video/ogg">
+                Your browser does not support the video tag.
+                <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/4/4b/ColFusionFirst_h264_vlc_secondtry.ogg" class="internal" title="ColFusionFirst h264 vlc secondtry.ogg"> Introduction to Col*Fusion</a>
+            </video>
+        </td>
+         <td align="center">
+            <video width="420" height="315" controls>
+                <source src="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/9/9b/ColFusionSecond_vlc.ogg" type="video/ogg">
+                Your browser does not support the video tag.
+                <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/9/9b/ColFusionSecond_vlc.ogg" class="internal" title="ColFusionSecond vlc.ogg"> Introduction to Col*Fusion web interface</a>
+            </video>
+        </td>
+    </tr>
+</table>
