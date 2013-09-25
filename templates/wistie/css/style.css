@@ -2,6 +2,12 @@
 /* CSS Document */
 /* UNIVERSAL */
 
+.homePageIntroText {
+    padding: 10px;
+    line-height: 20px;
+    color: rgb(32, 32, 41);
+}
+
 .hidden{
     display:none;
 }
