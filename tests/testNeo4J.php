@@ -8,7 +8,6 @@
  //   error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
  //   ini_set('display_errors', 1);
 
-
    // Connecting to the default port 7474 on localhost
     $client = new Everyman\Neo4j\Client(NEO4J_HOST, NEO4J_PORT);
 
