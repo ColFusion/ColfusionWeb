@@ -12,9 +12,6 @@ $userId = $_POST["userID"];
 $dbHandler = unserialize($_POST["dbHandler"]);
 $dumpFilePath = $_POST["dumpFilePath"];
 
-// The DB where dump file is imported.
-$dbName = "colfusion_external_$sid";
-
 // "disable partial output" or
 // "enable buffering" to give out all at once later
 ob_start();
@@ -39,7 +36,7 @@ flush();
 // parent gets our answer and disconnects
 // but we can work "in background" :)
 
-importDataFromDumpFile($sid, $dbHandler, $userId, $dumpFilePath);
+importDataFromDumpFile($sid, $dbHandler, $userId, $dumpFilePath, $my_pligg_base_no_slash);
 
 function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath){
 
