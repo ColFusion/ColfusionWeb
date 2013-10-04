@@ -195,6 +195,6 @@ function loadCategoriesForCache($clear_cache = false) {
 	return $db->get_results($sql);
 }
 
-error_reporting(E_ALL ^ E_STRICT ^ E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 ?>

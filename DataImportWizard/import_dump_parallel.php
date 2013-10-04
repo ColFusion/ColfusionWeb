@@ -5,6 +5,7 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseH
 require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporterFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
+require_once(realpath(dirname(__FILE__)) . "/../settings.php");
 
 $sid = $_POST["sid"];
 $userId = $_POST["userID"];
@@ -51,7 +52,7 @@ function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $file
     }
 
     try{     
-        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbHandler->getDriver(), $sid, "colfusion");
+        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbHandler->getDriver(), $sid, $my_pligg_base_no_slash);
         $dbImporter->importDbData($filePath);
     
         foreach($logIds as $logId){
