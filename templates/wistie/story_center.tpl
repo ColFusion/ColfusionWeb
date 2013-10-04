@@ -149,12 +149,12 @@
         ):</span>
         <i data-bind="visible: isStatusShown, click: function () { isStatusShown(false) }" class="icon-collapse storyStatusCollapseIcon"></i>
         <i data-bind="visible: !isStatusShown(), click: function () { isStatusShown(true) }" class="icon-collapse-top storyStatusCollapseIcon"></i>
-    </div>
+    </div>     
     {/literal}
     {include file='storyStatusTableList.tpl'}
     {literal}
 </div>
-{/literal}
+{/literal} 
 
 <div id="dataPreviewContainer"></div>
 
