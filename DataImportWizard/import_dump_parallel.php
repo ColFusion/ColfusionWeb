@@ -38,7 +38,7 @@ flush();
 
 importDataFromDumpFile($sid, $dbHandler, $userId, $dumpFilePath, $my_pligg_base_no_slash);
 
-function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath){
+function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath, $my_pligg_base_no_slash){
 
     $ktrExeDao = new KTRExecutorDAO();
     $tableNames = $dbHandler->loadTables();
