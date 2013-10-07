@@ -120,10 +120,12 @@
 	
 	<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/vis.js">
 	
+<?php include_once(realpath(dirname(__FILE__)) . "/../../analyticstracking.php") ?>
+
 </head>
 <body dir="{#PLIGG_Visual_Language_Direction#}" {$body_args}>
 
-<?php include_once(realpath(dirname(__FILE__)) . "/../../analyticstracking.php") ?>
+
 
 	{checkActionsTpl location="tpl_pligg_body_start"}
 	
