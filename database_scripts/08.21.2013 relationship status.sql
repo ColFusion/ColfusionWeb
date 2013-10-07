@@ -1,1 +1,0 @@
-ALTER TABLE  `colfusion_relationships` ADD  `status` INT( 1 ) NOT NULL DEFAULT  '0' COMMENT  '0->valid, 1->deleted';

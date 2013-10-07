@@ -3,9 +3,9 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Aug 19, 2013 at 03:51 PM
+-- Generation Time: Oct 05, 2013 at 08:25 PM
 -- Server version: 5.5.31
--- PHP Version: 5.3.10-1ubuntu3.7
+-- PHP Version: 5.3.10-1ubuntu3.8
 
 SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -17,7 +17,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8 */;
 
 --
--- Database: `colfusionDev`
+-- Database: `colfusion`
 --
 
 DELIMITER $$
@@ -274,7 +274,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `doRelationshipMining`(IN param1 var
     READS SQL DATA
 BEGIN
 	SET @currTime := CURRENT_TIMESTAMP;
-	SET @user := 22;
+	SET @user := 27;
 
 	drop temporary table if exists temporaryRelationshipsTable;
 
@@ -362,7 +362,9 @@ CREATE TABLE IF NOT EXISTS `colfusion_cached_queries_info` (
   `tableName` varchar(345) NOT NULL,
   `expiration_date` datetime NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
+
+-- --------------------------------------------------------
 
 --
 -- Table structure for table `colfusion_canvases`
@@ -378,7 +380,7 @@ CREATE TABLE IF NOT EXISTS `colfusion_canvases` (
   `privilege` int(1) DEFAULT NULL,
   PRIMARY KEY (`vid`),
   KEY `fk_canvases_userid` (`user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=26 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 --
 -- Triggers `colfusion_canvases`
@@ -523,7 +525,7 @@ INSERT INTO `colfusion_config` (`var_id`, `var_page`, `var_name`, `var_value`, `
 (5, 'Voting', 'days_to_publish', '1000000000000000000000', '10', 'number', 'Days to publish', 'After this many days posts will not be eligible to move from upcoming to published pages', 'define', NULL),
 (6, 'Misc', '$trackbackURL', 'colfusion.exp.sis.pitt.edu/colfusionDev', 'pligg.com', 'pligg.com', 'Trackback URL', 'The url to be used in <a href="http://en.wikipedia.org/wiki/Trackback">trackbacks</a>.', 'normal', '"'),
 (7, 'Location Installed', '$my_base_url', 'http://colfusion.exp.sis.pitt.edu', 'http://localhost', 'http://(your site name)(no trailing /)', 'Base URL', '<br>\r\n<b>Examples</b>\r\n<br>\r\nhttp://demo.pligg.com<br>\r\nhttp://localhost<br>\r\nhttp://www.pligg.com', 'normal', ''''),
-(8, 'Location Installed', '$my_pligg_base', '/colfusionDev', '', '/(folder name)', 'Pligg Base Folder', '<br>\r\n<b>Examples</b>\r\n<br>\r\n/pligg -- if installed in the /pligg subfolder<br>\r\nLeave blank if installed in the site root folder.', 'normal', ''''),
+(8, 'Location Installed', '$my_pligg_base', '/colfusion', '', '/(folder name)', 'Pligg Base Folder', '<br>\r\n<b>Examples</b>\r\n<br>\r\n/pligg -- if installed in the /pligg subfolder<br>\r\nLeave blank if installed in the site root folder.', 'normal', ''''),
 (9, 'Tags', 'Enable_Tags', 'true', 'true', 'true / false', 'Enable Tags', 'Enable the use of tags and the tag cloud.', 'define', NULL),
 (10, 'Tags', '$tags_min_pts', '8', '8', 'number (should be at least 8)', 'Tag Minimum Font Size', '<b>Only used if Tags are enabled.</b> How small should the text for the smallest tags be.', 'normal', NULL),
 (11, 'Tags', '$tags_max_pts', '36', '36', 'number', 'Tags Maximum Font Size', '<b>Only used if Tags are enabled.</b> How large should the text for the largest tags be.', 'normal', NULL),
@@ -650,8 +652,7 @@ CREATE TABLE IF NOT EXISTS `colfusion_dnameinfo` (
   `constant_value` varchar(255) DEFAULT NULL COMMENT 'if user is submitting database and on matching chema they provide input value, the value will be stored here',
   PRIMARY KEY (`cid`),
   KEY `fk_colfusion_dnameinfo_1_idx` (`sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2100 ;
-
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=66 ;
 
 -- --------------------------------------------------------
 
@@ -684,13 +685,12 @@ CREATE TABLE IF NOT EXISTS `colfusion_executeinfo` (
   `ExitStatus` varchar(20) DEFAULT NULL,
   `ErrorMessage` mediumtext,
   `RecordsProcessed` int(20) DEFAULT NULL,
-  `status` varchar(255) DEFAULT NULL,
+  `status` text,
   `pan_command` varchar(555) DEFAULT NULL,
   `tableName` varchar(300) NOT NULL,
   PRIMARY KEY (`Eid`),
   KEY `fk_colfusion_executeinfo_1_idx` (`Sid`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=8 ;
-
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=13 ;
 
 -- --------------------------------------------------------
 
@@ -726,14 +726,7 @@ CREATE TABLE IF NOT EXISTS `colfusion_friends` (
   `friend_to` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`friend_id`),
   UNIQUE KEY `friends_from_to` (`friend_from`,`friend_to`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
-
---
--- Dumping data for table `colfusion_friends`
---
-
-INSERT INTO `colfusion_friends` (`friend_id`, `friend_from`, `friend_to`) VALUES
-(1, 7, 1);
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -763,16 +756,7 @@ CREATE TABLE IF NOT EXISTS `colfusion_groups` (
   PRIMARY KEY (`group_id`),
   KEY `group_name` (`group_name`(100)),
   KEY `group_creator` (`group_creator`,`group_status`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=5 ;
-
---
--- Dumping data for table `colfusion_groups`
---
-
-INSERT INTO `colfusion_groups` (`group_id`, `group_creator`, `group_status`, `group_members`, `group_date`, `group_safename`, `group_name`, `group_description`, `group_privacy`, `group_avatar`, `group_vote_to_publish`, `group_field1`, `group_field2`, `group_field3`, `group_field4`, `group_field5`, `group_field6`, `group_notify_email`) VALUES
-(2, 6, 'Enable', 3, '2012-12-03 00:44:34', 'information-science', 'Information Science', 'University of Pittsburgh', 'private', 'uploaded', 3, NULL, NULL, NULL, NULL, NULL, NULL, 1),
-(3, 1, 'Enable', 3, '2012-12-03 01:08:10', 'movie', 'movie', 'share information', 'private', 'uploaded', 1, NULL, NULL, NULL, NULL, NULL, NULL, 1),
-(4, 6, 'Enable', 4, '2012-12-03 02:00:52', 'taipei-medical-university', 'Taipei Medical University', 'Respiratory Therapy', 'public', 'uploaded', 0, NULL, NULL, NULL, NULL, NULL, NULL, 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -788,24 +772,7 @@ CREATE TABLE IF NOT EXISTS `colfusion_group_member` (
   `member_status` enum('active','inactive') CHARACTER SET utf8 NOT NULL,
   PRIMARY KEY (`member_id`),
   KEY `user_group` (`member_group_id`,`member_user_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=16 ;
-
---
--- Dumping data for table `colfusion_group_member`
---
-
-INSERT INTO `colfusion_group_member` (`member_id`, `member_user_id`, `member_group_id`, `member_role`, `member_status`) VALUES
-(2, 6, 2, 'admin', 'active'),
-(4, 1, 3, 'admin', 'active'),
-(5, 6, 4, 'admin', 'active'),
-(6, 1, 4, 'moderator', 'active'),
-(9, 1, 2, 'banned', 'active'),
-(10, 7, 2, 'banned', 'active'),
-(11, 4, 2, 'normal', 'inactive'),
-(12, 4, 3, 'normal', 'active'),
-(13, 9, 3, 'normal', 'active'),
-(14, 9, 4, 'normal', 'active'),
-(15, 4, 4, 'normal', 'active');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -820,16 +787,7 @@ CREATE TABLE IF NOT EXISTS `colfusion_group_shared` (
   `share_user_id` int(20) NOT NULL,
   PRIMARY KEY (`share_id`),
   UNIQUE KEY `share_group_id` (`share_group_id`,`share_link_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=8 ;
-
---
--- Dumping data for table `colfusion_group_shared`
---
-
-INSERT INTO `colfusion_group_shared` (`share_id`, `share_link_id`, `share_group_id`, `share_user_id`) VALUES
-(4, 207, 2, 6),
-(6, 207, 4, 6),
-(7, 250, 3, 4);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -900,7 +858,6 @@ CREATE TABLE IF NOT EXISTS `colfusion_links` (
   FULLTEXT KEY `link_search` (`link_title`,`link_content`,`link_tags`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
-
 -- --------------------------------------------------------
 
 --
@@ -915,7 +872,19 @@ CREATE TABLE IF NOT EXISTS `colfusion_login_attempts` (
   `login_count` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`login_id`),
   UNIQUE KEY `login_username` (`login_ip`,`login_username`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=7 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=17 ;
+
+--
+-- Dumping data for table `colfusion_login_attempts`
+--
+
+INSERT INTO `colfusion_login_attempts` (`login_id`, `login_username`, `login_time`, `login_ip`, `login_count`) VALUES
+(6, 'pmanning@pitt.edu', '2013-06-26 15:53:57', '150.212.69.120', 1),
+(7, 'irule', '2013-07-02 15:38:31', '24.3.21.128', 2),
+(8, 'caokaisqtv', '2013-07-02 16:57:58', '150.212.46.129', 4),
+(10, 'williamlion', '2013-08-04 15:31:44', '50.156.118.122', 1),
+(11, 'ZhengGao', '2013-09-21 17:13:00', '24.131.86.247', 2),
+(13, 'JunYin', '2013-10-02 12:07:12', '71.61.181.254', 4);
 
 -- --------------------------------------------------------
 
@@ -1065,12 +1034,12 @@ CREATE TABLE IF NOT EXISTS `colfusion_relationships` (
   `sid2` int(11) NOT NULL,
   `tableName1` varchar(255) DEFAULT NULL,
   `tableName2` varchar(255) DEFAULT NULL,
+  `status` int(1) NOT NULL DEFAULT '0' COMMENT '0->valid, 1->deleted',
   PRIMARY KEY (`rel_id`),
   KEY `fk_colfusion_relationships_1_idx` (`creator`),
   KEY `fk_colfusion_relationships_2_idx` (`sid1`),
   KEY `fk_colfusion_relationships_3_idx` (`sid2`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=377 ;
-
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
 -- --------------------------------------------------------
 
@@ -1082,11 +1051,28 @@ CREATE TABLE IF NOT EXISTS `colfusion_relationships_columns` (
   `rel_id` int(11) NOT NULL,
   `cl_from` varchar(255) NOT NULL,
   `cl_to` varchar(255) NOT NULL,
+  `dataMatchingFromRatio` decimal(4,2) DEFAULT NULL,
+  `dataMatchingToRatio` decimal(4,2) DEFAULT NULL,
   PRIMARY KEY (`rel_id`,`cl_from`,`cl_to`),
   KEY `fk_new_table_1_idx` (`rel_id`),
   KEY `fk_new_table_2_idx` (`cl_from`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `colfusion_relationships_columns_cachingExecutionInfo`
+--
+
+CREATE TABLE IF NOT EXISTS `colfusion_relationships_columns_cachingExecutionInfo` (
+  `transformation` varchar(255) NOT NULL,
+  `status` text,
+  `timeStart` timestamp NULL DEFAULT NULL,
+  `timeEnd` timestamp NULL DEFAULT NULL,
+  `errorMessage` text,
+  `query` text,
+  PRIMARY KEY (`transformation`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -1135,7 +1121,7 @@ CREATE TABLE IF NOT EXISTS `colfusion_sourceinfo` (
   `source_type` varchar(45) NOT NULL DEFAULT 'file' COMMENT 'type of the source: whether it was submitted as file or as database',
   PRIMARY KEY (`Sid`),
   KEY `UserId` (`UserId`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1040 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=830 ;
 
 -- --------------------------------------------------------
 
@@ -1151,9 +1137,10 @@ CREATE TABLE IF NOT EXISTS `colfusion_sourceinfo_DB` (
   `password` varchar(255) NOT NULL,
   `source_database` varchar(255) NOT NULL,
   `driver` varchar(255) NOT NULL,
+  `is_local` int(11) DEFAULT '1' COMMENT '1 - means database was created from dump file and is stored on our server,\n0 - means that database was submitted as remote database and the data is stored somewhere not on our server',
+  `linked_server_name` varchar(255) DEFAULT NULL COMMENT 'Stores linked server name of the database. This value will be different only for remotely submitted databases because we give collusion internal name for them when create a linked server. ',
   PRIMARY KEY (`sid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Stores information about the dataset which was submitted as database';
-
 
 -- --------------------------------------------------------
 
@@ -1173,7 +1160,6 @@ CREATE TABLE IF NOT EXISTS `colfusion_synonyms_from` (
   KEY `userId` (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 -- --------------------------------------------------------
 
 --
@@ -1191,7 +1177,6 @@ CREATE TABLE IF NOT EXISTS `colfusion_synonyms_to` (
   KEY `fk_synfrom_sid` (`sid`),
   KEY `userId` (`userId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
 
 -- --------------------------------------------------------
 
@@ -1289,7 +1274,7 @@ CREATE TABLE IF NOT EXISTS `colfusion_totals` (
 
 INSERT INTO `colfusion_totals` (`name`, `total`) VALUES
 ('published', 0),
-('queued', 5),
+('queued', 0),
 ('discard', 0);
 
 -- --------------------------------------------------------
@@ -1384,14 +1369,19 @@ CREATE TABLE IF NOT EXISTS `colfusion_users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_login` (`user_login`),
   KEY `user_email` (`user_email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=27 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=32 ;
 
 --
 -- Dumping data for table `colfusion_users`
 --
 
 INSERT INTO `colfusion_users` (`user_id`, `user_login`, `user_level`, `user_modification`, `user_date`, `user_pass`, `user_email`, `user_names`, `user_karma`, `user_url`, `user_lastlogin`, `user_aim`, `user_msn`, `user_yahoo`, `user_gtalk`, `user_skype`, `user_irc`, `public_email`, `user_avatar_source`, `user_ip`, `user_lastip`, `last_reset_request`, `last_email_friend`, `last_reset_code`, `user_location`, `user_occupation`, `user_categories`, `user_enabled`, `user_language`, `status_switch`, `status_friends`, `status_story`, `status_comment`, `status_email`, `status_group`, `status_all_friends`, `status_friend_list`, `status_excludes`) VALUES
-(1, 'dataverse', 'god', '2013-08-13 14:08:31', '2012-10-22 13:14:18', '98a06ec01c750c70862585257c6b83139ad3e65be5279945e', 'epk8@pitt.edu', '', 10.00, 'colfusion.exp.sis.pitt.edu/colfusion/user.php?login=dataverse', '2013-08-13 14:08:31', '', '', '', '', '', 'dataverse', '', 'useruploaded', '0', '150.212.31.159', '2013-07-22 15:03:26', '2012-12-03 05:16:45', '2dc8cbafbd77b28be8776055ef130416cd7576c5069e6a7d4', '', '', '', 1, 'english', 1, 1, 1, 1, 1, 1, 1, NULL, NULL);
+(26, 'Evgeny', 'god', '2013-10-04 01:53:55', '2013-06-21 14:02:57', '4e7838f51bd8680fbfaee8e2ba2f54d9987c0779d3f1a9c84', 'karataev.evgeny@gmail.com', '', 0.00, '', '2013-10-04 01:53:55', '', '', '', '', '', 'admin', '', 'useruploaded', '10.228.65.112', '10.228.65.115', '2013-06-24 12:47:29', '0000-00-00 00:00:00', '11fd1796e9abc344ea287d3488628a3c9c993bdc1f7c56bf7', '', '', '', 1, 'english', 1, 1, 1, 1, 1, 1, 1, NULL, NULL),
+(27, 'Colfusion_AI', 'normal', '2013-06-24 15:15:20', '2013-06-24 15:15:20', '19ad8bddc15c95a0f84e4e317b0c617258c9675ab4a782aca', 'kzheka@hotmail.com', NULL, 0.00, NULL, '2013-06-24 15:15:20', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '10.228.65.112', '10.228.65.112', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL, NULL, NULL, '', 1, NULL, 1, 1, 1, 1, 1, 1, 1, NULL, NULL),
+(28, 'gintau', 'normal', '2013-06-26 14:39:02', '2013-06-26 14:39:02', 'ee7272a32ced851337dd42fb38003b48a73ce6e50d0149c7c', 'gintau2000@gmail.com', NULL, 0.00, NULL, '2013-06-26 14:39:02', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '67.172.17.136', '67.172.17.136', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL, NULL, NULL, '', 1, NULL, 1, 1, 1, 1, 1, 1, 1, NULL, NULL),
+(29, 'PatManning', 'normal', '2013-06-26 19:58:20', '2013-06-26 19:58:20', 'dbae0c3e2a7a2923055c5dc47d1ee11197a5007f89aaeb100', 'pmanning@pitt.edu', NULL, 0.00, NULL, '2013-06-26 19:58:20', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '150.212.69.120', '150.212.69.120', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL, NULL, NULL, '', 1, NULL, 1, 1, 1, 1, 1, 1, 1, NULL, NULL),
+(30, 'caokaisqtv', 'normal', '2013-07-02 20:59:01', '2013-07-02 20:59:01', '14ff86ecff14a705fc0cba609c97c901ba8e31c8007275919', 'caokaisqtv@gmail.com', NULL, 0.00, NULL, '2013-07-02 20:59:01', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '150.212.46.129', '150.212.46.129', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL, NULL, NULL, '', 1, NULL, 1, 1, 1, 1, 1, 1, 1, NULL, NULL),
+(31, 'dataverse', 'normal', '2013-09-30 02:04:17', '2013-09-25 19:05:26', 'fb5a0b7950b27484840b4580c26ea654a52abe725effa65fd', 'dataverse@dataverse.com', NULL, 0.00, NULL, '2013-09-30 02:04:17', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '10.228.65.115', '67.186.56.85', '0000-00-00 00:00:00', '0000-00-00 00:00:00', NULL, NULL, NULL, '', 1, NULL, 1, 1, 1, 1, 1, 1, 1, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -1410,7 +1400,6 @@ CREATE TABLE IF NOT EXISTS `colfusion_user_relationship_verdict` (
   KEY `fk_colfusion_user_relationship_verdict_2_idx` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 -- --------------------------------------------------------
 
 --
@@ -1423,6 +1412,20 @@ CREATE TABLE IF NOT EXISTS `colfusion_validation_code` (
   `isUsed` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `colfusion_validation_code`
+--
+
+INSERT INTO `colfusion_validation_code` (`email`, `vcode`, `isUsed`) VALUES
+('karataev.evgeny@gmail.com', 'mdGcixC7BIP08v7', 1),
+('kzheka@hotmail.com', '5R5GxtnMxQVuOrZ', 1),
+('gintau2000@gmail.com', 'KFqgmeR1QEpcaWA', 1),
+('kzheka@hotmail.com', 'XUd3NKWWhWSSJci', 0),
+('vladimir@sis.pitt.edu', '3biOZ6bgsScc1wq', 0),
+('pmanning@pitt.edu', 'y59TFMv5zjbukoP', 1),
+('caokaisqtv@gmail.com', 'Hr0Zf06rgyjtLl0', 1),
+('hanmorgan88@gmail.com', 'N85k3qEzN9RBsAX', 0),
+('dataverse@dataverse.com', 'g4ixRV8MzNp4gPh', 1);
 
 -- --------------------------------------------------------
 

@@ -5,14 +5,12 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseH
 require_once(realpath(dirname(__FILE__)) . "/../DAL/DBImporters/DatabaseImporterFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
+require_once(realpath(dirname(__FILE__)) . "/../settings.php");
 
 $sid = $_POST["sid"];
 $userId = $_POST["userID"];
 $dbHandler = unserialize($_POST["dbHandler"]);
 $dumpFilePath = $_POST["dumpFilePath"];
-
-// The DB where dump file is imported.
-$dbName = "colfusion_external_$sid";
 
 // "disable partial output" or
 // "enable buffering" to give out all at once later
@@ -38,9 +36,9 @@ flush();
 // parent gets our answer and disconnects
 // but we can work "in background" :)
 
-importDataFromDumpFile($sid, $dbHandler, $userId, $dumpFilePath);
+importDataFromDumpFile($sid, $dbHandler, $userId, $dumpFilePath, $my_pligg_base_no_slash);
 
-function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath){
+function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $filePath, $my_pligg_base_no_slash){
 
     $ktrExeDao = new KTRExecutorDAO();
     $tableNames = $dbHandler->loadTables();
@@ -51,7 +49,7 @@ function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $file
     }
 
     try{     
-        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbHandler->getDriver(), $sid, "colfusion");
+        $dbImporter = DatabaseImporterFactory::createDatabaseImporter($dbHandler->getDriver(), $sid, $my_pligg_base_no_slash);
         $dbImporter->importDbData($filePath);
     
         foreach($logIds as $logId){

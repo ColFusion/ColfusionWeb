@@ -148,7 +148,7 @@ var wizardFromFile = (function() {
                 .add('#dbServerUserName')
                 .add('#dbServerPassword')
                 .add('#dbServerDatabase')
-                .add('#excelFileMode')
+//                .add('#excelFileMode')
                 .add('#uploadFileType')
                 .add('#dbType').prop('disabled', false);
         $('input[name="place"]').prop('disabled', false);
@@ -206,7 +206,7 @@ var wizardFileUpload = (function() {
                 $('#excelFileMode').hide();
             } else {
                 $('#dbType').hide();
-                $('#excelFileMode').show();
+//                $('#excelFileMode').show();
             }
         });
 

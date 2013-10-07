@@ -22,15 +22,17 @@
                                     <option value="dataFile">CSV, Excel File</option>
                                     <option value="dbDump">Database Dump File</option>
                                 </select>                              
-                                <select name="excelFileMode" id="excelFileMode">
+                                <select name="excelFileMode" id="excelFileMode" style="display: none;">
                                     <option value="append">Append data into one table</option>
                                     <option value="join">View each file as a table</option>
                                 </select>
                                 <select name="dbType" id="dbType" style="display:none;">
                                     <option value="MySQL">MySQL</option>
-                                    <option value="MSSQL">MS SQL Server</option>
                                     <option value="PostgreSQL">PostgreSQL</option>
+                                    
+                            <!--    <option value="MSSQL">MS SQL Server</option>    
                                     <option value="Oracle">Oracle</option>
+                            -->
                                 </select>
                                 <label for='upload_file'>
                                     <b>Select file:</b>
