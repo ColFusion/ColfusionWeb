@@ -31,7 +31,8 @@ if(count($params) == 0){ // Params are from $_POST.
 $sid = $params['sid'];
 $uploadTimestamp = $params['uploadTimestamp'];
 $fileType = $params['fileType'];
-$excelFileMode = $params['excelFileMode'];
+//TODO FIXME: once appeding of files is resolved uncomment here;
+$excelFileMode = "join";//$params['excelFileMode'];
 $dbType = $params['dbType'];
 
 upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType);
