@@ -65,12 +65,18 @@ class UtilsForWizard {
 
     public static function PrintTableForDataMatchingStep($data) {
         $result = "";
+        
         foreach ($data as $oneTableName => $oneTableColumns) {
-            if (count($data) > 1)
+          //  if (count($data) > 1)
                 $result .= '<div> <span>' . $oneTableName . '</span>';
 
             $result .= UtilsForWizard::printDataMatchingStepOneTable($oneTableName, $oneTableColumns);
-            if (count($data) > 1)
+
+            $result .= "<label style='display: inline;'>Missing value:</label><input type='text' id='missValue' name='$oneTableName' value='' onclick='' />";
+        
+            
+
+            //if (count($data) > 1)
                 $result .= '</div>';
         }
         return $result;
@@ -98,7 +104,6 @@ class UtilsForWizard {
             $result .= "</td></tr>";
         }
         $result .= "</table>";
-
         return $result;
     }
 
@@ -163,17 +168,17 @@ class UtilsForWizard {
 
     public static function processDataMatchingUserInputsStoreDB($sid, $dataMatchingUserInputs) {
         foreach ($dataMatchingUserInputs as $value) {
-            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"]);
+            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"], null, $value["missingValue"]);
         }
     }
 
     public static function processDataMatchingUserInputsWithTableNameStoreDB($sid, $dataMatchingUserInputs) {
         foreach ($dataMatchingUserInputs as $value) {
-            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"], $value["tableName"]);
+            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"], $value["tableName"], $value["missingValue"]);
         }
     }
 
-    static function processOneColumn($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName = null) {
+    static function processOneColumn($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName = null, $missingValue) {
 
         $queryEngine = new QueryEngine();
         
@@ -182,7 +187,7 @@ class UtilsForWizard {
         }
         
         $originalDnameStripped = str_replace ($tableName.'.', '', $originalDname);
-        $cid = $queryEngine->simpleQuery->addColumnInfo($sid, $newDname, $type, $unit, $description, $originalDnameStripped);
+        $cid = $queryEngine->simpleQuery->addColumnInfo($sid, $newDname, $type, $unit, $description, $originalDnameStripped, $missingValue);
 
         $queryEngine->simpleQuery->addColumnTableInfo($cid, $tableName);
 

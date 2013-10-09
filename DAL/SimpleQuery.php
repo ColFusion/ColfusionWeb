@@ -153,7 +153,7 @@ class SimpleQuery
     }
 
 // Store metadata about column.
-    public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname)
+    public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $missingValue)
     {
         global $db;
 
@@ -164,8 +164,8 @@ class SimpleQuery
         $description = $db->escape($description);
         $originaDname = $db->escape($originaDname);
 
-        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name) VALUES (%d, '%s', '%s', '%s', '%s', '%s')";
-        $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname);
+        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, missing_value) VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s')";
+        $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $missingValue);
         $db->query($sql);
 
         return mysql_insert_id();

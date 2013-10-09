@@ -144,6 +144,9 @@ var importWizard = (function () {
                     }
                 }
 
+                var tableName = document
+                                    .getElementsByName('dname_value_tableName')[i].value;
+
                 result
 						.push({
 						    'originalDname': checkboxes[i].value,
@@ -154,9 +157,10 @@ var importWizard = (function () {
 									.getElementsByName('dname_value_unit')[i].value,
 						    'description': document
 									.getElementsByName('dname_value_description')[i].value,
-						    'tableName': document
-									.getElementsByName('dname_value_tableName')[i].value,
-						    'metadata': metadata
+						    'tableName': tableName,
+						    'metadata': metadata,
+                            'missingValue' : document
+                                    .getElementsByName(tableName)[0].value
 						});
             }
         }
