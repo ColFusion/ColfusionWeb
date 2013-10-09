@@ -1,36 +1,34 @@
 <!-- START HEADER.TPL -->
 <head>
-<script type="text/javascript" src="{$my_pligg_base}/templates/wistie/js/script.js"></script>
- <!-- <link href="templates/wistie/js/style1.css" rel="stylesheet" type="text/css"> -->
-
-  
-  </head>
+    <script type="text/javascript" src="{$my_pligg_base}/templates/wistie/js/script.js"></script>
+    <!-- <link href="templates/wistie/js/style1.css" rel="stylesheet" type="text/css"> -->
+</head>
 
 <div id="header">
 
 <!-- TOP MENU -->
 <div id="login">
-
-        {if $user_authenticated eq true} 
-        <div>
-            <ul>
+    {if $user_authenticated eq true}
+    <div>
+        <ul>
             <li>{#PLIGG_Visual_Welcome_Back#} <a href="{$URL_userNoVar}">{$user_logged_in}</a></li>
             {if isset($isgod) && $isgod eq 1}<li><a class="topmenu" href="{$URL_admin}">{#PLIGG_Visual_Header_AdminPanel#}</a></li>{/if}
+            <li><a class="topmenu" href="{$URL_notification}"><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_Notification#}</a></li>
             <li><a class="topmenu" href="{$URL_logout}"><img src="{$my_pligg_base}/templates/{$the_template}/images/logout.png"/> {#PLIGG_Visual_Logout#}</a></li>
-            </ul>
-        </div>
-        {/if}
-	
-        {if $user_authenticated neq true}
-        <div>
-            <ul>
+        </ul>
+    </div>
+    {/if}
+
+    {if $user_authenticated neq true}
+    <div>
+        <ul>
             <li><a class="topmenu" href='{$URL_register}'>{#PLIGG_Visual_Register#}</a></li>
             <li><a class="topmenu" href='{$URL_login}'><img src="{$my_pligg_base}/templates/{$the_template}/images/login.png"/>{#PLIGG_Visual_Login_Title#}</a></li>
-            </ul>
-        </div>
-        {/if}
-        
-	{checkActionsTpl location="tpl_pligg_login_link"}
+        </ul>
+    </div>
+    {/if}
+
+    {checkActionsTpl location="tpl_pligg_login_link"}
 </div>
 <!-- END TOP MENU -->
 
