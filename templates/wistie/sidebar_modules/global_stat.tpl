@@ -5,7 +5,10 @@
 <div class="sidebar-content">
 
 <!--	//put (query).php in DAL  -->
-	
+<p>Number of datasets: <strong data-bind="text: nDataset"> </strong></p>
+
 </div>
-<script>
-</script>
+
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.3.0.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Statistics.js"></script>
+
