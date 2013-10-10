@@ -30,7 +30,8 @@ function NotificationViewModel() {
     });
 
     self.goToStory = function(ntf) {
-        story_url = "http://localhost/Colfusion/story.php?title="+ntf.target_id;
+        story_url = "../story.php?title="+ntf.target_id;
+        //story_url = "http://localhost/Colfusion/story.php?title="+ntf.target_id;
         window.open(story_url);
     }
 
@@ -39,7 +40,7 @@ function NotificationViewModel() {
 function GetCurrentNTFNum(){
     var number = 0;
     $.ajax({
-        url: 'http://localhost/Colfusion/notification/notificationController.php?action=getNTFnum',
+        url: '../notification/notificationController.php?action=getNTFnum',
         type: 'get',
         dataType: 'json',
         success: function (data) {
