@@ -39,7 +39,7 @@ function NotificationViewModel() {
 function GetCurrentNTFNum(){
     var number = 0;
     $.ajax({
-        url: '../notification/notificationController.php?action=getNTFnum',
+        url: 'http://localhost/Colfusion/notification/notificationController.php?action=getNTFnum',
         type: 'get',
         dataType: 'json',
         success: function (data) {
