@@ -30,6 +30,30 @@ class StatisticsDAO {
         
         return $countRow-> dvariables;
     }
+
+    public function GetNumberOfRelationships() {
+        
+        $sql = "SELECT count(*) as relationshipNumber FROM `colfusion_relationships` ";
+        $countRow = $this->ezSql->get_row($sql);
+        
+        return $countRow-> relationshipNumber;
+    }
+
+    public function GetNumberOfRecords() {
+        
+        $sql = "SELECT sum(RecordsProcessed) as recordnumber FROM `colfusion_executeinfo` ";
+        $countRow = $this->ezSql->get_row($sql);
+        
+        return $countRow-> recordnumber;
+    }
+
+    public function GetNumberOfUsers() {
+        
+        $sql = "SELECT count(user_id) as usernumber FROM `colfusion_users` ";
+        $countRow = $this->ezSql->get_row($sql);
+        
+        return $countRow-> usernumber;
+    }
 }
 
 ?>

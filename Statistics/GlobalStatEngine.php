@@ -14,13 +14,24 @@ class GlobalStatEngine {
 		return $this->statisticsDAO->GetNumberOfStories();
 	}
 
-	function getNumberOfRelationships() {
-
-	}
-
 	public function GetNumberOfDvariables() {
 		return $this->statisticsDAO->GetNumberOfDvariables();
 	}
+
+	public function GetNumberOfRelationships() {
+        return  $this->statisticsDAO->GetNumberOfRelationships();
+    }
+
+    public function GetNumberOfRecords() {
+        return  $this->statisticsDAO->GetNumberOfRecords();
+
+    }
+
+    public function GetNumberOfUsers() {
+		return  $this->statisticsDAO->GetNumberOfUsers();
+
+	}
+
 }
 
 ?>
