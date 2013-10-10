@@ -32,7 +32,7 @@ $sid = $params['sid'];
 $uploadTimestamp = $params['uploadTimestamp'];
 $fileType = $params['fileType'];
 //TODO FIXME: once appeding of files is resolved uncomment here;
-$excelFileMode = "join";//$params['excelFileMode'];
+$excelFileMode = "jpon";//$params['excelFileMode'];
 $dbType = $params['dbType'];
 
 upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType);
@@ -104,6 +104,11 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
                     
 				} else if (strtolower($ext) == 'zip') {
 
+					//TODO FIXME: for now just set to append, later zip files always shoule be append
+					// even though user chooses join, because zip file might be required to join with 
+					// other excel files.
+					$_SESSION["excelFileMode_$sid"] = "append";
+
 					// If a zip file is provided, unzip all files.
 					$zipFilePath = $upload_path;
 					$zip = new ZipArchive;
@@ -129,7 +134,7 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 							$xlsxFilePath = FileUtil::convertCSVtoXLSX($csvFilePath);
 							$xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
 						}
-						unlink($filePath);
+						//unlink($filePath);
 					}
                     
 				} else if (strtolower($ext) == 'sql') {

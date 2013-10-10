@@ -79,6 +79,9 @@ class UtilsForWizard {
             //if (count($data) > 1)
                 $result .= '</div>';
         }
+
+
+
         return $result;
     }
 

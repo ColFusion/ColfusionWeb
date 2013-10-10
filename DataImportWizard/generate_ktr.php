@@ -36,6 +36,7 @@ $excelFileMode = $_SESSION["excelFileMode_$sid"];
 switch ($phase) {
     case 0:
 // When submit btn in step1 is clicked, the function executes.
+   // var_dump($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode);
         createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode);
         break;
     case 1:
@@ -63,7 +64,8 @@ switch ($phase) {
         get_sid();
         break;
     case 8:
-        getFileSources($sid, $dataSource_dir, $dataSource_dirPath);
+    //echo $excelFileMode;
+        getFileSources($sid);
         break;
     case 9:
         $filenames = $_SESSION["ktrArguments_$sid"]["filenames"];
@@ -142,8 +144,10 @@ function getFileSources($sid) {
     $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
     if (isset($ktrManagers)) {
         $json["isSuccessful"] = true;
+
         foreach ($ktrManagers as $ktrManager) {
             $paths = $ktrManager->getFilePaths();
+            //echo count($paths);
             $json["data"][] = getSheets($paths[0]);
         }
     } else {
