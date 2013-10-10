@@ -91,4 +91,7 @@ $(document).ready(function(){
 			  $("#ajax_response").fadeOut("slow");
 		});
 	});
+	$("#notification_icon").click(function(){
+		$("#notification_icon").attr("href", $("#user_logged_in").attr("href") + "?login=" + $("#user_logged_in").html() + "&view=notification");
+	});
 });
