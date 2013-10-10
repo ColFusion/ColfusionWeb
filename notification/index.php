@@ -37,6 +37,7 @@
     <script type="text/javascript">
             $(function() {
                 //var NotificationViewModel = new NotificationViewModel();
+                ko.cleanNode(document.getElementById('notification'));
                 ko.applyBindings(new NotificationViewModel, document.getElementById('notification'));
             });
     	</script>
