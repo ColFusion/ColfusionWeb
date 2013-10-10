@@ -9,6 +9,7 @@
 
 <!--	//put (query).php in DAL  -->
 <p>Number of datasets: <strong data-bind="text: nDatasets"> </strong></p>
+<p>Number of variables: <strong data-bind="text: nDvariables"> </strong></p>
 
 </div>
 <script>

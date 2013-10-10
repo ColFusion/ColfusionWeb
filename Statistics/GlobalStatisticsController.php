@@ -12,7 +12,10 @@ if(isset($_GET["action"])){
 function GetGlobalStatisticsSummary() {
     $globalStatEngine = new GlobalStatEngine();
 
-    echo json_encode($globalStatEngine->GetNumberOfStories());
-}
+    $result = new stdClass();
+    $result->numberOfStories = $globalStatEngine->GetNumberOfStories();
+    $result->numberOfDvariables = "0"; //$globalStatEngine->GetNumberOfDvariables();
 
+    echo json_encode($result);
+}
 ?>
