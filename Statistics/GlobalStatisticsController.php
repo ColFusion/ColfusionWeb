@@ -15,6 +15,9 @@ function GetGlobalStatisticsSummary() {
     $result = new stdClass();
     $result->numberOfStories = $globalStatEngine->GetNumberOfStories();
     $result->numberOfDvariables = $globalStatEngine->GetNumberOfDvariables();
+    $result->numberOfRelationships = $globalStatEngine->GetNumberOfRelationships();
+    $result->numberOfRecords = $globalStatEngine->GetNumberOfRecords();
+    $result->numberOfUsers = $globalStatEngine->GetNumberOfUsers();
 
     echo json_encode($result);
 }

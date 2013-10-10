@@ -10,6 +10,9 @@
 <!--	//put (query).php in DAL  -->
 <p>Number of datasets: <strong data-bind="text: nDatasets"> </strong></p>
 <p>Number of variables: <strong data-bind="text: nDvariables"> </strong></p>
+<p>Number of relationships: <strong data-bind="text: nRelationships"> </strong></p>
+<p>Number of records: <strong data-bind="text: nRecords"> </strong></p>
+<p>Nmber of users: <strong data-bind="text: nUsers"> </strong></p>
 
 </div>
 <script>
