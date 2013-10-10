@@ -7,11 +7,11 @@ class GlobalStatEngine {
 	private $statisticsDAO;
 
 	function __construct() {
-		$statisticsDAO = new StatisticsDAO();
+		$this->statisticsDAO = new StatisticsDAO();
 	}
 
 	public function GetNumberOfStories() {
-		return $statisticsDAO->GetNumberOfStories();
+		return $this->statisticsDAO->GetNumberOfStories();
 	}
 
 	function getNumberOfRelationships() {
