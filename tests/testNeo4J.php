@@ -156,7 +156,7 @@ echo json_encode($allPath);
     
 
     function rec($sourceIndex, $node, $list) {
-echo $node;
+echo $node."fc";
         $result = new stdClass();
 
         if (count($list) == 0) {
@@ -166,7 +166,7 @@ echo $node;
         else {
 
             $otherNode = array_pop($list);
-echo $otherNode;
+echo $otherNode."ffcc";
 
             $startNode = $sourceIndex->queryOne("sid:{$node}");
             $endNode = $sourceIndex->queryOne("sid:{$otherNode}");

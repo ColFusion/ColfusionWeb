@@ -90,7 +90,11 @@ class KTRExecutor
         // KTR manager has target database info.
         $databaseConnectionInfo = $this->ktrManager->getConnectionInfo();
 
+$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed before handler");
+
         $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($databaseConnectionInfo->engine, $databaseConnectionInfo->username, $databaseConnectionInfo->password, null, $databaseConnectionInfo->server, $databaseConnectionInfo->port, null, null);
+
+$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed after handler");
 
         // DATABASE
         $dbHandler = $dbHandler->createDatabaseIfNotExist($databaseConnectionInfo->database);

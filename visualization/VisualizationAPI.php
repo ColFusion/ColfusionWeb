@@ -26,7 +26,6 @@ function GetTableDataBySidAndName(){
     if (is_string($sid)) {
         $sid = json_decode($sid);
     }
-    
     echo json_encode(GetTableData($sid, $table_name, $perPage, $pageNo));
 }
 

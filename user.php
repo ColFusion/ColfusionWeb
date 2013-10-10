@@ -377,6 +377,9 @@ if(ShowProfileLastViewers == true){
 		case 'sendmessage':
 			do_sendmessage();
 			break;
+		case 'notification':
+			do_notification();
+			break;
 		case 'member_groups':
 			do_member_groups();
 			//$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
