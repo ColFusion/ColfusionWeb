@@ -1,12 +1,4 @@
-<html>
-	<head>
-		<script type="text/javascript" src="../javascripts/jquery-1.9.1.js"></script>  
-    	<script type="text/javascript" src="../javascripts/knockout-2.3.0.js"></script>
-    	<script type="text/javascript" src="../javascripts/knockout_models/Notification_model.js"></script>
-    	
-	</head>
-<body>
-    <?php
+<?php
     include_once('../Smarty.class.php');
     $main_smarty = new Smarty;
 
@@ -32,14 +24,4 @@
     $main_smarty->assign('tpl_center', $the_template . '/notification');
     $main_smarty->assign('no_jquery_in_pligg', true);
     $main_smarty->display($the_template . '/pligg.tpl');
-
-    ?>
-    <script type="text/javascript">
-            $(function() {
-                //var NotificationViewModel = new NotificationViewModel();
-                ko.cleanNode(document.getElementById('notification'));
-                ko.applyBindings(new NotificationViewModel, document.getElementById('notification'));
-            });
-    	</script>
-</body>
-</html>
+?>
