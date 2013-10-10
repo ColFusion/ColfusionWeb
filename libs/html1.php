@@ -573,7 +573,6 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 	if ($URLMethod == 1) {
 	
 		If ($x == "index") {return my_pligg_base."/index.php";}
-		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
 		If ($x == "maincategory") {return my_pligg_base."/index.php?category=" . $var1;}
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming.php?category=" . $var1;}
 		If ($x == "discardedcategory") {return my_pligg_base."/discarded.php?category=" . $var1;}
@@ -709,7 +708,6 @@ If ($x == "group_story_links_publish") {
 		If ($x == "userblank") {return my_pligg_base."/user/";}
 		If ($x == "user2") {return my_pligg_base."/user/" . $var2 . "/" . $var1 . "/";}
 		If ($x == "index") {return my_pligg_base . "/";}
-		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
 		If ($x == "index_sort") {return my_pligg_base."/".$var1.($var2 ? '/'.$var2 : '') . "/";}
 //		If ($x == "index_sort") {return my_pligg_base."/".$var1.($var2 ? '/category/'.$var2 : '') . "/";}
 //		If ($x == "upcoming_sort") {return my_pligg_base."/upcoming/".$var1.($var2 ? '/category/'.$var2 : '') . "/";}
@@ -805,7 +803,6 @@ function SetSmartyURLs($main_smarty) {
 	$main_smarty->assign('URL_logout', htmlentities(getmyurl("logout", $_SERVER['REQUEST_URI'])));
 	
 	$main_smarty->assign('URL_home', getmyurl("pligg_index"));
-	$main_smarty->assign('URL_notification', getmyurl("notification"));
 	$main_smarty->assign('URL_register', getmyurl("register"));
 	$main_smarty->assign('URL_root', getmyurl("root"));
 	$main_smarty->assign('URL_index', getmyurl("index"));

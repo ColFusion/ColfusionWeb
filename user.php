@@ -111,6 +111,7 @@ $CSRF->create('user_settings', true, true);
 	$main_smarty->assign('user_url_news_voted', getmyurl('user2', $login, 'voted'));
 	$main_smarty->assign('user_url_commented', getmyurl('user2', $login, 'commented'));
 	$main_smarty->assign('user_url_saved', getmyurl('user2', $login, 'saved'));
+	$main_smarty->assign('user_url_notification', getmyurl('user2', $login, 'notification'));
 	$main_smarty->assign('user_url_setting', getmyurl('user2', $login, 'setting'));
 	$main_smarty->assign('user_url_friends', getmyurl('user_friends', $login, 'viewfriends'));
 	$main_smarty->assign('user_url_friends2', getmyurl('user_friends', $login, 'viewfriends2'));
@@ -249,7 +250,18 @@ $CSRF->create('user_settings', true, true);
 		$main_smarty->assign('nav_s', 4);
 	 } else {
 		$main_smarty->assign('nav_s', 3);
-	}	
+	}
+
+	/***** Add sidebar tag for notification page *****/
+	if ($view == 'notification') {
+		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_Notification');
+		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_Notification');
+		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_Notification');
+		$main_smarty->assign('view_href', '');
+		$main_smarty->assign('nav_ntf', 4);
+	 } else {
+		$main_smarty->assign('nav_ntf', 3);
+	}
 
 	if ($view == 'viewfriends') {
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Viewing_Friends');
@@ -348,7 +360,11 @@ $CSRF->create('user_settings', true, true);
 		case 'saved':
 			do_stories();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
-			break;  
+			break;
+		case 'notification': // Notification
+			//do_notifications();
+			//$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
+			break;
 		case 'removefriend':
 			do_removefriend();
 			break;
@@ -439,7 +455,7 @@ function do_voted () {
 }
 
 function do_history () {
-	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
+	global $db, $main_smarty, $rows, $user, $offset, $page_size, $cached_links;
 
 	$output = '';
 	$link = new Link;
@@ -457,7 +473,7 @@ function do_history () {
 }
 //change it to search private data rather than orignal published data.
 function do_published () {
-	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
+	global $db, $main_smarty, $rows, $user, $offset, $page_size, $cached_links;
 
 	$output = '';
 	$link = new Link;
@@ -475,7 +491,7 @@ function do_published () {
 }
 
 function do_shaken () {
-	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
+	global $db, $main_smarty, $rows, $user, $offset, $page_size, $cached_links;
 
 	$output = '';
 	$link = new Link;
@@ -508,6 +524,11 @@ function do_commented () {
 		}
 	}     
 	$main_smarty->assign('user_page', $output);
+}
+
+function do_notifications () {
+	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
+	$main_smarty->assign('user_page', "<h3>notification</h3>");
 }
 
 function do_removefriend (){

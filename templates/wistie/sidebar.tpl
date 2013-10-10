@@ -91,6 +91,7 @@
 		<li class="navbut{$nav_c}"><a href="{$user_url_commented}"><span>{#PLIGG_Visual_User_NewsCommented#}</span></a></li>
 		<li class="navbut{$nav_nv}"><a href="{$user_url_news_voted}"><span>{#PLIGG_Visual_User_NewsVoted#}</span></a></li>
 		<li class="navbut{$nav_s}"><a href="{$user_url_saved}"><span>{#PLIGG_Visual_User_NewsSaved#}</span></a></li>
+		<li class="navbut{$nav_ntf}"><a href="{$user_url_notification}"><span>{#PLIGG_Visual_User_Notification#}</span></a></li>
 		{checkActionsTpl location="tpl_pligg_profile_sort_end"}
 		</ul>
 	</div>
