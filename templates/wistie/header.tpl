@@ -1,7 +1,8 @@
 <!-- START HEADER.TPL -->
 <head>
     <script type="text/javascript" src="{$my_pligg_base}/templates/wistie/js/script.js"></script>
-    <!-- <link href="templates/wistie/js/style1.css" rel="stylesheet" type="text/css"> -->
+    <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Notification_model.js"></script>
 </head>
 
 <div id="header">
@@ -13,8 +14,12 @@
         <ul>
             <li>{#PLIGG_Visual_Welcome_Back#} <a id="user_logged_in" href="{$URL_userNoVar}">{$user_logged_in}</a></li>
             {if isset($isgod) && $isgod eq 1}<li><a class="topmenu" href="{$URL_admin}">{#PLIGG_Visual_Header_AdminPanel#}</a></li>{/if}
-            <!--<li><a id="notification_icon" class="topmenu" href=""><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_User_Notification#}</a></li>-->
-            <li><a id="notification_icon" class="topmenu" href="{$URL_notification}"><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_User_Notification#}</a></li>
+            
+            <li><a id="notification_icon" class="topmenu" href="{$URL_notification}"><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_User_Notification#}
+            <script type="text/javascript">
+                GetCurrentNTFNum();
+            </script></a></li>
+            
             <li><a class="topmenu" href="{$URL_logout}"><img src="{$my_pligg_base}/templates/{$the_template}/images/logout.png"/> {#PLIGG_Visual_Logout#}</a></li>
         </ul>
     </div>
@@ -41,7 +46,7 @@
         
         <script type="text/javascript">
         {if !isset($searchboxtext)}
-            {assign var=searchboxtext value=#PLIGG_Visual_Search_SearchDefaultText#}			
+            {assign var=searchboxtext value=#PLIGG_Visual_Search_SearchDefaultText#}            
         {/if}
             var some_search='{$searchboxtext}';
         </script>
@@ -86,21 +91,21 @@
 
         <li {if $pagename eq "submit"}class="current"{/if}><a href="{$my_base_url}{$my_pligg_base}/submit1.php">{#PLIGG_Visual_Submit_A_New_Story#}</a></li>
 
-		<!--<li {if $pagename eq "submit"}class="current"{/if}><a href="{$URL_submit}">{#PLIGG_Visual_Submit_A_New_Story#}</a></li>-->
+        <!--<li {if $pagename eq "submit"}class="current"{/if}><a href="{$URL_submit}">{#PLIGG_Visual_Submit_A_New_Story#}</a></li>-->
 
-     <!--   {if $enable_group eq "true"}	
+     <!--   {if $enable_group eq "true"}    
         <li {if $pagename eq "groups" || $pagename eq "submit_groups" || $pagename eq "group_story"}class="current"{/if}><a href="{$URL_groups}">{#PLIGG_Visual_Groups#}</a></li>
         {/if}
     -->
 
-	   <!-- <li ><a href="{$my_base_url}{$my_pligg_base}/user_guide.php" target="_blank">How to contribute</a></li> -->
-	    <li ><a href="{$my_base_url}{$my_pligg_base}/phpBB3" target="_blank">Forum</a></li>
-	    <li ><a href="{$my_base_url}{$my_pligg_base}/wiki" target="_blank">Wiki</a></li>
+       <!-- <li ><a href="{$my_base_url}{$my_pligg_base}/user_guide.php" target="_blank">How to contribute</a></li> -->
+        <li ><a href="{$my_base_url}{$my_pligg_base}/phpBB3" target="_blank">Forum</a></li>
+        <li ><a href="{$my_base_url}{$my_pligg_base}/wiki" target="_blank">Wiki</a></li>
         <!--<li><a href="{$my_base_url}{$my_pligg_base}/visualization/dashboard.php" >Visualization</a></li>-->
 
       <!--  <li {if $pagename eq "advanced search"}class="current"{/if}><a href="{$my_base_url}{$my_pligg_base}/advancedsearch/advanced.php" >Adv Search</a></li> -->
 
-	    {if $user_authenticated eq true}
+        {if $user_authenticated eq true}
             <li {if $pagename eq "user"}class="current"{/if}><a href="{$URL_userNoVar}">{#PLIGG_Visual_Profile#}</a></li>
         {/if}
     </ul>
@@ -111,11 +116,11 @@
 
 <!-- START RSS -->
 <!--div class="rsslink">
-	{if $URL_rss_page}
-	<a href="{$URL_rss_page}" target="_blank">
-		RSS &nbsp;<img src="{$my_pligg_base}/templates/{$the_template}/images/rss.gif" align="top" border="0" alt="RSS" />
-	</a>
-	{/if}
+    {if $URL_rss_page}
+    <a href="{$URL_rss_page}" target="_blank">
+        RSS &nbsp;<img src="{$my_pligg_base}/templates/{$the_template}/images/rss.gif" align="top" border="0" alt="RSS" />
+    </a>
+    {/if}
 </div-->
 <!-- END RSS -->
 
