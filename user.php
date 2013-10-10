@@ -3,7 +3,7 @@
 // Ricardo Galli <gallir at uib dot es>.
 // It's licensed under the AFFERO GENERAL PUBLIC LICENSE unless stated otherwise.
 // You can get copies of the licenses here:
-// 		http://www.affero.org/oagpl.html
+// http://www.affero.org/oagpl.html
 // AFFERO GENERAL PUBLIC LICENSE is also included in the file called "COPYING".
 
 include_once('Smarty.class.php');
@@ -28,79 +28,80 @@ $CSRF = new csrf();
 $CSRF->create('user_settings', true, true);
 
 // if not logged in, redirect to the index page
-	$login = isset($_GET['login']) ? sanitize($_GET['login'], 3) : '';
-	$truelogin = isset($_COOKIE['mnm_user'] ) ? sanitize($_COOKIE['mnm_user'] , 3) : '';
-	if($login === ''){
-		if ($current_user->user_id > 0) {
-			$login = $current_user->user_login;
-		} else {
-			header('Location: '.$my_base_url.$my_pligg_base);
-			die;
+$login = isset($_GET['login']) ? sanitize($_GET['login'], 3) : '';
+$truelogin = isset($_COOKIE['mnm_user'] ) ? sanitize($_COOKIE['mnm_user'] , 3) : '';
+if($login === ''){
+	if ($current_user->user_id > 0) {
+		$login = $current_user->user_login;
+	} else {
+		header('Location: '.$my_base_url.$my_pligg_base);
+		die;
+	}
+}
+
+// setup the breadcrumbs
+$navwhere['text1'] = $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Profile');
+$navwhere['link1'] = getmyurl('topusers');
+$navwhere['text2'] = $login;
+$navwhere['link2'] = getmyurl('user2', $login, 'profile');
+
+// read the users information from the database
+$user = new User();
+$user->username = $login;
+if(!$user->read() || $user->level=='Spammer' || ($user->username=='anonymous' && !$user->user_lastip) ||
+	// Hide users without stories/comments from unregistered visitors
+	!$user->all_stats() || $user->total_links+$user->total_comments+$current_user->user_id==0) {
+	
+	header("Location: $my_pligg_base/404error.php");
+	die;
+}
+
+require_once(mnminclude.'check_behind_proxy.php');
+
+if(ShowProfileLastViewers == true){
+	$main_smarty->assign('ShowProfileLastViewers', true);		
+	// setup some arrays
+	$last_viewers_names = array();
+	$last_viewers_profile = array();
+	$last_viewers_avatar = array();
+
+	// for each viewer, get their name, profile link and avatar and put it in an array
+	$viewers = new User();
+	if ($last_viewers) {
+		foreach($last_viewers as $viewer_id) {
+			$viewers->id=$viewer_id;
+			$viewers->read();
+			$last_viewers_names[] = $viewers->username;
+			$last_viewers_profile[] = getmyurl('user2', $viewers->username, 'profile');
+			$last_viewers_avatar[] = get_avatar('small', "", $viewers->username, $viewers->email);
 		}
 	}
 
-// setup the breadcrumbs
-	$navwhere['text1'] = $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Profile');
-	$navwhere['link1'] = getmyurl('topusers');
-	$navwhere['text2'] = $login;
-	$navwhere['link2'] = getmyurl('user2', $login, 'profile');
+	// tell smarty about our arrays
+	$main_smarty->assign('last_viewers_names', $last_viewers_names);
+	$main_smarty->assign('last_viewers_profile', $last_viewers_profile);
+	$main_smarty->assign('last_viewers_avatar', $last_viewers_avatar);
+} else {
+	$main_smarty->assign('ShowProfileLastViewers', false);		
+}
 
-// read the users information from the database
-	$user=new User();
-	$user->username = $login;
-	if(!$user->read() || $user->level=='Spammer' || ($user->username=='anonymous' && !$user->user_lastip) ||
-	   // Hide users without stories/comments from unregistered visitors
-	   !$user->all_stats() || $user->total_links+$user->total_comments+$current_user->user_id==0) {
-		header("Location: $my_pligg_base/404error.php");
-		die;
-	}
- 
-	require_once(mnminclude.'check_behind_proxy.php'); 	 
-
-	if(ShowProfileLastViewers == true){
-		$main_smarty->assign('ShowProfileLastViewers', true);		
-		// setup some arrays
-			$last_viewers_names = array();
-			$last_viewers_profile = array();
-			$last_viewers_avatar = array();
-				
-		// for each viewer, get their name, profile link and avatar and put it in an array
-			$viewers=new User();
-			if ($last_viewers) {
-				foreach($last_viewers as $viewer_id) {
-					$viewers->id=$viewer_id;
-					$viewers->read();
-					$last_viewers_names[] = $viewers->username;
-					$last_viewers_profile[] = getmyurl('user2', $viewers->username, 'profile');
-					$last_viewers_avatar[] = get_avatar('small', "", $viewers->username, $viewers->email);
-				}
-			}
-		// tell smarty about our arrays
-			$main_smarty->assign('last_viewers_names', $last_viewers_names);
-			$main_smarty->assign('last_viewers_profile', $last_viewers_profile);
-			$main_smarty->assign('last_viewers_avatar', $last_viewers_avatar);
-	} else {
-		$main_smarty->assign('ShowProfileLastViewers', false);		
-	}
-	
-	
 // check to see if the profile is of a friend
-  $friend = new Friend;
-  $main_smarty->assign('is_friend', $friend->get_friend_status($user->id));
+$friend = new Friend;
+$main_smarty->assign('is_friend', $friend->get_friend_status($user->id));
 
 
 // avatars
-	$main_smarty->assign('UseAvatars', do_we_use_avatars());
-	$main_smarty->assign('Avatar_ImgSrc', get_avatar('large', '', $user->username, $user->email));
-	if ($user->url != "") {
-		if(substr(strtoupper($user->url), 0, 7) != "HTTP://"){
-			$main_smarty->assign('user_url', "http://" . $user->url);
-		}	else {
-			$main_smarty->assign('user_url', $user->url);
-		}
-	} else {
-		$main_smarty->assign('user_url', '');
-	}		
+$main_smarty->assign('UseAvatars', do_we_use_avatars());
+$main_smarty->assign('Avatar_ImgSrc', get_avatar('large', '', $user->username, $user->email));
+if ($user->url != "") {
+	if(substr(strtoupper($user->url), 0, 7) != "HTTP://"){
+		$main_smarty->assign('user_url', "http://" . $user->url);
+	}	else {
+		$main_smarty->assign('user_url', $user->url);
+	}
+} else {
+	$main_smarty->assign('user_url', '');
+}		
 
 
 // setup the URL method 2 links

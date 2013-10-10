@@ -573,6 +573,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 	if ($URLMethod == 1) {
 	
 		If ($x == "index") {return my_pligg_base."/index.php";}
+		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
 		If ($x == "maincategory") {return my_pligg_base."/index.php?category=" . $var1;}
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming.php?category=" . $var1;}
 		If ($x == "discardedcategory") {return my_pligg_base."/discarded.php?category=" . $var1;}
@@ -663,7 +664,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 		If ($x == "user_add_links_private") {return my_pligg_base."/user_add_remove_links.php?action=addprivate&amp;link=" . $var1;}
 		If ($x == "user_add_links_public") {return my_pligg_base."/user_add_remove_links.php?action=addpublic&amp;link=" . $var1;}
 
-If ($x == "group_story_links_publish") {
+		If ($x == "group_story_links_publish") {
 			return my_pligg_base."/join_group.php?action=queued&amp;link=" . $var1;
 			}
 
@@ -692,6 +693,7 @@ If ($x == "group_story_links_publish") {
 	if ($URLMethod == 2) { 
 	
 		If ($x == "maincategory") {return my_pligg_base."/" . $var1;}
+		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming/" . $var1;}
 		If ($x == "discardedcategory") {return my_pligg_base."/discarded/" . $var1 . "/";}
 //		If ($x == "queuedcategory") {return my_pligg_base."/upcoming/category/" . $var1 . "/";}
@@ -802,7 +804,7 @@ function SetSmartyURLs($main_smarty) {
 	}
 	$main_smarty->assign('URL_logout', htmlentities(getmyurl("logout", $_SERVER['REQUEST_URI'])));
 	
-	$main_smarty->assign('URL_home', getmyurl("pligg_index"));
+	$main_smarty->assign('URL_home', getmyurl("pligg_index"));	
 	$main_smarty->assign('URL_register', getmyurl("register"));
 	$main_smarty->assign('URL_root', getmyurl("root"));
 	$main_smarty->assign('URL_index', getmyurl("index"));
@@ -859,6 +861,8 @@ function SetSmartyURLs($main_smarty) {
 	$main_smarty->assign('URL_submit_groups', getmyurl("submit_groups"));
 	$main_smarty->assign('URL_join_group', getmyurl("join_group"));
 	$main_smarty->assign('unjoin_group', getmyurl("unjoin_group"));
+
+	$main_smarty->assign('URL_notification',getmyurl("notification"));
 	return $main_smarty;
 }
 

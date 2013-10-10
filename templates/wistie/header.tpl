@@ -13,7 +13,8 @@
         <ul>
             <li>{#PLIGG_Visual_Welcome_Back#} <a id="user_logged_in" href="{$URL_userNoVar}">{$user_logged_in}</a></li>
             {if isset($isgod) && $isgod eq 1}<li><a class="topmenu" href="{$URL_admin}">{#PLIGG_Visual_Header_AdminPanel#}</a></li>{/if}
-            <li><a id="notification_icon" class="topmenu" href=""><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_User_Notification#}</a></li>
+            <!--<li><a id="notification_icon" class="topmenu" href=""><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_User_Notification#}</a></li>-->
+            <li><a id="notification_icon" class="topmenu" href="{$URL_notification}"><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_User_Notification#}</a></li>
             <li><a class="topmenu" href="{$URL_logout}"><img src="{$my_pligg_base}/templates/{$the_template}/images/logout.png"/> {#PLIGG_Visual_Logout#}</a></li>
         </ul>
     </div>
