@@ -14,7 +14,7 @@ function GetGlobalStatisticsSummary() {
 
     $result = new stdClass();
     $result->numberOfStories = $globalStatEngine->GetNumberOfStories();
-    $result->numberOfDvariables = "0"; //$globalStatEngine->GetNumberOfDvariables();
+    $result->numberOfDvariables = $globalStatEngine->GetNumberOfDvariables();
 
     echo json_encode($result);
 }

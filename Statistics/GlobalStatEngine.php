@@ -17,6 +17,10 @@ class GlobalStatEngine {
 	function getNumberOfRelationships() {
 
 	}
+
+	public function GetNumberOfDvariables() {
+		return $this->statisticsDAO->GetNumberOfDvariables();
+	}
 }
 
 ?>

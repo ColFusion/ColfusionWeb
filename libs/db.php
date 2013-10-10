@@ -156,7 +156,8 @@ class ezSQL_mysql extends ezSQLcore {
      */
 
     function escape($str) {
-        return mysql_real_escape_string($str);
+        //var_dump($str);
+        return  mysql_real_escape_string($str);
     }
 
     /*     * ********************************************************************
@@ -284,6 +285,7 @@ class ezSQL_mysql extends ezSQLcore {
     }
 
 }
+
 
 $db = new ezSQL_mysql(EZSQL_DB_USER, EZSQL_DB_PASSWORD, EZSQL_DB_NAME, EZSQL_DB_HOST);
 /*

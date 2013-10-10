@@ -19,6 +19,17 @@ class StatisticsDAO {
         
         return $countRow->storiesNumber;
     }
+
+
+
+    public function GetNumberOfDvariables() {
+        
+        $sql = "SELECT count(distinct cid) as dvariables FROM `colfusion_dnameinfo` ";
+
+        $countRow = $this->ezSql->get_row($sql);
+        
+        return $countRow-> dvariables;
+    }
 }
 
 ?>
