@@ -526,18 +526,6 @@
 	</div>	
 {/if}
 
-{if $user_view eq 'notification'}
-	<div id="navbar" style="margin-bottom:-20px;border-bottom:0;"></div>
-
-
-	
-	<div class="user_settings_template">
-		<strong>{#PLIGG_Visual_User_Notification#}</strong>
-		<br /><br />
-	</div>
-
-{/if}
-
 {if isset($user_page)}{$user_page}{/if}
 {checkActionsTpl location="tpl_pligg_pagination_start"}
     {if isset($user_pagination)}
