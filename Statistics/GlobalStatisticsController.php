@@ -13,6 +13,7 @@ function GetGlobalStatisticsSummary() {
     $globalStatEngine = new GlobalStatEngine();
 
     $result = new stdClass();
+    // returned value from Engine, saved into variables in result
     $result->numberOfStories = $globalStatEngine->GetNumberOfStories();
     $result->numberOfDvariables = $globalStatEngine->GetNumberOfDvariables();
     $result->numberOfRelationships = $globalStatEngine->GetNumberOfRelationships();

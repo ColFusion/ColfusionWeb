@@ -10,6 +10,7 @@ class GlobalStatEngine {
 		$this->statisticsDAO = new StatisticsDAO();
 	}
 
+	// call functions from statisticsDAO
 	public function GetNumberOfStories() {
 		return $this->statisticsDAO->GetNumberOfStories();
 	}
@@ -31,8 +32,6 @@ class GlobalStatEngine {
 		return  $this->statisticsDAO->GetNumberOfUsers();
 
 	}
-	//global stats
-
 }
 
 ?>

@@ -5,9 +5,9 @@
 
 
 
-<div class="sidebar-content">
+<div class="sidebar-content" id="globalStatistics">
 
-<!--	//put (query).php in DAL  -->
+<!--  show Statistics in side bar under Published data tab  -->
 <p>Number of datasets: <strong data-bind="text: nDatasets"> </strong></p>
 <p>Number of variables: <strong data-bind="text: nDvariables"> </strong></p>
 <p>Number of relationships: <strong data-bind="text: nRelationships"> </strong></p>
@@ -16,7 +16,7 @@
 
 </div>
 <script>
-    my_pligg_base = '<?php echo $my_pligg_base; ?>';
+    my_pligg_base = '{$my_pligg_base}';
 </script>
 
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.3.0.js"></script>

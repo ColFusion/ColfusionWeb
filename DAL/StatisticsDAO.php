@@ -11,6 +11,7 @@ class StatisticsDAO {
         $this->ezSql = $db;
     }
 
+    // Number of datasets submitted by counting tuples with "queued" status in sourceinfo table
     public function GetNumberOfStories() {
         
         $sql = "SELECT count(*) as storiesNumber FROM `colfusion_sourceinfo` WHERE status = 'queued'";
@@ -20,8 +21,7 @@ class StatisticsDAO {
         return $countRow->storiesNumber;
     }
 
-
-
+    // Number of columns (distinct column names) by counting distinct tuples in dnameinfo table
     public function GetNumberOfDvariables() {
         
         $sql = "SELECT count(distinct cid) as dvariables FROM `colfusion_dnameinfo` ";
@@ -31,6 +31,7 @@ class StatisticsDAO {
         return $countRow-> dvariables;
     }
 
+    // Number of relationships by counting tuples in relationships table
     public function GetNumberOfRelationships() {
         
         $sql = "SELECT count(*) as relationshipNumber FROM `colfusion_relationships` ";
@@ -39,6 +40,7 @@ class StatisticsDAO {
         return $countRow-> relationshipNumber;
     }
 
+    // Number of records by summing values in execution info able, records processed column
     public function GetNumberOfRecords() {
         
         $sql = "SELECT sum(RecordsProcessed) as recordnumber FROM `colfusion_executeinfo` ";
@@ -47,6 +49,7 @@ class StatisticsDAO {
         return $countRow-> recordnumber;
     }
 
+    // Number of users by count tuples in users table
     public function GetNumberOfUsers() {
         
         $sql = "SELECT count(user_id) as usernumber FROM `colfusion_users` ";

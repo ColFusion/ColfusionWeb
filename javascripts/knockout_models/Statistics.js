@@ -7,13 +7,13 @@ function StatisticsViewModel() {
     self.nRecords = ko.observable();
     self.nUsers = ko.observable();
 
-
+    // obtain data from Engine
     $.ajax({
-    	url: "/Colfusion" + '/Statistics/GlobalStatisticsController.php?action=GetGlobalStatisticsSummary',
+    	url: my_pligg_base + '/Statistics/GlobalStatisticsController.php?action=GetGlobalStatisticsSummary',
         type: "GET",
         dataType: "json",
         success: function(data){
-
+            // assign values to knockout observable variables
             self.nDatasets(data.numberOfStories);
             self.nDvariables(data.numberOfDvariables);
             self.nRelationships(data.numberOfRelationships);
@@ -25,4 +25,4 @@ function StatisticsViewModel() {
 
 
 
-ko.applyBindings(new StatisticsViewModel());
+ko.applyBindings(new StatisticsViewModel(), document.getElementById('globalStatistics'));
