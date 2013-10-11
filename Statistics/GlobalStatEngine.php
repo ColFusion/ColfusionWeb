@@ -31,6 +31,7 @@ class GlobalStatEngine {
 		return  $this->statisticsDAO->GetNumberOfUsers();
 
 	}
+	//global stats
 
 }
 
