@@ -10,7 +10,7 @@ class DatasetDAO {
     public function __construct() {
         global $db;
         $this->ezSql = $db;
-    } 
+    }  
 
     public function getTableColumns($sid, $tableName) {
         
