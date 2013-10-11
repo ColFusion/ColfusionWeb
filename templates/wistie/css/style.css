@@ -203,6 +203,7 @@ iframe.invisible {
 #header #login ul li a.topmenu {
     text-decoration: none;
     font-weight: bold;
+    cursor: pointer;
 }
 
 #header #login ul li a img {
@@ -1575,4 +1576,22 @@ a:active {
 
 .resultText i{
     margin: 0 5px 0 3px;
+}
+
+/** Notification CSS ***/
+.notification_block {
+    position: absolute; top: 30px; right: 160px; padding: 0px;
+    border-top: 2px solid #4a9bea;
+    box-shadow: 0px 5px 20px #707070;
+    background-color: #fdfdee;
+}
+
+.notification_block_row {
+    border: 1px solid #E9DDAB; padding: 3px;
+    background-color: #FDFDEE;
+    cursor: pointer;
+}
+
+.notification_block_row:hover {
+    background-color: #FBF7E5;
 }
