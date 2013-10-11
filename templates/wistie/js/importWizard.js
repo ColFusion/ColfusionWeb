@@ -450,6 +450,26 @@ var importWizard = (function () {
     }
 
     /** ***************** */
-
+    function selectChange(event){
+    var selValue=$(event).val();
+    if(selValue=="STRING"){
+        
+        $("#unit_number").hide();
+        $("#unit_date").hide();
+    }
+    if(selValue=="INT"){
+        $("#unit_number").show();
+        $("#unit_date").hide();
+        }
+    if(selValue=="DATE"){
+        $("#unit_date").show();
+        $("#unit_number").hide();
+        }
+    
+    }
+    $(document).ready(function(){
+    $("#unit_number").hide();
+    $("#unit_date").hide();
+    });
     return importWizard;
 })();
