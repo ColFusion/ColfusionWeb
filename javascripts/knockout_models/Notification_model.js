@@ -7,6 +7,8 @@ function newNotification(ntf_id, sender_id, action, receiver_id, target, target_
     self.receiver_id = receiver_id;
     self.target = target;
     self.target_id = target_id;
+
+    self.msg = sender_id + " " + action + " " + target;
 }
 
 function NotificationViewModel() {
