@@ -1,6 +1,6 @@
 
 <div class="sidebar-headline">
-	<div class="sidebartitle"><img src="{$my_pligg_base}/templates/{$the_template}/images/right_arrow.png"/>&nbsp;&nbsp;&nbsp;<a href="{$URL_tagcloud}">{#PLIGG_Visual_Global_Stat#}</a></div>
+	<div class="sidebartitle"><img src="{$my_pligg_base}/templates/{$the_template}/images/right_arrow.png"/>&nbsp;&nbsp;&nbsp;<a href="{$URL_global_statistics}">{#PLIGG_Visual_Global_Stat#}</a></div>
 </div>
 
 

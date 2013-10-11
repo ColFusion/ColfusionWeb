@@ -635,6 +635,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
         If ($x == "admin_published") {return my_pligg_base."/admin/linkadmin.php?id=" . $var1 . "&amp;action=published";}
 		If ($x == "editcomment") {return my_pligg_base."/edit.php?id=" . $var2 . "&amp;commentid=" . $var1;}
 		If ($x == "tagcloud") {return my_pligg_base."/cloud.php";}
+		If ($x == "global_statistics") {return my_pligg_base."/Statistics/GlobalStatisticsView.php";}
 		If ($x == "tagcloud_range") {return my_pligg_base."/cloud.php?range=" . $var1;}
 		If ($x == "live_comments") {return my_pligg_base."/live_comments.php";}
 		If ($x == "live_published") {return my_pligg_base."/live_published.php";}
@@ -849,6 +850,7 @@ function SetSmartyURLs($main_smarty) {
 	$main_smarty->assign('URL_admin_config', getmyurl("admin_config"));
 	$main_smarty->assign('URL_admin_rss', getmyurl("admin_rss"));
 	$main_smarty->assign('URL_tagcloud', getmyurl("tagcloud"));
+	$main_smarty->assign('URL_global_statistics', getmyurl("global_statistics"));
 	$main_smarty->assign('URL_tagcloud_range', getmyurl("tagcloud_range"));
 	$main_smarty->assign('URL_live', getmyurl("live"));
 	$main_smarty->assign('URL_unpublished', getmyurl("live_unpublished"));
