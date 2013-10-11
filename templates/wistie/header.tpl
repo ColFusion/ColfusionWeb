@@ -2,6 +2,7 @@
 <head>
     <script type="text/javascript" src="{$my_pligg_base}/templates/wistie/js/script.js"></script>
     <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.js"></script>
+    <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.3.0.js"></script>
     <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Notification_model.js"></script>
 </head>
 
@@ -15,10 +16,28 @@
             <li>{#PLIGG_Visual_Welcome_Back#} <a id="user_logged_in" href="{$URL_userNoVar}">{$user_logged_in}</a></li>
             {if isset($isgod) && $isgod eq 1}<li><a class="topmenu" href="{$URL_admin}">{#PLIGG_Visual_Header_AdminPanel#}</a></li>{/if}
             
-            <li><a id="notification_icon" class="topmenu" href="{$URL_notification}"><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_User_Notification#}
+            <!--href="{$URL_notification}"-->
+
+            <li><a id="notification_icon" class="topmenu" data-bind="click: displayMore"><img src="{$my_pligg_base}/templates/{$the_template}/images/notification.png"/> {#PLIGG_Visual_User_Notification#}
             <script type="text/javascript">
                 GetCurrentNTFNum();
             </script></a></li>
+
+            <div class="notification_block" id="notification" data-bind="ntfVisible: visible">
+                    <table>
+                        <tbody data-bind="foreach: ntfs">
+                            <tr data-bind="click: $root.goToStory">
+                                <td data-bind="text: sender_id"></td>
+                                <td data-bind="text: action"></td>
+                                <td data-bind="text: target"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+
+            <script type="text/javascript">
+                applyb();
+            </script>
             
             <li><a class="topmenu" href="{$URL_logout}"><img src="{$my_pligg_base}/templates/{$the_template}/images/logout.png"/> {#PLIGG_Visual_Logout#}</a></li>
         </ul>
