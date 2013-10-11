@@ -158,6 +158,8 @@
 
 <div id="dataPreviewContainer"></div>
 
+{include file='storyStatistics.tpl'}
+
 {include file='relationships.tpl'}
 {if $isAuthenticated}
 {include file='addRelationships.tpl'}
