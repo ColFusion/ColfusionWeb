@@ -12,7 +12,7 @@ var importWizard = (function () {
                 sid: sid
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                triggerError();
+                triggerError(jqXHR, textStatus, errorThrown);
             }
         });
 
@@ -441,8 +441,11 @@ var importWizard = (function () {
         return isValid;
     }
 
-    function triggerError() {
+    function triggerError(jqXHR, textStatus, errorThrown) {
         console.log('error is triggered');
+        console.log(jqXHR);
+        console.log(textStatus);
+        console.log(errorThrown);
         wizard.trigger("error");
         wizard._submitting = false;
         wizard.showSubmitCard("error");
