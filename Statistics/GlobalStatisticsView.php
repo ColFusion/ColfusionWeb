@@ -5,6 +5,9 @@
 // You can get copies of the licenses here:
 // 		http://www.affero.org/oagpl.html
 // AFFERO GENERAL PUBLIC LICENSE is also included in the file called "COPYING".
+
+include_once(realpath(dirname(__FILE__)) . '/GlobalStatEngine.php');
+
 include_once(realpath(dirname(__FILE__)) . '/../config.php');
 //include('config.php');
 
@@ -57,6 +60,14 @@ $main_smarty->assign('pagename', pagename);
 
 // show the template
 $main_smarty->assign('tpl_center', $the_template . '/tag_cloud_center');
+$main_smarty->display($the_template . '/pligg.tpl');
+
+function showStatistics(){
+	$globalStatEngine = new GlobalStatEngine();
+	$outputs= $globalStatEngine->GetGlobalStatisticsSummary();
+}
+
+$main_smarty->assign('tpl_center', $the_template . '/global_statistics_center');
 $main_smarty->display($the_template . '/pligg.tpl');
 
 ?>

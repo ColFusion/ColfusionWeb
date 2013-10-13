@@ -32,6 +32,20 @@ class GlobalStatEngine {
 		return  $this->statisticsDAO->GetNumberOfUsers();
 
 	}
+
+	public function GetGlobalStatisticsSummary() {
+    
+	    $result = new stdClass();
+	    // returned value from Engine, saved into variables in result
+	    $result->numberOfStories = $this->GetNumberOfStories();
+	    $result->numberOfDvariables = $this->GetNumberOfDvariables();
+	    $result->numberOfRelationships = $this->GetNumberOfRelationships();
+	    $result->numberOfRecords = $this->GetNumberOfRecords();
+	    $result->numberOfUsers = $this->GetNumberOfUsers();
+
+	    return $result;
+	}
+
 }
 
 ?>
