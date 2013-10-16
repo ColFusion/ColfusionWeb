@@ -3,9 +3,16 @@
         <h3 class="preview-title">Statistics</h3>
 
 <!--  show Statistics in side bar under Published data tab --> 
-<p>mean: <strong data-bind="text: mean"> </strong></p>
-<p>Number of variables: <strong data-bind="text: stdev"> </strong></p>
-<p>Number of relationships: <strong data-bind="text: count"> </strong></p>
+
+<table class="tftable" border="1" style="white-space: nowrap;">
+    <tr data-bind="foreach: table">
+        <td data-bind="text: mean"></td>
+        <td data-bind="text: stdev"></td>
+        <td data-bind="text: count"></td>
+    </tr>
+</table>
+
+
 
 <script>
     my_pligg_base = "{$my_pligg_base}";
