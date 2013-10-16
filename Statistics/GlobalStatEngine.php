@@ -32,7 +32,7 @@ class GlobalStatEngine {
 		return  $this->statisticsDAO->GetNumberOfUsers();
 
 	}
-
+// for side bar
 	public function GetGlobalStatisticsSummary() {
     
 	    $result = new stdClass();
@@ -44,6 +44,16 @@ class GlobalStatEngine {
 	    $result->numberOfUsers = $this->GetNumberOfUsers();
 
 	    return $result;
+	}
+// for statistics section
+	public function GetStoryStatisticsSummary(){
+		$result = new stdClass();
+
+		$result->mean = "10";
+		$result->stdev = "20";
+		$result->count = "100";
+
+		return $result;
 	}
 
 }

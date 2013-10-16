@@ -10,12 +10,20 @@ if(isset($_GET["action"])){
 
 // Expects sid in post
 function GetGlobalStatisticsSummary() {
-    $globalStatEngine = new GlobalStatEngine();
-
+    
+	$globalStatEngine = new GlobalStatEngine();
    
     // returned value from Engine, saved into variables in result
     $results = $globalStatEngine->GetGlobalStatisticsSummary();
   
     echo json_encode($results);
+}
+
+function storyStatisticsSummary(){
+	$globalStatEngine = new GlobalStatEngine();
+
+	$results = $globalStatEngine->GetStoryStatisticsSummary();
+
+	echo json_encode($results);
 }
 ?>

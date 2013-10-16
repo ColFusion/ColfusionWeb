@@ -185,6 +185,8 @@ class UtilsForWizard {
 
     static function processOneColumn($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName = null, $missingValue) {
 
+//var_dump($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName, $missingValue);
+
         $queryEngine = new QueryEngine();
         
         if (!isset($tableName)) {

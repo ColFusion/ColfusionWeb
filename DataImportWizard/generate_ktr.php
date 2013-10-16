@@ -275,6 +275,8 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
 
     $_SESSION["ktrArguments_$sid"]["ktrManagers"] = serialize($ktrManagers);
 
+//var_dump($sid, $_POST["dataMatchingUserInputs"]);
+
     UtilsForWizard::processDataMatchingUserInputsWithTableNameStoreDB($sid, $_POST["dataMatchingUserInputs"]);
 }
 
