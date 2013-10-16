@@ -359,7 +359,7 @@ if(ShowProfileLastViewers == true){
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
 			break;
 		case 'notification': // Notification
-			$main_smarty->assign('user_page', $main_smarty->fetch($the_template . '/notification.tpl'));
+			$main_smarty->assign('user_page', $main_smarty->fetch($the_template . '/notification_all.tpl'));
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
 			break;
 		case 'viewfriends': // Personal Information -> People Following Me
