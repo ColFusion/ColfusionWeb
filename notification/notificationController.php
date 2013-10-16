@@ -8,6 +8,7 @@ include_once(mnminclude.'link.php');
 global $current_user;
 
 header('Content-type: text/html; charset=utf-8');
+
 if(isset($_GET["action"])){
     $action = $_GET["action"];
     $action();
@@ -21,10 +22,16 @@ function getNTFnum() {
 
 function allUserNTF() {
     $notificationDAO = new NotificationDAO();
-    //$_POST[$current_user]
+ 
     echo $notificationDAO->allUserNTF();
 }
 
+function removeNTF() {
+	$notificationDAO = new NotificationDAO();
+    $ntfID = $_GET["ntf_id"];
+
+    echo $notificationDAO->removeNTF($ntfID);
+}
 
 	
 ?>

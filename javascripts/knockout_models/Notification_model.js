@@ -1,14 +1,15 @@
-function newNotification(ntf_id, sender_id, action, receiver_id, target, target_id){
+function newNotification(ntf_id, sender, action, receiver_id, target, target_id, receiver){
     var self = this;
 
     self.ntf_id = ntf_id;
-    self.sender_id = sender_id;
+    self.sender = sender;
     self.action = action;
     self.receiver_id = receiver_id;
     self.target = target;
     self.target_id = target_id;
+    self.receiver = receiver;
 
-    self.msg = sender_id + " " + action + " " + target;
+    self.msg = sender + " " + action + " " + target;
 }
 
 function NotificationViewModel() {
@@ -17,7 +18,7 @@ function NotificationViewModel() {
     self.ntf_id = ko.observable();
     self.ntfsNUM = ko.observable();
     self.visible = ko.observable(false);
-
+    
     self.displayMore = function(){
         self.visible(!self.visible());
     }
@@ -27,21 +28,45 @@ function NotificationViewModel() {
         type: 'get',
         dataType: 'json',
         success: function (data) {
-            if (data.length > 0){
-                for (var i = 0; i <data.length; i++) {
-                    var tmpntf = new newNotification(data[i].ntf_id,data[i].sender,data[i].action,data[i].receiver_id,data[i].target, data[i].target_id);
+            if (data.notifications!=null){
+                for (var i = 0; i <data.notifications.length; i++) {
+                    var tmpntf = new newNotification(
+                        data.notifications[i].ntf_id,
+                        data.notifications[i].sender,
+                        data.notifications[i].action,
+                        data.notifications[i].receiver_id,
+                        data.notifications[i].target,
+                        data.notifications[i].target_id, 
+                        " ");
                     self.ntfs.push(tmpntf);
                 }
+            }//end if
+            else{
+                var tmpntf = new newNotification("","","There's No New Notifications.","","","no","");
+                self.ntfs.push(tmpntf);
             }
-            else;
+            self.ntfs.push(new newNotification("all ntf","      ","See All","all receiver","      ", "all", data.receiver));
         }
     });
 
     self.goToStory = function(ntf) {
-        story_url = "/Colfusion/story.php?title="+ntf.target_id;
-        //story_url = "http://localhost/Colfusion/story.php?title="+ntf.target_id;
-        window.open(story_url);
-    }
+        if (ntf.target_id == "all"){
+            story_url = "../Colfusion/user.php?login="+ntf.receiver+"&view=notificaion";
+            window.open(story_url);
+        }
+        else if (ntf.target_id == "no"){
+            //no nothing
+        }
+        else {
+            $.ajax({
+                url: '../Colfusion/notification/notificationController.php?action=removeNTF&ntf_id='+ntf.ntf_id,
+                type: 'post',
+                dataType: 'json'
+            });
+            story_url = "/Colfusion/story.php?title="+ntf.target_id;
+            window.open(story_url);
+        }
+    }//end of goToStory
 
 }
 

@@ -33,12 +33,25 @@ class NotificationDAO {
         $links = $this->ezSql->get_results($sql="SELECT C.user_login AS sender, A.ntf_id AS ntf_id, A.action AS action, B.receiver_id AS receiver_id, D.link_title AS target, D.link_id AS target_id
         FROM colfusion_notifications A, colfusion_notifications_unread B, colfusion_users C, colfusion_links D
         WHERE C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND D.link_id = A.target_id AND B.receiver_id=".$this->user->user_id);
-        return json_encode($links);
+        
+        $results = array(
+            "receiver" => $this->user->user_login,
+            "notifications" => $links,
+            );
+
+        return json_encode($results);
     }
 
     public function getNTFnum() {
         $number = $this->ezSql->get_results($sql="SELECT count(*) AS total FROM colfusion_notifications_unread WHERE receiver_id=".$this->user->user_id);
         return json_encode($number);
+    }
+
+    public function removeNTF($ntf_id) {
+        $query="DELETE FROM colfusion_notifications_unread WHERE ntf_id=".$ntf_id." AND receiver_id=".$this->user->user_id;
+        echo $query;
+        $this->ezSql->query($query);
+        return "success";
     }
   
 }

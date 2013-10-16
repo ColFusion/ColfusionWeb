@@ -24,18 +24,8 @@
             </script></a></li>
 
             <div class="notification_block" id="notification" data-bind="ntfVisible: visible, foreach: ntfs">
-                <!--<table class="notification_block_table"  data-bind="foreach: ntfs">
-                    <tbody data-bind="foreach: ntfs">
-                        <tr class="notification_block_row" data-bind="click: $root.goToStory">
-                            <td class="notification_block_cell" data-bind="text: sender_id"></td>
-                            <td class="notification_block_cell" data-bind="text: action"></td>
-                            <td class="notification_block_cell" data-bind="text: target"></td>
-                        </tr>
-                    </tbody>
-                </table>-->
                 <div class="notification_block_row" data-bind="click: $root.goToStory, text: msg"></div>
             </div>
-
             <script type="text/javascript">
                 applyb();
             </script>

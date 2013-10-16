@@ -1,4 +1,6 @@
-{literal}
+<h3>Notification Page</h3>
+
+<!--{literal}
 <div id="notification">
 	<table>
 		<tbody data-bind="foreach: ntfs()">
@@ -20,4 +22,4 @@
 		ko.applyBindings(new NotificationViewModel, document.getElementById('notification'));
 	});
 </script>
-{/literal}
+{/literal}-->
