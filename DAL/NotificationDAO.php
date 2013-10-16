@@ -53,6 +53,18 @@ class NotificationDAO {
         $this->ezSql->query($query);
         return "success";
     }
+
+    public function seeAll() {
+        $links = $this->ezSql->get_results($sql="SELECT user_login AS sender, action AS action, link_title AS target, N.target_id AS target_id FROM colfusion_notifications N, colfusion_saved_links S, colfusion_users U, colfusion_links L 
+            WHERE N.sender_id = U.user_id AND N.target_id = S.saved_link_id AND S.saved_link_id = L.link_id AND S.saved_user_id=".$this->user->user_id);
+        
+        $results = array(
+            "receiver" => $this->user->user_login,
+            "notifications" => $links,
+            );
+
+        return json_encode($results);
+    }
   
 }
 

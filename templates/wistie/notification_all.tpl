@@ -31,5 +31,5 @@
 </div>
 
 <script type="text/javascript">
-	applyb();
+	applyBseeall();
 </script>

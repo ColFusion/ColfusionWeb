@@ -24,7 +24,7 @@ function NotificationViewModel() {
     }
 
     $.ajax({
-        url: '/Colfusion/notification/notificationController.php?action=allUserNTF',
+        url: '/Colfusion/notification/notificationController.php?action=allUserNTF', //allUserNTF
         type: 'get',
         dataType: 'json',
         success: function (data) {
@@ -66,6 +66,44 @@ function NotificationViewModel() {
 
 }
 
+function seeAllViewModel(){
+    var self = this;
+    self.ntfs = ko.observableArray();
+    self.ntf_id = ko.observable();
+    self.ntfsNUM = ko.observable();
+    self.visible = ko.observable(false);
+    
+    self.displayMore = function(){
+        self.visible(!self.visible());
+    }
+
+    $.ajax({
+        url: '/Colfusion/notification/notificationController.php?action=seeAll', //allUserNTF
+        type: 'get',
+        dataType: 'json',
+        success: function (data) {
+            if (data.notifications!=null){
+                for (var i = 0; i <data.notifications.length; i++) {
+                    var tmpntf = new newNotification(
+                        " ",
+                        data.notifications[i].sender,
+                        data.notifications[i].action,
+                        " ",
+                        data.notifications[i].target,
+                        data.notifications[i].target_id, 
+                        " ");
+                    self.ntfs.push(tmpntf);
+                }
+            }//end if
+        }
+    });
+
+    self.goToStory = function(ntf) {
+        story_url = "/Colfusion/story.php?title="+ntf.target_id;
+        window.open(story_url);
+    }//end of goToStory
+}
+
 function GetCurrentNTFNum(){
     var number = 0;
     $.ajax({
@@ -94,6 +132,10 @@ ko.bindingHandlers.ntfVisible = {
 };
 
 function applyb() {
-    ko.applyBindings(new NotificationViewModel);
+    ko.applyBindings(new NotificationViewModel());
+}
+
+function applyBseeall() {
+    ko.applyBindings(new seeAllViewModel());
 }
 

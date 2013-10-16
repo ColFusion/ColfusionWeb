@@ -33,5 +33,11 @@ function removeNTF() {
     echo $notificationDAO->removeNTF($ntfID);
 }
 
+function seeAll() {
+    $notificationDAO = new NotificationDAO();
+
+    echo $notificationDAO->seeAll();
+}
+
 	
 ?>
