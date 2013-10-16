@@ -41,17 +41,13 @@ function NotificationViewModel() {
                     self.ntfs.push(tmpntf);
                 }
             }//end if
-            else{
-                var tmpntf = new newNotification("","","There's No New Notifications.","","","no","");
-                self.ntfs.push(tmpntf);
-            }
             self.ntfs.push(new newNotification("all ntf","      ","See All","all receiver","      ", "all", data.receiver));
         }
     });
 
     self.goToStory = function(ntf) {
         if (ntf.target_id == "all"){
-            story_url = "../Colfusion/user.php?login="+ntf.receiver+"&view=notificaion";
+            story_url = "../Colfusion/user.php?login="+ntf.receiver+"&view=notification";
             window.open(story_url);
         }
         else if (ntf.target_id == "no"){
