@@ -5,11 +5,13 @@
 <!--  show Statistics in side bar under Published data tab --> 
 
 <table class="tftable" border="1" style="white-space: nowrap;">
-    <tr data-bind="foreach: table">
+    <tbody data-bind="foreach: table">
+    <tr>
         <td data-bind="text: mean"></td>
         <td data-bind="text: stdev"></td>
         <td data-bind="text: count"></td>
     </tr>
+    </tbody>
 </table>
 
 
