@@ -49,9 +49,9 @@ class GlobalStatEngine {
 	public function GetStoryStatisticsSummary(){
 		$result = new stdClass();
 
-		$result->mean = "10";
-		$result->stdev = "20";
-		$result->count = "100";
+		$result->mean = ["10","11","12"];
+		$result->stdev = ["20","21","22"];
+		$result->count = ["100","101","102"];
 
 		return $result;
 	}
