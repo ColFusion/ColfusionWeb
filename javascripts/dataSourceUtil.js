@@ -40,6 +40,16 @@ var dataSourceUtil = (function() {
             dataType: 'json'
         });
     };
+
+    dataSourceUtil.getStoryStatisticsBySidAndName = function(sid, tableName, perPage, pageNo) {
+        return $.ajax({
+            type: 'POST',
+            url: my_pligg_base + "/Statistics/GlobalStatisticsController.php?action=storyStatisticsSummary",
+            data: {'sid': sid, 'table_name': tableName, 'perPage': perPage, 'pageNo': pageNo},
+            dataType: 'json'
+        });
+    };
+    
     
     dataSourceUtil.getTableDataByObject = function (object, perPage, pageNo) {
         return $.ajax({

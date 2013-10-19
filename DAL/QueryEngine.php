@@ -61,10 +61,13 @@ class QueryEngine {
             }
             else {
 
+
                 //NOTE: $select, $where and $group cannot have [] sybmols comming directly from column or table name
                 $select =  $transHandler->decodeTransformationInput($select, true);
                 $where =  $transHandler->decodeTransformationInput($where, true);
                 $groupby =  $transHandler->decodeTransformationInput($groupby, true);
+
+               
 
                 return $this->prepareAndRunQuery($select, $dataset, $where, $groupby, $perPage, $pageNo);
 
@@ -236,6 +239,7 @@ class QueryEngine {
     // group by - valid SQL group by
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
+
 
         if ($this->GetSourceType($from->sid) == "database") {
             $externalDBCredentials = $this->GetExternalDBCredentialsBySid($from->sid);

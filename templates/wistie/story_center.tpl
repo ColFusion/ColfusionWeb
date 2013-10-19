@@ -31,6 +31,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StoryStatusViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/ProgressBarViewModel.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StatisticsViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/hogan.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
@@ -54,6 +55,7 @@
   
     var sid = $.url().param('title');
     var dataPreviewViewModel;
+    var storyStatisticsViewModel;
     var relationshipViewModel;
     var storyStatusViewModel;
 
@@ -74,12 +76,15 @@
             dataType: 'html'
         });
 
+
+        storyStatisticsViewModel = new StoryStatisticsViewModel(sid);
         dataPreviewViewModel = new DataPreviewViewModel(sid);
         relationshipViewModel = new RelationshipViewModel(sid);
         storyStatusViewModel = new StoryStatusViewModel(sid, dataPreviewViewModel);
 
         ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
         ko.applyBindings(storyStatusViewModel, document.getElementById("storyStatus"));
+        ko.applyBindings(storyStatisticsViewModel, document.getElementById("storyStatisticsContainer"));
 
         relationshipViewModel.mineRelationships(10, 1);
     });

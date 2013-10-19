@@ -22,7 +22,10 @@ function GetGlobalStatisticsSummary() {
 function storyStatisticsSummary(){
 	$globalStatEngine = new GlobalStatEngine();
 
-	$results = $globalStatEngine->GetStoryStatisticsSummary();
+	$sid =  $_POST["sid"];
+	$tableName = $_POST["table_name"]; 
+
+	$results = $globalStatEngine->GetStoryStatisticsSummary($sid, $tableName);
 
 	echo json_encode($results);
 }

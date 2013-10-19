@@ -5,7 +5,7 @@
 
 	$curlCaller = new CurlCaller();
 
-	$res = $curlCaller->CallAPI("GET", REST_HOST . ":" . REST_PORT . "/ColFusionJAPI/webapi/provenance/4", false);
+	$res = $curlCaller->CallAPI("GET", REST_HOST . ":" . REST_PORT . "/ColFusionJAPI/webapi/provenance/6", false);
 
 	var_dump($res);
 ?>

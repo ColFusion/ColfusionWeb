@@ -12,6 +12,11 @@ ini_set('error_log','cache/log.php');
             $conn_str = "dblib:dbname=" . MSSQLWLS_DB_NAME . ";host=" . MSSQLWLS_DB_HOST .  ":" . MSSQLWLS_DB_PORT;
         }
 //try {
+
+var_dump($conn_str);
+var_dump(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD);
+
+//
         $pdo = new PDO($conn_str, MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec('SET QUOTED_IDENTIFIER ON');
