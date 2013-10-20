@@ -29,7 +29,7 @@ function NotificationViewModel() {
         dataType: 'json',
         success: function (data) {
             if (data.notifications!=null){
-                for (var i = 0; i <data.notifications.length; i++) {
+                for (var i = data.notifications.length-1; i>=0; i--) {
                     var tmpntf = new newNotification(
                         data.notifications[i].ntf_id,
                         data.notifications[i].sender,
@@ -41,7 +41,7 @@ function NotificationViewModel() {
                     self.ntfs.push(tmpntf);
                 }
             }//end if
-            self.ntfs.push(new newNotification("all ntf","      ","See All","all receiver","      ", "all", data.receiver));
+            self.ntfs.push(new newNotification("all ntf","******","See All","all receiver","******", "all", data.receiver));
         }
     });
 
@@ -78,12 +78,12 @@ function seeAllViewModel(){
     }
 
     $.ajax({
-        url: '/Colfusion/notification/notificationController.php?action=seeAll', //allUserNTF
+        url: '/Colfusion/notification/notificationController.php?action=seeAll', 
         type: 'get',
         dataType: 'json',
         success: function (data) {
             if (data.notifications!=null){
-                for (var i = 0; i <data.notifications.length; i++) {
+                for (var i = data.notifications.length-1; i>=0; i--) {
                     var tmpntf = new newNotification(
                         " ",
                         data.notifications[i].sender,
@@ -116,6 +116,10 @@ function GetCurrentNTFNum(){
                 document.getElementById("notification_icon").innerHTML += "("+number+")";
         }
     });
+}
+
+function UpdateNotifications(do){
+    alert(do);
 }
 
 ko.bindingHandlers.ntfVisible = {

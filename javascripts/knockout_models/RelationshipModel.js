@@ -183,6 +183,7 @@ var RelationshipModel = {
                     dataType: 'json'
                 });
             }).done(function (data) {
+                UpdateNotifications("send feedback");
                 self.yourComment(createCommentModel(data, true));
                 self.isYourCommentEditing(false);
                 updateFeedbackStatistics();

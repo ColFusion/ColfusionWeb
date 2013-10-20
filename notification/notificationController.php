@@ -39,5 +39,10 @@ function seeAll() {
     echo $notificationDAO->seeAll();
 }
 
+function addNTFtoDB($target_id, $do) {
+    $notificationDAO = new NotificationDAO();
+    
+    echo $notificationDAO->addNTFtoDB($target_id, $do);
+}
 	
 ?>

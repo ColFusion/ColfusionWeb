@@ -25,6 +25,8 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/dataSourceUtil.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/generalUtils.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Utils.js"></script>
+<!--edit by jason-->
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Notification_model.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/DataPreviewViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>

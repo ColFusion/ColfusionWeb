@@ -15,24 +15,10 @@ class NotificationDAO {
         $this->user = $current_user;
     }
 
-    public function getNumberOfUnreadNTF($userId) {
-        
-        $tableName = mysql_real_escape_string($tableName);
-        $allColsSql = "SELECT di.cid, sid, tableName, dname_chosen FROM `colfusion_dnameinfo` di 
-            INNER JOIN `colfusion_columnTableInfo` cti ON di.cid = cti.cid 
-            WHERE sid = $sid AND tableName = '$tableName'";
-        
-        foreach($this->ezSql->get_results($allColsSql) as $row){
-            $columns[$row->cid] = $row->dname_chosen;
-        }
-        
-        return $columns;
-    }
-
     public function allUserNTF() {
         $links = $this->ezSql->get_results($sql="SELECT C.user_login AS sender, A.ntf_id AS ntf_id, A.action AS action, B.receiver_id AS receiver_id, D.link_title AS target, D.link_id AS target_id
         FROM colfusion_notifications A, colfusion_notifications_unread B, colfusion_users C, colfusion_links D
-        WHERE C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND D.link_id = A.target_id AND B.receiver_id=".$this->user->user_id);
+        WHERE C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND D.link_id = A.target_id AND B.receiver_id=".$this->user->user_id." AND A.sender_id !=".$this->user->user_id);
         
         $results = array(
             "receiver" => $this->user->user_login,
@@ -56,7 +42,7 @@ class NotificationDAO {
 
     public function seeAll() {
         $links = $this->ezSql->get_results($sql="SELECT user_login AS sender, action AS action, link_title AS target, N.target_id AS target_id FROM colfusion_notifications N, colfusion_saved_links S, colfusion_users U, colfusion_links L 
-            WHERE N.sender_id = U.user_id AND N.target_id = S.saved_link_id AND S.saved_link_id = L.link_id AND S.saved_user_id=".$this->user->user_id);
+            WHERE N.sender_id = U.user_id AND N.target_id = S.saved_link_id AND S.saved_link_id = L.link_id AND S.saved_user_id=".$this->user->user_id." AND N.sender_id !=".$this->user->user_id);
         
         $results = array(
             "receiver" => $this->user->user_login,
@@ -64,6 +50,39 @@ class NotificationDAO {
             );
 
         return json_encode($results);
+    }
+
+    public function addNTFtoDB($target_id, $do) {
+        switch ($do) {
+            case 'addComment':
+                $userAction = "added a commment on";
+                break;
+            case 'updateComment':
+                $userAction = "updated previous commment on";
+                break;
+            case 'removeComment':
+                $userAction = "removed commment from";
+                break;   
+            default:
+                # code...
+                break;
+        }
+
+        $query = "INSERT INTO `colfusion`.`colfusion_notifications` (`ntf_id`, `sender_id`, `target_id`, `action`) VALUES ('', '".$this->user->user_id."', '".$target_id."', '".$userAction."')";
+        $this->ezSql->query($query);
+        $this->addUnreadNTFs();
+        return;
+    }
+
+    public function addUnreadNTFs(){
+        $query = "INSERT INTO  `colfusion`.`colfusion_notifications_unread` (`ntf_id` ,`receiver_id`) SELECT ntf_id, L.saved_user_id
+                    FROM colfusion_saved_links L, colfusion_notifications N
+                    WHERE L.saved_link_id = N.target_id
+                    AND L.saved_user_id !=".$this->user->user_id."
+                    AND ntf_id = ( 
+                    SELECT MAX( ntf_id ) 
+                    FROM colfusion_notifications )";
+        $this->ezSql->query($query);
     }
   
 }
