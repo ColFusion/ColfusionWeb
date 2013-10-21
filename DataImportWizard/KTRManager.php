@@ -33,7 +33,7 @@ class KTRManager {
         $this->addSheets($sheetNamesRowsColumns);
         $this->clearConstantAndTarget();
 
-        $this->addExcelInputFields($baseHeader);
+        $this->addExcelInputFields($baseHeader, $dataMatchingUserInputs);
 
         // $this->addSampleTarget();
         // foreach ($this->addedConstants as $constant) {
@@ -210,7 +210,7 @@ class KTRManager {
         }
     }
 
-    private function addExcelInputFields($baseHeader) {
+    private function addExcelInputFields($baseHeader, $dataMatchingUserInputs) {
         $steps = $this->ktrXml->step;
 
         foreach ($steps as $step) {
@@ -227,7 +227,7 @@ class KTRManager {
                     $field->addChild('trim_type', 'both');
                     $field->addChild('repeat', 'N');
 
-                    
+
                      foreach ($dataMatchingUserInputs as $key => $value) {
                         if ($item == $value["originalDname"]) {
                             if ($value["type"] == "INT") {
