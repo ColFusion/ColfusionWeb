@@ -118,10 +118,6 @@ function GetCurrentNTFNum(){
     });
 }
 
-function UpdateNotifications(do){
-    alert(do);
-}
-
 ko.bindingHandlers.ntfVisible = {
     init: function(element, valueAccessor) {
         // Initially set the element to be instantly visible/hidden depending on the value

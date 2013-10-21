@@ -179,7 +179,6 @@
     <input typle="hidden" name="relSerializedString"/>
 </form>
 {literal}
-    <script type="text/javascript" src="{$my_pligg_base}/javascript/knockout_models/Notification_model.js"></script>
     <script type="text/javascript">
         var newRelationshipViewModel = new NewRelationshipViewModel();
 

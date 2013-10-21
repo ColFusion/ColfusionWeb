@@ -227,7 +227,6 @@ function NewRelationshipViewModel() {
                     reset();
                     self.isContainerShowned(false);
                 }, 2000);
-                UpdateNotifications("I'm here");
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 self.isAddingRelationship(false);
