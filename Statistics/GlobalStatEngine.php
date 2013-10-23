@@ -63,21 +63,17 @@ class GlobalStatEngine {
 		$result = array();
 
 		$oneRow = array();
+
+		// Count tuples in each column
 		$oneRow["statistics"] = "count";
 
 		$queryEngine = new QueryEngine();
-$inputObj = new stdClass();
-			$inputObj->sid = $sid;
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
-
-
-			$select = "SELECT count(*) AS 'CountValue' ";
+			$select = "SELECT count($columnName) AS 'CountValue' ";
 			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 			$fromArray = array($from);
-
-
-
-
         	$obj = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 
         	//var_dump($obj);
@@ -86,9 +82,49 @@ $inputObj = new stdClass();
 		}
 
 		
-		$result[] = $oneRow;
+		$result[0] = $oneRow;
 
+		// Count distinct tuples in each column
+		$oneRow["statistics"] = "distintCount";
 
+		$queryEngine = new QueryEngine();
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		foreach ($columns as $cid => $columnName) {
+			$select = "SELECT count( DISTINCT $columnName) AS 'DistinctCount' ";
+			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+			$fromArray = array($from);
+			//$where = " WHERE $cid = '1'";
+        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+
+        	//var_dump($obj);
+        	//break;
+			$oneRow[$columnName] = $obj[0]["DistinctCount"];
+		}
+
+		
+		$result[1] = $oneRow;
+
+		// Sum tuples in each columns if can be cast into INTEGER
+		$oneRow["statistics"] = "sum";
+
+		$queryEngine = new QueryEngine();
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		foreach ($columns as $cid => $columnName) {
+			$select = "SELECT sum($columnName) AS 'SumValue' ";
+			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+			$fromArray = array($from);
+			$where = " WHERE $columnName NOT LIKE '%[0-9]%' ";
+        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+
+        	//var_dump($obj);
+        	//break;
+			$oneRow[$columnName] = $obj[0]["SumValue"];
+		}
+
+		
+		$result[2] = $oneRow;
 
 		// $result["mean"] = array("statistics" => "mean", "var1" => 10, "var2" => 11, "var3" => 12);
 		// $result["stdev"] = array("statistics" => "stdev", "var1" => 20, "var2" => 21, "var3" => 22);
@@ -97,7 +133,6 @@ $inputObj = new stdClass();
 	    $columns = NULL;
 	    foreach ($result as $r) {
 	        $json_array["data"][] = $r;
-
 	        if ($columns === NULL) {
 	            if (is_array($r))
 	                $columns = implode(",", array_keys($r));
