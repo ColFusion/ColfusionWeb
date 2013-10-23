@@ -26,6 +26,9 @@
             <div class="notification_block" id="notification" data-bind="ntfVisible: visible, foreach: ntfs">
                 <div class="notification_block_row" data-bind="click: $root.goToStory, text: msg"></div>
             </div>
+            <audio id="ntfSound">
+                <source src="{$my_pligg_base}/ntfSound.mp3" type="audio/mp3">
+            </audio>
             <script type="text/javascript">
                 applyb();
             </script>

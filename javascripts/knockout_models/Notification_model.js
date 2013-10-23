@@ -112,8 +112,10 @@ function GetCurrentNTFNum(){
         dataType: 'json',
         success: function (data) {
             number = data[0].total;
-            if (number != 0)
+            if (number != 0){
                 document.getElementById("notification_icon").innerHTML += "("+number+")";
+                document.getElementById("ntfSound").play();
+            }
         }
     });
 }
