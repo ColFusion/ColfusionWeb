@@ -118,6 +118,10 @@ function GetCurrentNTFNum(){
     });
 }
 
+function addNTFaddRelationship(){
+    alert("caonidaye");
+}
+
 ko.bindingHandlers.ntfVisible = {
     init: function(element, valueAccessor) {
         // Initially set the element to be instantly visible/hidden depending on the value

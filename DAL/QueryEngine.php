@@ -10,7 +10,7 @@ require_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 require_once(realpath(dirname(__FILE__)) . '/../DAL/LinkedServerCred.php');
 require_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
 require_once(realpath(dirname(__FILE__)) . '/RelationshipDAO.php');
-
+require_once(realpath(dirname(__FILE__)) . '/NotificationDAO.php');
 require_once(realpath(dirname(__FILE__)) . '/Neo4JDAO.php');
 require_once(realpath(dirname(__FILE__)) . '/../dataMatchChecker/DataMatcher.php');
 
@@ -415,6 +415,10 @@ class QueryEngine {
         $relationshipDao = new RelationshipDAO();
         $rel_id = $relationshipDao->addRelationship($user_id, $name, $description, $from, $to, $confidence, $comment);
 
+        // Update notifications
+        $notificationDAO = new NotificationDAO();
+        $notificationDAO->addNTFtoDB($rel_id, "addRelationship");
+        
         // add newly created relationshiop to neo4j.
         $neo4JDAO = new Neo4JDAO();
         $neo4JDAO->addRelationshipByRelId($rel_id);

@@ -40,6 +40,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout-2.3.0.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout.mapping.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Utils.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Notification_model.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/DataPreviewViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipViewModel.js"></script>

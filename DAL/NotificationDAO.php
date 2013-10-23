@@ -66,7 +66,13 @@ class NotificationDAO {
                 break;
             case 'removeComment':
                 $userAction = "removed commment from";
-                break;   
+                break;
+            case 'addRelationship':
+                $userAction = "added a relationship on";
+                break;
+            case 'removeRelationship':
+                $userAction = "removed previous relationship on";
+                break;  
             default:
                 # code...
                 break;
