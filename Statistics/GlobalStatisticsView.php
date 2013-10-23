@@ -9,9 +9,9 @@ include_once(realpath(dirname(__FILE__)) . '/../Smarty.class.php');
 $main_smarty = new Smarty;
 
 
-include(mnminclude.'html1.php');
-include(mnminclude.'link.php');
-include(mnminclude.'smartyvariables.php');
+include_once(realpath(dirname(__FILE__)) .'/../libs/html1.php');
+include_once(realpath(dirname(__FILE__)) .'/../libs/link.php');
+include_once(realpath(dirname(__FILE__)) . '/../libs/smartyvariables.php');
 
 
 // breadcrumbs and page title
