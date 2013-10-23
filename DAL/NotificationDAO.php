@@ -96,7 +96,8 @@ class NotificationDAO {
         
         $query = "INSERT INTO  `colfusion`.`colfusion_notifications_unread` (`ntf_id` ,`receiver_id`) SELECT MAX(ntf_id), link_author 
                     FROM colfusion_notifications N, colfusion_links L
-                    WHERE L.link_id = (SELECT sid2 FROM colfusion_relationships WHERE rel_id = ".$relID.")";
+                    WHERE L.link_id = (SELECT sid2 FROM colfusion_relationships WHERE rel_id = ".$relID.") 
+                    AND link_author != ".$this->user->user_id;
         $this->ezSql->query($query);
     }
   
