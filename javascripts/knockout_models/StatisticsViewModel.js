@@ -149,5 +149,11 @@ function StoryStatisticsViewModel(sid) {
             self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
         }
     };
+
+    $('.statisticsView').on('click','button',function(){
+    var  statisticsView= $(this).closest('.statisticsView') ;
+    couponContent.find('.storyStatisticsContainer').slideToggle();
+ });
+
 }
 

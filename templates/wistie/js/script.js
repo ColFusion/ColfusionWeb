@@ -91,6 +91,12 @@ $(document).ready(function(){
 			  $("#ajax_response").fadeOut("slow");
 		});
 	});
+
+	//Expand/Close Button 
+	$('#statisticsView').on('click','button',function(){
+    var  statisticsView= $(this).closest('#statisticsView') ;
+    statisticsView.find('#storyStatisticsContainer').slideToggle();
+ });
 	/*$("#notification_icon").click(function(){
 		$("#notification_icon").attr("href", $("#user_logged_in").attr("href") + "?login=" + $("#user_logged_in").html() + "&view=notification");
 	});*/

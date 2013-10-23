@@ -1,9 +1,9 @@
 {literal}
 <div class="dataPreviewTableWrapper">
-    <div class="preview-story">
+    <div class="preview-story" id = "statisticsView">
         <button data-bind="visible: currentTable" id="visualizeBtn" class="btn visualizeBtn" onclick="storyStatisticsViewModel.getTablesList();">
             <i class="icon-bar-chart" style="margin-right: 5px;"></i>
-            Expand
+            Expand/Close
         </button>
         <h3 class="preview-title">Statistics</h3>
         <div class="storycontent" id="storyStatisticsContainer">
