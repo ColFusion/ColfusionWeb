@@ -75,9 +75,6 @@ class GlobalStatEngine {
 			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 			$fromArray = array($from);
         	$obj = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
-
-        	//var_dump($obj);
-        	//break;
 			$oneRow[$columnName] = $obj[0]["CountValue"];
 		}
 
@@ -96,9 +93,6 @@ class GlobalStatEngine {
 			$fromArray = array($from);
 			//$where = " WHERE $cid = '1'";
         	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
-
-        	//var_dump($obj);
-        	//break;
 			$oneRow[$columnName] = $obj[0]["DistinctCount"];
 		}
 
@@ -112,20 +106,70 @@ class GlobalStatEngine {
 		$inputObj = new stdClass();
 		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
-			$select = "SELECT sum($columnName) AS 'SumValue' ";
+			$select = "SELECT ROUND(sum($columnName),2) AS 'SumValue' ";
 			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 			$fromArray = array($from);
-			$where = " WHERE $columnName NOT LIKE '%[0-9]%' ";
+			$where = " WHERE $columnName IS NOT NULL";
         	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
-
-        	//var_dump($obj);
-        	//break;
 			$oneRow[$columnName] = $obj[0]["SumValue"];
 		}
 
 		
 		$result[2] = $oneRow;
 
+		// Get Max value in each columns
+		$oneRow["statistics"] = "max";
+
+		$queryEngine = new QueryEngine();
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		foreach ($columns as $cid => $columnName) {
+			$select = "SELECT MAX($columnName) AS 'MaxValue' ";
+			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+			$fromArray = array($from);
+			$where = " WHERE $columnName IS NOT NULL";
+        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+			$oneRow[$columnName] = $obj[0]["MaxValue"];
+		}
+
+		
+		$result[3] = $oneRow;
+
+		// Get Min value in each columns
+		$oneRow["statistics"] = "min";
+
+		$queryEngine = new QueryEngine();
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		foreach ($columns as $cid => $columnName) {
+			$select = "SELECT MIN($columnName) AS 'MinValue' ";
+			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+			$fromArray = array($from);
+			$where = " WHERE $columnName IS NOT NULL";
+        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+			$oneRow[$columnName] = $obj[0]["MinValue"];
+		}
+
+		
+		$result[4] = $oneRow;
+
+		// Get Ave value in each columns
+		$oneRow["statistics"] = "Avg";
+
+		$queryEngine = new QueryEngine();
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		foreach ($columns as $cid => $columnName) {
+			$select = "SELECT AVG($columnName) AS 'AvgValue' ";
+			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+			$fromArray = array($from);
+			$where = " WHERE $columnName IS NOT NULL";
+        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+			$oneRow[$columnName] = $obj[0]["AvgValue"];
+		}
+
+		
+		$result[5] = $oneRow;
 		// $result["mean"] = array("statistics" => "mean", "var1" => 10, "var2" => 11, "var3" => 12);
 		// $result["stdev"] = array("statistics" => "stdev", "var1" => 20, "var2" => 21, "var3" => 22);
 		// $result["count"] = array("statistics" => "count", "var1" => 100, "var2" => 101, "var3" => 102);
