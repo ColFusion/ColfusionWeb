@@ -121,7 +121,7 @@ class SimpleQuery
         $sql = sprintf($sql, table_prefix, $sid, $server, $port, $user, $password, $database, $driver, $isImported, $linkedServerName);
         $db->query($sql);
 
-        $this->addLinkedServer($server, $port, $user, $password, $database, $driver, $linkedServerName);
+ //       $this->addLinkedServer($server, $port, $user, $password, $database, $driver, $linkedServerName);
     }
 
     public function getSourceDBInfo($sid)
@@ -184,7 +184,7 @@ class SimpleQuery
         $originaDname = $db->escape($originaDname);
         $value = $db->escape($value);
 
-        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, isConstant, constant_value) VALUES (%d, '%s', '%s', '%s', '%s', '%s', 1, '%s')";
+        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, isConstant, constant_value) VALUES (%d, '%s', '%s','%s', '%s', '%s', 1, '%s')";
         $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $value);
         $db->query($sql);
 
@@ -217,6 +217,7 @@ class SimpleQuery
         $db->query($sql);
     }
 
+    
     public function addCidToNewData($sid, $tableName)
     {
         global $db;
@@ -236,6 +237,16 @@ where cid is null and sid = $sid;
 EOQ;
 
         $db->query($query);
+    }
+    // Get info of unit.
+
+// Return a list of unit to display on the dropdown options
+    public function getUnits($type)
+    {
+        global $db;
+        $sql = "SELECT dname_value_unit FROM colfusion_dname_type where dname_value_type='$type'";
+        $results = $db->get_results($sql);
+        return $results;
     }
 
 }

@@ -2,26 +2,32 @@ function selectChange(event){
 
 
 	var selValue=$(event).val();
-
+    var optionString="<option value=value='0' selected>please choose unit of the type</option>";
 	$.ajax({
         url: my_pligg_base + '/DataImportWizard/wizardFromController.php?action=GetUnits',
         data: { type: selValue },
         type: "POST",
         dataType: "json",
         success: function(data){
-            alert(data);
+            for(key in data)
+            {
+            	var dataValue=data[key];
+            	optionString+="<option value="+dataValue.dname_value_unit+">"+dataValue.dname_value_unit+"</option>";
+            }
+            //alert(data);
+        $("[name='dname_value_unit']").html(optionString);
            
         }
     });
-
-	if(selValue=="STRING"){
+}
+/*	if(selValue=="STRING"){
 		
 		$("#unit_number").hide();
 		$("#unit_date").hide();
 		$("[name='number_unit']").hide();
 		$("[name='date_type']").hide();
 	}
-	if(selValue=="INT"){
+	if(selValue=="NUMBER"){
 		$("#unit_number").show();
 		$("#unit_date").hide();
 		$("[name='number_unit']").show();
@@ -33,8 +39,8 @@ function selectChange(event){
 		$("[name='number_unit']").hide();
 		$("[name='date_type']").show();
 		}
-	
-}
+*/	
+
 
 $(document).ready(function(){
 	$("#unit_number").hide();

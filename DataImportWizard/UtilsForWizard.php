@@ -24,7 +24,7 @@ class UtilsForWizard {
     }
 
     static function makeOptionsPart($data) {
-        //	$result = "<option value= -1>----</option>";
+        //  $result = "<option value= -1>----</option>";
 
         $result = "<option value='other' selected>Enter constant</option>";
 
@@ -99,10 +99,20 @@ class UtilsForWizard {
 
             $result .= "<tr>";
             $result .= "<td> <div><label style='display: inline;'><input type=\"checkbox\" name=\"columns[]\" value='$oneTableName.$tableColumns[$i]'>$tableColumns[$i]</label><input type='button' value='...' id='more$i' onClick='return $(\"#inDiv$i\").toggle();' /><img src='help.png' width='15' height='15' title='Click here to complete your definition about this dname.'/>";
-            $result .= "<div id='inDiv$i' style='display:none;'><label for='Dtype'>Corresponding value type:<img src='help.png' width='15' height='15' title='Data type of the header.'/></label><select name='dname_value_type' onChange='selectChange(this);'><option value='STRING' selected>STRING</option><option value='INT'>NUMBER</option><option value='DATE'>DATE</option></select>";
+            $result .= "<div id='inDiv$i' style='display:none;'><label for='Dtype'>Corresponding value type:<img src='help.png' width='15' height='15' title='Data type of the header.'/></label>
+            <select name='dname_value_type' onChange='selectChange(this);'>
+            <option value='STRING' selected>STRING</option>
+            <option value='NUMBER'>NUMBER</option>
+            <option value='DATE'>DATE</option>
+            </select>";
             $result .= "<label style='display:none;'>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label><input type='text' style='display:none;' name='dname_value_unit'/>";
-            $result .= "<label id='unit_number' style='display:none;'>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label><select name='number_unit' style='display:none;'><option value='0' selected>please choose unit of number</option><option value='1'>km</option><option value='2'>kg</option></select>
-            <label id='unit_date' style='display:none;'>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label><select name='date_type' style='display:none;'><option value='dd/mm/yyyy' selected>dd/mm/yyyy</option><option value='mm/dd/yyyy'>mm/dd/yyyy</option><option value='yyyy/mm/dd'>yyyy/mm/dd</option></select>";
+            $result .= "
+            <label id='unit_number' >Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label>
+            <select name='dname_value_unit' input type='text' >
+            <option value='0' selected>please choose unit of the type</option>
+            </select>
+            <label id='unit_date' style='display:none;'>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label>
+            ";
             $result .= "<label>Description: <img src='help.png' width='15' height='15' title='More description the header.'/></label><input type='text' name='dname_value_description'/></div></div></td>";
             $result .= "<td><div ><input type='text' value='$tableColumns[$i]' id='suggestmatch$i' name=\"Dname\" onClick=''/><input type='hidden' name='dname_value_tableName' value='$oneTableName'>";
 
@@ -111,7 +121,10 @@ class UtilsForWizard {
         $result .= "</table>";
         return $result;
     }
+    //<option value='1'>km</option>
+    //<option value='2'>kg</option>
 
+ 
     public static function stripWordUntilFirstDot($value) {
         return substr($value, stripos($value, '.') + 1);
     }

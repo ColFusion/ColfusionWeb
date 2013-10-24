@@ -8,16 +8,21 @@ $action($sid, $dbHandler, $userId);
 exit;
 
 function GetUnits() {
+	
+        //return $results;
 
     $type = $_POST["type"];
 
     $queryEngine = new QueryEngine();
 
-   // $units = $queryEngine->simpleQuery->getUnits($type);
+    $units = $queryEngine->simpleQuery->getUnits($type);
     
-    $units = "blbalbalbalbalbalbal $type";
+    //$units = "blbalbalbalbalbalbal $type";
 
-    echo json_encode($units);
+    //return $units;
+     //echo json_encode($type);
+     echo json_encode($units);
+
 }
 
 ?>
