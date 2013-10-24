@@ -1,5 +1,19 @@
 function selectChange(event){
+
+
 	var selValue=$(event).val();
+
+	$.ajax({
+        url: my_pligg_base + '/DataImportWizard/wizardFromController.php?action=GetUnits',
+        data: { type: selValue },
+        type: "POST",
+        dataType: "json",
+        success: function(data){
+            alert(data);
+           
+        }
+    });
+
 	if(selValue=="STRING"){
 		
 		$("#unit_number").hide();
@@ -21,6 +35,7 @@ function selectChange(event){
 		}
 	
 }
+
 $(document).ready(function(){
 	$("#unit_number").hide();
 	$("#unit_date").hide();

@@ -336,6 +336,8 @@ var importWizard = (function () {
         }
     }
 
+    
+
     // Step 2
     function displayOptionsStepCardOnLoad(card) {
         if (getImportSource() == "database") {

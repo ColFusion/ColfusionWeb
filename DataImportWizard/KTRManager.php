@@ -33,7 +33,7 @@ class KTRManager {
         $this->addSheets($sheetNamesRowsColumns);
         $this->clearConstantAndTarget();
 
-        $this->addExcelInputFields($baseHeader);
+        $this->addExcelInputFields($baseHeader, $dataMatchingUserInputs);
 
         // $this->addSampleTarget();
         // foreach ($this->addedConstants as $constant) {
@@ -210,7 +210,7 @@ class KTRManager {
         }
     }
 
-    private function addExcelInputFields($baseHeader) {
+    private function addExcelInputFields($baseHeader, $dataMatchingUserInputs) {
         $steps = $this->ktrXml->step;
 
         foreach ($steps as $step) {
@@ -226,7 +226,21 @@ class KTRManager {
                     $field->addChild('precision', '-1');
                     $field->addChild('trim_type', 'both');
                     $field->addChild('repeat', 'N');
-                    $field->addChild('format', '0.##############;-0.##############'); //TODO: This might need some testing on different data 
+
+                    foreach ($dataMatchingUserInputs as $key => $value) {
+                        if ($item == $value["originalDname"]) {
+                            if ($value["type"] == "INT") {
+                                $field->addChild('format', '0.##############;-0.##############'); //TODO: This might need some testing on different data 
+                            }
+                            else {
+
+                            }
+                            break;
+                        }
+                        $field->addChild('stream_name', $value["originalDname"]);
+                    }
+
+//                    $field->addChild('format', '0.##############;-0.##############'); //TODO: This might need some testing on different data 
                     $field->addChild('currency');
                     $field->addChild('decimal');
                     $field->addChild('group');

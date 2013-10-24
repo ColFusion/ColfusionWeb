@@ -335,6 +335,12 @@
                             </ul>                  
                         </td>
                     </tr>
+                    <tr>
+                        <td class="step1_input_title" style="vertical-align: top;"><span style="margin-top: 5px">Provenance:</span></td>
+                        <td style="vertical-align: top;">
+                            Put choose file button               
+                        </td>
+                    </tr>
                 </table>
 
                 <h4 class="stepHeader">Step 2: Upload Your Data</h4>
