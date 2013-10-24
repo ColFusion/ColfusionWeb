@@ -108,6 +108,7 @@ class GlobalStatEngine {
 		foreach ($columns as $cid => $columnName) {
 
 			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			$missValue = $this->statisticsDAO->GetMissingValue($cid);
 			if ($cidType == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
 				continue;
@@ -116,7 +117,7 @@ class GlobalStatEngine {
 				$select = "SELECT ROUND(sum($columnName),2) AS 'SumValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
-				$where = " WHERE $columnName IS NOT NULL";
+				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["SumValue"];
 			}
@@ -133,6 +134,7 @@ class GlobalStatEngine {
 		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
 			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			$missValue = $this->statisticsDAO->GetMissingValue($cid);
 			if ($cidType == "STRING"){
 				$oneRow[$columnName] = "--";
 				continue;
@@ -141,7 +143,7 @@ class GlobalStatEngine {
 				$select = "SELECT MAX($columnName) AS 'MaxValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
-				$where = " WHERE $columnName IS NOT NULL";
+				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MaxValue"];
 			}
@@ -158,6 +160,7 @@ class GlobalStatEngine {
 		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
 			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			$missValue = $this->statisticsDAO->GetMissingValue($cid);
 			if ($cidType == "STRING"){
 				$oneRow[$columnName] = "--";
 				continue;
@@ -166,7 +169,7 @@ class GlobalStatEngine {
 				$select = "SELECT MIN($columnName) AS 'MinValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
-				$where = " WHERE $columnName IS NOT NULL";
+				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MinValue"];
 			}
@@ -183,15 +186,16 @@ class GlobalStatEngine {
 		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
 			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			$missValue = $this->statisticsDAO->GetMissingValue($cid);
 			if ($cidType == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
 				continue;
 			}
 			else {
-				$select = "SELECT AVG($columnName) AS 'AvgValue' ";
+				$select = "SELECT ROUND(AVG($columnName),2) AS 'AvgValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
-				$where = " WHERE $columnName IS NOT NULL";
+				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["AvgValue"];
 			}
@@ -199,6 +203,32 @@ class GlobalStatEngine {
 
 		
 		$result[5] = $oneRow;
+
+		// Get Count of Missing Values 
+		$oneRow["statistics"] = "Missing";
+
+		$queryEngine = new QueryEngine();
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		foreach ($columns as $cid => $columnName) {
+			//$cidType = $this->statisticsDAO->GetColumnType($cid);
+			$missValue = $this->statisticsDAO->GetMissingValue($cid);
+			//if ($cidType == "STRING" || $cidType == "DATE"){
+			//	$oneRow[$columnName] = "--";
+			//	continue;
+			//}
+			//else {
+				$select = "SELECT count($columnName) AS 'MissValue' ";
+				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+				$fromArray = array($from);
+				$where = " WHERE $columnName = $missValue";
+        		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+				$oneRow[$columnName] = $obj[0]["MissValue"];
+			//}
+		}
+
+		
+		$result[6] = $oneRow;
 		// $result["mean"] = array("statistics" => "mean", "var1" => 10, "var2" => 11, "var3" => 12);
 		// $result["stdev"] = array("statistics" => "stdev", "var1" => 20, "var2" => 21, "var3" => 22);
 		// $result["count"] = array("statistics" => "count", "var1" => 100, "var2" => 101, "var3" => 102);
