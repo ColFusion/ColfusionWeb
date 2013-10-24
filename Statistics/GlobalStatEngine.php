@@ -106,12 +106,20 @@ class GlobalStatEngine {
 		$inputObj = new stdClass();
 		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
-			$select = "SELECT ROUND(sum($columnName),2) AS 'SumValue' ";
-			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
-			$fromArray = array($from);
-			$where = " WHERE $columnName IS NOT NULL";
-        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
-			$oneRow[$columnName] = $obj[0]["SumValue"];
+
+			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			if ($cidType == "STRING" || $cidType == "DATE"){
+				$oneRow[$columnName] = "--";
+				continue;
+			}
+			else {
+				$select = "SELECT ROUND(sum($columnName),2) AS 'SumValue' ";
+				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+				$fromArray = array($from);
+				$where = " WHERE $columnName IS NOT NULL";
+        		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+				$oneRow[$columnName] = $obj[0]["SumValue"];
+			}
 		}
 
 		
@@ -124,12 +132,19 @@ class GlobalStatEngine {
 		$inputObj = new stdClass();
 		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
-			$select = "SELECT MAX($columnName) AS 'MaxValue' ";
-			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
-			$fromArray = array($from);
-			$where = " WHERE $columnName IS NOT NULL";
-        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
-			$oneRow[$columnName] = $obj[0]["MaxValue"];
+			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			if ($cidType == "STRING"){
+				$oneRow[$columnName] = "--";
+				continue;
+			}
+			else {
+				$select = "SELECT MAX($columnName) AS 'MaxValue' ";
+				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+				$fromArray = array($from);
+				$where = " WHERE $columnName IS NOT NULL";
+        		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+				$oneRow[$columnName] = $obj[0]["MaxValue"];
+			}
 		}
 
 		
@@ -142,12 +157,19 @@ class GlobalStatEngine {
 		$inputObj = new stdClass();
 		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
-			$select = "SELECT MIN($columnName) AS 'MinValue' ";
-			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
-			$fromArray = array($from);
-			$where = " WHERE $columnName IS NOT NULL";
-        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
-			$oneRow[$columnName] = $obj[0]["MinValue"];
+			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			if ($cidType == "STRING"){
+				$oneRow[$columnName] = "--";
+				continue;
+			}
+			else {
+				$select = "SELECT MIN($columnName) AS 'MinValue' ";
+				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+				$fromArray = array($from);
+				$where = " WHERE $columnName IS NOT NULL";
+        		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+				$oneRow[$columnName] = $obj[0]["MinValue"];
+			}
 		}
 
 		
@@ -160,12 +182,19 @@ class GlobalStatEngine {
 		$inputObj = new stdClass();
 		$inputObj->sid = $sid;
 		foreach ($columns as $cid => $columnName) {
-			$select = "SELECT AVG($columnName) AS 'AvgValue' ";
-			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
-			$fromArray = array($from);
-			$where = " WHERE $columnName IS NOT NULL";
-        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
-			$oneRow[$columnName] = $obj[0]["AvgValue"];
+			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			if ($cidType == "STRING" || $cidType == "DATE"){
+				$oneRow[$columnName] = "--";
+				continue;
+			}
+			else {
+				$select = "SELECT AVG($columnName) AS 'AvgValue' ";
+				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+				$fromArray = array($from);
+				$where = " WHERE $columnName IS NOT NULL";
+        		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+				$oneRow[$columnName] = $obj[0]["AvgValue"];
+			}
 		}
 
 		

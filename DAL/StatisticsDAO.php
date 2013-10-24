@@ -57,6 +57,20 @@ class StatisticsDAO {
         
         return $countRow-> usernumber;
     }
+
+    // Type of each column
+    public function GetColumnType($cid){
+        // return the types of each column
+        $sql = "SELECT dname_value_type as cidType FROM `colfusion_dnameinfo` WHERE cid = $cid ";
+        $countRow = $this->ezSql->get_row($sql);
+        
+        return $countRow-> cidType;
+    }
+
+    // Missing Value
+    public function GetMissingValue(){
+        // return missing value 
+    }
 }
 
 ?>
