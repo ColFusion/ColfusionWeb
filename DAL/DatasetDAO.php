@@ -51,6 +51,17 @@ class DatasetDAO {
         
         return $this->ezSql->get_row($query);
     }
+
+    public function saveProvenanceXML($sid, $provenance) {
+
+        $provenance = mysql_real_escape_string($provenance);
+
+        $query = "UPDATE colfusion_sourceinfo set provenance = '$provenance' where sid = $sid";
+        
+//var_dump($query);
+
+        $this->ezSql->query($query);
+    }
 }
 
 ?>
