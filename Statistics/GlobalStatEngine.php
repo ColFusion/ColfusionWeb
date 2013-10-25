@@ -109,6 +109,9 @@ class GlobalStatEngine {
 
 			$cidType = $this->statisticsDAO->GetColumnType($cid);
 			$missValue = $this->statisticsDAO->GetMissingValue($cid);
+			if ($missValue == ""){
+				$missValue = "-99999999";
+			}
 			if ($cidType == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
 				continue;
@@ -135,6 +138,9 @@ class GlobalStatEngine {
 		foreach ($columns as $cid => $columnName) {
 			$cidType = $this->statisticsDAO->GetColumnType($cid);
 			$missValue = $this->statisticsDAO->GetMissingValue($cid);
+			if ($missValue == ""){
+				$missValue = "-99999999";
+			}
 			if ($cidType == "STRING"){
 				$oneRow[$columnName] = "--";
 				continue;
@@ -161,6 +167,9 @@ class GlobalStatEngine {
 		foreach ($columns as $cid => $columnName) {
 			$cidType = $this->statisticsDAO->GetColumnType($cid);
 			$missValue = $this->statisticsDAO->GetMissingValue($cid);
+			if ($missValue == ""){
+				$missValue = "-99999999";
+			}
 			if ($cidType == "STRING"){
 				$oneRow[$columnName] = "--";
 				continue;
@@ -187,6 +196,9 @@ class GlobalStatEngine {
 		foreach ($columns as $cid => $columnName) {
 			$cidType = $this->statisticsDAO->GetColumnType($cid);
 			$missValue = $this->statisticsDAO->GetMissingValue($cid);
+			if ($missValue == ""){
+				$missValue = "-99999999";
+			}
 			if ($cidType == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
 				continue;
@@ -213,6 +225,9 @@ class GlobalStatEngine {
 		foreach ($columns as $cid => $columnName) {
 			//$cidType = $this->statisticsDAO->GetColumnType($cid);
 			$missValue = $this->statisticsDAO->GetMissingValue($cid);
+			if ($missValue == ""){
+				$missValue = "-99999999";
+			}
 			if ($missValue == ""){
 				$oneRow[$columnName] = "--";
 				continue;
