@@ -70,7 +70,7 @@ class StatisticsDAO {
     // Missing Value
     public function GetMissingValue($cid){
         // return missing value 
-        $sql = "SELECT missing_value as missValue FROM `colfusion_dnameinfo` WHERE cid = $cid ";
+        $sql = "SELECT missing_value as missValue FROM `colfusion_dnameinfo` WHERE cid = $cid";
         $countRow = $this->ezSql->get_row($sql);
         
         return $countRow-> missValue;

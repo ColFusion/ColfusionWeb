@@ -213,22 +213,24 @@ class GlobalStatEngine {
 		foreach ($columns as $cid => $columnName) {
 			//$cidType = $this->statisticsDAO->GetColumnType($cid);
 			$missValue = $this->statisticsDAO->GetMissingValue($cid);
-			//if ($cidType == "STRING" || $cidType == "DATE"){
-			//	$oneRow[$columnName] = "--";
-			//	continue;
-			//}
-			//else {
+			if ($missValue == ""){
+				$oneRow[$columnName] = "--";
+				continue;
+			}
+			else {
 				$select = "SELECT count($columnName) AS 'MissValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
 				$where = " WHERE $columnName = $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MissValue"];
-			//}
+			}
 		}
 
 		
 		$result[6] = $oneRow;
+
+		
 		// $result["mean"] = array("statistics" => "mean", "var1" => 10, "var2" => 11, "var3" => 12);
 		// $result["stdev"] = array("statistics" => "stdev", "var1" => 20, "var2" => 21, "var3" => 22);
 		// $result["count"] = array("statistics" => "count", "var1" => 100, "var2" => 101, "var3" => 102);
