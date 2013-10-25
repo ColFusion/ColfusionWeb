@@ -1595,3 +1595,7 @@ a:active {
 .notification_block_row:hover {
     background-color: #FBF7E5;
 }
+
+#storyStatisticsContainer{
+    display: none;
+}
