@@ -184,7 +184,7 @@ class SimpleQuery
         $originaDname = $db->escape($originaDname);
         $value = $db->escape($value);
 
-        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, isConstant, constant_value) VALUES (%d, '%s', '%s','%s', '%s', '%s', 1, '%s')";
+        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, isConstant, constant_value) VALUES (%d, '%s','%s','%s', '%s', '%s', 1, '%s')";
         $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $value);
         $db->query($sql);
 

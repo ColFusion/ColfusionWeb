@@ -1,6 +1,6 @@
 function selectChange(event){
 
-
+    var i=(event.name).substr(16);//(event.name).length-1);
 	var selValue=$(event).val();
     var optionString="<option value=value='0' selected>please choose unit of the type</option>";
 	$.ajax({
@@ -15,7 +15,7 @@ function selectChange(event){
             	optionString+="<option value="+dataValue.dname_value_unit+">"+dataValue.dname_value_unit+"</option>";
             }
             //alert(data);
-        $("[name='dname_value_unit']").html(optionString);
+        $("[name='dname_value_unit"+i+"']").html(optionString);
            
         }
     });
