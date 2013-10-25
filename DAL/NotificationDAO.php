@@ -10,7 +10,7 @@ class NotificationDAO {
     private $ezSql;
     private $user;
     public function __construct() {
-        global $db, $current_user;;
+        global $db, $current_user;
         $this->ezSql = $db;
         $this->user = $current_user;
     }
@@ -43,9 +43,9 @@ class NotificationDAO {
 
     //see every notification
     public function seeAll() {
-        $links = $this->ezSql->get_results($sql="SELECT user_login AS sender, action AS action, link_title AS target, N.target_id AS target_id FROM colfusion_notifications N, colfusion_saved_links S, colfusion_users U, colfusion_links L 
+        $links = $this->ezSql->get_results($sql="SELECT user_login AS sender, action AS action, link_title AS target, N.target_id AS target_id, N.datetime AS datetime FROM colfusion_notifications N, colfusion_saved_links S, colfusion_users U, colfusion_links L 
             WHERE N.sender_id = U.user_id AND N.target_id = S.saved_link_id AND S.saved_link_id = L.link_id AND S.saved_user_id=".$this->user->user_id." AND N.sender_id !=".$this->user->user_id." UNION (SELECT U.user_login AS sender, 
-                N.action AS action, L.link_title AS target, N.target_id AS target_id FROM colfusion_notifications N, colfusion_users U, colfusion_links L WHERE N.sender_id = U.user_id AND N.target_id = L.link_id AND L.link_author = ".$this->user->user_id.")");
+                N.action AS action, L.link_title AS target, N.target_id AS target_id, N.datetime AS datetime FROM colfusion_notifications N, colfusion_users U, colfusion_links L WHERE N.sender_id = U.user_id AND N.target_id = L.link_id AND L.link_author = ".$this->user->user_id.")");
         // 1st part is ntfs to user's saved datasets
         // union part is ntfs to user's published datasets
         $results = array(
@@ -77,8 +77,9 @@ class NotificationDAO {
                 # code...
                 break;
         }
-         
-        $query = "INSERT INTO `colfusion`.`colfusion_notifications` (`sender_id`, `target_id`, `action`) SELECT '".$this->user->user_id."',sid2,'".$userAction."' FROM colfusion_relationships WHERE rel_id=".$relID;
+        date_default_timezone_set('America/New_York');
+        $datetime = date('Y/m/d H:i:s');
+        $query = "INSERT INTO `colfusion`.`colfusion_notifications` (`sender_id`, `target_id`, `action`, `datetime`) SELECT '".$this->user->user_id."',sid2,'".$userAction."', '".$datetime."' FROM colfusion_relationships WHERE rel_id=".$relID;
         $this->ezSql->query($query);
         $this->addUnreadNTFs($relID);
         return;
@@ -93,12 +94,17 @@ class NotificationDAO {
                     SELECT MAX( ntf_id ) 
                     FROM colfusion_notifications )";
         $this->ezSql->query($query);
-        
-        $query = "INSERT INTO  `colfusion`.`colfusion_notifications_unread` (`ntf_id` ,`receiver_id`) SELECT MAX(ntf_id), link_author 
-                    FROM colfusion_notifications N, colfusion_links L
-                    WHERE L.link_id = (SELECT sid2 FROM colfusion_relationships WHERE rel_id = ".$relID.") 
-                    AND link_author != ".$this->user->user_id;
-        $this->ezSql->query($query);
+
+        $query = "SELECT link_author FROM colfusion_links WHERE link_id = (SELECT sid2 FROM colfusion_relationships WHERE rel_id= ".$relID.")";
+        $result = $this->ezSql->get_results($query);
+        foreach ($result as $r) {
+            $link_author = $r->link_author;
+        }
+        if($link_author != $this->user->user_id){
+            $query = "INSERT INTO  `colfusion`.`colfusion_notifications_unread` (`ntf_id` ,`receiver_id`) "
+            ."SELECT MAX(ntf_id), '".$link_author."' FROM colfusion_notifications";
+            $this->ezSql->query($query);
+        }
     }
   
 }

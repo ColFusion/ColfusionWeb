@@ -1,4 +1,4 @@
-function newNotification(ntf_id, sender, action, receiver_id, target, target_id, receiver){
+function newNotification(ntf_id, sender, action, receiver_id, target, target_id, receiver, datetime){
     var self = this;
 
     self.ntf_id = ntf_id;
@@ -8,8 +8,9 @@ function newNotification(ntf_id, sender, action, receiver_id, target, target_id,
     self.target = target;
     self.target_id = target_id;
     self.receiver = receiver;
-
+    self.datetime = datetime;
     self.msg = sender + " " + action + " " + target;
+    self.seeAllMsg = " "+action + " " + target + "    " + datetime;
 }
 
 function NotificationViewModel() {
@@ -37,11 +38,11 @@ function NotificationViewModel() {
                         data.notifications[i].receiver_id,
                         data.notifications[i].target,
                         data.notifications[i].target_id, 
-                        " ");
+                        " ", " ");
                     self.ntfs.push(tmpntf);
                 }
             }//end if
-            self.ntfs.push(new newNotification("all ntf","******","See All","all receiver","******", "all", data.receiver));
+            self.ntfs.push(new newNotification("all ntf","******","See All","all receiver","******", "all", data.receiver, " "));
         }
     });
 
@@ -91,7 +92,8 @@ function seeAllViewModel(){
                         " ",
                         data.notifications[i].target,
                         data.notifications[i].target_id, 
-                        " ");
+                        " ",
+                        data.notifications[i].datetime);
                     self.ntfs.push(tmpntf);
                 }
             }//end if
@@ -102,6 +104,11 @@ function seeAllViewModel(){
         story_url = "/Colfusion/story.php?title="+ntf.target_id;
         window.open(story_url);
     }//end of goToStory
+
+    self.goToUser = function(ntf){
+        user_url = "../Colfusion/user.php?login="+ntf.sender;
+        window.open(user_url);
+    }//end of goToUser
 }
 
 function GetCurrentNTFNum(){

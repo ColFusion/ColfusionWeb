@@ -26,7 +26,8 @@
 <div class="notification_all_block" data-bind="foreach: ntfs">
 	<div class="notification_all_block_row">
 		<img class="notification_all_icon" src="{$my_pligg_base}/templates/{$the_template}/images/notification_item.png"/>
-		<span style="cursor: pointer;" data-bind="click: $root.goToStory, text: msg"></span>
+		<a style="cursor: pointer;" data-bind="click: $root.goToUser, text: sender"></a>
+		<span style="cursor: pointer;" data-bind="click: $root.goToStory, text: seeAllMsg"></span>
 	</div>
 </div>
 
