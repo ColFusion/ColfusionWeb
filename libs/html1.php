@@ -552,8 +552,16 @@ function getmyFullurl($x, $var1="", $var2="", $var3="") {
 }
 
 function getmyurl($x, $var1="", $var2="", $var3="") {
-	global $URLMethod;
+	global $URLMethod, $db, $current_user;
 	
+	$sql = "SELECT user_email FROM colfusion_users WHERE user_id=".$current_user->user_id;
+	$result = $db->get_results($sql);
+	if($result){
+		foreach ($result as $r) {
+		$uEmail = $r->user_email;
+		}
+	}
+
 	$var1 = sanitize($var1,1);
 	$var2 = sanitize($var2,1);
 	$var3 = sanitize($var3,1);
@@ -574,6 +582,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 	
 		If ($x == "index") {return my_pligg_base."/index.php";}
 		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
+		If ($x == "chat") {return my_pligg_base."/chat/chat.php?name=".$current_user->user_login."&email=".$uEmail;}
 		If ($x == "maincategory") {return my_pligg_base."/index.php?category=" . $var1;}
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming.php?category=" . $var1;}
 		If ($x == "discardedcategory") {return my_pligg_base."/discarded.php?category=" . $var1;}
@@ -695,6 +704,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 	
 		If ($x == "maincategory") {return my_pligg_base."/" . $var1;}
 		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
+		If ($x == "chat") {return my_pligg_base."/chat/chat.php?name=".$current_user->user_login."&email=".$uEmail;}
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming/" . $var1;}
 		If ($x == "discardedcategory") {return my_pligg_base."/discarded/" . $var1 . "/";}
 //		If ($x == "queuedcategory") {return my_pligg_base."/upcoming/category/" . $var1 . "/";}
@@ -868,6 +878,7 @@ function SetSmartyURLs($main_smarty) {
 	$main_smarty->assign('unjoin_group', getmyurl("unjoin_group"));
 
 	$main_smarty->assign('URL_notification',getmyurl("notification"));
+	$main_smarty->assign('URL_chat',getmyurl("chat"));
 	return $main_smarty;
 }
 

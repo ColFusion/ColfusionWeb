@@ -32,7 +32,8 @@
             <script type="text/javascript">
                 applyb();
             </script>
-            
+            <li><a class="topmenu" href="{$URL_chat}">chat</a></li>
+
             <li><a class="topmenu" href="{$URL_logout}"><img src="{$my_pligg_base}/templates/{$the_template}/images/logout.png"/> {#PLIGG_Visual_Logout#}</a></li>
         </ul>
     </div>

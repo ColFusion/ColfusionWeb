@@ -18,6 +18,7 @@ function getNTFnum() {
 	$notificationDAO = new NotificationDAO();
 
     echo $notificationDAO->getNTFnum();
+
 }
 
 function allUserNTF() {
