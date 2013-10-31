@@ -1,29 +1,30 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html dir="{#PLIGG_Visual_Language_Direction#}" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
 <head>
 	{checkActionsTpl location="tpl_pligg_head_start"}
 	{include file="meta.tpl"}
 
 	<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/style.css" media="screen" />
 	{if $pagename eq "submit"}<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/wick.css" />{/if}
-    
-    <link href="{$my_pligg_base}/templates/{$the_template}/css/image-slider.css" rel="stylesheet" type="text/css" />
-	
-    <!------------------------------------------------------------------------>
-    <!--link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/dropdown.css" media="screen" /-->
+
+	<link href="{$my_pligg_base}/templates/{$the_template}/css/image-slider.css" rel="stylesheet" type="text/css" />
+
+	<!------------------------------------------------------------------------>
+	<!--link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/dropdown.css" media="screen" /-->
 	<!--link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/dropdown-default.css" media="screen" /-->
-    <!------------------------------------------------------------------------>
-    
-    	
-    <script src="{$my_pligg_base}/templates/{$the_template}/js/image-slider.js" type="text/javascript"></script>
-	
+	<!------------------------------------------------------------------------>
+
+	<script src="{$my_pligg_base}/templates/{$the_template}/js/image-slider.js" type="text/javascript"></script>
+
 	{if not $no_jquery_in_pligg}
 		<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
 	{/if}
-    <script src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
+
+	<script src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
 
 	{if $Voting_Method eq 2}
-	<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/star_rating/star.css" media="screen" />
+		<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/star_rating/star.css" media="screen" />
 	{/if}
 
 	{checkForCss}
@@ -67,12 +68,10 @@
 		<title>{#PLIGG_Visual_Search_Advanced#} | {#PLIGG_Visual_Name#}</title>
 	{elseif preg_match('/search.php$/',$templatelite.server.SCRIPT_NAME)}	
 		<title>{#PLIGG_Visual_Search_SearchResults#} '{if $get.search}{$get.search}{else}{$get.date}{/if}' | {#PLIGG_Visual_Name#}</title>
-        
-   
+
 	{elseif preg_match('/searchbycategory.php$/',$templatelite.server.SCRIPT_NAME)}	
 		<title>Search by Category | {#PLIGG_Visual_Name#}</title>
-   
-    
+
 	{elseif preg_match('/groups.php$/',$templatelite.server.SCRIPT_NAME)}	
 		{if $get.page>1}
 			<title>{#PLIGG_Visual_Groups#} | {#PLIGG_Page_Title#} {$get.page} | {#PLIGG_Visual_Name#}</title>
@@ -119,74 +118,87 @@
 	{checkActionsTpl location="tpl_pligg_head_end"}
 	
 	<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/vis.js">
-	
-<?php include_once(realpath(dirname(__FILE__)) . "/../../analyticstracking.php") ?>
 
+	<?php include_once(realpath(dirname(__FILE__)) . "/../../analyticstracking.php") ?>
 </head>
+
 <body dir="{#PLIGG_Visual_Language_Direction#}" {$body_args}>
 
-
-
 	{checkActionsTpl location="tpl_pligg_body_start"}
-	
-    {literal}
-			<script type="text/javascript" language="JavaScript">
+
+	{literal}
+		<script type="text/javascript" language="JavaScript">
 			function checkForm() {
-			answer = true;
-			if (siw && siw.selectingSomething)
-				answer = false;
-			return answer;
-			}//
-			</script>
-    {/literal}
-    
-    {checkActionsTpl location="tpl_pligg_banner_top"}
-        
-		{include file=$tpl_header.".tpl"}
-    
-<!-- START CONTENT -->
-        <div id="content">
+				answer = true;
+				if (siw && siw.selectingSomething)
+					answer = false;
+				return answer;
+			}
+		</script>
+	{/literal}
 
-<!-- START MAIN COLUMN -->
-        {if $pagename eq "submit" || $pagename eq "home" || $pagename eq "advancedsearch" || $pagename eq "user_guide" || $pagename eq "uploadlocalfile" || $pagename eq "story" || $pagename eq "visualization"}
-            <div id="leftcol-superwide">
-        {else}
-            <div id="leftcol-wide">
-        {/if}
-		
-        {if $pagename eq "group_story"}
-        <div id="group_navbar"></div>
-        {/if}
-        {*include file="templates/".$the_template"/page_title.tpl"*}	
-    
-        {checkActionsTpl location="tpl_pligg_content_start"}
-            {checkActionsTpl location="tpl_pligg_above_center"}
-                {include file=$tpl_center.".tpl"}
-            {checkActionsTpl location="tpl_pligg_below_center"}
-        {checkActionsTpl location="tpl_pligg_content_end"}
-		
-            </div>
-<!-- END MAIN COLUMN -->
+	{checkActionsTpl location="tpl_pligg_banner_top"}
 
-{checkActionsTpl location="tpl_pligg_columns_start"}	
-	{if $pagename neq "story" && $pagename neq "submit" && $pagename neq "profile" && $pagename neq "login" && $pagename neq "register" && $pagename neq "edit"}
+	{include file=$tpl_header.".tpl"}
 
-	{/if}
-	
-	{if $pagename neq "submit" && $pagename neq "story" &&  $pagename neq "home" && $pagename neq "advancedsearch" && $pagename neq "user_guide" && $pagename neq "uploadlocalfile" && $pagename neq "visualization"}
-<!-- START RIGHT COLUMN -->
-		<div id="rightcol">
-			{include file=$tpl_right_sidebar".tpl"}
+	<!-- START CONTENT -->
+	<div id="content">
+
+		<!-- START MAIN COLUMN -->
+		{if $pagename eq "submit" || $pagename eq "home" || $pagename eq "advancedsearch" || $pagename eq "user_guide" || $pagename eq "uploadlocalfile" || $pagename eq "story" || $pagename eq "visualization"}
+			<div id="leftcol-superwide">
+		{else}
+			<div id="leftcol-wide">
+		{/if}
+
+			{if $pagename eq "group_story"}
+				<div id="group_navbar"></div>
+			{/if}
+
+			{*include file="templates/".$the_template"/page_title.tpl"*}
+			
+			{checkActionsTpl location="tpl_pligg_content_start"}
+
+			{checkActionsTpl location="tpl_pligg_above_center"}
+
+			{include file=$tpl_center.".tpl"}
+
+			{checkActionsTpl location="tpl_pligg_below_center"}
+
+			{checkActionsTpl location="tpl_pligg_content_end"}
 		</div>
-<!-- END RIGHT COLUMN -->
-	{/if}	
+		<!-- END MAIN COLUMN -->
 
-	{checkActionsTpl location="tpl_pligg_banner_bottom"}
-	
-	{include file=$tpl_footer.".tpl"}
-</div>	
-<!-- END CONTENT --> 
+		{checkActionsTpl location="tpl_pligg_columns_start"}
+
+		{if $pagename neq "story" && $pagename neq "submit" && $pagename neq "profile" && $pagename neq "login" && $pagename neq "register" && $pagename neq "edit"}
+		{/if}
+
+		{if $pagename neq "submit" && $pagename neq "story" &&  $pagename neq "home" && $pagename neq "advancedsearch" && $pagename neq "user_guide" && $pagename neq "uploadlocalfile" && $pagename neq "visualization" && $pagename neq "notification" && $pagename neq "chat"}
+			<!-- START RIGHT COLUMN -->
+			<div id="rightcol">
+				{include file=$tpl_right_sidebar".tpl"}
+			</div>
+			<!-- END RIGHT COLUMN -->
+		{/if}
+
+		{if $pagename eq "chat"}
+			<!-- START CHAT SIDEBAR -->
+			<div id="rightcol">
+				{include file=$tpl_chat_sidebar".tpl"}
+			</div>
+			<!-- END CHAT SIDEBAR -->
+		{/if}
+
+		{checkActionsTpl location="tpl_pligg_banner_bottom"}
+
+		{include file=$tpl_footer.".tpl"}
+	</div>
+	<!-- END CONTENT -->
+
 	<script src="{$my_pligg_base}/templates/xmlhttp.php" type="text/javascript"></script> {* this line HAS to be towards the END of pligg.tpl *}
+
 	{checkActionsTpl location="tpl_pligg_body_end"}
 </body>
+
 </html>

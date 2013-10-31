@@ -23,14 +23,14 @@
                 GetCurrentNTFNum();
             </script></a></li>
 
-            <div class="notification_block" id="notification" data-bind="ntfVisible: visible, foreach: ntfs">
+            <div class="notification_block" id="notification" data-bind="ntfVisible: visibleNTF, foreach: ntfs">
                 <div class="notification_block_row" data-bind="click: $root.goToStory, text: msg"></div>
             </div>
             <audio id="ntfSound">
                 <source src="{$my_pligg_base}/ntfSound.mp3" type="audio/mp3">
             </audio>
             <script type="text/javascript">
-                applyb();
+                applyNTF();
             </script>
             <li><a class="topmenu" href="{$URL_chat}">chat</a></li>
 
@@ -122,6 +122,8 @@
         {if $user_authenticated eq true}
             <li {if $pagename eq "user"}class="current"{/if}><a href="{$URL_userNoVar}">{#PLIGG_Visual_Profile#}</a></li>
         {/if}
+
+        <li  {if $pagename eq "chat"}class="current"{/if}><a href="{$URL_chat}">{#PLIGG_Visual_Chat#}</a></li>
     </ul>
     
     {checkActionsTpl location="tpl_pligg_navbar_end"}
