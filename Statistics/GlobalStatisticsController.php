@@ -25,7 +25,17 @@ function storyStatisticsSummary(){
 	$sid =  $_POST["sid"];
 	$tableName = $_POST["table_name"]; 
 
-	$results = $globalStatEngine->GetStoryStatisticsSummary($sid, $tableName);
+	$startTime = $globalStatEngine->CheckStartTime($sid,$tableName);
+	$finishTime = $globalStatEngine->CheckFinishTime($sid,$tableName);
+	if ($startTime==""){
+		$results = $globalStatEngine->GetStoryStatisticsSummary($sid, $tableName);
+	}
+
+	else if ($finishTime != "") {
+		$results = $globalStatEngine->DisplayStatisticsSummary($sid, $tableName);
+	}
+
+	
 
 	echo json_encode($results);
 }

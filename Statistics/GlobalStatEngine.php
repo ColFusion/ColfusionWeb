@@ -1,5 +1,5 @@
 <?php
-
+require_once realpath(dirname(__FILE__)) . '/../config.php';
 include_once(realpath(dirname(__FILE__)) . '/../DAL/StatisticsDAO.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/DatasetDAO.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
@@ -9,6 +9,7 @@ class GlobalStatEngine {
 	private $statisticsDAO;
 
 	function __construct() {
+		global $db;
 		$this->statisticsDAO = new StatisticsDAO();
 	}
 
@@ -48,6 +49,100 @@ class GlobalStatEngine {
 	    return $result;
 	}
 
+	// check if statistics already being calculated in colfusion database
+	public function CheckStartTime($sid,$tableName){
+		
+		return $this->statisticsDAO->CheckStartTime($sid, $tableName);
+	}
+
+	// check if statistics already exist in colfusion database
+	public function CheckFinishTime($sid,$tableName){
+		
+		return $this->statisticsDAO->CheckFinishTime($sid, $tableName);
+	}
+
+	// Display statistics in database
+	public function DisplayStatisticsSummary($sid, $tableName){
+
+		$datasetDAO = new DatasetDAO();
+
+		$columns = $datasetDAO->getTableColumns($sid, $tableName);
+
+		$oneRow = array();
+		$result = array();
+		$oneRow["statistics"] = "count";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "count");
+			$oneRow[$columnName] = $temp;
+		}
+		$result[0] = $oneRow;
+
+		$oneRow["statistics"] = "distinctCount";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "distinctCount");
+			$oneRow[$columnName] = $temp;
+		}
+		$result[1] = $oneRow;
+
+		$oneRow["statistics"] = "sum";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "sum");
+			$oneRow[$columnName] = $temp;
+		}
+		$result[2] = $oneRow;
+
+		$oneRow["statistics"] = "max";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "max");
+			$oneRow[$columnName] = $temp;
+		}
+		$result[3] = $oneRow;
+
+		$oneRow["statistics"] = "min";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "min");
+			$oneRow[$columnName] = $temp;
+		}
+		$result[4] = $oneRow;
+
+		$oneRow["statistics"] = "avg";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "avg");
+			$oneRow[$columnName] = $temp;
+		}
+		$result[5] = $oneRow;
+
+		$oneRow["statistics"] = "missing";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "missing");
+			$oneRow[$columnName] = $temp;
+		}
+		$result[6] = $oneRow;
+
+		$columns = NULL;
+	    foreach ($result as $r) {
+	        $json_array["data"][] = $r;
+	        if ($columns === NULL) {
+	            if (is_array($r))
+	                $columns = implode(",", array_keys($r));
+	            else
+	                $columns = implode(",", array_keys(get_object_vars($r)));
+	        }
+	    }
+
+	    $json_array["Control"]["cols"] = $columns;
+    
+		return $json_array;
+
+	}
+
 	/**
 	 * [GetStoryStatisticsSummary description]
 	 * @param [type] $sid       [description]
@@ -64,6 +159,9 @@ class GlobalStatEngine {
 
 		$oneRow = array();
 
+	    $startTime = date ("Y-m-d H:i:s" , mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'))) ; 
+	    $this->statisticsDAO->WriteStatisticsTime($sid,$tableName,$startTime, null);
+
 		// Count tuples in each column
 		$oneRow["statistics"] = "count";
 
@@ -76,13 +174,16 @@ class GlobalStatEngine {
 			$fromArray = array($from);
         	$obj = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 			$oneRow[$columnName] = $obj[0]["CountValue"];
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"count",$oneRow[$columnName]);
 		}
 
 		
+
 		$result[0] = $oneRow;
 
 		// Count distinct tuples in each column
-		$oneRow["statistics"] = "distintCount";
+		$oneRow["statistics"] = "distinctCount";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -94,6 +195,8 @@ class GlobalStatEngine {
 			//$where = " WHERE $cid = '1'";
         	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 			$oneRow[$columnName] = $obj[0]["DistinctCount"];
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"distinctCount",$oneRow[$columnName]);
 		}
 
 		
@@ -124,6 +227,8 @@ class GlobalStatEngine {
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["SumValue"];
 			}
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"sum",$oneRow[$columnName]);
 		}
 
 		
@@ -153,6 +258,8 @@ class GlobalStatEngine {
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MaxValue"];
 			}
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"max",$oneRow[$columnName]);
 		}
 
 		
@@ -182,13 +289,15 @@ class GlobalStatEngine {
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MinValue"];
 			}
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"min",$oneRow[$columnName]);
 		}
 
 		
 		$result[4] = $oneRow;
 
 		// Get Ave value in each columns
-		$oneRow["statistics"] = "Avg";
+		$oneRow["statistics"] = "avg";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -211,13 +320,15 @@ class GlobalStatEngine {
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["AvgValue"];
 			}
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"avg",$oneRow[$columnName]);
 		}
 
 		
 		$result[5] = $oneRow;
 
 		// Get Count of Missing Values 
-		$oneRow["statistics"] = "Missing";
+		$oneRow["statistics"] = "missing";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -240,15 +351,21 @@ class GlobalStatEngine {
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MissValue"];
 			}
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"missing",$oneRow[$columnName]);
 		}
 
 		
+		$finishTime = date ("Y-m-d H:i:s" , mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'))) ; 
+
+		$this->statisticsDAO->UpdateStatisticsTime($sid,$tableName,$startTime,$finishTime);
+
 		$result[6] = $oneRow;
 
 		
-		// $result["mean"] = array("statistics" => "mean", "var1" => 10, "var2" => 11, "var3" => 12);
-		// $result["stdev"] = array("statistics" => "stdev", "var1" => 20, "var2" => 21, "var3" => 22);
-		// $result["count"] = array("statistics" => "count", "var1" => 100, "var2" => 101, "var3" => 102);
+		// write to database
+//		foreach ($result as $values)
+
 
 	    $columns = NULL;
 	    foreach ($result as $r) {

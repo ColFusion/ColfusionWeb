@@ -1,6 +1,8 @@
 <?php
 
 require_once realpath(dirname(__FILE__)) . '/../config.php';
+//require_once realpath(dirname(__FILE__)) . '/../config.php';
+//include(mnminclude.'smartyvariables.php');
 
 class StatisticsDAO {
 
@@ -74,6 +76,45 @@ class StatisticsDAO {
         $countRow = $this->ezSql->get_row($sql);
         
         return $countRow-> missValue;
+    }
+
+    // Check if start_time exists
+    public function CheckStartTime($sid, $tableName){
+        $sql = "SELECT startTime as startTime FROM `colfusion_statstime` WHERE sid = $sid AND tableName = '$tableName'";
+        $countRow = $this->ezSql->get_row($sql);
+        
+        return $countRow-> startTime;
+    }
+
+    // Check if finish_time exists
+    public function CheckFinishTime($sid, $tableName){
+        $sql = "SELECT finishTime as finishTime FROM `colfusion_statstime` WHERE sid = $sid AND tableName = '$tableName'";
+        $countRow = $this->ezSql->get_row($sql);
+        
+        return $countRow-> finishTime;
+    }
+
+    public function WriteStatistics($cid,$sid,$stats,$value){
+        $sql = "INSERT INTO " . table_prefix . "statistics (cid, sid, stats, val) VALUES ($cid, $sid, '$stats', '$value');";
+        $this->ezSql->query($sql);
+    }
+
+    public function WriteStatisticsTime($sid,$tableName,$startTime,$finishTime){
+        $sql = "INSERT INTO " . table_prefix . "statstime (sid, tableName, startTime, finishTime) VALUES ($sid,'$tableName','$startTime','$finishTime');"; 
+        $this->ezSql->query($sql);
+        //$sql = "INSERT INTO" . table_prefix . "statstime (sid, tableName, startTime, finishTime)VALUES ($sid,$tableName,$startTime,$finishTime);";   
+    }
+
+    public function UpdateStatisticsTime($sid,$tableName,$startTime,$finishTime){
+        $sql="UPDATE " . table_prefix . "statstime SET finishTime='".$finishTime."' WHERE sid='".$sid."' AND tableName='$tableName'";
+        $this->ezSql->query($sql);
+    }
+
+    public function DisplayStatisticsSummary($cid, $stats){
+        $sql = "SELECT val as statsval FROM `colfusion_statistics` WHERE cid = $cid AND stats = '$stats'";
+        $countRow = $this->ezSql->get_row($sql);
+        
+        return $countRow-> statsval;
     }
 }
 
