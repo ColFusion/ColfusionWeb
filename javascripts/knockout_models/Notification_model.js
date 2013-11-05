@@ -18,10 +18,10 @@ function NotificationViewModel() {
     self.ntfs = ko.observableArray();
     self.ntf_id = ko.observable();
     self.ntfsNUM = ko.observable();
-    self.visible = ko.observable(false);
+    self.visibleNTF = ko.observable(false);
     
     self.displayMore = function(){
-        self.visible(!self.visible());
+        self.visibleNTF(!self.visibleNTF());
     }
 
     $.ajax({
@@ -72,10 +72,10 @@ function seeAllViewModel(){
     self.ntfs = ko.observableArray();
     self.ntf_id = ko.observable();
     self.ntfsNUM = ko.observable();
-    self.visible = ko.observable(false);
+    self.visibleNTF = ko.observable(false);
     
     self.displayMore = function(){
-        self.visible(!self.visible());
+        self.visibleNTF(!self.visibleNTF());
     }
 
     $.ajax({
@@ -140,7 +140,7 @@ ko.bindingHandlers.ntfVisible = {
     }
 };
 
-function applyb() {
+function applyNTF() {
     ko.applyBindings(new NotificationViewModel());
 }
 
