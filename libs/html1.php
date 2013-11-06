@@ -583,7 +583,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 		If ($x == "index") {return my_pligg_base."/index.php";}
 		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
 
-		If ($x == "chat") {return my_pligg_base."/chat/chat.php?name=".$current_user->user_login."&email=".$uEmail;}
+		If ($x == "chat") {return my_pligg_base."/chat.php";}
 
 		If ($x == "maincategory") {return my_pligg_base."/index.php?category=" . $var1;}
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming.php?category=" . $var1;}
@@ -707,7 +707,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 		If ($x == "maincategory") {return my_pligg_base."/" . $var1;}
 		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
 
-		If ($x == "chat") {return my_pligg_base."/chat/chat.php?name=".$current_user->user_login."&email=".$uEmail;}
+		If ($x == "chat") {return my_pligg_base."/chat.php";}
 		
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming/" . $var1;}
 		If ($x == "discardedcategory") {return my_pligg_base."/discarded/" . $var1 . "/";}

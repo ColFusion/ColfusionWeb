@@ -25,7 +25,7 @@ function NotificationViewModel() {
     }
 
     $.ajax({
-        url: '/Colfusion/notification/notificationController.php?action=allUserNTF', //allUserNTF
+        url: '/Colfusion/notification/notificationController.php?action=allUserNTF', 
         type: 'get',
         dataType: 'json',
         success: function (data) {

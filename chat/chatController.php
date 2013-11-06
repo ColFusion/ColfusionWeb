@@ -1,78 +1,43 @@
 <?php
+include_once(realpath(dirname(__FILE__)) . '/../DAL/ChatDAO.php');
 
-/* Database Configuration. */
+include_once('../config.php');
+include_once(mnminclude.'html1.php');
+include_once(mnminclude.'link.php');
 
-$dbOptions = array(
-	'db_host' => 'localhost',
-	'db_user' => 'dataverse',
-	'db_pass' => 'dataverse',
-	'db_name' => 'colfusion'
-);
+global $current_user;
 
-/* Database Config End */
+header('Content-type: text/html; charset=utf-8');
 
-
-error_reporting(E_ALL ^ E_NOTICE);
-
-require "../DAL/chat_classes/DB.class.php";
-require "../DAL/chat_classes/Chat.class.php";
-require "../DAL/chat_classes/ChatBase.class.php";
-require "../DAL/chat_classes/ChatLine.class.php";
-require "../DAL/chat_classes/ChatUser.class.php";
-
-session_name('webchat');
-session_start();
-
-if(get_magic_quotes_gpc()){
-	
-	// If magic quotes is enabled, strip the extra slashes
-	array_walk_recursive($_GET,create_function('&$v,$k','$v = stripslashes($v);'));
-	array_walk_recursive($_POST,create_function('&$v,$k','$v = stripslashes($v);'));
+if(isset($_GET["action"])){
+    $action = $_GET["action"];
+    $action();
 }
 
-try{
-	
-	// Connecting to the database
-	DB::init($dbOptions);
-	
-	$response = array();
-	
-	// Handling the supported actions:
-	
-	switch($_GET['action']){
-		
-		case 'login':
-			$response = Chat::login($_POST['name'],$_POST['email']);
-		break;
-		
-		case 'checkLogged':
-			$response = Chat::checkLogged();
-		break;
-		
-		case 'logout':
-			$response = Chat::logout();
-		break;
-		
-		case 'submitChat':
-			$response = Chat::submitChat($_POST['chatText']);
-		break;
-		
-		case 'getUsers':
-			$response = Chat::getUsers();
-		break;
-		
-		case 'getChats':
-			$response = Chat::getChats($_GET['lastID']);
-		break;
-		
-		default:
-			throw new Exception('Wrong action');
-	}
-	
-	echo json_encode($response);
-}
-catch(Exception $e){
-	die(json_encode(array('error' => $e->getMessage())));
+function addToOnline(){
+	$chatDAO = new ChatDAO();
+
+    echo $chatDAO->addToOnline();
 }
 
+function getAllOnlineUsers(){
+    $chatDAO = new ChatDAO();
+
+    echo $chatDAO->getAllOnlineUsers();
+}
+
+function getChats(){
+    $chatDAO = new ChatDAO();
+    $lastID = $_GET["lastID"];
+
+    echo $chatDAO->getChats($lastID);
+}
+
+function submitChat(){
+    $chatDAO = new ChatDAO();
+    $details = $_GET["details"];
+
+    echo $chatDAO->submitChat($details);
+}
+	
 ?>

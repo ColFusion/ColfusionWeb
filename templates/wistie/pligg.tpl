@@ -110,6 +110,15 @@
 
 	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="{$my_base_url}{$my_pligg_base}/rss.php"/>
 	<link rel="icon" href="{$my_pligg_base}/favicon.ico" type="image/x-icon"/>
+
+	{if $pagename eq 'chat'}
+		
+		<!--<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+		<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery.mousewheel.js"></script>
+		<script type="text/javascript" src="{$my_pligg_base}/javascripts/jScrollPane.min.js"></script>
+		<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Chat_model.js"></script>-->
+	{/if}
 	
 	{if $pagename eq 'published'}<link rel="canonical" href="{$my_base_url}{$my_pligg_base}/{$navbar_where.text2}/" />{/if}
 	{if $pagename eq 'index'}<link rel="canonical" href="{$my_base_url}{$my_pligg_base}/" />{/if}
