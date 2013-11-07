@@ -90,6 +90,9 @@ class GlobalStatEngine {
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "sum");
+			if ($temp == ''){
+				$temp = '-';
+			}
 			$oneRow[$columnName] = $temp;
 		}
 		$result[2] = $oneRow;
@@ -98,6 +101,9 @@ class GlobalStatEngine {
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "max");
+			if ($temp == ''){
+				$temp = '-';
+			}
 			$oneRow[$columnName] = $temp;
 		}
 		$result[3] = $oneRow;
@@ -106,6 +112,9 @@ class GlobalStatEngine {
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "min");
+			if ($temp == ''){
+				$temp = '-';
+			}
 			$oneRow[$columnName] = $temp;
 		}
 		$result[4] = $oneRow;
@@ -114,6 +123,9 @@ class GlobalStatEngine {
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "avg");
+			if ($temp == ''){
+				$temp = '-';
+			}
 			$oneRow[$columnName] = $temp;
 		}
 		$result[5] = $oneRow;
@@ -122,6 +134,9 @@ class GlobalStatEngine {
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "missing");
+			if ($temp == ''){
+				$temp = '-';
+			}
 			$oneRow[$columnName] = $temp;
 		}
 		$result[6] = $oneRow;
