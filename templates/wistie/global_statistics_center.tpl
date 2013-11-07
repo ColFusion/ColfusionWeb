@@ -4,7 +4,7 @@
   {
     font-size: 23px;
     color: #629ACB; 
-    margin: 5% 30%;
+    margin: 5% 35%;
   }
   .gStatTable
   {
