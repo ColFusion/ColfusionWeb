@@ -70,7 +70,7 @@ class GlobalStatEngine {
 
 		$oneRow = array();
 		$result = array();
-		$oneRow["statistics"] = "count";
+		$oneRow["statistics"] = "Total Values";
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "count");
@@ -78,7 +78,7 @@ class GlobalStatEngine {
 		}
 		$result[0] = $oneRow;
 
-		$oneRow["statistics"] = "distinctCount";
+		$oneRow["statistics"] = "Total Distinct Values";
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "distinctCount");
@@ -86,7 +86,7 @@ class GlobalStatEngine {
 		}
 		$result[1] = $oneRow;
 
-		$oneRow["statistics"] = "sum";
+		$oneRow["statistics"] = "Sum";
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "sum");
@@ -94,7 +94,7 @@ class GlobalStatEngine {
 		}
 		$result[2] = $oneRow;
 
-		$oneRow["statistics"] = "max";
+		$oneRow["statistics"] = "Maximum";
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "max");
@@ -102,7 +102,7 @@ class GlobalStatEngine {
 		}
 		$result[3] = $oneRow;
 
-		$oneRow["statistics"] = "min";
+		$oneRow["statistics"] = "Minimum";
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "min");
@@ -110,7 +110,7 @@ class GlobalStatEngine {
 		}
 		$result[4] = $oneRow;
 
-		$oneRow["statistics"] = "avg";
+		$oneRow["statistics"] = "Average";
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "avg");
@@ -118,7 +118,7 @@ class GlobalStatEngine {
 		}
 		$result[5] = $oneRow;
 
-		$oneRow["statistics"] = "missing";
+		$oneRow["statistics"] = "Missing Values";
 
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "missing");
@@ -163,7 +163,7 @@ class GlobalStatEngine {
 	    $this->statisticsDAO->WriteStatisticsTime($sid,$tableName,$startTime, null);
 
 		// Count tuples in each column
-		$oneRow["statistics"] = "count";
+		$oneRow["statistics"] = "Total Values";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -183,7 +183,7 @@ class GlobalStatEngine {
 		$result[0] = $oneRow;
 
 		// Count distinct tuples in each column
-		$oneRow["statistics"] = "distinctCount";
+		$oneRow["statistics"] = "Total Distinct Values";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -203,7 +203,7 @@ class GlobalStatEngine {
 		$result[1] = $oneRow;
 
 		// Sum tuples in each columns if can be cast into INTEGER
-		$oneRow["statistics"] = "sum";
+		$oneRow["statistics"] = "Sum";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -235,7 +235,7 @@ class GlobalStatEngine {
 		$result[2] = $oneRow;
 
 		// Get Max value in each columns
-		$oneRow["statistics"] = "max";
+		$oneRow["statistics"] = "Maximum";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -266,7 +266,7 @@ class GlobalStatEngine {
 		$result[3] = $oneRow;
 
 		// Get Min value in each columns
-		$oneRow["statistics"] = "min";
+		$oneRow["statistics"] = "Minimum";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -297,7 +297,7 @@ class GlobalStatEngine {
 		$result[4] = $oneRow;
 
 		// Get Ave value in each columns
-		$oneRow["statistics"] = "avg";
+		$oneRow["statistics"] = "Average";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
@@ -328,7 +328,7 @@ class GlobalStatEngine {
 		$result[5] = $oneRow;
 
 		// Get Count of Missing Values 
-		$oneRow["statistics"] = "missing";
+		$oneRow["statistics"] = "Missing Values";
 
 		$queryEngine = new QueryEngine();
 		$inputObj = new stdClass();
