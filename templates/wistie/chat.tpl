@@ -1,7 +1,7 @@
 {literal}
 <link rel="stylesheet" type="text/css" href="../Colfusion/css/jScrollPane.css" />
 <link rel="stylesheet" type="text/css" href="../Colfusion/css/chat.css" />
-<h3>Chat Page</h3>
+
 <div id="chatContainer">
 
     <div id="chatLineHolder"></div>
@@ -9,7 +9,7 @@
     	<div class="tip"></div>
 	    <div id="submitForm">
             <input id="chatText" name="chatText" class="rounded" maxlength="255" />
-            <input type="submit" class="blueButton" id="submitButton" value="Submit" />
+            <input type="submit" id="submitButton" value="Submit" />
         </div>
         
     </div>

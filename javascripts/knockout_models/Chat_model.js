@@ -166,7 +166,7 @@ var onlineUsers = {
 	        success: function (data) {
 	            var users = [];
 				if(data.users){
-					for(var i=0; i< data.users.length;i++){
+					for(var i=0; i< data.users.length; i++){
 						if(data.users[i]){
 							users.push(onlineUsers.render('user',data.users[i]));
 						}
@@ -178,10 +178,10 @@ var onlineUsers = {
 					message = 'No one is online';
 				}
 				else {
-					message = data.total+' '+(data.total == 1 ? 'person':'people')+' online';
+					message = data.total + ' ' + (data.total == 1 ? 'person':'people') + ' online';
 				}
 				
-				users.push('<p class="count">'+message+'</p>');
+				users.push('<p class="count">' + message + '</p>');
 				
 				$('#chatUsers').html(users.join(''));
 				
@@ -196,14 +196,13 @@ var onlineUsers = {
 			
 			case 'chatLine':
 				arr = [
-					'<div class="chat chat-',params.id,' rounded"><span class="author">',params.author,
+					'<div class="chat chat-', params.id, ' rounded"><span class="author">', params.author, 
 					':</span><span class="text">',params.text,'</span><span class="time">',params.time,'</span></div>'];
 			break;
 			
 			case 'user':
 				arr = [
-					'<div class="user" title="',params.name,'"><img src="',
-					params.gravatar,'" width="30" height="30" onload="this.style.visibility=\'visible\'" /></div>'
+					'<div class="user" title="',params.user_login,'">'+params.user_login+'</div>'
 				];
 			break;
 		}
