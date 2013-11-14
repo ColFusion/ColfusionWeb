@@ -130,6 +130,17 @@ class GlobalStatEngine {
 		}
 		$result[5] = $oneRow;
 
+		$oneRow["statistics"] = "Standard Deviation";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "stdev");
+			if ($temp == ''){
+				$temp = '-';
+			}
+			$oneRow[$columnName] = $temp;
+		}
+		$result[6] = $oneRow;
+
 		$oneRow["statistics"] = "Missing Values";
 
 		foreach($columns as $cid => $columnName) {
@@ -139,7 +150,7 @@ class GlobalStatEngine {
 			}
 			$oneRow[$columnName] = $temp;
 		}
-		$result[6] = $oneRow;
+		$result[7] = $oneRow;
 
 		$columns = NULL;
 	    foreach ($result as $r) {
@@ -208,7 +219,7 @@ class GlobalStatEngine {
 			$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 			$fromArray = array($from);
 			//$where = " WHERE $cid = '1'";
-        	$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+        	$obj = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 			$oneRow[$columnName] = $obj[0]["DistinctCount"];
 
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"distinctCount",$oneRow[$columnName]);
@@ -232,7 +243,7 @@ class GlobalStatEngine {
 			}
 			if ($cidType == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
-				continue;
+				//continue;
 			}
 			else {
 				$select = "SELECT ROUND(sum($columnName),2) AS 'SumValue' ";
@@ -263,7 +274,7 @@ class GlobalStatEngine {
 			}
 			if ($cidType == "STRING"){
 				$oneRow[$columnName] = "--";
-				continue;
+				//continue;
 			}
 			else {
 				$select = "SELECT MAX($columnName) AS 'MaxValue' ";
@@ -294,7 +305,7 @@ class GlobalStatEngine {
 			}
 			if ($cidType == "STRING"){
 				$oneRow[$columnName] = "--";
-				continue;
+				//continue;
 			}
 			else {
 				$select = "SELECT MIN($columnName) AS 'MinValue' ";
@@ -325,7 +336,7 @@ class GlobalStatEngine {
 			}
 			if ($cidType == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
-				continue;
+				//continue;
 			}
 			else {
 				$select = "SELECT ROUND(AVG($columnName),2) AS 'AvgValue' ";
@@ -342,6 +353,37 @@ class GlobalStatEngine {
 		
 		$result[5] = $oneRow;
 
+		// Calculate Standard Deviation
+		$oneRow["statistics"] = "Standard Deviation";
+
+		$queryEngine = new QueryEngine();
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		foreach ($columns as $cid => $columnName) {
+			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			$missValue = $this->statisticsDAO->GetMissingValue($cid);
+			if ($missValue == ""){
+				$missValue = "-99999999";
+			}
+			if ($cidType == "STRING" || $cidType == "DATE"){
+				$oneRow[$columnName] = "--";
+				//continue;
+			}
+			else {
+				$select = "SELECT ROUND(STD($columnName),2) AS 'Stdev' ";
+				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+				$fromArray = array($from);
+				//$where = " WHERE $columnName <> $missValue";
+        		$obj = $queryEngine->doQuery($select, $fromArray, $null, null, null, null, null);
+				$oneRow[$columnName] = $obj[0]["Stdev"];
+			}
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"stdev",$oneRow[$columnName]);
+		}
+
+		
+		$result[6] = $oneRow;
+
 		// Get Count of Missing Values 
 		$oneRow["statistics"] = "Missing Values";
 
@@ -356,7 +398,7 @@ class GlobalStatEngine {
 			}
 			if ($missValue == ""){
 				$oneRow[$columnName] = "--";
-				continue;
+				//continue;
 			}
 			else {
 				$select = "SELECT count($columnName) AS 'MissValue' ";
@@ -370,12 +412,52 @@ class GlobalStatEngine {
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"missing",$oneRow[$columnName]);
 		}
 
+		$result[7] = $oneRow;
+
+
+		// starts correlation calculation
+
+		$row = 8;
+		$keys = array_keys($columns);
+		$values = array_values($columns);
+		
+		for($i = 0; $i < sizeof($keys); $i++){
+			$queryEngine = new QueryEngine();
+			$inputObj = new stdClass();
+			$inputObj->sid = $sid;
+			$cidi = $keys[$i];
+			$columnNamei = $values[$i];
+			$cidiType = $this->statisticsDAO->GetColumnType($cidi);
+			$oneRow["statistics"] = $columnNamei;
+			for($j = 0; $j < sizeof($keys); $j++){
+				$cidj = $keys[$j];
+				$columnNamej = $values[$j];
+				$cidjType = $this->statisticsDAO->GetColumnType($cidj);
+				if ($cidiType == "STRING" || $cidiType == "DATE" || $cidjType == "STRING" || $cidjType == "DATE"){
+					$oneRow[$columnNamej] = "--";
+					//continue;
+				}
+				else {
+					$select = "SELECT ROUND(CORR($values[$i], $values[$j]),2) AS 'Correlation' ";
+					$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+					$fromArray = array($from);
+        			$obj = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
+					$oneRow[$columnNamej] = $obj[0]["Correlation"];
+					//$oneRow[$columnNamej] = "--";
+				}
+				$this->statisticsDAO->WriteStatistics($cidi,$sid,(string)$cidj,$oneRow[$columnNamej]);
+			}
+			$result[$row] = $oneRow;
+			$row++;
+		}
+
+
 		
 		$finishTime = date ("Y-m-d H:i:s" , mktime(date('H'), date('i'), date('s'), date('m'), date('d'), date('Y'))) ; 
 
 		$this->statisticsDAO->UpdateStatisticsTime($sid,$tableName,$startTime,$finishTime);
 
-		$result[6] = $oneRow;
+		
 
 		
 		// write to database
