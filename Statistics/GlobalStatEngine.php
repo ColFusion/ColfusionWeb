@@ -91,7 +91,7 @@ class GlobalStatEngine {
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "sum");
 			if ($temp == ''){
-				$temp = '-';
+				$temp = '--';
 			}
 			$oneRow[$columnName] = $temp;
 		}
@@ -102,7 +102,7 @@ class GlobalStatEngine {
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "max");
 			if ($temp == ''){
-				$temp = '-';
+				$temp = '--';
 			}
 			$oneRow[$columnName] = $temp;
 		}
@@ -113,7 +113,7 @@ class GlobalStatEngine {
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "min");
 			if ($temp == ''){
-				$temp = '-';
+				$temp = '--';
 			}
 			$oneRow[$columnName] = $temp;
 		}
@@ -124,7 +124,7 @@ class GlobalStatEngine {
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "avg");
 			if ($temp == ''){
-				$temp = '-';
+				$temp = '--';
 			}
 			$oneRow[$columnName] = $temp;
 		}
@@ -135,7 +135,7 @@ class GlobalStatEngine {
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "stdev");
 			if ($temp == ''){
-				$temp = '-';
+				$temp = '--';
 			}
 			$oneRow[$columnName] = $temp;
 		}
@@ -146,11 +146,32 @@ class GlobalStatEngine {
 		foreach($columns as $cid => $columnName) {
 			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "missing");
 			if ($temp == ''){
-				$temp = '-';
+				$temp = '--';
 			}
 			$oneRow[$columnName] = $temp;
 		}
 		$result[7] = $oneRow;
+
+		$row = 8;
+		$keys = array_keys($columns);
+		$values = array_values($columns);
+		
+		for($i = 0; $i < sizeof($keys); $i++){
+			$cidi = $keys[$i];
+			$columnNamei = $values[$i];
+			$oneRow["statistics"] = "Correlation " . (string)$columnNamei;
+			for($j = 0; $j < sizeof($keys); $j++){
+				$cidj = $keys[$j];
+				$columnNamej = $values[$j];
+				$temp = $this->statisticsDAO->DisplayStatisticsSummary($cidi, (string)$cidj);
+				if ($temp == ''){
+					$temp = '--';
+				}
+				$oneRow[$columnNamej] = $temp;
+			}
+			$result[$row] = $oneRow;			
+			$row++;
+		}
 
 		$columns = NULL;
 	    foreach ($result as $r) {
@@ -428,7 +449,7 @@ class GlobalStatEngine {
 			$cidi = $keys[$i];
 			$columnNamei = $values[$i];
 			$cidiType = $this->statisticsDAO->GetColumnType($cidi);
-			$oneRow["statistics"] = $columnNamei;
+			$oneRow["statistics"] = "Correlation " . $columnNamei;
 			for($j = 0; $j < sizeof($keys); $j++){
 				$cidj = $keys[$j];
 				$columnNamej = $values[$j];
