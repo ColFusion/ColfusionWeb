@@ -2,14 +2,11 @@
 <div class="dataPreviewTableWrapper">
     <div class="preview-story" id = "statisticsView">
         <button data-bind="visible: currentTable" id="visualizeBtn" class="btn visualizeBtn" onclick="storyStatisticsViewModel.getTablesList();">
-           
             Expand/Close
         </button>
         <h3 class="preview-title">Statistics</h3>
         <div class="storycontent" id="storyStatisticsContainer">
-            <div class="storycontent">
-                
-
+            <!--<div class="storycontent">-->
                 <ul data-bind="visible: tableList().length > 1, foreach: tableList" class="tableList" id="previewTableList">
                     <li data-bind="click: $root.chooseTable" class="tableListItem">
                         <span class="chosenTableBullet">
@@ -38,22 +35,24 @@
                             </tbody>
                         </table>
                     </div>
+
                     <div id="previewTableNavigations">
                         <div style="display: inline-block;margin-right: 4px;" id="dataPreviewLoadingIcon" class="dataPreviewLoadingIcon">
                             <img data-bind="visible: $parent.isLoading" src="images/ajax-loader.gif" />
                         </div>
                         <i class="icon-arrow-left" id="prevBtn" data-bind="visible: currentPage() > 1, click: $parent.goToPreviousPage" title="Previous Page"></i>
-                        <i class="icon-arrow-right" id="nextBtn" data-bind="visible: currentPage() < totalPage(), click: $parent.goToNextPage" title="Next Page"></i>
+                        <i class="icon-arrow-right" id="nextBtn" data-bind="visible: currentPage() < totalPage(), click: $parent.goToNextPage" title="Next Page"></i>                        
+                        
+
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    <script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script>    
+    <!--</div>-->
+    <script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script> 
 </div>
 
 
 
 
-<script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script>
 {/literal}
