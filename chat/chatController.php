@@ -16,28 +16,35 @@ if(isset($_GET["action"])){
 
 function addToOnline(){
 	$chatDAO = new ChatDAO();
-
+    $sid = $_GET["room"];
     echo $chatDAO->addToOnline();
 }
 
 function getAllOnlineUsers(){
     $chatDAO = new ChatDAO();
-
-    echo $chatDAO->getAllOnlineUsers();
+    $sid = $_GET["room"];
+    echo $chatDAO->getAllOnlineUsers($sid);
 }
 
 function getChats(){
     $chatDAO = new ChatDAO();
     $lastID = $_GET["lastID"];
-
-    echo $chatDAO->getChats($lastID);
+    $sid = $_GET["room"];
+    echo $chatDAO->getChats($lastID, $sid);
 }
 
 function submitChat(){
     $chatDAO = new ChatDAO();
     $details = $_GET["details"];
-
-    echo $chatDAO->submitChat($details);
+    $sid = $_GET["room"];
+    echo $chatDAO->submitChat($details, $sid);
 }
 	
+function createRoomIfNeeded(){
+    $chatDAO = new ChatDAO();
+    $sid = $_GET["room"];
+    echo $chatDAO->addToOnline($sid);
+    echo $chatDAO->createChatRoomForStory($sid);
+}
+
 ?>

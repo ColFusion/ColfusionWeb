@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
 	
 	// Run the init method on document ready:
@@ -15,8 +16,8 @@ var chat = {
 	
 	// Init binds event listeners and sets up timers:
 	
-	init : function(){
-		
+	init : function(){		
+		alert(room);
 		// Using the defaultText jQuery plugin, included at the bottom:
 		$('#name').defaultText('Nickname');
 		$('#email').defaultText('Email (Gravatars are Enabled)');
@@ -63,10 +64,7 @@ var chat = {
 			var text = $('#chatText').val();
 			
 			if(text.length == 0){
-				return false;
-			}
-			
-			if(working) return false;
+				return false;			}						if(working) return false;
 			working = true;
 			
 			// Assigning a temporary ID to the chat:
@@ -337,11 +335,11 @@ var chat = {
 // Custom GET & POST wrappers:
 
 $.tzPOST = function(action,data,callback){
-	$.post('../chat/chatController.php?action='+action,data,callback,'json');
+	$.post('../chat/chatController.php?sid='+room+'&action='+action,data,callback,'json');
 }
 
 $.tzGET = function(action,data,callback){
-	$.get('../chat/chatController.php?action='+action,data,callback,'json');
+	$.get('../chat/chatController.php?sid='+room+'&action='+action,data,callback,'json');
 }
 
 // A custom jQuery method for placeholder text:

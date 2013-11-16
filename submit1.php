@@ -19,6 +19,7 @@ include(mnminclude.'user.php');
 include(mnminclude.'smartyvariables.php');
 
 include_once('DAL/QueryEngine.php');
+include_once('DAL/ChatDAO.php');
 
 if (!$_COOKIE['referrer'])
 	check_referrer();
@@ -190,19 +191,17 @@ function do_submit1() {
 	$main_smarty->assign('request_category_name', $thecat->category_name);
 
 
-
-
-		if(!isset($_POST['summarytext'])){
+	if(!isset($_POST['summarytext'])){
 		$linkres->link_summary = utf8_substr(sanitize($_POST['bodytext'], 4, $Story_Content_Tags_To_Allow), 0, StorySummary_ContentTruncate - 1);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
+		$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
 	} else {
-	$linkres->link_summary = sanitize($_POST['summarytext'], 4, $Story_Content_Tags_To_Allow);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	if(utf8_strlen($linkres->link_summary) > StorySummary_ContentTruncate){
-	loghack('SubmitAStory-SummaryGreaterThanLimit', 'username: ' . sanitize($_POST["username"], 3).'|email: '.sanitize($_POST["email"], 3), true);
-	$linkres->link_summary = utf8_substr($linkres->link_summary, 0, StorySummary_ContentTruncate - 1);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	}
+		$linkres->link_summary = sanitize($_POST['summarytext'], 4, $Story_Content_Tags_To_Allow);
+		$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
+		if(utf8_strlen($linkres->link_summary) > StorySummary_ContentTruncate){
+		loghack('SubmitAStory-SummaryGreaterThanLimit', 'username: ' . sanitize($_POST["username"], 3).'|email: '.sanitize($_POST["email"], 3), true);
+		$linkres->link_summary = utf8_substr($linkres->link_summary, 0, StorySummary_ContentTruncate - 1);
+		$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
+		}
 	}
 	
 	$sid = $_POST["sid"];
@@ -228,7 +227,7 @@ function do_submit1() {
 	include(mnminclude.'redirector.php');
 	$x = new redirector($_SERVER['REQUEST_URI']);
 	//$Sid=$_SESSION['newSid'];
-	
+
 	header("Location:".my_base_url.my_pligg_base."/story.php?title=$sid");
 		
 

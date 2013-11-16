@@ -121,8 +121,8 @@
         {if $user_authenticated eq true}
             <li {if $pagename eq "user"}class="current"{/if}><a href="{$URL_userNoVar}">{#PLIGG_Visual_Profile#}</a></li>
         {/if}
-
-        <li  {if $pagename eq "chat"}class="current"{/if}><a href="{$URL_chat}">{#PLIGG_Visual_Chat#}</a></li>
+        <!--
+        <li  {if $pagename eq "chat"}class="current"{/if}><a href="{$URL_chat}">{#PLIGG_Visual_Chat#}</a></li>-->
     </ul>
     
     {checkActionsTpl location="tpl_pligg_navbar_end"}

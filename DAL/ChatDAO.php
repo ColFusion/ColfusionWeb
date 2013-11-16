@@ -15,26 +15,35 @@ class ChatDAO {
         $this->user = $current_user;
     }
 
-    // get unread notifications from notification_unread
-    public function addToOnline() {
-        $query = "INSERT INTO  `colfusion`.`colfusion_webchat_users` (`id`,`last_activity`)VALUES ('".$this->user->user_id."',CURRENT_TIMESTAMP);";
+    public function createChatRoomForStory($sid){
+        $query = "CREATE TABLE IF NOT EXISTS `colfusion_chat`.`colfusion_webchat_users".$sid."`(`id` int(20) unsigned NOT NULL,`last_activity` timestamp NOT NULL default CURRENT_TIMESTAMP,PRIMARY KEY  (`id`),KEY `last_activity` (`last_activity`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
         $this->ezSql->query($query);
-        return "success";
+
+        $query = "CREATE TABLE IF NOT EXISTS `colfusion_chat`.`colfusion_webchat_lines".$sid."` (`id` int(10) unsigned NOT NULL auto_increment,`aid` int(20) NOT NULL,`text` varchar(255) NOT NULL,`ts` timestamp NOT NULL default CURRENT_TIMESTAMP,PRIMARY KEY  (`id`),KEY `ts` (`ts`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
+        $this->ezSql->query($query);
+
+        echo "success";
     }
 
-    public function getAllOnlineUsers() {
+    public function addToOnline($sid) {
+        $query = "INSERT INTO  `colfusion_chat`.`colfusion_webchat_users".$sid."` (`id`,`last_activity`)VALUES ('".$this->user->user_id."',CURRENT_TIMESTAMP);";
+        $this->ezSql->query($query);
+        return "logged in";
+    }
+
+    public function getAllOnlineUsers($sid) {
         // Deleting chats older than 5 minutes and users inactive for 10 minites
-        $query = "DELETE FROM colfusion_webchat_lines WHERE ts < SUBTIME(NOW(),'0:5:0');";
+        $query = "DELETE FROM `colfusion_chat`.`colfusion_webchat_lines".$sid."` WHERE ts < SUBTIME(NOW(),'0:5:0');";
         $this->ezSql->query($query);
 
-        $query = "DELETE FROM colfusion_webchat_users WHERE last_activity < SUBTIME(NOW(),'0:10:0');";
+        $query = "DELETE FROM `colfusion_chat`.`colfusion_webchat_users".$sid."` WHERE last_activity < SUBTIME(NOW(),'0:10:0');";
         $this->ezSql->query($query);
 
         //get all users
-        $query = "SELECT id AS user_id, user_login FROM `colfusion_webchat_users` WU, `colfusion_users` U WHERE WU.id = U.user_id AND U.user_id !=".$this->user->user_id;
+        $query = "SELECT id AS user_id, user_login FROM `colfusion_chat`.`colfusion_webchat_users".$sid."` WU, `colfusion`.`colfusion_users` U WHERE WU.id = U.user_id AND U.user_id !=".$this->user->user_id;
         $links =  $this->ezSql->get_results($query);
 
-        $query = "SELECT count(*) AS total FROM `colfusion_webchat_users` WHERE id !=".$this->user->user_id;
+        $query = "SELECT count(*) AS total FROM `colfusion_chat`.`colfusion_webchat_users".$sid."` WHERE id !=".$this->user->user_id;
         $number = $this->ezSql->get_results($query);
         foreach ($number as $r) {
             $total = $r->total;
@@ -48,10 +57,10 @@ class ChatDAO {
         return json_encode($results);
     }
 
-    public function getChats($lastID) {
+    public function getChats($lastID, $sid) {
         $lastID = (int)$lastID;
-        
-        $query = "SELECT id,aid,text,ts,user_login AS author FROM colfusion_webchat_lines WU, colfusion_users U WHERE WU.id > ".$lastID." AND WU.aid = U.user_id ORDER BY id ASC";
+        $tableName = "colfusion_chat.colfusion_webchat_lines".$sid;
+        $query = "SELECT id,aid,text,ts,user_login AS author FROM ".$tableName." WU, `colfusion`.`colfusion_users` U WHERE WU.id > ".$lastID." AND WU.aid = U.user_id ORDER BY id ASC";
         $result = $this->ezSql->get_results($query);
         $chats = array();
         if($result){
@@ -75,11 +84,11 @@ class ChatDAO {
         return json_encode($return_chat);
     }
 
-    public function submitChat($details){
-        $query = "INSERT INTO `colfusion`.`colfusion_webchat_lines` (`id`, `aid`, `text`, `ts`) VALUES (NULL, '".$this->user->user_id."', '".$details."', CURRENT_TIMESTAMP);";
+    public function submitChat($details, $sid){
+        $query = "INSERT INTO `colfusion_chat`.`colfusion_webchat_lines".$sid."` (`id`, `aid`, `text`, `ts`) VALUES (NULL, '".$this->user->user_id."', '".$details."', CURRENT_TIMESTAMP);";
         $this->ezSql->query($query);
 
-        $query = "SELECT max(id) AS id FROM colfusion_webchat_lines";
+        $query = "SELECT max(id) AS id FROM `colfusion_chat`.`colfusion_webchat_lines".$sid."`;";
         $result = $this->ezSql->get_results($query);
 
         $return_chat = array(

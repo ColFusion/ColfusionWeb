@@ -90,7 +90,15 @@
 
         relationshipViewModel.mineRelationships(10, 1);
     });
-
+    
+    function joinDiscuss() {
+        $.ajax({
+            url: my_pligg_base + "/chat/chatController.php?action=createRoomIfNeeded&room="+sid,
+            success: function(data) {
+                window.open("../Colfusion/chat/chatroom.php?room="+sid);
+            }
+        });
+    }
     function fetchDatasetProfile() {
         $.ajax({
             url: my_pligg_base + "/display_data.php?count=5",
@@ -146,6 +154,7 @@
                 </table>
             </td>
         </tr>
+        <a onclick="joinDiscuss();" style="position: relative; float: right;">Click here to discuss!</a>
     </table>
 </div>
 
