@@ -16,6 +16,9 @@ class ChatDAO {
     }
 
     public function createChatRoomForStory($sid){
+        $quer = "CREATE DATABASE IF NOT EXISTS colfusion_chat";
+        $this->ezSql->query($query);
+        
         $query = "CREATE TABLE IF NOT EXISTS `colfusion_chat`.`colfusion_webchat_users".$sid."`(`id` int(20) unsigned NOT NULL,`last_activity` timestamp NOT NULL default CURRENT_TIMESTAMP,PRIMARY KEY  (`id`),KEY `last_activity` (`last_activity`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8;";
         $this->ezSql->query($query);
 

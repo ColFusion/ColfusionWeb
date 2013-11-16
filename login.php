@@ -33,8 +33,6 @@ if($my_pligg_base){
 }
 if(isset($_GET["op"])){
 	if(sanitize($_GET["op"], 3) == 'logout') {
-		$sql = "DELETE FROM `colfusion`.`colfusion_webchat_users` WHERE id=".$current_user->user_id;
-		$db->query($sql);
 		$current_user->Logout(sanitize($_GET['return'], 3));
 	}
 }
@@ -76,10 +74,6 @@ if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (is
 		    }
 		    } else {
 			$sql = "DELETE FROM " . table_login_attempts . " WHERE login_ip='$lastip' ";
-			$db->query($sql);
-
-			//edit by Jason, add current login user to online webchat
-			$sql = "INSERT INTO `colfusion`.`colfusion_webchat_users` (`id`, `last_activity`) VALUES ('".$current_user->user_id."', CURRENT_TIMESTAMP);";
 			$db->query($sql);
 			
 			if(strlen(sanitize($_POST['return'], 3)) > 1) {
