@@ -1,10 +1,82 @@
+<script type="text/javascript">
+
+/*function showSubNav(title){
+ $("td[title='"+title+"']").show();
+ 
+}
+ function hideSubNav(title){
+ $("td[title='"+title+"']").hide;
+}
+*/
+ function Modify(id) {  
+  var str=prompt("enter new value:");
+  if(str)
+    {
+        alert("new value is: "+ str)
+    }
+  var p=document.getElementById(id);
+  p.innerHTML=str;  
+  Mark(id);
+  Comment(id);
+}
+
+ function Delete(id) {
+  alert("it is deleted");
+  document.getElementById(id).innerHTML="null";
+  Mark(id);
+  Comment(id);
+}
+
+function Mark(id){
+  document.getElementById(id).style.background="#FFD700";
+
+}
+
+function Comment(id){
+var p=prompt("please write a comment here: ");
+// record the comment by id
+}
+
+</script>
+<script>
+    $(".preview-title").click(function(){
+       // $("#tfhover").find("tbody").eq(1).find("tr").each(function(index){$(this).find("td").each(function(index2){$(this).attr("id","row"+index+"-col"+index2);});});
+      // $(".preview-title").click(function(){
+           var $targetTable = $("#tfhover").find("tbody").eq(1).find("tr");
+           for (var i=0;i<$targetTable.length;i++) {
+                $targetRow = $targetTable.eq(i).find("td");
+                for (var j=0;j<$targetRow.length;j++) {
+
+
+                    $targetRow.eq(j).attr({
+                        "id":"row"+i+"-col"+j,    //cell id
+                        "title":"row"+i+"col"+j,    //navi id
+                        "ondblclick":"showSubNav(title)",
+                        "onclick":"hideSubNav(title)"
+                    });
+
+                    var cid = $targetRow.eq(j).attr("id");
+                    $targetRow.eq(j).css("position","relative");
+                    var cell = $targetRow.eq(j).html();
+                    var navTable = '<div name=table class="sub_nav" style="top:0px; height:100%; width:100%; position: absolute; z-index:1000;display:block;" onclick="try{window.event.cancelBubble = true;}catch(e){event.stopPropagation();}">';
+                    navTable += '<img src="edit_pencil.jpg" style="margin-left: 20px; " height="15" width="15" id="image1" onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"/></tr>';
+                    navTable += '<img src="delete_trashcan.jpg" height="15" width="15" id="image2" onclick="Delete(\''+cid+'\');Mark(\''+cid+'\');"/></tr>';
+                    navTable += '</div>';
+                    $targetRow.eq(j).html(cell+navTable);
+
+
+                }
+           }
+       });
+    //});
+</script>
 <div class="dataPreviewTableWrapper">
     <div class="preview-story">
         <button data-bind="visible: currentTable" id="visualizeBtn" class="btn visualizeBtn" onclick="openVisualizationPage()">
             <i class="icon-bar-chart" style="margin-right: 5px;"></i>
             Visualize
         </button>
-        <h3 class="preview-title">Data Preview</h3>
+        <h3 class="preview-title">Switch to edit mode</h3>
         <div class="storycontent" id="dataPreviewContainer">
             <ul data-bind="visible: tableList().length > 1, foreach: tableList" class="tableList" id="previewTableList">
                 <li data-bind="click: $root.chooseTable" class="tableListItem">
@@ -19,7 +91,7 @@
                 Processing Data...
             </div>
             <!-- /ko -->
-            <div data-bind="visible: isNoData" style="color: grey;">This table has no data or the data are being processed.</div>
+            <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
             <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
             <div data-bind="with: currentTable">
                 <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">

@@ -151,10 +151,8 @@ var importWizard = (function () {
 						.push({
 						    'originalDname': checkboxes[i].value,
 						    'newDname': document.getElementsByName('Dname')[i].value,
-						    'type': document
-									.getElementsByName('dname_value_type')[i].value,
-						    'unit': document
-									.getElementsByName('dname_value_unit')[i].value,
+						    'type': 'INT',//document.getElementsByName('dname_value_type')[i].value,
+						    'unit': document.getElementsByName('dname_value_unit')[i].value,
 						    'description': document
 									.getElementsByName('dname_value_description')[i].value,
 						    'tableName': tableName,

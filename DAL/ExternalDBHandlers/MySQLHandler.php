@@ -1,6 +1,7 @@
 <?php
 
 require_once(realpath(dirname(__FILE__)) . "/DatabaseHandler.php");
+require_once(realpath(dirname(__FILE__)) . "/../KTRExecutorDAO.php");
 
 class MySQLHandler extends DatabaseHandler
 {
@@ -180,6 +181,9 @@ class MySQLHandler extends DatabaseHandler
         }
 
         $query .= implode(", ", $columnsDefinition) . " ); ";
+
+$ktrExecutorDAO = new KTRExecutorDAO();
+$ktrExecutorDAO->updateExecutionInfoTupleStatus(1, $query);
 
         try {
             $pdo = $this->GetConnection();

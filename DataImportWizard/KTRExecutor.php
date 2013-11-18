@@ -90,24 +90,27 @@ class KTRExecutor
         // KTR manager has target database info.
         $databaseConnectionInfo = $this->ktrManager->getConnectionInfo();
 
-$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed before handler");
+$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating dbhandler");
 
         $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($databaseConnectionInfo->engine, $databaseConnectionInfo->username, $databaseConnectionInfo->password, null, $databaseConnectionInfo->server, $databaseConnectionInfo->port, null, null);
 
-$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed after handler");
+$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "after creating dbhandler");
 
         // DATABASE
         $dbHandler = $dbHandler->createDatabaseIfNotExist($databaseConnectionInfo->database);
 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed");    // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "after creating database if needed");    // loggin to db
 
         // KTR manager also has target table name and columns which that table needs to have
         $tableName = $this->ktrManager->getTableName();
         $columns = $this->ktrManager->getColumns();
 
+$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "before creating table if needed");
+
         // TABLE
         $dbHandler->createTableIfNotExist($tableName, $columns);
 
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "after creating table if needed");
         //by this po everything went fine, so not just need to return target database connection info for future use
         return $databaseConnectionInfo;
     }
