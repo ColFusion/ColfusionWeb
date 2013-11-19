@@ -1,0 +1,218 @@
+html, body {
+	background: #3E3E3E;
+	background: -webkit-linear-gradient(#3E3E3E, #757575, #3E3E3E);
+	background: -o-linear-gradient(#3E3E3E, #757575, #3E3E3E);
+	background-repeat: no-repeat;
+	height: 100%;
+}
+
+#chatBody {
+	margin: 0px auto;
+	width: 880px;
+}
+
+#chatContainer{
+	position: relative; float: left;
+	border: 1px solid #E9DDAB; border-bottom-width: 0;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	margin-top: 20px;
+	width: 680px;
+	background: white;
+}
+
+#chatSide {
+	position: relative; float: left;
+	margin-left: 10px; margin-top: 23px;
+}
+
+/* Chat Sidebar - Header */
+#sidebar-header {
+	display: block;
+	width: 180px;
+}
+
+#sidebar-header ul {
+	display: block;
+	list-style: none;
+	margin: 0; padding: 0;
+}
+
+#sidebar-header li {
+	display: inline;
+	margin: 0 2px 0 0; padding: 5px 5px 6px 5px;
+	border: 1px solid #E9DDAB; border-bottom-width: 0;
+	border-radius: 8px; border-bottom-right-radius: 0; border-bottom-left-radius: 0;
+	font-size: 14px;
+	background: #FDFDEE;
+}
+
+#sidebar-header a {
+	padding: 0 1em;
+	text-decoration: none;
+	color: #505050;
+	background: #FDFDEE;
+}
+
+#sidebar-header .selected a {
+	padding-bottom: 4px;
+	background: #FDFDEE;
+}
+
+/* Chat Sidebar - Chat User Area */
+#chatUsers {
+	background-color: #FDFDEE;
+	border: 1px solid #E9DDAB;
+	height: 360px; width: 180px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#chatUsers .user {
+	border-bottom: 1px solid #E9DDAB;
+	margin: 0; padding: 10px 0 10px 10px; float: left;
+	width: 170px;
+	background-color: #FDFDEE;
+	cursor: pointer;
+}
+
+#chatUsers .user:hover {
+	background-color: #FBF7E5;
+}
+
+p.noChats, #chatUsers .count{
+	clear: both;
+	font-size: 14px;
+	padding: 10px;
+	text-align: center;
+}
+
+#chatUsers .count{
+	font-size: 14px;
+}
+
+/* Main Chat - Bottom Bar */
+#chatBottomBar{
+	position: relative;
+	border-bottom-right-radius: 8px; border-bottom-left-radius: 8px;
+	padding: 10px;
+	background:url('../css/img/solid_gray.jpg') repeat-x #d0d0d0;
+}
+
+#chatBottomBar .tip{
+	position: absolute;
+	border: 10px solid transparent;
+	border-bottom-color: #eeeeee;
+	width: 0; height: 0;
+	top: -20px; left: 20px;
+}
+
+
+/* Main Chat - Content */
+#chatLineHolder{
+	margin: 10px;
+	width: 660px; height: 360px;
+}
+
+.chat {
+	position: relative;
+	border: 1px solid #FFFFFF;
+	border-radius: 5px;
+	padding: 10px;
+	background-color: #EDEDED;
+}
+
+.chat:last-child{
+	margin-bottom:0;
+}
+
+.chat span{
+	color: #777777;
+	font-size: 14px;
+}
+
+.chat .text .author{
+	color: #444444;
+	display: inline-block;
+	font-size: 14px;
+	overflow: hidden;
+	vertical-align: middle;
+	width: 200px;
+}
+
+.chat .time{
+	position: absolute;
+	right: 10px; top: 12px;
+	font-size:11px;
+}
+
+.chat .author{
+	margin-right: 10px;
+	color: #909090;
+}
+
+input#chatText{
+	border: 1px solid;
+	border-color: #C1C1C1 #EEE #EEE #C1C1C1;
+	padding-left: 10px;
+	width: 580px; height: 30px;
+	background: url('../css/img/input_bg.jpg') repeat-x #DCDCDC;
+	font: 14px "Calibri";
+	color: #505050;
+	outline: none;
+}
+
+#submitButton{
+	display: inline-block;
+	position: absolute;
+	border: none !important;
+	right: 10px; top: 10px;
+	width: 60px; height: 30px;
+	background: url('../css/img/button_blue.png') no-repeat;
+	color: #505050 !important;
+	font-size: 14px;
+	text-align: center;
+	cursor: pointer;
+}
+
+/* Overloading the default styles of jScrollPane */
+.jspVerticalBar{
+	background: none;
+	width: 20px;
+}
+
+.jspTrack{
+	background-color: #202020;
+	border: 1px solid #111111;
+	width: 3px;
+	right: -10px;
+}
+
+.jspDrag {
+	background: url('../css/img/slider.png') no-repeat;
+	width: 20px;
+	left: -9px;
+	height: 20px !important;
+	margin-top: -5px;
+}
+
+.jspDrag:hover{
+	background-position:left bottom;
+}
+
+#chatErrorMessage{
+	width: 100%;
+	top: 0;
+	left: 0;
+	position: fixed;
+	background-color: #ab0909;
+	border-bottom: 1px solid #d32a2a;
+	font-size: 23px;
+	padding: 16px;
+	text-align: center;
+	color: #fff;
+	
+	text-shadow: 1px 1px 0 #940f0f;
+}
