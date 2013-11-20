@@ -114,7 +114,7 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
             }
         }
 
-        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid);
+        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid, $fileURLs);
     } else {
         foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
             if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
@@ -126,7 +126,7 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
                 if (!file_exists($ktrFilePath)) {
                     copy($template, $ktrFilePath);
                 }
-                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid);
+                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid, $fileURLs);
             }
         }
     }

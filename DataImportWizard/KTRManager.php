@@ -14,12 +14,14 @@ class KTRManager {
     private $sid;
     private $connectionInfo;
     private $tableName;
+    private $fileURLs;
 
-    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid) {
+    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid, $fileURLs) {
         $this->ktrTemplatePath = $ktrTemplatePath;
         $this->ktrFilePath = $ktrFilePath;
         $this->filePaths = $filePaths;
         $this->sid = $sid;
+        $this->fileURLs = $fileURLs;
     }
 
     public function createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs) {
@@ -29,7 +31,7 @@ class KTRManager {
 
         $this->changeConnection();
         $this->changeSheetType();
-        $this->addUrls($this->filePaths);
+        $this->addUrls($this->fileURLs);
         $this->addSheets($sheetNamesRowsColumns);
         $this->clearConstantAndTarget();
 
