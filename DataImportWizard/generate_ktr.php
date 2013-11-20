@@ -30,7 +30,7 @@ else
 
 $sid = getSid();
 $dataSource_dir = "upload_raw_data/$sid/";
-$dataSource_dirPath = mnmpath . $dataSource_dir;
+$dataSource_dirPath = my_pligg_base . $dataSource_dir; //mnmpath
 $excelFileMode = $_SESSION["excelFileMode_$sid"];
 
 switch ($phase) {

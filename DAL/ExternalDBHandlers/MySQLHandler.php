@@ -19,6 +19,8 @@ class MySQLHandler extends DatabaseHandler
             $pdo = new PDO("mysql:host=$this->host;port=$this->port;dbname=$this->database;charset=utf8;", $this->user, $this->password);
         }
 
+//var_dump("mysql:host=$this->host;port=$this->port;dbname=$this->database;charset=utf8;", $this->user, $this->password);
+
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
@@ -129,6 +131,8 @@ class MySQLHandler extends DatabaseHandler
     public function ExecuteQuery($query)
     {
         $pdo = $this->GetConnection();
+
+//var_dump($query);
 
         $res = $pdo->query($query);
         $result = array();
