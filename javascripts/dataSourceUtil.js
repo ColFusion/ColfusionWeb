@@ -94,7 +94,7 @@ var dataSourceUtil = (function() {
         }
 
         var rows = [];
-        for (var i = 0; i < rawData.data.length && i < 10; i++) {
+        for (var i = 0; i < rawData.data.length && i < rawData.Control.perPage; i++) {
             var rowObj = rawData.data[i];
             var row = [];
             for (var j = 0; j < cols.length; j++) {

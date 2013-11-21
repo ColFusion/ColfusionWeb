@@ -4,6 +4,8 @@ include_once(realpath(dirname(__FILE__)) . '/../DAL/StatisticsDAO.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/DatasetDAO.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
+require_once(realpath(dirname(__FILE__)) . '/../visualization/charts/PieChart.php');
+
 class GlobalStatEngine {
 
 	private $statisticsDAO;
@@ -141,6 +143,17 @@ class GlobalStatEngine {
 		}
 		$result[6] = $oneRow;
 
+		$oneRow["statistics"] = "Median";
+
+		foreach($columns as $cid => $columnName) {
+			$temp = $this->statisticsDAO->DisplayStatisticsSummary($cid, "med");
+			if ($temp == ''){
+				$temp = '--';
+			}
+			$oneRow[$columnName] = $temp;
+		}
+		$result[7] = $oneRow;
+
 		$oneRow["statistics"] = "Missing Values";
 
 		foreach($columns as $cid => $columnName) {
@@ -150,9 +163,9 @@ class GlobalStatEngine {
 			}
 			$oneRow[$columnName] = $temp;
 		}
-		$result[7] = $oneRow;
+		$result[8] = $oneRow;
 
-		$row = 8;
+		$row = 9;
 		$keys = array_keys($columns);
 		$values = array_values($columns);
 		
@@ -405,6 +418,37 @@ class GlobalStatEngine {
 		
 		$result[6] = $oneRow;
 
+		// Get Ave value in each columns
+		$oneRow["statistics"] = "Median";
+
+		$queryEngine = new QueryEngine();
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		foreach ($columns as $cid => $columnName) {
+			$cidType = $this->statisticsDAO->GetColumnType($cid);
+			$missValue = $this->statisticsDAO->GetMissingValue($cid);
+			if ($missValue == ""){
+				$missValue = "-99999999";
+			}
+			if ($cidType == "STRING" || $cidType == "DATE"){
+				$oneRow[$columnName] = "--";
+				//continue;
+			}
+			else {
+				$select = "SELECT ROUND(MEDIAN($columnName),2) AS 'MedValue' ";
+				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+				$fromArray = array($from);
+				$where = " WHERE $columnName <> $missValue";
+        		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
+				$oneRow[$columnName] = $obj[0]["MedValue"];
+			}
+
+			$this->statisticsDAO->WriteStatistics($cid,$sid,"med",$oneRow[$columnName]);
+		}
+
+		
+		$result[7] = $oneRow;
+
 		// Get Count of Missing Values 
 		$oneRow["statistics"] = "Missing Values";
 
@@ -433,12 +477,12 @@ class GlobalStatEngine {
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"missing",$oneRow[$columnName]);
 		}
 
-		$result[7] = $oneRow;
+		$result[8] = $oneRow;
 
 
 		// starts correlation calculation
 
-		$row = 8;
+		$row = 9;
 		$keys = array_keys($columns);
 		$values = array_values($columns);
 		
@@ -499,6 +543,102 @@ class GlobalStatEngine {
 	    $json_array["Control"]["cols"] = $columns;
     
 		return $json_array;
+	}
+
+	public function GetStoryCorrelationSummary($sid, $tableName){
+		$datasetDAO = new DatasetDAO();
+		//TODO: get cids of all column in the table by sid and tableName
+
+		$columns = $datasetDAO->getTableColumns($sid, $tableName);
+
+		$result = array();
+
+		$oneRow = array();
+
+
+
+		$row = 0;
+		$keys = array_keys($columns);
+		$values = array_values($columns);
+		
+		for($i = 0; $i < sizeof($keys); $i++){
+			$queryEngine = new QueryEngine();
+			$inputObj = new stdClass();
+			$inputObj->sid = $sid;
+			$cidi = $keys[$i];
+			$columnNamei = $values[$i];
+			$cidiType = $this->statisticsDAO->GetColumnType($cidi);
+			$oneRow["statistics"] = "Correlation " . $columnNamei;
+			for($j = 0; $j < sizeof($keys); $j++){
+				$cidj = $keys[$j];
+				$columnNamej = $values[$j];
+				$cidjType = $this->statisticsDAO->GetColumnType($cidj);
+				if ($cidiType == "STRING" || $cidiType == "DATE" || $cidjType == "STRING" || $cidjType == "DATE"){
+					$oneRow[$columnNamej] = "--";
+					//continue;
+				}
+				else {
+					$select = "SELECT ROUND(CORR($values[$i], $values[$j]),2) AS 'Correlation' ";
+					$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
+					$fromArray = array($from);
+        			$obj = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
+					$oneRow[$columnNamej] = $obj[0]["Correlation"];
+					//$oneRow[$columnNamej] = "--";
+				}
+			}
+			$result[$row] = $oneRow;
+			$row++;
+		}
+		$columns = NULL;
+	    foreach ($result as $r) {
+	        $json_array["data"][] = $r;
+	        if ($columns === NULL) {
+	            if (is_array($r))
+	                $columns = implode(",", array_keys($r));
+	            else
+	                $columns = implode(",", array_keys(get_object_vars($r)));
+	        }
+	    }
+
+	    $json_array["Control"]["cols"] = $columns;
+    
+		return $json_array;
+
+	}
+
+	function getPieChart($sid, $tableName, $columnName) {
+		$datasetDAO = new DatasetDAO();
+
+		$cid = $datasetDAO->getCidBySidTableNameColumName($sid, $tableName, $columnName);
+	
+		$pieChartInput = new stdClass();
+
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		$inputObj->oneSid = true;
+		$inputObj->tableName = $tableName;
+		$inputObj->title = 'pieChart';
+
+		$pieChartInput->inputObj = $inputObj;
+
+		$pieChartInput->table = $tableName;
+
+		$columnObj = new stdClass();
+		$columnObj->cid = $cid;
+
+		$pieChartInput->pieColumnCat = $columnObj;
+		$pieChartInput->pieColumnAgg = $columnObj;
+		$pieChartInput->pieAggType = "Count";
+		$pieChartInput->where = "";
+
+		$pieChart = new PieChart(null, null, null, null, null, null, null, null, null, null, null);	 
+		$pieData = $pieChart->query($pieChartInput);
+		$chartId = str_replace(".", "dot", "$sid$tableName$columnName");
+
+       	$pieData["chartId"] = $chartId;
+       	$pieData["columnName"] = $columnName;
+
+       	return $pieData;
 	}
 
 }

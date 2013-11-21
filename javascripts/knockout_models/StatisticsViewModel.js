@@ -42,6 +42,8 @@ var StoryStatisticsViewModelProperties = {
     }
 };
 
+google.load("visualization", "1", {packages:["corechart"]});
+
 function StoryStatisticsViewModel(sid) {
     var self = this;
     self.sid = sid;
@@ -149,5 +151,58 @@ function StoryStatisticsViewModel(sid) {
             self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
         }
     };
+
+    self.getPieChart = function(header) {
+
+        var currentTable = self.currentTable();
+        
+        var columnName = header.name();
+
+        $.ajax({
+            type: 'POST',
+            url: my_pligg_base + "/Statistics/GlobalStatisticsController.php?action=getPieChart",
+            data: {'sid': self.sid, 'table_name': currentTable.tableName, 'columnName': columnName},
+            dataType: 'json',
+            success: function(pieData) {
+                
+
+                    
+                    
+                    // Set a callback to run when the Google Visualization API is loaded.
+                    self.drawPieChart(pieData);
+            }
+        });
+    };
+
+    self.drawPieChart = function(pieData) {
+            var chartId = pieData.chartId;
+
+            if ($("#" + chartId).length > 0) {
+                $("#" + chartId).toggle();
+            }
+            else {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', "ColumnName");
+                data.addColumn('number', "Value");
+                
+                for(i = 0; i < pieData.content.length; i++) {
+                    data.addRow();
+                    data.setCell(i, 0, String(pieData.content[i].Category));
+                    data.setCell(i, 1 , parseFloat(String(pieData.content[i].AggValue)));
+                }
+                var options = {
+                          'title':'Pie Chart for column ' + pieData.columnName
+                    };
+
+                var chartDiv = document.createElement('div');
+                chartDiv.id = pieData.chartId;
+
+                $("#statChartsContainer").append(chartDiv);
+
+                var chart = new google.visualization.PieChart(chartDiv);
+                chart.draw(data, options);
+            }
+
+    }
 }
 

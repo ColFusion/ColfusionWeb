@@ -1,5 +1,5 @@
 <?php
-require_once('Chart.php');
+require_once(realpath(dirname(__FILE__)) . '/../Chart.php');
 
 include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
 
@@ -57,6 +57,9 @@ class PieChart extends Chart {
         $groupby = " GROUP BY cid(" . $pieColumnCat->cid . ") ";
         $queryEngine = new QueryEngine();
         $rst = array();
+
+//var_dump($select, $fromArray, $groupby);
+
         $rst['content'] = $queryEngine->doQuery($select, $fromArray, null, $groupby, null, null, null);
         $rst['pieAggType'] = $pieAggType;
         $rst['pieColumnCat'] = $pieColumnCat->columnName;
