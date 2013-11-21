@@ -95,7 +95,7 @@ $(document).ready(function() {
     $("#des_popup").hide();
     $("#category_popup").hide();
     $("#tags_popup").hide();
-    $("#notification").hide();
+    $("#notification2").hide();
     $("#save_button").hide();
     $("#cancel_button").hide();
     //$(".deleteFileBtnWrapper").hide();

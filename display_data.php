@@ -131,10 +131,10 @@ include_once(mnminclude.'user.php');
 	    }
 	    
 	    if (title_str!=null || des_str!=null || category_value!=0 || tags_str!="000") {
-		$("#notification").fadeIn("fast");
+		$("#notification2").fadeIn("fast");
 		showShade();
 		$("#fade, #noti_cancel").bind("click",function(){
-		    $("#notification").fadeOut("fast",function(){
+		    $("#notification2").fadeOut("fast",function(){
 			
 			$("#title_noti_wrap").hide();
 			$("#des_noti_wrap").hide();
@@ -506,7 +506,7 @@ include_once(mnminclude.'user.php');
 		
 		
 		
-		echo '<div id="notification" style="padding:10px;background-color:#f5f5f5;position:absolute;top: 40%;left: 30%;width:500px;min-height:250px;height:auto;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
+		echo '<div id="notification2" style="padding:10px;background-color:#f5f5f5;position:absolute;top: 40%;left: 30%;width:500px;min-height:250px;height:auto;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 			<div id="title_noti_wrap" style="display:none;margin-top:18px;"><div style="padding:5px;padding-left:10px;width:100%;height:40px;"><h4 style="">Reasons why you change TITLE?</h4></div>
 			<textarea placeholder="say something.." id="title_noti" style="width:460px;height:80px;margin:10px;margin-top:5px;"></textarea></div>
 			
