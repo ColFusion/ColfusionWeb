@@ -9,6 +9,8 @@
 	{if $pagename eq "submit"}<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/wick.css" />{/if}
 
 	<link href="{$my_pligg_base}/templates/{$the_template}/css/image-slider.css" rel="stylesheet" type="text/css" />
+	<link href="{$my_pligg_base}/css/chat_reset.css" rel="stylesheet" type="text/css" />
+	<link href="{$my_pligg_base}/css/chat_indexchat.css" rel="stylesheet" type="text/css" />
 
 	<!------------------------------------------------------------------------>
 	<!--link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/dropdown.css" media="screen" /-->
@@ -20,8 +22,7 @@
 	{if not $no_jquery_in_pligg}
 		<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
 	{/if}
-
-	<script src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
+	<script src="{$my_pligg_base}/javascripts/jquery.form.js"></script>
 
 	{if $Voting_Method eq 2}
 		<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/star_rating/star.css" media="screen" />
@@ -142,7 +143,7 @@
 	{include file=$tpl_header.".tpl"}
 
 	<!-- START CONTENT -->
-	<div id="content">
+	<div id="content" style="z-index: 1;">
 
 		<!-- START MAIN COLUMN -->
 		{if $pagename eq "submit" || $pagename eq "home" || $pagename eq "advancedsearch" || $pagename eq "user_guide" || $pagename eq "uploadlocalfile" || $pagename eq "story" || $pagename eq "visualization"}
@@ -195,7 +196,49 @@
 		{include file=$tpl_footer.".tpl"}
 	</div>
 	<!-- END CONTENT -->
+	<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-migrate-1.2.1.min.js"></script>
+	<script type="text/javascript" src="{$my_pligg_base}/javascripts/index_chat/jquery.ajax_chat.js?<?php echo $rndnumber; ?>"></script>
+	<script type="text/javascript" src="{$my_pligg_base}/javascripts/index_chat/own_id.inc.php"></script>
+	<div style="position: absolute; top: 0px; right: 0px; z-index: 100; width: 150px; height: 300px; border: none;">
+		{php}
+			$sql_username = 'root';
+			$sql_password = '';
+			$database = 'colfusion_chat';
+			//connect to MySQL	
+			$mysql['connection_id'] = mysql_connect('localhost',$sql_username, $sql_password);
+			mysql_select_db($database);
 
+			mysql_query("set names utf8");
+
+			global $current_user;
+		    if($current_user->user_login != null){
+		    	$_SESSION['username'] = $current_user->user_login; 
+		    	$_SESSION['user_id'] = $current_user->user_id;
+		    	$own_id = $_SESSION['user_id'];
+		    			
+
+			    //load users from database
+				$users = mysql_query("SELECT id,username FROM `colfusion_chat`.`index_users` WHERE id!='".$_SESSION['user_id']."'");
+				if(mysql_num_rows($users) > 0){
+					while($user = mysql_fetch_assoc($users)){
+						//ALT tag contains user ID and user name 
+						print '&bull; <a href="#" alt="'.$user['id'].'|'.$user['username'].'" class="chat_user">'.$user['username'].'</a><br />';
+					}
+				}
+			}
+			if (isset($_SESSION['chatbox_status'])) {
+				print '<script type="text/javascript">';
+				print '$(function() {';
+				foreach ($_SESSION['chatbox_status'] as $openedchatbox) {
+					print 'PopupChat('.$openedchatbox['partner_id'].',"'.$openedchatbox['partner_username'].'",'.$openedchatbox['chatbox_status'].');';
+				}
+				print "});";
+				print '</script>';
+			}
+		{/php}
+	</div>
+	<div id="player_div"></div>
 	<script src="{$my_pligg_base}/templates/xmlhttp.php" type="text/javascript"></script> {* this line HAS to be towards the END of pligg.tpl *}
 </body>
 

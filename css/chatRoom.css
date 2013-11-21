@@ -4,6 +4,7 @@ html, body {
 	background: -o-linear-gradient(#3E3E3E, #757575, #3E3E3E);
 	background-repeat: no-repeat;
 	height: 100%;
+	overflow: hidden;
 }
 
 #chatBody {

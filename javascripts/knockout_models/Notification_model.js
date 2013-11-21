@@ -9,7 +9,11 @@ function newNotification(ntf_id, sender, action, receiver_id, target, target_id,
     self.target_id = target_id;
     self.receiver = receiver;
     self.datetime = datetime;
-    self.msg = sender + " " + action + " " + target;
+
+    if(self.target_id!=0)
+        self.msg = sender + " " + action + " " + target;
+    else
+        self.msg = sender + " " + action;
     self.seeAllMsg = " "+action + " " + target + "    " + datetime;
 }
 
@@ -60,7 +64,10 @@ function NotificationViewModel() {
                 type: 'post',
                 dataType: 'json'
             });
-            story_url = "/Colfusion/story.php?title="+ntf.target_id;
+            if(ntf.target_id!=0)
+                story_url = "/Colfusion/story.php?title="+ntf.target_id;
+            else
+                story_url = "/Colfusion/user.php?login="+ntf.sender;
             window.open(story_url);
         }
     }//end of goToStory

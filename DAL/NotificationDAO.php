@@ -19,7 +19,11 @@ class NotificationDAO {
     public function allUserNTF() {
         $links = $this->ezSql->get_results($sql="SELECT C.user_login AS sender, A.ntf_id AS ntf_id, A.action AS action, B.receiver_id AS receiver_id, D.link_title AS target, D.link_id AS target_id
         FROM colfusion_notifications A, colfusion_notifications_unread B, colfusion_users C, colfusion_links D
-        WHERE C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND D.link_id = A.target_id AND B.receiver_id=".$this->user->user_id." AND A.sender_id !=".$this->user->user_id);
+        WHERE C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND D.link_id = A.target_id AND B.receiver_id=".$this->user->user_id." AND A.sender_id !=".$this->user->user_id."
+        union
+        SELECT C.user_login AS sender, A.ntf_id AS ntf_id, A.action AS action, B.receiver_id AS receiver_id, 'not a title', '0' AS target_id
+        FROM colfusion_notifications A, colfusion_notifications_unread B, colfusion_users C,colfusion_friends WHERE C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND B.receiver_id=".$this->user->user_id." AND A.sender_id !=".$this->user->user_id."
+        ");
         
         $results = array(
             "receiver" => $this->user->user_login,
@@ -82,6 +86,18 @@ class NotificationDAO {
         $query = "INSERT INTO `colfusion`.`colfusion_notifications` (`sender_id`, `target_id`, `action`, `datetime`) SELECT '".$this->user->user_id."',sid2,'".$userAction."', '".$datetime."' FROM colfusion_relationships WHERE rel_id=".$relID;
         $this->ezSql->query($query);
         $this->addUnreadNTFs($relID);
+        return;
+    }
+
+    public function friend($to_user, $act){
+        date_default_timezone_set('America/New_York');
+        $datetime = date('Y/m/d H:i:s');
+        // insert the ntf to ntf table
+        $query = "INSERT INTO `colfusion`.`colfusion_notifications` (`ntf_id`, `sender_id`, `target_id`, `action`, `datetime`) VALUES (NULL, '".$this->user->user_id."', '0', '".$act."', '".$datetime."');";//target id set 0! to mean that this is a friend ntf
+        $this->ezSql->query($query);
+
+        $query = "INSERT INTO `colfusion`.`colfusion_notifications_unread` (`ntf_id`, `receiver_id`) SELECT MAX(ntf_id),'".$to_user."' FROM `colfusion`.`colfusion_notifications`;";
+        $this->ezSql->query($query);
         return;
     }
 
