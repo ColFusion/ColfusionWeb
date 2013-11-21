@@ -175,7 +175,7 @@ function StoryStatisticsViewModel(sid) {
     };
 
     self.drawPieChart = function(pieData) {
-            var chartId = pieData.chartId;
+            var chartId = pieData.chartId + 'Pie';
 
             if ($("#" + chartId).length > 0) {
                 $("#" + chartId).toggle();
@@ -195,7 +195,7 @@ function StoryStatisticsViewModel(sid) {
                     };
 
                 var chartDiv = document.createElement('div');
-                chartDiv.id = pieData.chartId;
+                chartDiv.id = pieData.chartId + 'Pie';
 
                 $("#statChartsContainer").append(chartDiv);
 
@@ -226,7 +226,7 @@ function StoryStatisticsViewModel(sid) {
     };
 
     self.drawColumnChart = function(columnData) {
-            var chartId = columnData.chartId;
+            var chartId = columnData.chartId + 'Column';
 
             if ($("#" + chartId).length > 0) {
                 $("#" + chartId).toggle();
@@ -248,7 +248,7 @@ function StoryStatisticsViewModel(sid) {
                     };
 
                 var chartDiv = document.createElement('div');
-                chartDiv.id = columnData.chartId;
+                chartDiv.id = columnData.chartId + 'Column';
 
                 $("#statChartsContainer").append(chartDiv);
 
@@ -260,6 +260,6 @@ function StoryStatisticsViewModel(sid) {
 
 
 
-    
+
 }
 

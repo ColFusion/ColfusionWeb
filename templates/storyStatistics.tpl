@@ -37,9 +37,8 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-
-                    <div id="previewTableNavigations">
+                    
+                        <div id="previewTableNavigations">
                         <div style="display: inline-block;margin-right: 4px;" id="dataPreviewLoadingIcon" class="dataPreviewLoadingIcon">
                             <img data-bind="visible: $parent.isLoading" src="images/ajax-loader.gif" />
                         </div>
@@ -48,10 +47,15 @@
                         
 
                     </div>
+
+                    </div>
+
+                    
                     
                 </div>
-            </div>
             <div id="statChartsContainer" />
+            </div>
+            
         </div>
     <!--</div>-->
     <script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script> 
