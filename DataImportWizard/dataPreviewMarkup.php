@@ -10,19 +10,25 @@
 */
  function Modify(id) {  
   var str=prompt("enter new value:");
-  if(str)
+  if(str!=="")
     {
-        alert("new value is: "+ str)
+       // $(".alert").alert("new value is: "+ str)
+        //save it to database
+        // need to modeify
+        var p=document.getElementById(id);
+        p.innerHTML=str; 
+        Mark(id);
+        Comment(id); 
     }
-  var p=document.getElementById(id);
-  p.innerHTML=str;  
-  Mark(id);
-  Comment(id);
+    else if(str==""){
+      Delete(id);
+    }
+  
 }
 
  function Delete(id) {
-  alert("it is deleted");
-  document.getElementById(id).innerHTML="null";
+  alert("it is deleted!");
+  document.getElementById(id).innerHTML="null";//need to be null instead of a String
   Mark(id);
   Comment(id);
 }
@@ -34,41 +40,91 @@ function Mark(id){
 
 function Comment(id){
 var p=prompt("please write a comment here: ");
-// record the comment by id
+var counter=0;
+// record the comment by id and insert it into db
 }
+
+//表单栏目右侧弹出评论popout；点击对话框可以直接添加自己的评论；
+//function commentpopout(id){
+//    if(document.getElementById(id).style.background=="#FFD700")
+//    {
+//        onclick="$('#td'+id).popover('show');"
+//        onclick="$('#td'+id).popover('hide');" 
+//    }
+       
+//}
 
 </script>
 <script>
-    $(".preview-title").click(function(){
-       // $("#tfhover").find("tbody").eq(1).find("tr").each(function(index){$(this).find("td").each(function(index2){$(this).attr("id","row"+index+"-col"+index2);});});
-      // $(".preview-title").click(function(){
+$.ajax({
+        url: 'localhost/Colfusion/story.php?title=73', 
+        type: 'post',
+        dataType: 'json',
+        success: function (data) {
+            if (data.notifications!=null){
+                for (var i = data.notifications.length-1; i>=0; i--) {
+                    var tmpntf = new newNotification(
+                        data.notifications[i].ntf_id,
+                        data.notifications[i].sender,
+                        data.notifications[i].action,
+                        data.notifications[i].receiver_id,
+                        data.notifications[i].target,
+                        data.notifications[i].target_id, 
+                        " ", " ");
+                    self.ntfs.push(tmpntf);
+                }
+            }//end if
+            self.ntfs.push(new newNotification("all ntf","******","See All","all receiver","******", "all", data.receiver, " "));
+        }
+    });
+
+</script>
+<script>
+//add editing function here
+    var indexControl = 0;
+        $(".btn-primary").click(function()
+    {   if(indexControl == 0){
+        indexControl++;
            var $targetTable = $("#tfhover").find("tbody").eq(1).find("tr");
-           for (var i=0;i<$targetTable.length;i++) {
+           for (var i=0;i<$targetTable.length;i++) 
+           {
                 $targetRow = $targetTable.eq(i).find("td");
-                for (var j=0;j<$targetRow.length;j++) {
+                for (var j=0;j<$targetRow.length;j++) 
+                {
 
 
                     $targetRow.eq(j).attr({
                         "id":"row"+i+"-col"+j,    //cell id
-                        "title":"row"+i+"col"+j,    //navi id
-                        "ondblclick":"showSubNav(title)",
-                        "onclick":"hideSubNav(title)"
+                        "title":"row"+i+"col"+j   //navi id
                     });
 
+                    //allocate editng icons to each cell
                     var cid = $targetRow.eq(j).attr("id");
                     $targetRow.eq(j).css("position","relative");
                     var cell = $targetRow.eq(j).html();
                     var navTable = '<div name=table class="sub_nav" style="top:0px; height:100%; width:100%; position: absolute; z-index:1000;display:block;" onclick="try{window.event.cancelBubble = true;}catch(e){event.stopPropagation();}">';
-                    navTable += '<img src="edit_pencil.jpg" style="margin-left: 20px; " height="15" width="15" id="image1" onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"/></tr>';
-                    navTable += '<img src="delete_trashcan.jpg" height="15" width="15" id="image2" onclick="Delete(\''+cid+'\');Mark(\''+cid+'\');"/></tr>';
+                    navTable += '<i class="icon-pencil" style="margin-left: 45px; " onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
+                    navTable += '<i class="icon-trash" onclick="Delete(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
                     navTable += '</div>';
                     $targetRow.eq(j).html(cell+navTable);
-
+                    //添加comment栏
+                    if(j == $targetRow.length-1)
+                      //$('#element').popover('show')
+                    var comment = '<div><i class="icon-comment" style="margin-left: 250px" onlick="Comment()"></i></div>';
+                     //$targetRow.eq(j).html(cell+navTable);
 
                 }
            }
+
+    }
+            
        });
-    //});
+$(".btn-info").click(function()
+{
+    //to generate a new table with highlight cell and popout comment
+    window.location.reload();
+}
+);
 </script>
 <div class="dataPreviewTableWrapper">
     <div class="preview-story">
@@ -76,7 +132,9 @@ var p=prompt("please write a comment here: ");
             <i class="icon-bar-chart" style="margin-right: 5px;"></i>
             Visualize
         </button>
-        <h3 class="preview-title">Switch to edit mode</h3>
+        <h3 class="preview-title">Data Preview</h3>
+        <button class="btn btn-primary" type="button"><i class="icon-edit"></i>Edit Mode</button> <!--需要将响应事件转移到该按钮 -->
+        <button class="btn btn-info" type="button"><i class="icon-book"></i>Read Mode</button> <!--需要添加响应事件 -->
         <div class="storycontent" id="dataPreviewContainer">
             <ul data-bind="visible: tableList().length > 1, foreach: tableList" class="tableList" id="previewTableList">
                 <li data-bind="click: $root.chooseTable" class="tableListItem">
@@ -100,8 +158,9 @@ var p=prompt("please write a comment here: ");
                             <th data-bind="text: name"></th>
                         </tr>
                         <tbody class="dataPreviewTBody" data-bind="foreach: rows">
-                            <tr class="datatr" data-bind="foreach: cells">
-                                <td data-bind="text: $data"></td>
+                            <tr class="datatr" onmouseover="commentpopout();" data-bind="foreach: cells">
+                                <td onclick="alert('Need to change the bgcolor for the modified data here')" data-bind="text: $data"></td>
+                            
                             </tr>
                         </tbody>
                     </table>
