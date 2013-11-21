@@ -27,7 +27,8 @@
                     <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
                         <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
                             <tr data-bind="foreach: headers">
-                                <th><span data-bind="text: name"></span><i class="icon-adjust" data-bind="click: $root.getPieChart" style="{cursor: pointer !important;}"></i> 
+                                <th><span data-bind="text: name"></span><i class="icon-adjust" data-bind="click: $root.getPieChart" style="{cursor: pointer !important;}"></i>
+                                    <i class="icon-adjust" data-bind="click: $root.getColumnChart" style="{cursor: pointer !important;}"></i>
                                     </th>
                             </tr>
                             <tbody class="dataPreviewTBody" data-bind="foreach: rows">

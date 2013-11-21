@@ -204,5 +204,62 @@ function StoryStatisticsViewModel(sid) {
             }
 
     }
+
+    self.getColumnChart = function(header) {
+
+        var currentTable = self.currentTable();
+        
+        var columnName = header.name();
+
+        $.ajax({
+            type: 'POST',
+            url: my_pligg_base + "/Statistics/GlobalStatisticsController.php?action=getColumnChart",
+            data: {'sid': self.sid, 'table_name': currentTable.tableName, 'columnName': columnName},
+            dataType: 'json',
+            success: function(columnData) {
+
+                    
+                    // Set a callback to run when the Google Visualization API is loaded.
+                    self.drawColumnChart(columnData);
+            }
+        });
+    };
+
+    self.drawColumnChart = function(columnData) {
+            var chartId = columnData.chartId;
+
+            if ($("#" + chartId).length > 0) {
+                $("#" + chartId).toggle();
+            }
+            else {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', "ColumnName");
+                data.addColumn('number', "Value");
+                
+                for(i = 0; i < columnData.content.length; i++) {
+                    data.addRow();
+                    data.setCell(i, 0, String(columnData.content[i].Category));
+                    data.setCell(i, 1 , parseFloat(String(columnData.content[i].AggValue)));
+                }
+                var options = {
+                          'title':'Column Chart for column ' + columnData.columnName,
+                          'width': "100%",
+                          'height':"90%"
+                    };
+
+                var chartDiv = document.createElement('div');
+                chartDiv.id = columnData.chartId;
+
+                $("#statChartsContainer").append(chartDiv);
+
+                var chart = new google.visualization.ColumnChart(chartDiv);
+                chart.draw(data, options);
+            }
+
+    }
+
+
+
+    
 }
 

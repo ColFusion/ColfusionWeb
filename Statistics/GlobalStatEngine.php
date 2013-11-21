@@ -5,6 +5,7 @@ include_once(realpath(dirname(__FILE__)) . '/../DAL/DatasetDAO.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
 require_once(realpath(dirname(__FILE__)) . '/../visualization/charts/PieChart.php');
+require_once(realpath(dirname(__FILE__)) . '/../visualization/charts/ColumnChart.php');
 
 class GlobalStatEngine {
 
@@ -640,6 +641,42 @@ class GlobalStatEngine {
 
        	return $pieData;
 	}
+
+	function getColumnChart($sid, $tableName, $columnName) {
+		$datasetDAO = new DatasetDAO();
+
+		$cid = $datasetDAO->getCidBySidTableNameColumName($sid, $tableName, $columnName);
+	
+		$columnChartInput = new stdClass();
+
+		$inputObj = new stdClass();
+		$inputObj->sid = $sid;
+		$inputObj->oneSid = true;
+		$inputObj->tableName = $tableName;
+		$inputObj->title = 'columnChart';
+
+		$columnChartInput->inputObj = $inputObj;
+
+		$columnChartInput->table = $tableName;
+
+		$columnObj = new stdClass();
+		$columnObj->cid = $cid;
+
+		$columnChartInput->columnCat = $columnObj;
+		$columnChartInput->columnAgg = $columnObj;
+		$columnChartInput->columnAggType = "Count";
+		$columnChartInput->where = "";
+
+		$columnChart = new ColumnChart(null, null, null, null, null, null, null, null, null, null, null);	 
+		$columnData = $columnChart->query($columnChartInput);
+		$chartId = str_replace(".", "dot", "$sid$tableName$columnName");
+
+       	$columnData["chartId"] = $chartId;
+       	$columnData["columnName"] = $columnName;
+
+       	return $columnData;
+	}
+
 
 }
 

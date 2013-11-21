@@ -77,4 +77,16 @@ function getPieChart() {
 
 	echo json_encode($data);
 }
+
+function getColumnChart() {
+	$globalStatEngine = new GlobalStatEngine();
+	$sid =  $_POST["sid"];
+	$tableName = $_POST["table_name"];
+	$columnName = $_POST["columnName"];
+
+	
+	$data = $globalStatEngine->getColumnChart($sid, $tableName, $columnName);
+
+	echo json_encode($data);
+}
 ?>
