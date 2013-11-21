@@ -33,10 +33,12 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StoryStatusViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/ProgressBarViewModel.js"></script>
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StatisticsViewModel.js"></script>
+
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/hogan.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StatisticsViewModel.js"></script>
 
 
 {literal}
