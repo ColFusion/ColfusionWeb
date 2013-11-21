@@ -13,7 +13,7 @@ if(isset($isTesting) && $isTesting) return;
 ini_set('include_path', '.');
 
 define('LOG_FILE','cache/log.php');
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 ini_set('display_errors', 1);
 ini_set('error_log','cache/log.php');
 
@@ -195,6 +195,6 @@ function loadCategoriesForCache($clear_cache = false) {
 	return $db->get_results($sql);
 }
 
-error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
+//error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 
 ?>
