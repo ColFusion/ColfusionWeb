@@ -9,7 +9,7 @@
 }
 */
  function Modify(id) {  
-  var str=prompt("enter new value:");
+  var str=window.open(www.baidu.com,name,"enter new value:");
   if(str!=="")
     {
        // $(".alert").alert("new value is: "+ str)
@@ -55,6 +55,7 @@ var counter=0;
 //}
 
 </script>
+<!--ajax edit function begins(not implemented yet)>
 <script>
 $.ajax({
         url: 'localhost/Colfusion/story.php?title=73', 
@@ -77,6 +78,7 @@ $.ajax({
             self.ntfs.push(new newNotification("all ntf","******","See All","all receiver","******", "all", data.receiver, " "));
         }
     });
+<! ajax edit function ends(not implemented yet) -->
 
 </script>
 <script>
@@ -103,7 +105,7 @@ $.ajax({
                     $targetRow.eq(j).css("position","relative");
                     var cell = $targetRow.eq(j).html();
                     var navTable = '<div name=table class="sub_nav" style="top:0px; height:100%; width:100%; position: absolute; z-index:1000;display:block;" onclick="try{window.event.cancelBubble = true;}catch(e){event.stopPropagation();}">';
-                    navTable += '<i class="icon-pencil" style="margin-left: 45px; " onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
+                    navTable += '<i class="icon-pencil" style="margin-left: 45px; margin-right: 5px;" onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
                     navTable += '<i class="icon-trash" onclick="Delete(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
                     navTable += '</div>';
                     $targetRow.eq(j).html(cell+navTable);

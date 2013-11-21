@@ -64,6 +64,19 @@ include_once(mnminclude.'user.php');
 	}
 	
 	//insert data the wiki_history when the link is just created
+	//建数据库语句报错
+	//将修改评论的历史添加进该表单！
+    $sql = "CREATE TABLE if not exists wiki_history(
+	sid int DEFAULT 0,
+    user_id int DEFAULT 0,
+    timestamp char(30),
+    field char(30),
+    VALUE mediumtext DEFAULT null,
+    notification mediumtext DEFAULT null,
+    checked tinyint DEFAULT 0,
+    PRIMARY KEY (sid,user_id,timestamp,field))";
+	$db->query($sql);
+
         $sql_select = "SELECT * 
                        FROM wiki_history  
                        WHERE sid={$link_id}";
