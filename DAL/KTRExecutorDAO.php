@@ -79,8 +79,21 @@ class KTRExecutorDAO
      */
     public function updateExecutionInfoTupleStatus( $logID,  $status)
     {
+        $oldStatus = "";
 
-        $status = mysql_real_escape_string($status); 
+        $sql = "SELECT status FROM " . table_prefix . "executeinfo WHERE eid = $logID";
+
+        try {
+            $res = $this->ezSql->get_row($sql);
+
+            $oldStatus = $res->status;
+        }
+        catch (Exception $e) {
+            throw new Exception("Error Processing Request. Could not execute the query", 1);
+        }
+
+
+        $status = mysql_real_escape_string($oldStatus . $status); 
         $sql = "UPDATE " . table_prefix . "executeinfo SET status = '$status' WHERE Eid = $logID";
 
         try {
