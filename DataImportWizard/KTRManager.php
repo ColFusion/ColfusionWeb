@@ -29,6 +29,7 @@ class KTRManager {
         copy($this->ktrTemplatePath, $this->ktrFilePath);
         $this->ktrXml = simplexml_load_file($this->ktrFilePath);
 
+        $this->changeTranasformationName($this->sid);
         $this->changeConnection();
         $this->changeSheetType();
         $this->addUrls($this->fileURLs);
@@ -54,6 +55,11 @@ class KTRManager {
         unset($this->ktrXml);
     }
 
+    private function changeTranasformationName($sid) {
+ 
+        $this->ktrXml->info[0]->name = $sid;
+    }
+
     private function changeConnection() {
  
         $connectionInfo = new stdClass();
@@ -71,6 +77,13 @@ class KTRManager {
         $this->ktrXml->connection[0]->server = $connectionInfo->server;
         $this->ktrXml->connection[0]->port = $connectionInfo->port;
         $this->ktrXml->connection[0]->type = $connectionInfo->engine;
+
+        $this->ktrXml->connection[1]->database = PENTAHO_LOG_DB;
+        $this->ktrXml->connection[1]->username = PENTAHO_LOG_DB_USER;
+        $this->ktrXml->connection[1]->password = PENTAHO_LOG_DB_PASSWORD;
+        $this->ktrXml->connection[1]->server = PENTAHO_LOG_DB_HOST;
+        $this->ktrXml->connection[1]->port = PENTAHO_LOG_DB_PORT;
+        $this->ktrXml->connection[1]->type = PENTAHO_LOG_DB_ENGINE;
 
         $this->connectionInfo = $connectionInfo;
     }
