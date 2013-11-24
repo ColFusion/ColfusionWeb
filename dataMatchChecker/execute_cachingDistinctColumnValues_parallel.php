@@ -39,10 +39,10 @@ while (!$areDatasetsProcessed) {
 
     $areDatasetsProcessed = checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo);
 
-    //TODO do something to make sure that process die if this checking happens for a log time.
+    //TODO do something to make sure that process die if this checking happens for a long time.
     $count += 1;
 
-    if ($count > 10000000)
+    if ($count > 3)
         die; //write this action in some log (e.g. in some db table);
 }
 
