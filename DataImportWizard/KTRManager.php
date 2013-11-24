@@ -29,7 +29,7 @@ class KTRManager {
         copy($this->ktrTemplatePath, $this->ktrFilePath);
         $this->ktrXml = simplexml_load_file($this->ktrFilePath);
 
-        $this->changeTranasformationName($this->sid);
+        
         $this->changeConnection();
         $this->changeSheetType();
         $this->addUrls($this->fileURLs);
@@ -51,13 +51,27 @@ class KTRManager {
         $this->updatedColAndStreamNames = $dataMatchingUserInputs;
         $this->updateTargetSchemaStepColumnAndStreamName($dataMatchingUserInputs);
 
+        $this->changeTranasformationName($this->sid);
+
         file_put_contents($this->ktrFilePath, $this->ktrXml->asXML());
         unset($this->ktrXml);
     }
 
-    private function changeTranasformationName($sid) {
+    public function changeTranasformationName($name) {
  
-        $this->ktrXml->info[0]->name = $sid;
+        if (isset($this->ktrXml)) {
+            $this->ktrXml->info[0]->name = $name;
+        }
+        else {
+            $this->ktrXml = simplexml_load_file($this->ktrFilePath);
+
+            $this->ktrXml->info[0]->name = $name;
+
+            file_put_contents($this->ktrFilePath, $this->ktrXml->asXML());
+            unset($this->ktrXml);
+        }
+
+        
     }
 
     private function changeConnection() {

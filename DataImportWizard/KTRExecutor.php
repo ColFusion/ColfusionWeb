@@ -40,6 +40,8 @@ class KTRExecutor
     {
         $logID = $this->ktrExecutorDAO->addExecutionInfoTuple($this->sid, $this->ktrManager->getTableName(), $this->userId);
 
+        $ktrFilePath = $this->ktrManager->changeTranasformationName($logID);
+
         $command = $this->getCommand($logID);
         $this->ktrExecutorDAO->updateExecutionInfoTupleCommand($logID, $command);   // loggin to db
         

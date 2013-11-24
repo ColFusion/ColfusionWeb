@@ -89,7 +89,7 @@ class ExecutionManager
             foreach ($tables as $key => $tableName) {
                 $rec = new stdClass();
                 $rec->tableName = $tableName;
-                $rec->status = "success";
+                $rec->status = "end";
                 $rec->Eid = "NA";
                 $rec->ErrorMessage = "";
                 $rec->RecordsProcessed = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[$tableName]");
@@ -106,7 +106,7 @@ class ExecutionManager
 
         foreach ($tuplesFromExecuteInfoTable as $i => $tupleFromExecuteInfoTable) {
            
-            if($tupleFromExecuteInfoTable->status == 'success' || $tupleFromExecuteInfoTable->status == 'error'){                
+            if($tupleFromExecuteInfoTable->status == 'end' || $tupleFromExecuteInfoTable->status == 'error'){                
                 $tupleFromExecuteInfoTable->numberProcessRecords = $tupleFromExecuteInfoTable->RecordsProcessed;
             }else{                
                 //TODO FIXME: table name should not be wrapped into [] at this spet. Need global refactoring to move wrapping table into brackets closer to the query execution

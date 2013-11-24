@@ -60,7 +60,7 @@ function checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLi
         die("datasets are in error");
     }
 
-    if ($statusFrom->status == "success" && $statusTo->status == "success") {
+    if ($statusFrom->status == "end" && $statusTo->status == "end") {
         return true;
     }
 
