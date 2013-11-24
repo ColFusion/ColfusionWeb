@@ -11,7 +11,7 @@ CREATE
             SET status = 
                 CASE 
                    WHEN @st like '%end%' THEN
-                    'end'
+                    'success'
                 	ELSE @st
                 END
             WHERE Eid = NEW.TRANSNAME;
@@ -34,7 +34,7 @@ CREATE
             SET status = 
                 CASE 
                    WHEN @st like '%end%' THEN
-                    'end'
+                    'success'
                 	ELSE @st
                 END
             WHERE Eid = NEW.TRANSNAME;
