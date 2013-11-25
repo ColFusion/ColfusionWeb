@@ -15,13 +15,15 @@ class KTRManager {
     private $connectionInfo;
     private $tableName;
     private $fileURLs;
+    private $ktrFileURL;
 
-    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid, $fileURLs) {
+    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid, $fileURLs, $ktrFileURL) {
         $this->ktrTemplatePath = $ktrTemplatePath;
         $this->ktrFilePath = $ktrFilePath;
         $this->filePaths = $filePaths;
         $this->sid = $sid;
         $this->fileURLs = $fileURLs;
+        $this->ktrFileURL = $ktrFileURL;
     }
 
     public function createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs) {
@@ -366,6 +368,10 @@ class KTRManager {
     
     public function getKtrFilePath(){
         return $this->ktrFilePath;
+    }
+
+    public function getKtrFileURLh(){
+        return $this->ktrFileURL;
     }
 }
 
