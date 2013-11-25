@@ -30,7 +30,7 @@ else
 
 $sid = getSid();
 $dataSource_dir = "upload_raw_data/$sid/";
-$dataSource_dirPath = my_pligg_base . $dataSource_dir; //mnmpath
+$dataSource_dirPath = mnmpath . $dataSource_dir; //  my_base_url . $dataSource_dir
 $excelFileMode = $_SESSION["excelFileMode_$sid"];
 
 switch ($phase) {
@@ -95,13 +95,14 @@ function getSid() {
 function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode) {
 
     $template = 'excel-to-database.ktr'; //'excel-to-target_schema.ktr';
-    $newDir = mnmpath . "temp/$sid";
-    if (!file_exists($newDir)) {
-        mkdir($newDir);
+    $newDir = "temp/$sid";
+    if (!file_exists(mnmpath . $newDir)) {
+        mkdir(mnmpath . $newDir);
     }
 
     if ($excelFileMode == 'append') {
-        $ktrFilePath = "$newDir/$sid.ktr";
+        $ktrFilePath = mnmpath . "$newDir/$sid.ktr";
+        $ktrFileURL = my_base_url . my_pligg_base . "/$newDir/$sid.ktr";
         if (!file_exists($ktrFilePath)) {
             copy($template, $ktrFilePath);
         }
@@ -114,7 +115,7 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
             }
         }
 
-        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid, $fileURLs);
+        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid, $fileURLs, $ktrFileURL);
     } else {
         foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
             if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
@@ -122,11 +123,12 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
                 $filePath = $dataSource_dirPath . $dataSource_filename;
                 $filePaths[] = $filePath;
                 $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
-                $ktrFilePath = "$newDir/$dataSource_filename.ktr";
+                $ktrFilePath = mnmpath . "$newDir/$dataSource_filename.ktr";
+                $ktrFileURL = my_base_url . my_pligg_base . "/$newDir/$dataSource_filename.ktr";
                 if (!file_exists($ktrFilePath)) {
                     copy($template, $ktrFilePath);
                 }
-                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid, $fileURLs);
+                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid, $fileURLs, $ktrFileURL);
             }
         }
     }
