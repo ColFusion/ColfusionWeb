@@ -6,6 +6,7 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
+require_once realpath(dirname(__FILE__)) . '/CurlCaller.php';
 
 /**
  * Execute ktr transformation from KTRManager
@@ -52,11 +53,24 @@ class KTRExecutor
         $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "executing pan");  // loggin to db
 
         // ACTUALL PAN SCRIPT EXECUTION
-        exec($command . "2>&1", $outA, $returnVar);
+        
+        $timeStarted = time();
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "Strting Curl:" . time());  // loggin to db
 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan finished");  // loggin to db
+        $curlCaller = new CurlCaller();
 
-        $this->processExecutionResultMessage($logID, $returnVar, $outA);
+        $res = $curlCaller->CallAPI("GET", $command, false);
+
+        $timeEnded = time();
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "Finished Curl: " . time() . " Took: " . $timeEnded - $timeStarted);  // loggin to db
+
+        //var_dump($res);
+
+        //exec($command . "2>&1", $outA, $returnVar);
+
+    //    $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan finished");  // loggin to db
+
+       // $this->processExecutionResultMessage($logID, $returnVar, $outA);
     }
 
     //TODO: refactor this code. Our ktr template doesn't need sid and logid param.
@@ -67,17 +81,23 @@ class KTRExecutor
      */
     private function getCommand($logID)
     {
-        $ktrFilePath = $this->ktrManager->getKtrFilePath();
+        $ktrFilePath = $this->ktrManager->getKtrFileURLh(); //getKtrFilePath();
 
-        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-            $locationOfPan = mnmpath . 'kettle-data-integration\\Pan_WHDV.bat';
-            $command = 'cmd.exe /C ' . $locationOfPan . ' /file:"' . $ktrFilePath . '" ' . '"-param:Sid=' . $this->sid . '"' . ' "-param:Eid=' . $logID . '"';
-        } else {
-            $locationOfPan = mnmpath . 'kettle-data-integration/pan.sh';
-            $command = 'sh ' . $locationOfPan . ' -file="' . $ktrFilePath . '" ' . '-param:Sid=' . $this->sid . ' -param:Eid=' . $logID;
-        }
+        $ktrFilePath = str_replace("/", "%2F", $ktrFilePath);
+
+        $command = "http://130.49.135.94:8081/kettle/executeTrans/?trans=$ktrFilePath&Sid={$this->sid}&Eid=$logID";
 
         return $command;
+
+        // if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+        //     $locationOfPan = mnmpath . 'kettle-data-integration\\Pan_WHDV.bat';
+        //     $command = 'cmd.exe /C ' . $locationOfPan . ' /file:"' . $ktrFilePath . '" ' . '"-param:Sid=' . $this->sid . '"' . ' "-param:Eid=' . $logID . '"';
+        // } else {
+        //     $locationOfPan = mnmpath . 'kettle-data-integration/pan.sh';
+        //     $command = 'sh ' . $locationOfPan . ' -file="' . $ktrFilePath . '" ' . '-param:Sid=' . $this->sid . ' -param:Eid=' . $logID;
+        // }
+
+        // return $command;
     }
 
     /**
