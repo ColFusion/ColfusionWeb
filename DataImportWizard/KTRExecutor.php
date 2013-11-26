@@ -1,12 +1,12 @@
 <?php
 
-include_once '../config.php';
+include_once(realpath(dirname(__FILE__)) . '../config.php');
 
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/KTRExecutorDAO.php");
-require_once realpath(dirname(__FILE__)) . '/CurlCaller.php';
+require_once(realpath(dirname(__FILE__)) . '/CurlCaller.php');
 
 /**
  * Execute ktr transformation from KTRManager
