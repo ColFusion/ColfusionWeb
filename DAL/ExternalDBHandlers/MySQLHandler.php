@@ -180,7 +180,7 @@ class MySQLHandler extends DatabaseHandler
 
         foreach ($columns as $key => $column) {
             //FIXME: for now all columns are varchars, actually we could use the info provided by user abotu each column
-            $columnsDefinition[] = " `{$column['originalDname']}` varchar(400) ";
+            $columnsDefinition[] = " `{$column['originalDname']}` TEXT ";
         }
 
         $query .= implode(", ", $columnsDefinition) . " ); ";
