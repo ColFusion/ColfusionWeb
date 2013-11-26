@@ -44,31 +44,31 @@ class KTRExecutor
         $ktrFilePath = $this->ktrManager->changeTranasformationName($logID);
 
         $command = $this->getCommand($logID);
-        $this->ktrExecutorDAO->updateExecutionInfoTupleCommand($logID, $command);   // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoTupleCommand($logID, $command);   // loggin to db 
         
         $databaseConnectionInfo = $this->createTargetDatabaseAndTable($logID);
 
         $this->addMetaDataAboutTargetDatabase($logID, $databaseConnectionInfo);
         
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "executing pan");  // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoLog($logID, "executing pan");  // loggin to db
 
         // ACTUALL PAN SCRIPT EXECUTION
         
         $timeStarted = time();
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "Strting Curl:" . time());  // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoLog($logID, "Strting Curl:" . time());  // loggin to db
 
         $curlCaller = new CurlCaller();
 
         $res = $curlCaller->CallAPI("GET", $command, false);
 
         $timeEnded = time();
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "Finished Curl: " . time() . " Took: " . $timeEnded - $timeStarted);  // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoLog($logID, "Finished Curl: " . time() . " Took: " . $timeEnded - $timeStarted);  // loggin to db
 
         //var_dump($res);
 
         //exec($command . "2>&1", $outA, $returnVar);
 
-    //    $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan finished");  // loggin to db
+    //    $this->ktrExecutorDAO->updateExecutionInfoLog($logID, "pan finished");  // loggin to db
 
        // $this->processExecutionResultMessage($logID, $returnVar, $outA);
     }
@@ -107,7 +107,7 @@ class KTRExecutor
      */
     private function createTargetDatabaseAndTable($logID)
     {
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating database if needed");  // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoLog($logID, "creating database if needed");  // loggin to db
 
         // KTR manager has target database info.
         $databaseConnectionInfo = $this->ktrManager->getConnectionInfo();
@@ -117,7 +117,7 @@ class KTRExecutor
         // DATABASE
         $dbHandler = $dbHandler->createDatabaseIfNotExist($databaseConnectionInfo->database);
 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed");    // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoLog($logID, "creating table if needed");    // loggin to db
 
         // KTR manager also has target table name and columns which that table needs to have
         $tableName = $this->ktrManager->getTableName();
@@ -135,9 +135,9 @@ class KTRExecutor
      * @param       $logID                  eid of execution info table to update status
      * @param stdClass $databaseConnectionInfo target database connection info
      */
-    public function addMetaDataAboutTargetDatabase( $logID, $databaseConnectionInfo)
+    public function addMetaDataAboutTargetDatabase($logID, $databaseConnectionInfo)
     {
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "adding meta data about target database and creating linked server");  // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoLog($logID, "adding meta data about target database and creating linked server");  // loggin to db
 
         $queryEngine = new QueryEngine();
 

@@ -53,12 +53,12 @@ function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $file
         $dbImporter->importDbData($filePath);
     
         foreach($logIds as $logId){
-            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'success');
+            $ktrExeDao->updateExecutionInfoStatus($logId, 'success');
         }
     }
     catch(Exception $e){
         foreach($logIds as $logId){
-            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'error');
+            $ktrExeDao->updateExecutionInfoStatus($logId, 'error');
             $ktrExeDao->updateExecutionInfoErrorMessage($logId, $e->getMessage());
         }
     }
