@@ -29,6 +29,8 @@ echo "OKKKK";
 ob_flush();
 flush();
 
+//TODO: fix it, we should have some kind of resource manager which will queue background exec requests.
+exit;
 
 $areDatasetsProcessed = checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo);
 
