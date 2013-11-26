@@ -104,6 +104,8 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
                     
 				} else if (strtolower($ext) == 'zip') {
 
+					$_SESSION["excelFileMode_$sid"] = "append";
+
 					// If a zip file is provided, unzip all files.
 					$zipFilePath = $upload_path;
 					$zip = new ZipArchive;
