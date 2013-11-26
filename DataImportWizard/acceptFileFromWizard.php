@@ -100,7 +100,7 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 					$xlsxFilePath = FileUtil::convertCSVtoXLSX($csvFilePath);
 					$xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
 					$raw_file_name = $xlsxFileName;
-					unlink($csvFilePath);
+					//unlink($csvFilePath);
                     
 				} else if (strtolower($ext) == 'zip') {
 
@@ -129,7 +129,7 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 							$xlsxFilePath = FileUtil::convertCSVtoXLSX($csvFilePath);
 							$xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
 						}
-						unlink($filePath);
+						//unlink($filePath);
 					}
                     
 				} else if (strtolower($ext) == 'sql') {
