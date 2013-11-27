@@ -1,4 +1,4 @@
-USE [colfusion_relationships_columns]
+USE colfusion_relationships_columns
 GO
 
 SET ANSI_NULLS ON

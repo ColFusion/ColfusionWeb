@@ -1,0 +1,27 @@
+digraph OPMGraph { rankdir="BT"; 
+p1 [label="Submitted to Colfusion",shape="polygon",sides="4"]
+a1 [label="Table name is: test"]
+ann3 [color="gray",fontcolor="black",label=<<TABLE cellpadding="0" border="0">
+	<TR>
+	    <TD align="left">hasColumns:</TD>
+	    <TD align="left">2</TD>
+	</TR>
+    </TABLE>>
+,shape="note"]
+ann3 -> a1 [style="dashed",color="gray",arrowhead="none"]
+a2 [label="Table in database: test"]
+ann4 [color="gray",fontcolor="black",label=<<TABLE cellpadding="0" border="0">
+	<TR>
+	    <TD align="left">hasColumns:</TD>
+	    <TD align="left">2</TD>
+	</TR>
+    </TABLE>>
+,shape="note"]
+ann4 -> a2 [style="dashed",color="gray",arrowhead="none"]
+ag1 [label="uid is: 2
+ sid is: 74",shape="polygon",sides="8"]
+p1 -> a1 [style="dotted",color="black",fontcolor="black"]
+a2 -> p1 [style="dotted",color="black",label=" ",fontcolor="black",fontsize="10"]
+a2 -> a1 [style="bold",color="black",label="wasDerivedFrom",fontcolor="black",fontsize="10"]
+p1 -> ag1 [style="dotted",color="black",fontcolor="black"]
+}

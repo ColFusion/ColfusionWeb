@@ -14,12 +14,16 @@ include(mnminclude . 'user.php');
 include(mnminclude . 'smartyvariables.php');
 
 include_once 'UtilsForWizard.php';
+
 include_once 'process_excelV2.php';
 include_once './excelProcessors/PreviewExcelProcessor.php';
 include_once './excelProcessors/MatchSchemaExcelProcessor.php';
 include_once 'NothingFilter.php';
 include_once 'FileUtil.php';
 include_once 'KTRManager.php';
+require_once (realpath(dirname(__FILE__)) . '/../DAL/DatasetDAO.php');
+require_once realpath(dirname(__FILE__)) . '/../RESTCaller/CurlCaller.php';
+require_once realpath(dirname(__FILE__)) . '/../conf/ColFusion_JAVA_REST_API.php';
 
 if (isset($_POST["phase"]) && is_numeric($_POST["phase"]))
     $phase = $_POST["phase"];
@@ -66,6 +70,7 @@ switch ($phase) {
     case 8:
     //echo $excelFileMode;
         getFileSources($sid);
+
         break;
     case 9:
         $filenames = $_SESSION["ktrArguments_$sid"]["filenames"];
@@ -74,10 +79,13 @@ switch ($phase) {
             $totalSeconds += estimateLoadingProgress($dataSource_dirPath . $filename);
         }
         echo $totalSeconds;
+        generateOPM($sid, $dataSource_dirPath);
         break;
     case 10:
         getExcelPreview($sid, $dataSource_dirPath);
         break;
+
+
 }
 exit;
 
@@ -164,8 +172,50 @@ function getExcelPreview($sid, $dataSource_dirPath) {
     $previewPage = $_POST['previewPage'];
     loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage);
     echo json_encode(getSingleExcelPreview($sid, $filename));
+     
 }
 
+function generateOPM($sid,$dataSource_dirPath) {
+    $filename = $_POST['filename'];
+    $filePath = $dataSource_dirPath . $filename;
+    $previewRowsPerPage = 20;
+    $previewPage = 1;
+    loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage);
+    $columnn=getColumnNumber($sid,$filename);
+
+    $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
+    if (isset($ktrManagers)) {
+        $json["isSuccessful"] = true;
+
+        foreach ($ktrManagers as $ktrManager) {
+            $paths = $ktrManager->getFilePaths();
+            $filePath=$paths[0];
+            $sheetName = Process_excel::getSheetName($filePath);
+        }
+    } else {
+        $json["isSuccessful"] = false;
+    }
+    
+    global $current_user;
+
+    $curlCaller = new CurlCaller();
+    $user_id=$current_user->user_id;
+    $table_name=$sheetName[0];
+    $columns= $columnn;
+    $condition="?";
+    echo $user_id.$table_name.$columns.$condition;
+
+    $res = $curlCaller->CallAPI("GET", REST_HOST . ":" . REST_PORT . "/RESTfulProject/REST/WebService/GetFeeds?sid=".$sid."&user_id=".$user_id."&table_name=".$table_name."&columns=".$columns."&condition=".$condition, false);
+
+    var_dump($res);
+
+    $xmlfile = file_get_contents(mnmpath."target/".$sid.".xml");
+    $datasetDAO = new DatasetDAO();
+    $datasetDAO->saveProvenanceXML($sid, $xmlfile);
+ 
+    var_dump($xmlfile);
+
+}
 function loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage) {
     $filename = pathinfo($filePath, PATHINFO_BASENAME);
     $PHPExcel = new PreviewExcelProcessor($filePath, $previewPage, $previewRowsPerPage);
@@ -179,6 +229,13 @@ function getSingleExcelPreview($sid, $filename) {
     $PHPExcel = unserialize($_SESSION["excelPreview_$sid"][$filename]);
     return $PHPExcel->getCellData();
 }
+
+function getColumnNumber ($sid,$filename) {
+    $PHPExcel = unserialize($_SESSION["excelPreview_$sid"][$filename]);
+    return $PHPExcel->getColumnNumber();
+}
+
+
 
 function getSheets($filePath) {
     $filename = pathinfo($filePath, PATHINFO_BASENAME);

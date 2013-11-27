@@ -34,6 +34,12 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/ProgressBarViewModel.js"></script>
 
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/ProvenanceProcess.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/file_get_contents.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/cytoscape_web/json2.min.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/cytoscape_web/AC_OETags.min.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/cytoscape_web/cytoscapeweb.min.js"></script>
+<script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/hogan.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
@@ -59,6 +65,7 @@
   
     var sid = $.url().param('title');
     var dataPreviewViewModel;
+    var dataProvenance;
     var storyStatisticsViewModel;
     var relationshipViewModel;
     var storyStatusViewModel;
@@ -82,6 +89,7 @@
 
 
         storyStatisticsViewModel = new StoryStatisticsViewModel(sid);
+        dataProvenance = new dataProvenanceModel(sid);
         dataPreviewViewModel = new DataPreviewViewModel(sid);
         relationshipViewModel = new RelationshipViewModel(sid);
         storyStatusViewModel = new StoryStatusViewModel(sid, dataPreviewViewModel);
@@ -89,6 +97,7 @@
         ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
         ko.applyBindings(storyStatusViewModel, document.getElementById("storyStatus"));
         ko.applyBindings(storyStatisticsViewModel, document.getElementById("storyStatisticsContainer"));
+        ko.applyBindings(dataProvenance, document.getElementById("provenanceView"));
 
         relationshipViewModel.mineRelationships(10, 1);
     });
@@ -176,10 +185,12 @@
 {/literal} 
 
 <div id="dataPreviewContainer"></div>
-
 {include file='storyStatistics.tpl'}
 
+{include file='dataprovenance.tpl'}
+
 {include file='relationships.tpl'}
+
 {if $isAuthenticated}
 {include file='addRelationships.tpl'}
 {/if}

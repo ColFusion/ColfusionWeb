@@ -18,6 +18,7 @@ class Process_excel {
     protected $PHPExcel;
     protected $PHPExcelReader;
 
+
     function __construct($filePath, $filter = null) {
         $this->filePath = str_replace('\\', '/', $filePath);
         $this->PHPExcelReader = Process_excel::createExcelReader($this->filePath);
@@ -67,6 +68,7 @@ class Process_excel {
         $lastColumn = PHPExcel_Cell::columnIndexFromString($lastColumn) - 1;
 
         for ($column = $startColumn; $column <= $lastColumn; $column++) {
+            $columni++;
             $cell = $currentSheet->getCellByColumnAndRow($column, $startRow)->getCalculatedValue();
             if (!is_null($cell)) {
                 $headerArray[PHPExcel_Cell::stringFromColumnIndex($column)] = $cell;
@@ -88,10 +90,12 @@ class Process_excel {
                 $cellIterator = $row->getCellIterator();
 
                 $rowValue = array();
+                $columni=0;
                 foreach ($cellIterator as $cell) {
                     $cellValue = trim($cell->getValue());
                     if ($cellValue != '') {
                         $rowValue[] = $cellValue;
+
                     }
                 }
 
@@ -103,6 +107,38 @@ class Process_excel {
 
         return $worksheetsCells;
     }
+
+    public function getColumnNumber() {
+        $worksheetsName = $this->getSheetName($this->filePath);
+        
+
+        $worksheetsCells = array();
+        foreach ($worksheetsName as $worksheetName) {
+            $worksheet = $this->PHPExcel->getSheetByName($worksheetName);
+
+            foreach ($worksheet->getRowIterator() as $row) {
+                $cellIterator = $row->getCellIterator();
+
+                $rowValue = array();
+                $columni=0;
+                foreach ($cellIterator as $cell) {
+                    $cellValue = trim($cell->getValue());
+                    if ($cellValue != '') {
+                        $rowValue[] = $cellValue;
+                        $columni++;
+                    }
+                }
+                return $columni;
+                if (count($rowValue) > 0) {
+                    $worksheetsCells[$worksheetName][] = $rowValue;
+                }
+            }
+        }
+        
+ 
+    }
+
+
 
     public function getFilePath() {
         return $this->filePath;

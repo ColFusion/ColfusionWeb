@@ -68,6 +68,7 @@ class DatasetDAO {
         $provenance = mysql_real_escape_string($provenance);
 
         $query = "UPDATE colfusion_sourceinfo set provenance = '$provenance' where sid = $sid";
+        //$query = "INSERT INTO colfusion_sourceinfo(sid,provenance) VALUES ($sid,'$provenance')";
         
 //var_dump($query);
 
