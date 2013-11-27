@@ -1,88 +1,34 @@
 <script type="text/javascript">
 
-/*function showSubNav(title){
- $("td[title='"+title+"']").show();
- 
-}
- function hideSubNav(title){
- $("td[title='"+title+"']").hide;
-}
-*/
- function Modify(id) {  
-  var str=window.open(www.baidu.com,name,"enter new value:");
-  if(str!=="")
-    {
-       // $(".alert").alert("new value is: "+ str)
-        //save it to database
-        // need to modeify
-        var p=document.getElementById(id);
-        p.innerHTML=str; 
-        Mark(id);
-        Comment(id); 
-    }
-    else if(str==""){
-      Delete(id);
-    }
-  
-}
-
- function Delete(id) {
-  alert("it is deleted!");
-  document.getElementById(id).innerHTML="null";//need to be null instead of a String
-  Mark(id);
-  Comment(id);
-}
-
-function Mark(id){
-  document.getElementById(id).style.background="#FFD700";
-
-}
-
-function Comment(id){
-var p=prompt("please write a comment here: ");
-var counter=0;
-// record the comment by id and insert it into db
-}
-
-//表单栏目右侧弹出评论popout；点击对话框可以直接添加自己的评论；
-//function commentpopout(id){
-//    if(document.getElementById(id).style.background=="#FFD700")
-//    {
-//        onclick="$('#td'+id).popover('show');"
-//        onclick="$('#td'+id).popover('hide');" 
-//    }
-       
-//}
-
-</script>
-<!--ajax edit function begins(not implemented yet)>
-<script>
-$.ajax({
-        url: 'localhost/Colfusion/story.php?title=73', 
-        type: 'post',
-        dataType: 'json',
-        success: function (data) {
-            if (data.notifications!=null){
-                for (var i = data.notifications.length-1; i>=0; i--) {
-                    var tmpntf = new newNotification(
-                        data.notifications[i].ntf_id,
-                        data.notifications[i].sender,
-                        data.notifications[i].action,
-                        data.notifications[i].receiver_id,
-                        data.notifications[i].target,
-                        data.notifications[i].target_id, 
-                        " ", " ");
-                    self.ntfs.push(tmpntf);
-                }
-            }//end if
-            self.ntfs.push(new newNotification("all ntf","******","See All","all receiver","******", "all", data.receiver, " "));
+//generate the comment table
+//function comment_popup(cid){
+        //alert(cid);
+        /*
+        var xmlhttp;
+        var url = "deal_with_data_preview.php";
+        url += "?id='.$link_id.'&cid="+cid;
+        alert(url);
+        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+        xmlhttp=new XMLHttpRequest();
+        } else {// code for IE6, IE5
+        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
         }
-    });
-<! ajax edit function ends(not implemented yet) -->
+        xmlhttp.onreadystatechange=function() {
+        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+            //alert("ok");
+            document.getElementById("report").innerHTML=xmlhttp.responseText;
+            var commentreport=xmlhttp.responseText;
+            return(commentreport); 
+            //window.location.reload();
+        }
+        };
+        xmlhttp.open("GET",url,true);
+        xmlhttp.send();
+        */
+    //}
 
-</script>
-<script>
 //add editing function here
+
     var indexControl = 0;
         $(".btn-primary").click(function()
     {   if(indexControl == 0){
@@ -105,38 +51,82 @@ $.ajax({
                     $targetRow.eq(j).css("position","relative");
                     var cell = $targetRow.eq(j).html();
                     var navTable = '<div name=table class="sub_nav" style="top:0px; height:100%; width:100%; position: absolute; z-index:1000;display:block;" onclick="try{window.event.cancelBubble = true;}catch(e){event.stopPropagation();}">';
-                    navTable += '<i class="icon-pencil" style="margin-left: 45px; margin-right: 5px;" onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
+                    navTable += '<i class="icon-pencil" id="'+cid+'" style="margin-left: 45px; margin-right: 5px;" onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
                     navTable += '<i class="icon-trash" onclick="Delete(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
+                    navTable += '<i class="icon-comment" style="margin-left:5px;" onclick="Comment(\''+cid+'\');"></i></tr>';
                     navTable += '</div>';
                     $targetRow.eq(j).html(cell+navTable);
-                    //添加comment栏
-                    if(j == $targetRow.length-1)
-                      //$('#element').popover('show')
-                    var comment = '<div><i class="icon-comment" style="margin-left: 250px" onlick="Comment()"></i></div>';
-                     //$targetRow.eq(j).html(cell+navTable);
-
-                }
+                    }
            }
 
     }
             
        });
-$(".btn-info").click(function()
+//reading mode function here
+var indexControl2 = 0;
+$("#switch_new").click(function()
 {
     //to generate a new table with highlight cell and popout comment
-    window.location.reload();
-}
-);
+    //window.location.reload();
+if(indexControl2 == 0)
+    {
+        indexControl2++;
+           var $targetTable = $("#tfhover").find("tbody").eq(1).find("tr");
+           for (var i=0;i<$targetTable.length;i++) 
+           {
+                $targetRow = $targetTable.eq(i).find("td");
+                for (var j=0;j<$targetRow.length;j++) 
+                {
+
+
+                    $targetRow.eq(j).attr({
+                        "id":"row"+i+"-col"+j,    //cell id
+                        "title":"row"+i+"col"+j   //navi id
+                    });
+
+                    var cid = $targetRow.eq(j).attr("id");
+                    $targetRow.eq(j).css("position","relative");
+
+                }
+           }
+        
+    }
+    $(".sub_nav").hide();
+    updateData();
+    highlightComment();
+    indexControl = 0;
+});
+//reading mode function ends
+
+
 </script>
+
+<!-- Button to trigger modal -->
+<!--<a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>-->
+ <div>launch demo model</div>
+<!-- Modal -->
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 id="myModalLabel">Modal header</h3>
+  </div>
+  <div class="modal-body">
+    <div id="report"></div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+  </div>
+</div>
+
 <div class="dataPreviewTableWrapper">
     <div class="preview-story">
         <button data-bind="visible: currentTable" id="visualizeBtn" class="btn visualizeBtn" onclick="openVisualizationPage()">
             <i class="icon-bar-chart" style="margin-right: 5px;"></i>
             Visualize
         </button>
-        <h3 class="preview-title">Data Preview</h3>
+        <h3 class="preview-title">Origin data preview</h3>
         <button class="btn btn-primary" type="button"><i class="icon-edit"></i>Edit Mode</button> <!--需要将响应事件转移到该按钮 -->
-        <button class="btn btn-info" type="button"><i class="icon-book"></i>Read Mode</button> <!--需要添加响应事件 -->
+        <button class="btn btn-info" type="button" id="switch_new"><i class="icon-book"></i>Switch to new data</button> <!--需要添加响应事件 -->
         <div class="storycontent" id="dataPreviewContainer">
             <ul data-bind="visible: tableList().length > 1, foreach: tableList" class="tableList" id="previewTableList">
                 <li data-bind="click: $root.chooseTable" class="tableListItem">
@@ -160,9 +150,8 @@ $(".btn-info").click(function()
                             <th data-bind="text: name"></th>
                         </tr>
                         <tbody class="dataPreviewTBody" data-bind="foreach: rows">
-                            <tr class="datatr" onmouseover="commentpopout();" data-bind="foreach: cells">
-                                <td onclick="alert('Need to change the bgcolor for the modified data here')" data-bind="text: $data"></td>
-                            
+                            <tr class="datatr" data-bind="foreach: cells">
+                                <td data-bind="text: $data" onclick="comment_popup(this.id);"></td>
                             </tr>
                         </tbody>
                     </table>

@@ -75,6 +75,7 @@ var currentTitle;
 var currentDescription;
 var currentCategory;
 var currentTags;
+var currentDataedit;
 function getCurrentVision(section) {  //section includes title_vision,des_vision,tags_vision
     var currentVision;
     for (var i=0;i<$("input[name="+section+"]").length;i++) {
@@ -86,11 +87,56 @@ function getCurrentVision(section) {  //section includes title_vision,des_vision
     }
     return currentVision;
 }
+
+//for data preview
+
+
+
+function showNav()
+    {   
+           var $targetTable = $("#tfhover").find("tbody").eq(1).find("tr");
+           for (var i=0;i<$targetTable.length;i++) 
+           {
+                $targetRow = $targetTable.eq(i).find("td");
+                for (var j=0;j<$targetRow.length;j++) 
+                {
+
+
+                    $targetRow.eq(j).attr({
+                        "id":"row"+i+"-col"+j,    //cell id
+                        "title":"row"+i+"col"+j   //navi id
+                    });
+
+                    //allocate editng icons to each cell
+                    var cid = $targetRow.eq(j).attr("id");
+                    $targetRow.eq(j).css("position","relative");
+                    var cell = $targetRow.eq(j).html();
+                    var navTable = '<div name=table class="sub_nav" style="top:0px; height:100%; width:100%; position: absolute; z-index:1000;display:block;" onclick="try{window.event.cancelBubble = true;}catch(e){event.stopPropagation();}">';
+                    navTable += '<i class="icon-pencil" id="'+cid+'" style="margin-left: 45px; margin-right: 5px;" onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
+                    navTable += '<i class="icon-trash" onclick="Delete(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
+                    navTable += '<i class="icon-comment" style="margin-left:5px;" onclick="Comment(\''+cid+'\');"></i></tr>';
+                    navTable += '</div>';
+                    $targetRow.eq(j).html(cell+navTable);
+                    }
+           }
+
+            
+       }
+
+
+
+
     
 $(document).ready(function() {
     
+    $("#report").click(function(){
+        updateData();
+    });
+
+
+
     
-    
+    $("#dataedit_popup").hide();
     $("#title_popup").hide();
     $("#des_popup").hide();
     $("#category_popup").hide();
@@ -107,6 +153,7 @@ $(document).ready(function() {
     currentDescription = getCurrentVision("des_popup");
     currentCategory = getCurrentVision("category_popup");
     currentTags = getCurrentVision("tags_popup");
+    currentDataedit = getCurrentVision("dataedit_popup");
     //alert(currentCategory);
     $("#edit_button").click(function() {
         $(this).hide();
@@ -120,6 +167,7 @@ $(document).ready(function() {
         $("#dataset_title").empty();
         $("#dataset_title").html(input+titleHistory);
         
+       
         //change the mode of description to editable
         var desOriginalTxt = $("#profile_datasetDescription").html();
         
@@ -164,6 +212,15 @@ $(document).ready(function() {
         
         
         // deal with pop up
+        $("#dataedit_history").click(function(){
+            $("#dataedit_popup").fadeIn('fast');
+            showShade();
+            $("#fade").click(function(){
+                $("#dataedit_popup").fadeOut('fast');
+                $("#fade").remove();        
+            });
+        });
+
         $("#title_history").click(function(){
             $("#title_popup").fadeIn('fast');
             showShade();
@@ -211,7 +268,13 @@ $(document).ready(function() {
     $("body").find(".attachmentDescription").html(input);
     $("body").find(".deleteFileBtnWrapper").after(attachDescriptionHistory);
     
-    });    
+    });
+
+
+    //for editing preview data
+
+
+
 
 });
 

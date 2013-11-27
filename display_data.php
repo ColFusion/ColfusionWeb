@@ -99,9 +99,91 @@ include_once(mnminclude.'user.php');
 		}
 	    }
 	}
-	
+	/*
+	$sql = "CREATE TABLE if not exists record_history(
+	sid int DEFAULT 0,
+    user_id int DEFAULT 0,
+    timestamp char(30),
+    cid char(30),
+    VALUE mediumtext DEFAULT null,
+    comment mediumtext DEFAULT null,
+    checked tinyint DEFAULT 0,
+    PRIMARY KEY (sid,user_id,timestamp,cid))";
+	$db->query($sql);
+	*/
+
+    $sql_create = "CREATE TABLE if not exists record_history_{$Sid} (
+                sid int,
+                user_id int,
+                cid char(30),
+                timestamp char(50),
+                value mediumtext,
+                notification mediumtext,
+                comment mediumtext,
+                checked tinyint default 0,
+                PRIMARY KEY (sid,user_id,timestamp,cid)
+                )";
+
+    $db->query($sql_create);
+
+
+
+
+
+
+	//update the data of preview data
+    $sql_select = "SELECT cid, value, checked 
+		   FROM record_history_{$link_id} AS t  
+		   WHERE checked=1 ";
+
+    $result = mysql_query($sql_select);
+
+    echo '<script>';
+    echo 'function updateData() {';
+
+
+
+    while($row = mysql_fetch_array($result)) {
+
+    	echo '$("body #'.$row['cid'].'").html("'.$row['value'].'");$("body #'.$row['cid'].'").css("backgroundColor","#FFFF93");';
+    }
+
+
+
+    echo '}';
+
+
+    $sql_select = "SELECT cid 
+	   FROM record_history_{$link_id} 
+	   WHERE comment <> 'null'  
+	   GROUP BY cid ";
+
+    $result = mysql_query($sql_select);
+    echo 'function highlightComment() {';
+
+    while($row = mysql_fetch_array($result)) {
+    	//echo '$("body #'.$row['cid'].'").attr({href: "#myModal", role: "button", class: "btn", data-toggle:"modal"});';
+    	//echo '$("body #'.$row['cid'].'").attr("onclick", "comment_popup(this.id);");';
+    	echo '$("body #'.$row['cid'].'").css("backgroundColor","#FF521B");';
+    	echo 'var $str = $("body #'.$row['cid'].'").text(); $("body #'.$row['cid'].'").html($str); $("body #'.$row['cid'].'").wrap("<a href=\"#myModal\" role=\"button\" data-toggle=\"modal\"></a></span>"); ';
+    	//echo '$("body #'.$row['cid'].'").after("<i class=\"icon-th-list\" style=\"float:right; margin-right: 10px;\" />");';
+    	//echo 'var $str = $("body #'.$row['cid'].'").text(); $("body #'.$row['cid'].'").html($str); $("body #'.$row['cid'].'").wrap("<a href=\"#myModal\" role=\"button\" data-toggle=\"modal\"></a>"); ';
+    	//echo '$("body #'.$row['cid'].'").find("div").after("<i class=\"icon-th-list\" style=\"float:right; margin-right: 10px;\" />");';
+    	//echo '$("body #'.$row['cid'].'").wrap("<a href=\"#myModal\" role=\"button\" data-toggle=\"modal\"></a>"); ';
+    }
+
+    echo '}';
+
+
+
+
+    echo '</script>';
+
+
 	echo '<script>
-	
+
+
+
 	//this function judges whether data is modified,if yes, user should fill the notification, else submit
 	function beforeSubmit() {
 	    
@@ -364,14 +446,159 @@ include_once(mnminclude.'user.php');
 	}
 	
 	//function loadXMLForRollback(title,description,tags,rollback,date,user) 
+
+
+
+	//this function is for data preview
 	
+	function loadXMLForDataPreview(cellValue,cid,notification,comment) {
+
+	    //alert("loadXML");
+	    var xmlhttp;
+	        var url = "deal_with_data_preview.php";
+	        url += "?id='.$link_id.'&userid='.$user_id.'&value="+cellValue+"&cid="+cid+"&notification="+notification+"&comment="+comment;
+	        //alert(url);
+	    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	    } else {// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	    }
+	    xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			//alert("ok");
+		    document.getElementById("report").innerHTML=xmlhttp.responseText;
+		    //window.location.reload();
+		}
+	    };
+	    xmlhttp.open("GET",url,true);
+	    xmlhttp.send();
+	}
+
 	
+
+
+    function Modify(id) {  
+      var str=prompt("enter new value:");
+      if(str!=="")
+        {
+        	
+            var p=document.getElementById(id);
+            p.innerHTML=str;
+        	//$("#"+id).text(str);
+
+            Mark(id);
+            var notif = Notification(id);
+            loadXMLForDataPreview(str,id,notif,null);
+
+            $(".sub_nav").remove();
+            showNav();
+
+        }
+        else if(str==""){
+          Delete(id);
+        }
+
+      
+    }
+
+
+    function Delete(id) {
+      alert("it is deleted!");
+      document.getElementById(id).innerHTML="NULL";//need to be null instead of a String
+      Mark(id);
+      notif=Notification(id);
+      loadXMLForDataPreview(null,id,notif,null);
+    }
+
+    function Mark(id){
+      document.getElementById(id).style.background="#FFFF93";
+    }
+
+    function Notification(id){
+    var p=prompt("please write a notification here: ");
+    //alert(p);
+    return p;
+
+    Mark(id);
+    // record the notification by id and insert it into db
+    }
+
+    function Comment(id){
+    	var c=prompt("add comment here:");
+    	loadXMLForDataPreview(null,id,null,c);
+    }
+
+
+
+    //comment popup when in DataPreviewMarkup
+	function comment_popup(cid){
+		if (cid =="") return;
+     	//alert(cid);
+     	var xmlhttp;
+        var url = "deal_with_data_preview.php";
+        url += "?id='.$link_id.'&cid="+cid;
+        //alert(url);
+	    if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	    } else {// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	    }
+	    xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+			//alert("ok");
+		    document.getElementById("report").innerHTML=xmlhttp.responseText;
+		    //window.location.reload();
+		    var commentreport=xmlhttp.responseText;
+		    return commentreport;
+		}
+	    };
+	    xmlhttp.open("GET",url,true);
+	    xmlhttp.send();
+	}
+
+
+
+
 	
       </script>';
 
-	$title_index = 1;
+    $title_index = 1;
 	echo '<br/>
 	<!-- history popup start -->
+	    <div id="dataedit_popup" style="background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
+		<div style="width:100%;height:40px;border-bottom:2px solid #ddd;"><h3 style="position:relative;top:0px;display:inline;">Dataedit History</h3></div>
+		<div style="width:100%;">
+		    <table style="border-collapse:collapse;margin:auto;width:100%;">
+		    <tr style="background-color:#1874cd;color:#b3d5f6;">
+			<th style="border:1px solid #999;padding: 10px;width:10%;">VISION</th>
+			<th style="border:1px solid #999;padding: 10px;width:25%;">MODIFIED DATE</th>
+			<th style="border:1px solid #999;padding: 10px;width:25%;">NEW VALUE</th>
+			<th style="border:1px solid #999;padding: 10px;width:15%;">USER ID</th>
+			<th style="border:1px solid #999;padding: 10px;width:25%;">COMMENT</th>
+		    </tr></table>';
+	echo '<div style="width:100%;height:360px;overflow:scroll;"><table style="width:100%;">';	    
+		    $sql_select = "SELECT timestamp, value, user_id, comment, checked 
+				   FROM wiki_history AS w, colfusion_users AS u 
+				   WHERE w.user_id=u.user_id and sid={$link_id} and field='dataedit' ORDER BY timestamp";
+
+		    $result = mysql_query($sql_select);
+		    while($row = mysql_fetch_array($result)) {
+			echo '<tr style="background-color:#fdfdee;">';
+			echo '<td style="padding: 0px;border:1px solid #999;width:10%;text-align:center;"><input type="radio" ';?><?php if($row['checked']) echo "checked ";?><?php echo 'name="title_popup" value="titlerollback-'.$title_index.'"/></td>';
+			echo '<td style="padding: 10px;border:1px solid #999;width:25%;">' . $row['timestamp'] . "</td>";
+			echo '<td style="padding: 10px;border:1px solid #999;width:25%;">' . $row['value'] . "</td>";
+			echo '<td style="padding: 10px;border:1px solid #999;width:15%;">' . $row['user_id'] . "</td>";
+			echo '<td style="padding: 10px;border:1px solid #999;width:25%;">' . $row['comment'] . "</td>";
+			echo "</tr>";
+			$title_index ++;
+		    }
+		echo '</table></div></div>';
+		echo '<div style="border-top:2px solid #ddd;width:100%;"><div style="margin:10px;float:right;">
+			    <button class="btn" name="dataedit_popup_confirm" onclick="rollbackListener(this.name)">Confrim</button><button class="btn" name="dataedit_popup_cancel" onclick="rollbackListener(this.name)">Cancel</button>
+			</div></div></div>';  
+
+	$title_index = 1;
+	echo '<br/>
 	    <div id="title_popup" style="background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 		<div style="width:100%;height:40px;border-bottom:2px solid #ddd;"><h3 style="position:relative;top:0px;display:inline;">Title History</h3></div>
 		<div style="width:100%;">
@@ -552,7 +779,10 @@ include_once(mnminclude.'user.php');
 	    
 	        
 	echo '
-	    <span id="edit_button" style="float:right;padding:3px;padding-right:20px;"><a>[edit page]</a></span>
+
+	    <span><a href="#myModal" role="button" data-toggle="modal" id="history_button" style="float:right;padding:3px;padding-right:30px;">[history]</a></span>
+	    </be>
+	    <span id="edit_button" style="float:right;padding:3px;padding-right:20px;"><a>[edit]</a></span>
 	    <span id="cancel_button" style="float:right;padding:3px;padding-right:20px;"><a>[cancel]</a></span>
 	    <span id="save_button" style="float:right;padding:3px;"><a>[save]</a></span>
 
