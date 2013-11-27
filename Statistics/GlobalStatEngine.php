@@ -639,6 +639,12 @@ class GlobalStatEngine {
        	$pieData["chartId"] = $chartId;
        	$pieData["columnName"] = $columnName;
 
+       	// foreach ($pieData["content"] as $key => $value) {
+       	// 	SAVETODB($cid, $value->Category, $value->AggValue);
+       	// 	//$value["Category"], $value["AggValue"]
+       	// }
+
+
        	return $pieData;
 	}
 
