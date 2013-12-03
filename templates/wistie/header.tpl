@@ -23,7 +23,7 @@
                 GetCurrentNTFNum();
             </script></a></li>
 
-            <div class="notification_block" id="notification" data-bind="ntfVisible: visibleNTF, foreach: ntfs">
+            <div class="notification_block" id="notificationaa" data-bind="ntfVisible: visibleNTF, foreach: ntfs">
                 <div class="notification_block_row" data-bind="click: $root.goToStory, text: msg"></div>
             </div>
             <audio id="ntfSound">

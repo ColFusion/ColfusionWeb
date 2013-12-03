@@ -141,3 +141,16 @@
 	font-style: italic;	
 	font-size: 11px;
 }
+
+.chat_user_bg {
+	padding-left: 5px; padding-top: 5px;
+	background: #fdfdee;
+}
+
+.hasFriends:hover {
+	background: #fff3bd;
+}
+
+.chat_user {
+	text-decoration: none;
+}

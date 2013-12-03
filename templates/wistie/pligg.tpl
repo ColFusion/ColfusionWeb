@@ -219,13 +219,16 @@
 		    			
 
 			    //load users from database
-				$users = mysql_query("SELECT id,username FROM `colfusion_chat`.`index_users` WHERE id!='".$_SESSION['user_id']."'");
+				$users = mysql_query("SELECT id,username FROM `colfusion_chat`.`index_users` WHERE id!='".$_SESSION['user_id']."' HAVING id IN (SELECT `friend_to` FROM `colfusion`.`colfusion_friends` WHERE `friend_from`=".$_SESSION['user_id'].")");
+				print '<div class="chat_user_bg">Online Friends<div>';
 				if(mysql_num_rows($users) > 0){
 					while($user = mysql_fetch_assoc($users)){
 						//ALT tag contains user ID and user name 
-						print '&bull; <a href="#" alt="'.$user['id'].'|'.$user['username'].'" class="chat_user">'.$user['username'].'</a><br />';
+						print '<div class="chat_user_bg hasFriends"><a href="#" alt="'.$user['id'].'|'.$user['username'].'" class="chat_user">'.$user['username'].'</a></div>';
 					}
 				}
+				else
+					print '<div class="chat_user_bg">You do not have any friend yet.<div>';
 			}
 			if (isset($_SESSION['chatbox_status'])) {
 				print '<script type="text/javascript">';
