@@ -45,5 +45,12 @@ function addNTFtoDB($rel_id, $do) {
     
     echo $notificationDAO->addNTFtoDB($rel_id, $do);
 }
+
+function addEditNTFtoDB(){
+    $notificationDAO = new NotificationDAO();
+    $link_id = $_GET["link_id"];
+    echo $notificationDAO->addEditNTFtoDB($link_id);
+}
+
 	
 ?>

@@ -122,6 +122,37 @@ class NotificationDAO {
             $this->ezSql->query($query);
         }
     }
+
+    public function addEditNTFtoDB($link_id){
+        //add ntf
+        date_default_timezone_set('America/New_York');
+        $datetime = date('Y/m/d H:i:s');
+        $query="INSERT INTO `colfusion`.`colfusion_notifications` (`ntf_id`, `sender_id`, `target_id`, `action`, `datetime`) VALUES (NULL, '".$this->user->user_id."', '".$link_id."', 'edited on', '".$datetime."');";
+        $this->ezSql->query($query);
+
+        //add ntf to everyone that saved this link
+        $query = "INSERT INTO  `colfusion`.`colfusion_notifications_unread` (`ntf_id` ,`receiver_id`) SELECT ntf_id, L.saved_user_id
+                    FROM colfusion_saved_links L, colfusion_notifications N
+                    WHERE L.saved_link_id = N.target_id
+                    AND L.saved_user_id !=".$this->user->user_id."
+                    AND ntf_id = ( 
+                    SELECT MAX( ntf_id ) 
+                    FROM colfusion_notifications )";
+        $this->ezSql->query($query);
+
+        //add ntf to author
+        $query = "SELECT link_author FROM colfusion_links WHERE link_id = ".$link_id."";
+        $result = $this->ezSql->get_results($query);
+        foreach ($result as $r) {
+            $link_author = $r->link_author;
+        }
+        if($link_author != $this->user->user_id){
+            $query = "INSERT INTO  `colfusion`.`colfusion_notifications_unread` (`ntf_id` ,`receiver_id`) "
+            ."SELECT MAX(ntf_id), '".$link_author."' FROM colfusion_notifications";
+            echo $query;
+            $this->ezSql->query($query);
+        }
+    }
   
 }
 

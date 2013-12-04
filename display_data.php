@@ -10,6 +10,8 @@ include(mnminclude.'group.php');
 include(mnminclude.'smartyvariables.php');
 include_once(mnminclude.'user.php');
 
+include_once('../Colfusion/DAL/NotificationDAO.php');
+
 //include('c_1_wistie_submit_step_21_tpl.php');
 
 
@@ -50,17 +52,20 @@ include_once(mnminclude.'user.php');
 	//debug---replace <br /> with <br> of description(link_content)	; the bug will appear at first time
 	if (strpos($link_content,"<br />")!=false) {
 	    $link_content=str_replace("<br />","<br>",$link_content);
-	    $link_content= \mysql_real_escape_string($link_content);
+	    $link_content= mysql_real_escape_string($link_content);
 	    $sql_update = "UPDATE colfusion_links ";
 	    $sql_update .="SET link_content = '{$link_content}' ";
 	    $sql_update .="WHERE link_id = {$link_id}";
 	    if($db->query($sql_update)) {
             //update the link_summary
-		$sql_update = "UPDATE colfusion_links ";
-		$sql_update .="SET link_summary = '{$link_content}' ";
-		$sql_update .="WHERE link_id = {$link_id}";
-		$db->query($sql_update);
+			$sql_update = "UPDATE colfusion_links ";
+			$sql_update .="SET link_summary = '{$link_content}' ";
+			$sql_update .="WHERE link_id = {$link_id}";
+			$db->query($sql_update);
 	    }
+	    //added by Jason
+	    $notificationDAO = new NotificationDAO();
+        $notificationDAO->addEditNTFtoDB($link_id);
 	}
 	
 	//insert data the wiki_history when the link is just created

@@ -220,7 +220,7 @@
 
 			    //load users from database
 				$users = mysql_query("SELECT id,username FROM `colfusion_chat`.`index_users` WHERE id!='".$_SESSION['user_id']."' HAVING id IN (SELECT `friend_to` FROM `colfusion`.`colfusion_friends` WHERE `friend_from`=".$_SESSION['user_id'].")");
-				print '<div class="chat_user_bg">Online Friends<div>';
+				print '<div class="chat_user_bg">Friends<div>';
 				if(mysql_num_rows($users) > 0){
 					while($user = mysql_fetch_assoc($users)){
 						//ALT tag contains user ID and user name 
