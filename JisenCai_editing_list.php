@@ -264,7 +264,6 @@ function Mark(id){
 <link rel="stylesheet" type="text/css" href="/Colfusion/css/parsley_custom.css" />
 <link rel="stylesheet" type="text/css" href="/Colfusion/css/popup_style.css"/>
 
-<script type="text/javascript" src="/Colfusion/javascripts/jquery-1.4.2.min.js"></script>
 <script type="text/javascript" src="/Colfusion/javascripts/popup_layer.js"></script>
 <script type="text/javascript" src="/Colfusion/javascripts/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="/Colfusion/javascripts/jquery-ui-1.10.3.custom.min.js"></script>

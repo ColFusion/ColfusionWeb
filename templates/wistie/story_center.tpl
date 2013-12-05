@@ -185,6 +185,7 @@
 {/literal} 
 
 <div id="dataPreviewContainer"></div>
+
 {include file='storyStatistics.tpl'}
 
 {include file='dataprovenance.tpl'}

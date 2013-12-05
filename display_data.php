@@ -16,7 +16,7 @@ include_once('../Colfusion/DAL/NotificationDAO.php');
 
 
 // determine which step of the submit process we are on
-  echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>';
+  echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>';
   echo '<script type="text/javascript" src="label_edit_js.js"></script>'; 
 	
 	global $current_user, $globals, $the_template, $smarty, $db;

@@ -1,7 +1,7 @@
 {literal}
 
 <div class="dataPreviewTableWrapper">
-    <div class="preview-story" id = "statisticsView">
+    <div class="preview-story" id = "dataprovenanceView">
        
         <button id="visualizeBtn" class="btn visualizeBtn" onclick="dataProvenance.showGraph();">
            
