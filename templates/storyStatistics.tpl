@@ -27,8 +27,8 @@
                     <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
                         <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
                             <tr data-bind="foreach: headers">
-                                <th><span data-bind="text: name"></span><i class="icon-adjust" data-bind="click: $root.getPieChart" style="{cursor: pointer !important;}"></i>
-                                    <i class="icon-adjust" data-bind="click: $root.getColumnChart" style="{cursor: pointer !important;}"></i>
+                                <th><span data-bind="text: name"></span>  <button  data-bind="click: $root.getPieChart" style="{cursor: pointer !important;}"><i class="icon-adjust" ></i></button>
+                                    <button data-bind="click: $root.getColumnChart" style="{cursor: pointer !important;}"><i class="icon-bar-chart" ></i></button>
                                     </th>
                             </tr>
                             <tbody class="dataPreviewTBody" data-bind="foreach: rows">
@@ -44,6 +44,8 @@
                         </div>
                         <i class="icon-arrow-left" id="prevBtn" data-bind="visible: currentPage() > 1, click: $parent.goToPreviousPage" title="Previous Page"></i>
                         <i class="icon-arrow-right" id="nextBtn" data-bind="visible: currentPage() < totalPage(), click: $parent.goToNextPage" title="Next Page"></i>                        
+                        
+
                     </div>
 
                     </div>
@@ -57,6 +59,7 @@
         </div>
     <!--</div>-->
     <script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script> 
+    <script  type="text/javascript" src="javascripts/jquery.statisticsbuttoncontrol.js"></script> 
 </div>
 
 
