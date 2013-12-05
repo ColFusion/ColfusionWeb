@@ -55,7 +55,7 @@ function NotificationViewModel() {
             story_url = "../Colfusion/user.php?login="+ntf.receiver+"&view=notification";
             window.open(story_url);
         }
-        else if (ntf.target_id == "no"){
+        else if (ntf.target_id == 0){
             //no nothing
         }
         else {

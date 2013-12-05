@@ -22,7 +22,7 @@ class NotificationDAO {
         WHERE C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND D.link_id = A.target_id AND B.receiver_id=".$this->user->user_id." AND A.sender_id !=".$this->user->user_id."
         union
         SELECT C.user_login AS sender, A.ntf_id AS ntf_id, A.action AS action, B.receiver_id AS receiver_id, 'not a title', '0' AS target_id
-        FROM colfusion_notifications A, colfusion_notifications_unread B, colfusion_users C,colfusion_friends WHERE C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND B.receiver_id=".$this->user->user_id." AND A.sender_id !=".$this->user->user_id."
+        FROM colfusion_notifications A, colfusion_notifications_unread B, colfusion_users C,colfusion_friends WHERE A.action = 'followed you' AND C.user_id = A.sender_id AND A.ntf_id = B.ntf_id AND B.receiver_id=".$this->user->user_id." AND A.sender_id !=".$this->user->user_id."
         ");
         
         $results = array(

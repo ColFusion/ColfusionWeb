@@ -63,9 +63,6 @@ include_once('../Colfusion/DAL/NotificationDAO.php');
 			$sql_update .="WHERE link_id = {$link_id}";
 			$db->query($sql_update);
 	    }
-	    //added by Jason
-	    $notificationDAO = new NotificationDAO();
-        $notificationDAO->addEditNTFtoDB($link_id);
 	}
 	
 	//insert data the wiki_history when the link is just created

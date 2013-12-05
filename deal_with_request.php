@@ -9,6 +9,9 @@
     include(mnminclude.'smartyvariables.php');
     include_once(mnminclude.'user.php');
     
+    //added by Jason
+    include_once('../Colfusion/DAL/NotificationDAO.php');
+
     global $current_user, $globals, $the_template, $smarty, $db;
     $timestamp = date("Y-m-d H:i:m");
     
@@ -210,6 +213,9 @@
         
     }         
 
+    //added by Jason
+    $notificationDAO = new NotificationDAO();
+    $notificationDAO->addEditNTFtoDB($link_id);
 
     //echo $str."<br/>";
     /*
