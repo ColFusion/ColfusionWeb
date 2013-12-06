@@ -10,7 +10,7 @@
     include_once(mnminclude.'user.php');
     
     //added by Jason
-    include_once('../Colfusion/DAL/NotificationDAO.php');
+    include_once realpath(dirname(__FILE__)) . '/DAL/NotificationDAO.php';
 
     global $current_user, $globals, $the_template, $smarty, $db;
     $timestamp = date("Y-m-d H:i:m");

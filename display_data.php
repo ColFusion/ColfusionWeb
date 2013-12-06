@@ -10,7 +10,6 @@ include(mnminclude.'group.php');
 include(mnminclude.'smartyvariables.php');
 include_once(mnminclude.'user.php');
 
-include_once('../Colfusion/DAL/NotificationDAO.php');
 
 //include('c_1_wistie_submit_step_21_tpl.php');
 

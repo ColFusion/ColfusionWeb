@@ -11,9 +11,13 @@ class IndexchatDAO {
 
     public function addNewUser(){
         $query1 = "SELECT * FROM `colfusion`.`colfusion_users`";
-        $query2 = "SELECT * FROM `index_users`";
+        $query2 = "SELECT * FROM `".CHAT_DB."`.`index_users`";
         $num1 = mysql_num_rows(mysql_query($query1));
-        $num2 = mysql_num_rows(mysql_query($query2));
+        if (mysql_query($query2)){
+            $num2 = mysql_num_rows(mysql_query($query2));
+        }
+        else
+            $num2 = -1;
         if($num1!=$num2){
             $query = "INSERT INTO `".CHAT_DB."`.`index_users`(`id`, `username`, `chat_status`, `offlineshift`) SELECT user_id, user_login, 'offline', '0' FROM `colfusion`.`colfusion_users` HAVING user_id NOT IN (SELECT id FROM `".CHAT_DB."`.`index_users`)";
             mysql_query($query);
