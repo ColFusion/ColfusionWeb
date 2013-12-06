@@ -157,15 +157,17 @@ var importWizard = (function () {
 									.getElementsByName('dname_value_description')[i].value,
 						    'tableName': tableName,
 						    'metadata': metadata,
+                            'constantValue' : document
+                                    .getElementsByName('constant_value')[i].value,
                             'missingValue' : document
-                                    .getElementsByName(tableName)[0].value
+                                    .getElementsByName('missing_value')[0].value
 						});
             }
         }
 
         return result;
     };
-
+    
     importWizard.getDataMatchingLoadingProgress = function () {
         if (getImportSource() == "database") {
             importWizard.dataMatchingProgressViewModel.stop();

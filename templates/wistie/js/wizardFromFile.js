@@ -70,7 +70,6 @@ var wizardFromFile = (function() {
             dataType: 'json',
             success: function(jsonResponse) {
                 sourceWorksheetSettingsViewModel.cleanSource();
-
                 for (var i = 0; i < jsonResponse.data.length; i++) {
                     var fileSource = jsonResponse.data[i];
                     var filename = fileSource.filename;

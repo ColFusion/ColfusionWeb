@@ -39,6 +39,8 @@ class CSVToExcelConverter {
         //row index start from 1
         $row_index = 0;
         foreach ($in_sheet->getRowIterator() as $row) {
+            //if($row_index==20)
+            //    break;
             $row_index++;
             $cellIterator = $row->getCellIterator();
             $cellIterator->setIterateOnlyExistingCells(false);

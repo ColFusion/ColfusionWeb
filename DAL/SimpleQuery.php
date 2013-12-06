@@ -153,7 +153,7 @@ class SimpleQuery
     }
 
 // Store metadata about column.
-    public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $missingValue)
+    public function addColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $constantValue, $missingValue)
     {
         global $db;
 
@@ -163,16 +163,17 @@ class SimpleQuery
         $unit = $db->escape($unit);
         $description = $db->escape($description);
         $originaDname = $db->escape($originaDname);
-
-        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, missing_value) VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s')";
-        $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $missingValue);
+        $missing_value = $db->escape($missingValue);
+        $constant_value = $db->escape($constantValue);
+        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, constant_value, missing_value) VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s', '%s')";
+        $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $constantValue, $missingValue);
         $db->query($sql);
 
         return mysql_insert_id();
     }
 
 // Store metadata about column.
-    public function addConstantColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $value)
+    public function addConstantColumnInfo($sid, $newDname, $type, $unit, $description, $originaDname, $value, $constantValue, $missing_value)
     {
         global $db;
 
@@ -183,9 +184,10 @@ class SimpleQuery
         $description = $db->escape($description);
         $originaDname = $db->escape($originaDname);
         $value = $db->escape($value);
-
-        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, isConstant, constant_value) VALUES (%d, '%s','%s','%s', '%s', '%s', 1, '%s')";
-        $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $value);
+        $constantValue=$db->escape($constantValue);
+        $missingValue=$db->escape($missingValue);
+        $sql = "INSERT INTO %sdnameinfo (sid, dname_chosen, dname_value_type, dname_value_unit, dname_value_description, dname_original_name, isConstant, constant_value, missing_value) VALUES (%d, '%s','%s','%s', '%s', '%s', 1, '%s', '%s')";
+        $sql = sprintf($sql, table_prefix, $sid, $newDname, $type, $unit, $description, $originaDname, $value, $constantValue, $missingValue);
         $db->query($sql);
 
         return mysql_insert_id();
@@ -244,9 +246,29 @@ EOQ;
     public function getUnits($type)
     {
         global $db;
-        $sql = "SELECT dname_value_unit FROM colfusion_dname_type where dname_value_type='$type'";
+        $sql = "SELECT dname_value_unit FROM colfusion_dname_type WHERE dname_value_type='$type'";
         $results = $db->get_results($sql);
         return $results;
     }
-
+    public function getTypes($type)
+    {
+        global $db;
+        $sql = "SELECT DISTINCT dname_value_type FROM colfusion_dname_type WHERE dname_value_type<>'$type'";
+        $results = $db->get_results($sql);
+        return $results;
+    }
+    public function getAllColumnNames($columnName)
+    {
+        global $db;
+        $sql = "SELECT dname_chosen FROM colfusion_dnameinfo";//DISTINCT 
+        $results = $db->get_results($sql);
+        return $results;
+    }
+    public function getAllDescriptions($columnName)
+    {
+        global $db;
+        $sql = "SELECT dname_value_description,dname_chosen FROM colfusion_dnameinfo";
+        $results = $db->get_results($sql);
+        return $results;
+    }
 }
