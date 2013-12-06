@@ -53,13 +53,24 @@ class KTRExecutor
 
         // ACTUALL PAN SCRIPT EXECUTION
         //exec($command . "2>&1", $outA, $returnVar);
+        $databaseConnectionInfo = $this->ktrManager->getConnectionInfo();
         $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID,$this->ktrManager->getConnectionInfo()->database); 
         $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $this->ktrManager->getTableName()); 
         $file = $this->ktrManager->getFilePaths();
         $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $file[0]); 
-        $fileActualPath = "/RESTfulProject/REST/Submit/SaveExcelToMysql?databaseName=" . $this->ktrManager->getConnectionInfo()->database . "&tableName=" . $this->ktrManager->getTableName() . "&filePath=" . $file[0];
+        $fileActualPath = "/RESTfulProject/REST/Submit/SaveExcelToMysql";
         $curlCaller = new CurlCaller();
-        $res = $curlCaller->CallAPI("GET", REST_HOST . ":" . REST_PORT . $fileActualPath, false);
+        $data = array(
+                "databaseName" => $this->ktrManager->getConnectionInfo()->database,
+                "tableName" => $this->ktrManager->getTableName(),
+                "filePath" => $file[0],
+                "engine" => $databaseConnectionInfo->engine,
+                "username" => $databaseConnectionInfo->username,
+                "password" => $databaseConnectionInfo->password,
+                "server" => $databaseConnectionInfo->server,
+                "port" => $databaseConnectionInfo->port,
+            );
+        $res = $curlCaller->CallAPI("POST", REST_HOST . ":" . REST_PORT . $fileActualPath, $data);
         if($res="sucess")
         {
             $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan finished");  // loggin to db
