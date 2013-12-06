@@ -1,6 +1,8 @@
 <?php
 
 include_once '../config.php';
+require_once realpath(dirname(__FILE__)) . '/../RESTCaller/CurlCaller.php';
+require_once realpath(dirname(__FILE__)) . '/../conf/ColFusion_JAVA_REST_API.php';
 
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
@@ -29,7 +31,6 @@ class KTRExecutor
         $this->sid = $sid;
         $this->userId = $userId;
         $this->ktrManager = $ktrManager;
-
         $this->ktrExecutorDAO = new KTRExecutorDAO();
     }
 
@@ -41,6 +42,7 @@ class KTRExecutor
         $logID = $this->ktrExecutorDAO->addExecutionInfoTuple($this->sid, $this->ktrManager->getTableName(), $this->userId);
 
         $command = $this->getCommand($logID);
+
         $this->ktrExecutorDAO->updateExecutionInfoTupleCommand($logID, $command);   // loggin to db
         
         $databaseConnectionInfo = $this->createTargetDatabaseAndTable($logID);
@@ -50,11 +52,25 @@ class KTRExecutor
         $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "executing pan");  // loggin to db
 
         // ACTUALL PAN SCRIPT EXECUTION
-        exec($command . "2>&1", $outA, $returnVar);
+        //exec($command . "2>&1", $outA, $returnVar);
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID,$this->ktrManager->getConnectionInfo()->database); 
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $this->ktrManager->getTableName()); 
+        $file = $this->ktrManager->getFilePaths();
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $file[0]); 
+        $fileActualPath = "/RESTfulProject/REST/Submit/SaveExcelToMysql?databaseName=" . $this->ktrManager->getConnectionInfo()->database . "&tableName=" . $this->ktrManager->getTableName() . "&filePath=" . $file[0];
+        $curlCaller = new CurlCaller();
+        $res = $curlCaller->CallAPI("GET", REST_HOST . ":" . REST_PORT . $fileActualPath, false);
+        if($res="sucess")
+        {
+            $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan finished");  // loggin to db
 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan finished");  // loggin to db
-
-        $this->processExecutionResultMessage($logID, $returnVar, $outA);
+            $this->processExecutionResultMessage($logID, 0, $outA);
+        }
+        else
+        {
+            $this->processExecutionResultMessage($logID, 0, $outA);
+            $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "pan error");
+        }
     }
 
     //TODO: refactor this code. Our ktr template doesn't need sid and logid param.
@@ -90,27 +106,26 @@ class KTRExecutor
         // KTR manager has target database info.
         $databaseConnectionInfo = $this->ktrManager->getConnectionInfo();
 
-$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating dbhandler");
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed before handler");
 
         $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($databaseConnectionInfo->engine, $databaseConnectionInfo->username, $databaseConnectionInfo->password, null, $databaseConnectionInfo->server, $databaseConnectionInfo->port, null, null);
 
-$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "after creating dbhandler");
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed after handler");
 
         // DATABASE
         $dbHandler = $dbHandler->createDatabaseIfNotExist($databaseConnectionInfo->database);
 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "after creating database if needed");    // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "creating table if needed");    // loggin to db
 
         // KTR manager also has target table name and columns which that table needs to have
         $tableName = $this->ktrManager->getTableName();
         $columns = $this->ktrManager->getColumns();
 
-$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "before creating table if needed");
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "number of columns: " . count($columns));
 
         // TABLE
         $dbHandler->createTableIfNotExist($tableName, $columns);
 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "after creating table if needed");
         //by this po everything went fine, so not just need to return target database connection info for future use
         return $databaseConnectionInfo;
     }
@@ -118,7 +133,7 @@ $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "before creating t
     /**
      * Add target database connection info o our database and also linked server will be created automatically.
      * @param       $logID                  eid of execution info table to update status
-     * @param stdClass $databaseConnectionInfo target database connection info
+     * @param   stdClass $databaseConnectionInfo target database connection info
      */
     public function addMetaDataAboutTargetDatabase( $logID, $databaseConnectionInfo)
     {
@@ -136,7 +151,7 @@ $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "before creating t
      * Logs final messages to the execute info table depending on the returned value from pan execution
      * @param    $logID     eid of execution info table to update status
      * @param    $returnVar pan returned status number
-     * @param array $outA      log of pan execution
+     * @param  array $outA      log of pan execution
      */
     public function processExecutionResultMessage($logID,  $returnVar, $outA)
     {

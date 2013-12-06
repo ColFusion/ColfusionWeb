@@ -1,132 +1,10 @@
-<script type="text/javascript">
-
-//generate the comment table
-//function comment_popup(cid){
-        //alert(cid);
-        /*
-        var xmlhttp;
-        var url = "deal_with_data_preview.php";
-        url += "?id='.$link_id.'&cid="+cid;
-        alert(url);
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-        xmlhttp=new XMLHttpRequest();
-        } else {// code for IE6, IE5
-        xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange=function() {
-        if (xmlhttp.readyState==4 && xmlhttp.status==200) {
-            //alert("ok");
-            document.getElementById("report").innerHTML=xmlhttp.responseText;
-            var commentreport=xmlhttp.responseText;
-            return(commentreport); 
-            //window.location.reload();
-        }
-        };
-        xmlhttp.open("GET",url,true);
-        xmlhttp.send();
-        */
-    //}
-
-//add editing function here
-
-    var indexControl = 0;
-        $(".btn-primary").click(function()
-    {   if(indexControl == 0){
-        indexControl++;
-           var $targetTable = $("#tfhover").find("tbody").eq(1).find("tr");
-           for (var i=0;i<$targetTable.length;i++) 
-           {
-                $targetRow = $targetTable.eq(i).find("td");
-                for (var j=0;j<$targetRow.length;j++) 
-                {
-
-
-                    $targetRow.eq(j).attr({
-                        "id":"row"+i+"-col"+j,    //cell id
-                        "title":"row"+i+"col"+j   //navi id
-                    });
-
-                    //allocate editng icons to each cell
-                    var cid = $targetRow.eq(j).attr("id");
-                    $targetRow.eq(j).css("position","relative");
-                    var cell = $targetRow.eq(j).html();
-                    var navTable = '<div name=table class="sub_nav" style="top:0px; height:100%; width:100%; position: absolute; z-index:1000;display:block;" onclick="try{window.event.cancelBubble = true;}catch(e){event.stopPropagation();}">';
-                    navTable += '<i class="icon-pencil" id="'+cid+'" style="margin-left: 45px; margin-right: 5px;" onclick="Modify(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
-                    navTable += '<i class="icon-trash" onclick="Delete(\''+cid+'\');Mark(\''+cid+'\');"></i></tr>';
-                    navTable += '<i class="icon-comment" style="margin-left:5px;" onclick="Comment(\''+cid+'\');"></i></tr>';
-                    navTable += '</div>';
-                    $targetRow.eq(j).html(cell+navTable);
-                    }
-           }
-
-    }
-            
-       });
-//reading mode function here
-var indexControl2 = 0;
-$("#switch_new").click(function()
-{
-    //to generate a new table with highlight cell and popout comment
-    //window.location.reload();
-if(indexControl2 == 0)
-    {
-        indexControl2++;
-           var $targetTable = $("#tfhover").find("tbody").eq(1).find("tr");
-           for (var i=0;i<$targetTable.length;i++) 
-           {
-                $targetRow = $targetTable.eq(i).find("td");
-                for (var j=0;j<$targetRow.length;j++) 
-                {
-
-
-                    $targetRow.eq(j).attr({
-                        "id":"row"+i+"-col"+j,    //cell id
-                        "title":"row"+i+"col"+j   //navi id
-                    });
-
-                    var cid = $targetRow.eq(j).attr("id");
-                    $targetRow.eq(j).css("position","relative");
-
-                }
-           }
-        
-    }
-    $(".sub_nav").hide();
-    updateData();
-    highlightComment();
-    indexControl = 0;
-});
-//reading mode function ends
-
-
-</script>
-
-<!-- Button to trigger modal -->
-<!--<a href="#myModal" role="button" class="btn" data-toggle="modal">Launch demo modal</a>-->
- <div>launch demo model</div>
-<!-- Modal -->
-<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 id="myModalLabel">Modal header</h3>
-  </div>
-  <div class="modal-body">
-    <div id="report"></div>
-  </div>
-  <div class="modal-footer">
-    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-  </div>
-</div>
-
 <div class="dataPreviewTableWrapper">
     <div class="preview-story">
         <button data-bind="visible: currentTable" id="visualizeBtn" class="btn visualizeBtn" onclick="openVisualizationPage()">
             <i class="icon-bar-chart" style="margin-right: 5px;"></i>
             Visualize
         </button>
-        <h3 class="preview-title">Origin data preview</h3>
-        <button class="btn btn-primary" type="button"><i class="icon-edit"></i>Edit Mode</button> <!--需要将响应事件转移到该按钮 -->
-        <button class="btn btn-info" type="button" id="switch_new"><i class="icon-book"></i>Switch to new data</button> <!--需要添加响应事件 -->
+        <h3 class="preview-title">Data Preview</h3>
         <div class="storycontent" id="dataPreviewContainer">
             <ul data-bind="visible: tableList().length > 1, foreach: tableList" class="tableList" id="previewTableList">
                 <li data-bind="click: $root.chooseTable" class="tableListItem">
@@ -141,7 +19,7 @@ if(indexControl2 == 0)
                 Processing Data...
             </div>
             <!-- /ko -->
-            <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
+            <div data-bind="visible: isNoData" style="color: grey;">This table has no data or the data are being processed.</div>
             <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
             <div data-bind="with: currentTable">
                 <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
@@ -151,7 +29,7 @@ if(indexControl2 == 0)
                         </tr>
                         <tbody class="dataPreviewTBody" data-bind="foreach: rows">
                             <tr class="datatr" data-bind="foreach: cells">
-                                <td data-bind="text: $data" onclick="comment_popup(this.id);"></td>
+                                <td data-bind="text: $data"></td>
                             </tr>
                         </tbody>
                     </table>

@@ -274,7 +274,7 @@
             </div>
             <br/>
 
-            <label><input type='checkbox' id='toggleAllColumns'/>toggle all</label>
+            <label><input type='checkbox' id='toggleAllColumns' <?php echo 'checked';?>/>toggle all</label>
             <div id='dataMatchingTable'></div>
         </div>
     </div>

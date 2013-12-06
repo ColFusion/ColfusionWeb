@@ -71,9 +71,8 @@ class UtilsForWizard {
                 $result .= '<div> <span>' . $oneTableName . '</span>';
 
             $result .= UtilsForWizard::printDataMatchingStepOneTable($oneTableName, $oneTableColumns);
-
-            $result .= "<label style='display: inline;'>Missing value:</label><input type='text' id='missValue' name='$oneTableName' value='' onclick='' />";
-        
+            $result .= "<label style='display: inline;'>Missing value:</label><input type='text' id='missValue' name='missing_value' value='' onclick='' />";
+            
             
 
             //if (count($data) > 1)
@@ -87,7 +86,7 @@ class UtilsForWizard {
 
     static function printDataMatchingStepOneTable($oneTableName, $oneTableColumns) {
         global $db;
-
+        
         $result = "";
 
         $result .= "<table border=\"1\" id=\"norm\"><thead class='head'><tr ><th class='thw'> Field name </th><th class='thw'> Matching </th></tr></thead>"; //<th> Field name </th><th> Type </th>";
@@ -96,35 +95,49 @@ class UtilsForWizard {
 
         for ($i = 0; $i < count($tableColumns); $i++) {
             $edited_array_word[$i] = explode(" ", $tableColumns[$i]);
-
+            $columnType = $_SESSION["columnType"];
+            $selectedValue = $columnType[0][$i];
+            $typesHtml = UtilsForWizard::getTypes($selectedValue);
+            $unitsHtml = UtilsForWizard::getUnits($selectedValue);
+            $similarityHtml = UtilsForWizard::getSuggestedColumnName($tableColumns[$i]);
             $result .= "<tr>";
-            $result .= "<td> <div><label style='display: inline;'><input type=\"checkbox\" name=\"columns[]\" value='$oneTableName.$tableColumns[$i]'>$tableColumns[$i]</label><input type='button' value='...' id='more$i' onClick='return $(\"#inDiv$i\").toggle();' /><img src='help.png' width='15' height='15' title='Click here to complete your definition about this dname.'/>";
+            $result .= "<td> <div><label style='display: inline;'><input type=\"checkbox\" name=\"columns[]\" value='$oneTableName.$tableColumns[$i]' checked/>$tableColumns[$i]</label><input type='button' value='...' id='more$i' onClick='return $(\"#inDiv$i\").toggle();' /><img src='help.png' width='15' height='15' title='Click here to complete your definition about this dname.'/>";
             $result .= "<div id='inDiv$i' style='display:none;'><label for='Dtype'>Corresponding value type:<img src='help.png' width='15' height='15' title='Data type of the header.'/></label>
-            <select name='dname_value_type' onChange='selectChange(this);'>
-            <option value='STRING' selected>STRING</option>
-            <option value='NUMBER'>NUMBER</option>
-            <option value='DATE'>DATE</option>
+            <select name='dname_value_type' id='dname_value_type$i' onChange='selectChange(this);'>
+            $typesHtml
             </select>";
-            $result .= "<label style='display:none;'>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label><input type='text' style='display:none;' name='dname_value_unit'/>";
+            $result .= "<label style='display:none;'>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label>";//<input type='text' style='display:none;' name='dname_value_unit'/>";
             $result .= "
             <label id='unit_number' >Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label>
-            <select name='dname_value_unit' input type='text' >
+            <select name='dname_value_unit' id='dname_value_unit$i' input type='text' >
             <option value='0' selected>please choose unit of the type</option>
+            $unitsHtml
             </select>
-            <label id='unit_date' style='display:none;'>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label>
-            ";
-            $result .= "<label>Description: <img src='help.png' width='15' height='15' title='More description the header.'/></label><input type='text' name='dname_value_description'/></div></div></td>";
-            $result .= "<td><div ><input type='text' value='$tableColumns[$i]' id='suggestmatch$i' name=\"Dname\" onClick=''/><input type='hidden' name='dname_value_tableName' value='$oneTableName'>";
+            <label id='unit_date' style='display:none;'>Unit:<img src='help.png' width='15' height='15' title='Unit for measuring the header.'/></label>";
+            $result .= "
+            <label>Description: <img src='help.png' width='15' height='15' title='More description the header.'/></label>
+            <input type='text' name='dname_value_description' id='dname_value_description$i' value='' onChange='similarityDescription(this);'/>
+            <label>Constant value: <img src='help.png' width='15' height='15' title='The constant value of this file.'/></label>
+            <input type='text' name='constant_value' id='constant_value$i' value=''/>
+            </div></div></td>";
+            $result .= "<td><div >
+            <select name='suggestmatchSelect' id='suggestmatchSelect$i' onChange='similaritySelectChange(this);'>
+            $similarityHtml
+            </select>
+            <input type='text' value='$tableColumns[$i]' id='suggestmatch$i' name=\"Dname\" onClick='' />
+            <input type='hidden' name='dname_value_tableName' value='$oneTableName'>";
 
             $result .= "</td></tr>";
         }
         $result .= "</table>";
         return $result;
     }
-    //<option value='1'>km</option>
-    //<option value='2'>kg</option>
 
- 
+    public static function getColumnType($columntype)
+    {
+        
+    }
+
     public static function stripWordUntilFirstDot($value) {
         return substr($value, stripos($value, '.') + 1);
     }
@@ -186,17 +199,17 @@ class UtilsForWizard {
 
     public static function processDataMatchingUserInputsStoreDB($sid, $dataMatchingUserInputs) {
         foreach ($dataMatchingUserInputs as $value) {
-            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"], null, $value["missingValue"]);
+            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"], null, $value["constantValue"], $value["missingValue"]);
         }
     }
 
     public static function processDataMatchingUserInputsWithTableNameStoreDB($sid, $dataMatchingUserInputs) {
         foreach ($dataMatchingUserInputs as $value) {
-            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"], $value["tableName"], $value["missingValue"]);
+            UtilsForWizard::processOneColumn($sid, $value["originalDname"], $value["newDname"], $value["type"], $value["unit"], $value["description"], $value["metadata"], $value["tableName"], $value["constantValue"], $value["missingValue"]);
         }
     }
 
-    static function processOneColumn($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName = null, $missingValue) {
+    static function processOneColumn($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName = null, $constantValue, $missingValue) {
 
 //var_dump($sid, $originalDname, $newDname, $type, $unit, $description, $metadata, $tableName, $missingValue);
 
@@ -207,7 +220,7 @@ class UtilsForWizard {
         }
         
         $originalDnameStripped = str_replace ($tableName.'.', '', $originalDname);
-        $cid = $queryEngine->simpleQuery->addColumnInfo($sid, $newDname, $type, $unit, $description, $originalDnameStripped, $missingValue);
+        $cid = $queryEngine->simpleQuery->addColumnInfo($sid, $newDname, $type, $unit, $description, $originalDnameStripped, $constantValue, $missingValue);
 
         $queryEngine->simpleQuery->addColumnTableInfo($cid, $tableName);
 
@@ -228,6 +241,78 @@ class UtilsForWizard {
         $queryEngine->simpleQuery->addCidToNewData($sid, $tableName);
     }
 
+
+    static function getSuggestedColumnName($columnName) {
+
+        $queryEngine = new QueryEngine();
+        $columnNames = $queryEngine->simpleQuery->getAllColumnNames($columnName);
+        $similarityHtml = UtilsForWizard::calculateSimilarity($columnName,$columnNames);
+        return $similarityHtml;
+    }
+    static function calculateSimilarity($columnName, $columnNames ) {
+        $similarityHtml = "<option value='$selectedValue' selected>Choose from suggestion</option>";
+        $arrayRepeat=array();
+        foreach($columnNames  as $each) {
+            $judge=1;
+            similar_text($columnName, $each->dname_chosen, $percent);
+            if($percent>80)
+            {
+                if(count($arrayRepeat)==0)
+                {
+                    array_push($arrayRepeat, $each->dname_chosen);
+                    $similarityHtml = $similarityHtml . "<option value=" . $each->dname_chosen . ">" . $each->dname_chosen . "</option>";
+                }
+                else
+                {
+                    for($i=0;$i<count($arrayRepeat);$i++)
+                    {
+                        if($arrayRepeat[$i]==$each->dname_chosen)
+                            {$judge=0;break;}
+                    }   
+                    if($judge)
+                    {
+                        array_push($arrayRepeat, $each->dname_chosen);
+                        $similarityHtml = $similarityHtml . "<option value=" . $each->dname_chosen . ">" . $each->dname_chosen . "</option>"; 
+                    }
+                }
+                 
+            } 
+        }
+        return $similarityHtml;
+    }
+
+
+    static function getTypes($selectedValue) {
+
+        $queryEngine = new QueryEngine();
+        $types = $queryEngine->simpleQuery->getTypes($selectedValue);
+        $typesHtml = UtilsForWizard::generateTypesInHtml($selectedValue,$types);
+        return $typesHtml;
+    }
+    static function getUnits($selectedValue) {
+
+        $queryEngine = new QueryEngine();
+        $types = $queryEngine->simpleQuery->getUnits($selectedValue);
+        $typesHtml = UtilsForWizard::generateUnitsInHtml($types);
+        return $typesHtml;
+    }
+
+
+    static function generateUnitsInHtml($typesArray) {
+        $typesHtml = "";
+        foreach($typesArray as $types) {
+            $typesHtml = $typesHtml . "<option value=" . $types->dname_value_unit . ">" . $types->dname_value_unit . "</option>";
+        }
+        return $typesHtml;
+    }
+    static function generateTypesInHtml($selectedValue,$typesArray) {
+        $typesHtml = "<option value='$selectedValue' selected>" . $selectedValue . "</option>";
+        foreach($typesArray as $types) {
+
+            $typesHtml = $typesHtml . "<option value=" . $types->dname_value_type . ">" . $types->dname_value_type . "</option>";
+        }
+        return $typesHtml;
+    }
 }
 
 ?>

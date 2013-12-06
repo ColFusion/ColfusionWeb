@@ -96,11 +96,11 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 				// If a csv file is provided, create a excel file and write the csv value to it.
 				if (strtolower($ext) == 'csv') {
 
-					$csvFilePath = $upload_path;
+					/*$csvFilePath = $upload_path;
 					$xlsxFilePath = FileUtil::convertCSVtoXLSX($csvFilePath);
 					$xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
 					$raw_file_name = $xlsxFileName;
-					unlink($csvFilePath);
+					unlink($csvFilePath);*/
                     
 				} else if (strtolower($ext) == 'zip') {
 
