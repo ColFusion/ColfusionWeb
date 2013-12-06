@@ -29,7 +29,7 @@ function NotificationViewModel() {
     }
 
     $.ajax({
-        url: '/Colfusion/notification/notificationController.php?action=allUserNTF', 
+        url: my_pligg_base+'/notification/notificationController.php?action=allUserNTF', // /Colfusion
         type: 'get',
         dataType: 'json',
         success: function (data) {
@@ -52,22 +52,22 @@ function NotificationViewModel() {
 
     self.goToStory = function(ntf) {
         if (ntf.target_id == "all"){
-            story_url = "../Colfusion/user.php?login="+ntf.receiver+"&view=notification";
+            story_url = my_pligg_base+"/user.php?login="+ntf.receiver+"&view=notification"; //../Colfusion
             window.open(story_url);
         }
-        else if (ntf.target_id == 0){
+        else if (ntf.target_id == "no"){
             //no nothing
         }
         else {
             $.ajax({
-                url: '../Colfusion/notification/notificationController.php?action=removeNTF&ntf_id='+ntf.ntf_id,
+                url: my_pligg_base+'/notification/notificationController.php?action=removeNTF&ntf_id='+ntf.ntf_id,//../Colfusion
                 type: 'post',
                 dataType: 'json'
             });
             if(ntf.target_id!=0)
-                story_url = "/Colfusion/story.php?title="+ntf.target_id;
+                story_url = my_pligg_base+"/story.php?title="+ntf.target_id;///Colfusion
             else
-                story_url = "/Colfusion/user.php?login="+ntf.sender;
+                story_url = my_pligg_base+"/user.php?login="+ntf.sender;///Colfusion
             window.open(story_url);
         }
     }//end of goToStory
@@ -86,7 +86,7 @@ function seeAllViewModel(){
     }
 
     $.ajax({
-        url: '/Colfusion/notification/notificationController.php?action=seeAll', 
+        url: my_pligg_base+'/notification/notificationController.php?action=seeAll', ///Colfusion
         type: 'get',
         dataType: 'json',
         success: function (data) {
@@ -108,12 +108,12 @@ function seeAllViewModel(){
     });
 
     self.goToStory = function(ntf) {
-        story_url = "/Colfusion/story.php?title="+ntf.target_id;
+        story_url = my_pligg_base+"/story.php?title="+ntf.target_id;///Colfusion
         window.open(story_url);
     }//end of goToStory
 
     self.goToUser = function(ntf){
-        user_url = "../Colfusion/user.php?login="+ntf.sender;
+        user_url = my_pligg_base+"/user.php?login="+ntf.sender;//../Colfusion
         window.open(user_url);
     }//end of goToUser
 }
@@ -121,7 +121,7 @@ function seeAllViewModel(){
 function GetCurrentNTFNum(){
     var number = 0;
     $.ajax({
-        url: '../Colfusion/notification/notificationController.php?action=getNTFnum',
+        url: my_pligg_base+'/notification/notificationController.php?action=getNTFnum',//../Colfusion
         type: 'get',
         dataType: 'json',
         success: function (data) {

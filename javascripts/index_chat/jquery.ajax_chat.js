@@ -9,7 +9,7 @@ $(document).ready(function() {
 	//GO ONLINE
 	$.ajax({
 		type: "POST",
-		url: '../Colfusion/chat/chatController.php?action=setStatus',
+		url: my_pligg_base+'/chat/chatController.php?action=setStatus',//../Colfusion
 		async: false,
 		data: 'own_id='+$own_id+'&status=online',
 		success: function(i){
@@ -133,7 +133,7 @@ $(document).ready(function() {
 
 		$.ajax({
 			type: "POST",
-			url: '../Colfusion/chat/chatController.php?action=sendMessage'+datastring,
+			url: my_pligg_base+'/chat/chatController.php?action=sendMessage'+datastring,//../Colfusion
 			success: function(i){
 				if(i == 1){
 				//if success, reload chat area
@@ -155,7 +155,7 @@ $(document).ready(function() {
 	$(window).unload(function (){ 
 		$.ajax({
 			type: "POST",
-			url: '../Colfusion/chat/chatController.php?action=setStatus',
+			url: my_pligg_base+'/chat/chatController.php?action=setStatus',//../Colfusion
 			async: false,
 			data: 'status=offline',
 			success: function(i){
@@ -200,7 +200,7 @@ $(document).ready(function() {
 
 			$.ajax({
 				type: "POST",
-				url: '../Colfusion/chat/chatController.php?action=loadMessage&'+'partner_id='+this_chatbox_id+'&is_typing='+is_typing,
+				url: my_pligg_base+'/chat/chatController.php?action=loadMessage&'+'partner_id='+this_chatbox_id+'&is_typing='+is_typing,//../Colfusion
 				//data: 'partner_id='+this_chatbox_id+'&is_typing='+is_typing,
 				success: function(i){
 					//reload messages in chat area
@@ -237,7 +237,7 @@ $(document).ready(function() {
 			//check if user is typing
 			$.ajax({
 				type: "POST",
-				url: '../Colfusion/chat/chatController.php?action=isTyping'+'&partner_id='+$(this).attr('title'),
+				url: my_pligg_base+'/chat/chatController.php?action=isTyping'+'&partner_id='+$(this).attr('title'),//../Colfusion
 				//data: '&partner_id='+$(this).attr('title'),
 				success: function(e){
 					if(e == 1){
@@ -253,7 +253,7 @@ $(document).ready(function() {
 		//check if current user has a new message (to_id = current_user_id) which haven't been received and there's no popup with that user
 		$.ajax({
 			type: "POST",
-			url: '../Colfusion/chat/chatController.php?action=loadPopupMessage',
+			url: my_pligg_base+'/chat/chatController.php?action=loadPopupMessage',//../Colfusion
 			success: function(o){
 				if(o != 0){
 				//there's a new message, so just open up a new chat window and message will be loaded automatically
@@ -349,7 +349,7 @@ function UpdateChatWindowStatus(){
 	});
 	$.ajax({
 		type: "POST",
-		url: '../Colfusion/chat/chatController.php?action=setStatus',
+		url: my_pligg_base+'/chat/chatController.php?action=setStatus',//../Colfusion
 		async: false,
 		data: ({ chatbox_status: chatboxdata }),
 		//data: 'chatbox_status=1',

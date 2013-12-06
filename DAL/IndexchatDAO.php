@@ -9,6 +9,17 @@ class IndexchatDAO {
         date_default_timezone_set('America/New_York');
     }
 
+    public function addNewUser(){
+        $query1 = "SELECT * FROM `colfusion`.`colfusion_users`";
+        $query2 = "SELECT * FROM `index_users`";
+        $num1 = mysql_num_rows(mysql_query($query1));
+        $num2 = mysql_num_rows(mysql_query($query2));
+        if($num1!=$num2){
+            $query = "INSERT INTO `".CHAT_DB."`.`index_users`(`id`, `username`, `chat_status`, `offlineshift`) SELECT user_id, user_login, 'offline', '0' FROM `colfusion`.`colfusion_users` HAVING user_id NOT IN (SELECT id FROM `".CHAT_DB."`.`index_users`)";
+            mysql_query($query);
+        }
+    }
+
     public function setStatus($chat_status, $offlineshift){
         $query = "UPDATE `index_users` SET chat_status='".$chat_status."', offlineshift='".$offlineshift."' WHERE id='".$this->user->user_id."'";
         mysql_query($query);
