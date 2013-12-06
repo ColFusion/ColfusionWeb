@@ -5,6 +5,7 @@
 {php}
 	require_once realpath(dirname(dirname(__DIR__))) . '/chat/indexchat_config.php';
 	require_once realpath(dirname(dirname(__DIR__))) . '/DAL/IndexchatDAO.php';
+	require_once realpath(dirname(dirname(__DIR__))) . '/libs/dbconnect.php';
 	$indexchatDAO = new IndexchatDAO();
     $indexchatDAO->addNewUser();
     
@@ -15,7 +16,7 @@
 		$own_id = $_SESSION['user_id'];
 
 		//load users from database
-		$users = mysql_query("SELECT id,username FROM `".CHAT_DB."`.`index_users` WHERE id!='".$_SESSION['user_id']."' HAVING id IN (SELECT `friend_to` FROM `colfusion`.`colfusion_friends` WHERE `friend_from`=".$_SESSION['user_id'].")");
+		$users = mysql_query("SELECT id,username FROM `".CHAT_DB."`.`index_users` WHERE id!='".$_SESSION['user_id']."' HAVING id IN (SELECT `friend_to` FROM `".EZSQL_DB_NAME."`.`colfusion_friends` WHERE `friend_from`=".$_SESSION['user_id'].")");
 		print '<div class="chat_user_bg">Friends<div>';
 		if(mysql_num_rows($users) > 0){
 			while($user = mysql_fetch_assoc($users)){

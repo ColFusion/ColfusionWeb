@@ -2,6 +2,7 @@
 
 require_once realpath(dirname(__FILE__)) . '/../config.php';
 require_once realpath(dirname(__FILE__)) . '/../chat/indexchat_config.php';
+include_once realpath(dirname(__FILE__)) . '/../libs/dbconnect.php';
 
 require_once(mnminclude.'html1.php');
 require_once(mnminclude.'link.php');
@@ -44,7 +45,7 @@ class ChatDAO {
         $this->ezSql->query($query);
 
         //get all users
-        $query = "SELECT id AS user_id, user_login FROM `".CHAT_DB."`.`colfusion_webchat_users".$sid."` WU, `colfusion`.`colfusion_users` U WHERE WU.id = U.user_id AND U.user_id !=".$this->user->user_id;
+        $query = "SELECT id AS user_id, user_login FROM `".CHAT_DB."`.`colfusion_webchat_users".$sid."` WU, `".EZSQL_DB_NAME."`.`colfusion_users` U WHERE WU.id = U.user_id AND U.user_id !=".$this->user->user_id;
         $links =  $this->ezSql->get_results($query);
 
         $query = "SELECT count(*) AS total FROM `".CHAT_DB."`.`colfusion_webchat_users".$sid."` WHERE id !=".$this->user->user_id;
@@ -64,7 +65,7 @@ class ChatDAO {
     public function getChats($lastID, $sid) {
         $lastID = (int)$lastID;
         $tableName = CHAT_DB.".colfusion_webchat_lines".$sid;
-        $query = "SELECT id,aid,text,ts,user_login AS author FROM ".$tableName." WU, `colfusion`.`colfusion_users` U WHERE WU.id > ".$lastID." AND WU.aid = U.user_id ORDER BY id ASC";
+        $query = "SELECT id,aid,text,ts,user_login AS author FROM ".$tableName." WU, `".EZSQL_DB_NAME."`.`colfusion_users` U WHERE WU.id > ".$lastID." AND WU.aid = U.user_id ORDER BY id ASC";
         $result = $this->ezSql->get_results($query);
         $chats = array();
         if($result){
