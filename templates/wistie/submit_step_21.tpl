@@ -27,10 +27,9 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery.sheet.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/jquery.form.js"></script>
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-file-upload/jquery.fileupload.js"></script>
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-file-upload/jquery.fileupload-ui.js"></script>
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-file-upload/jquery.iframe-transport.js"></script>
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-file-upload/vendor/jquery.ui.widget.js"></script>
+
+
+
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/parsley.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/persist-min.js"></script>
 
@@ -54,6 +53,10 @@
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/wizardFromDB.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/dataimport.js"></script>
 
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-file-upload/vendor/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-file-upload/jquery.iframe-transport.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-file-upload/jquery.fileupload.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-file-upload/jquery.fileupload-ui.js"></script>
 
 
 {literal}
