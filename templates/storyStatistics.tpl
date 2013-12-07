@@ -27,8 +27,18 @@
                     <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
                         <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
                             <tr data-bind="foreach: headers">
-                                <th><span data-bind="text: name"></span>  <button  data-bind="click: $root.getPieChart" style="{cursor: pointer !important;}"><i class="icon-adjust" ></i></button>
+                                <th>
+
+
+
+                                    <!-- ko if: $index() === 0 -->
+
+                                    <span data-bind="text: name"></span>  
+                                    <!-- /ko -->
+                                    <!-- ko if: $index() !== 0 -->
+                                    <span data-bind="text: name"></span><button  data-bind="click: $root.getPieChart" style="{cursor: pointer !important;}"><i class="icon-adjust" ></i></button>
                                     <button data-bind="click: $root.getColumnChart" style="{cursor: pointer !important;}"><i class="icon-bar-chart" ></i></button>
+                                    <!-- /ko -->
                                     </th>
                             </tr>
                             <tbody class="dataPreviewTBody" data-bind="foreach: rows">
