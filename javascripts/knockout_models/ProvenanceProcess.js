@@ -20,11 +20,11 @@ function dataProvenanceModel(sid) {
 
     };
     self.showXML = function(){
-        var url = "target/"+sid+".xml";
+        var url = "temp/"+sid+"/"+sid+".xml";
         return window.open(url, '_blank', 'fullscreen=yes'); return false;
     };
     self.showPDF = function(){
-        var url = "target/"+sid+".pdf";
+        var url = "temp/"+sid+"/"+sid+".pdf";
         return window.open(url, '_blank', 'fullscreen=yes'); return false;
     };
 }
@@ -36,7 +36,7 @@ function drawCyto(sid) {
                 // NOTE: - the attributes on nodes and edges
                 //       - it also has directed edges, which will automatically display edge arrows
 
-                var filepath = "target/"+sid+"_visual.xml";
+                var filepath = "temp/"+sid+"/"+sid+"_visual.xml";
 
                 var xmlll=file_get_contents(filepath);
                 
