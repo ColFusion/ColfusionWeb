@@ -37,8 +37,19 @@ function drawCyto(sid) {
                 //       - it also has directed edges, which will automatically display edge arrows
 
                 var filepath = "target/"+sid+"_visual.xml";
-                var xml=file_get_contents(filepath);
+
+                var xmlll=file_get_contents(filepath);
                 
+                if(xmlll.indexOf('404')!==-1)
+                {
+                    xml='<graphml><key attr.name="label" attr.type="string" for="all" id="label"/><key attr.name="weight" attr.type="double" for="node" id="weight"/><graph edgedefault="directed"><node id="1"><data key="label">File Not Found!</data><data key="weight">2.0</data></node></graph></graphml>';
+
+                }
+                else
+                {
+                   xml=xmlll;
+
+                }
      
 
                 function rand_color() {
