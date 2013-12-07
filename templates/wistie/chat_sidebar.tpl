@@ -1,4 +1,3 @@
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-migrate-1.2.1.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/index_chat/jquery.ajax_chat.js?<?php echo $rndnumber; ?>"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/index_chat/own_id.inc.php"></script>
