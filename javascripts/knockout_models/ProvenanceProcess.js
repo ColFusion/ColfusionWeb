@@ -1,3 +1,10 @@
+function getRootPath() {
+       var pathName = window.location.pathname.substring(1);
+       var webName = pathName == '' ? '' : pathName.substring(0, pathName.indexOf('/'));
+       //return window.location.protocol + '//' + window.location.host + '/'+ webName + '/';
+       return webName;
+       } 
+
 function dataProvenanceModel(sid) {
 	var self = this;
 	self.isShow = ko.observable(false);
@@ -13,11 +20,11 @@ function dataProvenanceModel(sid) {
 
     };
     self.showXML = function(){
-        var url = "/colfusion/target/"+sid+".xml";
+        var url = "target/"+sid+".xml";
         return window.open(url, '_blank', 'fullscreen=yes'); return false;
     };
     self.showPDF = function(){
-        var url = "/colfusion/target/"+sid+".pdf";
+        var url = "target/"+sid+".pdf";
         return window.open(url, '_blank', 'fullscreen=yes'); return false;
     };
 }
@@ -29,7 +36,7 @@ function drawCyto(sid) {
                 // NOTE: - the attributes on nodes and edges
                 //       - it also has directed edges, which will automatically display edge arrows
 
-                var filepath = "/colfusion/target/"+sid+"_visual.xml";
+                var filepath = "target/"+sid+"_visual.xml";
                 var xml=file_get_contents(filepath);
                 
      
