@@ -42,7 +42,7 @@ function drawCyto(sid) {
                 
                 if(xmlll.indexOf('404')!==-1)
                 {
-                    xml='<graphml><key attr.name="label" attr.type="string" for="all" id="label"/><key attr.name="weight" attr.type="double" for="node" id="weight"/><graph edgedefault="directed"><node id="1"><data key="label">File Not Found!</data><data key="weight">2.0</data></node></graph></graphml>';
+                    xml='<graphml><key attr.name="label" attr.type="string" for="all" id="label"/><key attr.name="weight" attr.type="double" for="node" id="weight"/><graph edgedefault="directed"><node id="1"><data key="label">Related Provenance File Not Found!</data><data key="weight">2.0</data></node></graph></graphml>';
 
                 }
                 else
