@@ -14,6 +14,7 @@ class KTRManager {
     private $sid;
     private $connectionInfo;
     private $tableName;
+    private $sheetNamesRowsColumns;
 
     public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid) {
         $this->ktrTemplatePath = $ktrTemplatePath;
@@ -23,7 +24,7 @@ class KTRManager {
     }
 
     public function createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs) {
-
+        $this->sheetNamesRowsColumns=$sheetNamesRowsColumns;
         copy($this->ktrTemplatePath, $this->ktrFilePath);
         $this->ktrXml = simplexml_load_file($this->ktrFilePath);
 
@@ -335,6 +336,10 @@ class KTRManager {
     
     public function getKtrFilePath(){
         return $this->ktrFilePath;
+    }
+
+    public function getSheetNamesRowsColumns(){
+        return $this->sheetNamesRowsColumns;
     }
 }
 

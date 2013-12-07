@@ -3,7 +3,7 @@
 include_once '../config.php';
 require_once realpath(dirname(__FILE__)) . '/../RESTCaller/CurlCaller.php';
 require_once realpath(dirname(__FILE__)) . '/../conf/ColFusion_JAVA_REST_API.php';
-
+require_once(realpath(dirname(__FILE__)) . '/../Classes/PHPExcel.php');
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 require_once(realpath(dirname(__FILE__)) . "/KTRManager.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseHandlerFactory.php");
@@ -56,8 +56,23 @@ class KTRExecutor
         $databaseConnectionInfo = $this->ktrManager->getConnectionInfo();
         $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID,$this->ktrManager->getConnectionInfo()->database); 
         $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $this->ktrManager->getTableName()); 
-        $file = $this->ktrManager->getFilePaths();
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $file[0]); 
+        $file = $this->ktrManager->getFilePaths(); 
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $file[0]);
+
+        $sheetNamesRowsColumns = array(); 
+        $sheetNamesRowsColumns = $this->ktrManager->getSheetNamesRowsColumns();
+        for ($i = 0; $i < count($sheetNamesRowsColumns[0]); $i++) {
+            $sheetNamesRowsColumns[2][$i] = PHPExcel_Cell::columnIndexFromString($sheetNamesRowsColumns[2][$i]) . "";
+        }
+        $sheetNamesRowsColumnsJson = json_encode($sheetNamesRowsColumns);
+
+        $updatedColAndStreamNames = $this->ktrManager->getColumns();
+        $updatedColAndStreamNamesArray = array();
+        for ($i = 0; $i < count($updatedColAndStreamNames); $i++)
+        {
+            array_push($updatedColAndStreamNamesArray, $updatedColAndStreamNames[$i]["originalDname"]);
+        }
+        $updatedColAndStreamNamesJson = json_encode($updatedColAndStreamNamesArray);
         $fileActualPath = "/RESTfulProject/REST/Submit/SaveExcelToMysql";
         $curlCaller = new CurlCaller();
         $data = array(
@@ -69,7 +84,15 @@ class KTRExecutor
                 "password" => $databaseConnectionInfo->password,
                 "server" => $databaseConnectionInfo->server,
                 "port" => $databaseConnectionInfo->port,
-            );
+
+                "sid" => $this->sid,
+                "xmlPath" => $this->ktrManager->getKtrFilePath(),
+                "user_id" => $this->userId,
+                "columns" => $sheetNamesRowsColumnsJson,
+                "condition" => "unknown",
+                "updatedColAndStreamNamesJson" => $updatedColAndStreamNamesJson,
+        );
+
         $res = $curlCaller->CallAPI("POST", REST_HOST . ":" . REST_PORT . $fileActualPath, $data);
         if($res="sucess")
         {
