@@ -96,7 +96,7 @@ class IndexchatDAO {
                     //message from system               
                         print '<p class="system">'.$row['message'].'</p>';                                  
                 }elseif($row['from_id'] != $_POST['own_id']){
-                    $res2 = mysql_query("SELECT username FROM `index_users` WHERE id='".$row['from_id']."'");
+                    $res2 = mysql_query("SELECT username FROM `".CHAT_DB."`.`index_users` WHERE id='".$row['from_id']."'");
                     $row2 = mysql_fetch_assoc($res2);
                     print '<p><b>'.$row2['username'].':</b> '.$row['message'].'</p>';
                 }else{
@@ -106,7 +106,7 @@ class IndexchatDAO {
                 
                 //if to_id = current user, mark message as received
                 if($row['to_id'] == $this->user->user_id){
-                    mysql_query("UPDATE `index_chat` SET recd='1' WHERE id='".$row['id']."' AND recd='0'");
+                    mysql_query("UPDATE `".CHAT_DB."`.`index_chat` SET recd='1' WHERE id='".$row['id']."' AND recd='0'");
                 }       
                 
                 $last_msg = $row['sent'];
