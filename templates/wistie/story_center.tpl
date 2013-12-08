@@ -106,7 +106,7 @@
         $.ajax({
             url: my_pligg_base + "/chat/chatController.php?action=createRoomIfNeeded&room="+sid,
             success: function(data) {
-                window.open("../Colfusion/chat/chatroom.php?room="+sid,"","width=1000,height=500");
+                window.open(my_pligg_base+"/chat/chatroom.php?room="+sid,"","width=1000,height=500");
             }
         });
     }
