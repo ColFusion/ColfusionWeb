@@ -312,7 +312,7 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if (strtoupper($cidType) == "STRING"){
+			if (strcasecmp($cidType, "STRING") == 0){
 				$oneRow[$columnName] = "--";
 				//continue;
 			}
