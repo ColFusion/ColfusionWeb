@@ -44,7 +44,7 @@ var onlineUsers = {
 				};
 			
 			$.ajax({
-		        url: '/Colfusion/chat/chatController.php?action=submitChat&details='+params.text+'&room='+room, 
+		        url: '/../chat/chatController.php?action=submitChat&details='+params.text+'&room='+room, 
 		        type: 'get',		        dataType: 'json',
 		        success: function (data) {
 					working = false;
@@ -113,7 +113,7 @@ var onlineUsers = {
 	},
 	getChats : function(callback){
 		$.ajax({
-	        url: '/Colfusion/chat/chatController.php?action=getChats&lastID='+onlineUsers.data.lastID+'&room='+room, 
+	        url: '/../chat/chatController.php?action=getChats&lastID='+onlineUsers.data.lastID+'&room='+room, 
 	        type: 'get',
 	        dataType: 'json',
 	        success: function (data) {
@@ -160,7 +160,7 @@ var onlineUsers = {
 	},
 	getUsers : function(callback){
 		$.ajax({
-	        url: '/Colfusion/chat/chatController.php?action=getAllOnlineUsers&room='+room, 
+	        url: '/../chat/chatController.php?action=getAllOnlineUsers&room='+room, 
 	        type: 'get',
 	        dataType: 'json',
 	        success: function (data) {
