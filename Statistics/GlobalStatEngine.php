@@ -280,7 +280,7 @@ class GlobalStatEngine {
 				$oneRow[$columnName] = "--";
 				//continue;
 			}
-			else {
+			elseif (strtoupper($cidType) == "NUMBER") {
 				$select = "SELECT ROUND(sum($columnName),2) AS 'SumValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
