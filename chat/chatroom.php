@@ -11,9 +11,9 @@
 
 <body>
 <script>
-	var test = <?php 
-	echo $_GET['room'];
-?>;
+	var test = <?php echo $_GET['room']; ?>;
+	var url = document.URL;
+	var base = url.substring(0, url.indexOf("chat"));
 </script>
 
 <div id="chatBody">
