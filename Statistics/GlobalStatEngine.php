@@ -276,7 +276,7 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if ($cidType == "STRING" || $cidType == "DATE"){
+			if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
 				//continue;
 			}
@@ -307,7 +307,7 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if ($cidType == "STRING"){
+			if (strtoupper($cidType) == "STRING"){
 				$oneRow[$columnName] = "--";
 				//continue;
 			}
@@ -338,7 +338,7 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if ($cidType == "STRING"){
+			if (strtoupper($cidType) == "STRING"){
 				$oneRow[$columnName] = "--";
 				//continue;
 			}
@@ -369,7 +369,7 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if ($cidType == "STRING" || $cidType == "DATE"){
+			if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
 				//continue;
 			}
@@ -400,7 +400,7 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if ($cidType == "STRING" || $cidType == "DATE"){
+			if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
 				//continue;
 			}
@@ -431,7 +431,7 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if ($cidType == "STRING" || $cidType == "DATE"){
+			if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
 				$oneRow[$columnName] = "--";
 				//continue;
 			}
@@ -499,7 +499,7 @@ class GlobalStatEngine {
 				$cidj = $keys[$j];
 				$columnNamej = $values[$j];
 				$cidjType = $this->statisticsDAO->GetColumnType($cidj);
-				if ($cidiType == "STRING" || $cidiType == "DATE" || $cidjType == "STRING" || $cidjType == "DATE"){
+				if (strtoupper($cidiType) == "STRING" || $cidiType == "DATE" || strtoupper($cidjType) == "STRING" || $cidjType == "DATE"){
 					$oneRow[$columnNamej] = "--";
 					//continue;
 				}
@@ -574,7 +574,7 @@ class GlobalStatEngine {
 				$cidj = $keys[$j];
 				$columnNamej = $values[$j];
 				$cidjType = $this->statisticsDAO->GetColumnType($cidj);
-				if ($cidiType == "STRING" || $cidiType == "DATE" || $cidjType == "STRING" || $cidjType == "DATE"){
+				if (strtoupper($cidiType) == "STRING" || $cidiType == "DATE" || strtoupper($cidjType) == "STRING" || $cidjType == "DATE"){
 					$oneRow[$columnNamej] = "--";
 					//continue;
 				}
