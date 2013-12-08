@@ -40,7 +40,7 @@ function storyStatisticsSummary(){
 			$results = $globalStatEngine->DisplayStatisticsSummary($sid, $tableName);
 		}
 
-		$results["Control"]["perPage"] = 9;
+		$results["Control"]["perPage"] = 8;
     	$results["Control"]["totalPage"] = 2;
     	$results["Control"]["pageNo"] = $pageNo;
     }
