@@ -276,17 +276,22 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
-				$oneRow[$columnName] = "--";
-				//continue;
-			}
-			elseif (strtoupper($cidType) == "NUMBER") {
+			// if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
+			// 	$oneRow[$columnName] = "--";
+			// 	//continue;
+			// }
+			if (strtoupper($cidType) == "NUMBER") {
 				$select = "SELECT ROUND(sum($columnName),2) AS 'SumValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
 				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["SumValue"];
+			}
+
+			else{
+				$oneRow[$columnName] = "--";
+				//continue;
 			}
 
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"sum",$oneRow[$columnName]);
