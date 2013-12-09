@@ -104,10 +104,10 @@ var importWizard = (function () {
 
         initBootstrapWizard();
         importWizard.loadingGif = "<img src='" + my_pligg_base
-				+ "/templates/wistie/images/ajax-loader_cp.gif'/>";
+                + "/templates/wistie/images/ajax-loader_cp.gif'/>";
 
         ko.applyBindings(importWizard.dataMatchingProgressViewModel, document
-				.getElementById('dataMatchingStepCard'));
+                .getElementById('dataMatchingStepCard'));
     };
 
     // ***********************************************************************************************
@@ -139,7 +139,7 @@ var importWizard = (function () {
                         metadata.push({
                             'category': metaCheckboxes[j].value,
                             'suggestedValue': document
-									.getElementsByName(suggest)[j].value
+                                    .getElementsByName(suggest)[j].value
                         });
                     }
                 }
@@ -148,20 +148,22 @@ var importWizard = (function () {
                                     .getElementsByName('dname_value_tableName')[i].value;
 
                 result
-						.push({
-						    'originalDname': checkboxes[i].value,
-						    'newDname': document.getElementsByName('Dname')[i].value,
-						    'type': 'INT',//document.getElementsByName('dname_value_type')[i].value,
-						    'unit': document.getElementsByName('dname_value_unit')[i].value,
-						    'description': document
-									.getElementsByName('dname_value_description')[i].value,
-						    'tableName': tableName,
-						    'metadata': metadata,
+                        .push({
+                            'originalDname': checkboxes[i].value,
+                            'newDname': document.getElementsByName('Dname')[i].value,
+                            'type': document
+                                    .getElementsByName('dname_value_type')[i].value,
+                            'unit': document
+                                    .getElementsByName('dname_value_unit')[i].value,
+                            'description': document
+                                    .getElementsByName('dname_value_description')[i].value,
+                            'tableName': tableName,
+                            'metadata': metadata,
                             'constantValue' : document
                                     .getElementsByName('constant_value')[i].value,
                             'missingValue' : document
                                     .getElementsByName('missing_value')[0].value
-						});
+                        });
             }
         }
 
@@ -180,7 +182,7 @@ var importWizard = (function () {
         $('#dataMatchingTable').empty();
         if (getImportSource() == "database") {
             var deferred = wizardFromDB
-					.passSelectedTablesFromDisplayOptionStep();
+                    .passSelectedTablesFromDisplayOptionStep();
         } else {
             var deferred = wizardFromFile.passSheetInfoFromDisplayOptionStep();
         }
@@ -205,15 +207,15 @@ var importWizard = (function () {
         wizard = $("#wizard-demo").wizard();
 
         wizard.cards['displayOptionsStepCard']
-				.on(
-						"validate",
-						function (card) {
-						    if (getImportSource() == 'database') {
-						        return isDbSourceSelected($('#displayOptoinsStepCardFromDBForm'));
-						    } else {
-						        return isFileSourceSelected($('#displayOptoinsStepCardFromFileForm'));
-						    }
-						});
+                .on(
+                        "validate",
+                        function (card) {
+                            if (getImportSource() == 'database') {
+                                return isDbSourceSelected($('#displayOptoinsStepCardFromDBForm'));
+                            } else {
+                                return isFileSourceSelected($('#displayOptoinsStepCardFromFileForm'));
+                            }
+                        });
 
         $(".chzn-select").chosen();
 
@@ -231,7 +233,7 @@ var importWizard = (function () {
         });
 
         wizard.cards["displayOptionsStepCard"].on("selected",
-				displayOptionsStepCardOnLoad);
+                displayOptionsStepCardOnLoad);
 
         wizard.cards["dataMatchingStepCard"].on("selected", function (card) {
             wizard.disableNextButton();
@@ -243,11 +245,11 @@ var importWizard = (function () {
                 deferred.done(function (estimatedSeconds) {
                     importWizard.dataMatchingProgressViewModel.start(estimatedSeconds * 1000);
                     importWizard.passInfofromDisplayOptionsStep().done(
-							function () {
-							    wizard.enableNextButton();
-							}).always(function () {
-							    importWizard.dataMatchingProgressViewModel.stop();
-							});
+                            function () {
+                                wizard.enableNextButton();
+                            }).always(function () {
+                                importWizard.dataMatchingProgressViewModel.stop();
+                            });
                 });
             } else {
                 importWizard.passInfofromDisplayOptionsStep().done(function () {
@@ -261,24 +263,24 @@ var importWizard = (function () {
 
             $('button.wizard-close').hide();
             execute().done(
-					function (resultJson) {
-					    $('button.wizard-close').show();
+                    function (resultJson) {
+                        $('button.wizard-close').show();
 
-					    $("#exe").html(resultJson.message);
-					    if (resultJson.isSuccessful) {
-					        wizard.trigger("success");
+                        $("#exe").html(resultJson.message);
+                        if (resultJson.isSuccessful) {
+                            wizard.trigger("success");
 
-					        wizard.hideButtons();
-					        wizard._submitting = false;
-					        wizard.showSubmitCard("success");
+                            wizard.hideButtons();
+                            wizard._submitting = false;
+                            wizard.showSubmitCard("success");
 
-					        $('#fromDataSetWrapper').find('.sidInput').val(
-									'New Dataset');
-					    } else {
-					        wizard.trigger("failure");
-					        $("#exe").html(resultJson.message);
-					    }
-					});
+                            $('#fromDataSetWrapper').find('.sidInput').val(
+                                    'New Dataset');
+                        } else {
+                            wizard.trigger("failure");
+                            $("#exe").html(resultJson.message);
+                        }
+                    });
         });
 
         wizard.on("reset", function (wizard) {
@@ -293,9 +295,9 @@ var importWizard = (function () {
         });
 
         wizard.el.find(".wizard-success .create-another-server").click(
-				function () {
-				    wizard.reset();
-				});
+                function () {
+                    wizard.reset();
+                });
 
         $("#open-wizard").click(function () {
 
@@ -324,15 +326,15 @@ var importWizard = (function () {
                 console.log("callExecuteKtr");
                 return $.ajax({
                     url: my_pligg_base
-							+ "/DataImportWizard/execute_ktr.php?sid="
-							+ $('#sid').val(),
+                            + "/DataImportWizard/execute_ktr.php?sid="
+                            + $('#sid').val(),
                     type: 'get',
                     dataType: 'json'
                 });
             };
 
             return $.when(wizardFromFile.executeFromFile())
-					.then(callExecuteKtr);
+                    .then(callExecuteKtr);
         }
     }
 
@@ -347,15 +349,15 @@ var importWizard = (function () {
 
             $("#displayOptoinsStepCardFromDB").append(importWizard.loadingGif);
             wizardFromDB.LoadDatabaseTables($("#dbServerName").val(),
-					$("#dbServerUserName").val(), $("#dbServerPassword").val(),
-					$("#dbServerDatabase").val(), $('#dbServerPort').val(),
-					$('#selectDBServer').val(), $('#isImport').val()).done(
-					function (JSON_Response) {
-					    $('#loadingProgressContainer').hide();
-					    printTableList($("#displayOptoinsStepCardFromDB"),
-								JSON_Response);
-					    wizard.enableNextButton();
-					});
+                    $("#dbServerUserName").val(), $("#dbServerPassword").val(),
+                    $("#dbServerDatabase").val(), $('#dbServerPort').val(),
+                    $('#selectDBServer').val(), $('#isImport').val()).done(
+                    function (JSON_Response) {
+                        $('#loadingProgressContainer').hide();
+                        printTableList($("#displayOptoinsStepCardFromDB"),
+                                JSON_Response);
+                        wizard.enableNextButton();
+                    });
         } else {
             $("#displayOptoinsStepCardFromFile").hide();
             $("#displayOptoinsStepCardFromDB").hide();
@@ -388,12 +390,12 @@ var importWizard = (function () {
         if (JSON_Response.isSuccessful) {
             var el = "<p>Tables in selected database:</p><div style='height: 80%; overflow-y: scroll;'>";
             for (var i = 0; JSON_Response.data
-					&& i < JSON_Response.data.length; i++) {
+                    && i < JSON_Response.data.length; i++) {
                 el += "<label style='display: inline;'><input type='checkbox' name='table[]' value='"
-						+ JSON_Response.data[i]
-						+ "'/>"
-						+ JSON_Response.data[i]
-						+ "</lable><br/>";
+                        + JSON_Response.data[i]
+                        + "'/>"
+                        + JSON_Response.data[i]
+                        + "</lable><br/>";
             }
             el += "</div>";
         } else {
@@ -405,7 +407,7 @@ var importWizard = (function () {
 
     function getImportSource() {
         if ($("input[name='place']:checked").val() == "database"
-				|| $('#uploadFileType').val() == 'dbDump') {
+                || $('#uploadFileType').val() == 'dbDump') {
             return 'database';
         } else {
             return 'file';
@@ -419,26 +421,26 @@ var importWizard = (function () {
     function isFileSourceSelected(inputContainer) {
         $(inputContainer).parsley('destroy');
         $(inputContainer).parsley(
-				{
-				    validators: {
-				        excelcol: function (val, attrVal) {
-				            var isValid = Boolean(val);
-				            var Acode = 'A'.charCodeAt(0);
-				            var Zcode = 'Z'.charCodeAt(0)
+                {
+                    validators: {
+                        excelcol: function (val, attrVal) {
+                            var isValid = Boolean(val);
+                            var Acode = 'A'.charCodeAt(0);
+                            var Zcode = 'Z'.charCodeAt(0)
 
-				            for (var i = 0; i < val.length; i++) {
-				                var charCode = val.charCodeAt(i);
-				                isValid = isValid && Acode <= charCode
-										&& Zcode >= charCode;
-				            }
+                            for (var i = 0; i < val.length; i++) {
+                                var charCode = val.charCodeAt(i);
+                                isValid = isValid && Acode <= charCode
+                                        && Zcode >= charCode;
+                            }
 
-				            return isValid;
-				        }
-				    },
-				    messages: {
-				        excelcol: "This value should be a valid excel column"
-				    }
-				});
+                            return isValid;
+                        }
+                    },
+                    messages: {
+                        excelcol: "This value should be a valid excel column"
+                    }
+                });
         var isValid = $(inputContainer).parsley('validate');
         return isValid;
     }
