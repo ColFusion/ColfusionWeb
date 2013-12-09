@@ -8,6 +8,8 @@
 
 if(!defined('mnminclude')){header('Location: ../404error.php');die();}
 
+include_once(realpath(dirname(__FILE__)) . '/../DAL/NotificationDAO.php');
+
 class Friend {
 	var $friend = "";
 
@@ -40,6 +42,8 @@ class Friend {
 			//echo "INSERT INTO " . table_friends . " (friend_from, friend_to) values ($current_user->user_id, $friend);";
 			$db->query("INSERT IGNORE INTO " . table_friends . " (friend_from, friend_to) values (" . $current_user->user_id . ", " . $friend . ");");
 
+			$notificationDAO = new NotificationDAO();
+    		$notificationDAO->friend($friend, "followed you");
 			$friend_status = $this->get_friend_status($friend);
 			if (!$friend_status){die("there was an error");}
 

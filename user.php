@@ -17,7 +17,6 @@ include(mnminclude.'user.php');
 include(mnminclude.'friend.php');
 include(mnminclude.'smartyvariables.php');
 include(mnminclude.'csrf.php');
-include_once(realpath(dirname(__FILE__)) . '/DAL/NotificationDAO.php');
 
 $offset=(get_current_page()-1)*$page_size;
 $main_smarty = do_sidebar($main_smarty);
@@ -577,9 +576,6 @@ function do_addfriend (){
 
 	$friend = new Friend;
 	$friend->add($user->id);
-
-	$notificationDAO = new NotificationDAO();
-    echo $notificationDAO->friend($user->id, "followed you");
 }
 
 function do_viewfriends($user_id){
