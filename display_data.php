@@ -65,8 +65,6 @@ include_once(mnminclude.'user.php');
 	}
 	
 	//insert data the wiki_history when the link is just created
-	//建数据库语句报错
-	//将修改评论的历史添加进该表单！
     $sql = "CREATE TABLE if not exists wiki_history(
 	sid int DEFAULT 0,
     user_id int DEFAULT 0,
@@ -165,8 +163,8 @@ include_once(mnminclude.'user.php');
     while($row = mysql_fetch_array($result)) {
     	//echo '$("body #'.$row['cid'].'").attr({href: "#myModal", role: "button", class: "btn", data-toggle:"modal"});';
     	//echo '$("body #'.$row['cid'].'").attr("onclick", "comment_popup(this.id);");';
-    	echo '$("body #'.$row['cid'].'").css("backgroundColor","#FF521B");';
-    	echo 'var $str = $("body #'.$row['cid'].'").text(); $("body #'.$row['cid'].'").html($str); $("body #'.$row['cid'].'").wrap("<a href=\"#myModal\" role=\"button\" data-toggle=\"modal\"></a></span>"); ';
+    	echo '$("body #'.$row['cid'].'").css("backgroundColor","#FFC125");';
+    	//echo 'var $str = $("body #'.$row['cid'].'").text(); $("body #'.$row['cid'].'").html($str); $("body #'.$row['cid'].'").wrap("<a href=\"#myModal\" role=\"button\" data-toggle=\"modal\"></a></span>"); ';
     	//echo '$("body #'.$row['cid'].'").after("<i class=\"icon-th-list\" style=\"float:right; margin-right: 10px;\" />");';
     	//echo 'var $str = $("body #'.$row['cid'].'").text(); $("body #'.$row['cid'].'").html($str); $("body #'.$row['cid'].'").wrap("<a href=\"#myModal\" role=\"button\" data-toggle=\"modal\"></a>"); ';
     	//echo '$("body #'.$row['cid'].'").find("div").after("<i class=\"icon-th-list\" style=\"float:right; margin-right: 10px;\" />");';
@@ -566,7 +564,7 @@ include_once(mnminclude.'user.php');
     $title_index = 1;
 	echo '<br/>
 	<!-- history popup start -->
-	    <div id="dataedit_popup" style="background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
+	    <div id="dataedit_popup" style="display:none;background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 		<div style="width:100%;height:40px;border-bottom:2px solid #ddd;"><h3 style="position:relative;top:0px;display:inline;">Dataedit History</h3></div>
 		<div style="width:100%;">
 		    <table style="border-collapse:collapse;margin:auto;width:100%;">
@@ -600,7 +598,7 @@ include_once(mnminclude.'user.php');
 
 	$title_index = 1;
 	echo '<br/>
-	    <div id="title_popup" style="background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
+	    <div id="title_popup" style="display:none;background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 		<div style="width:100%;height:40px;border-bottom:2px solid #ddd;"><h3 style="position:relative;top:0px;display:inline;">Title History</h3></div>
 		<div style="width:100%;">
 		    <table style="border-collapse:collapse;margin:auto;width:100%;">
@@ -636,7 +634,7 @@ include_once(mnminclude.'user.php');
 			
 	$des_index = 1;
 	echo '
-	    <div id="des_popup" style="background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
+	    <div id="des_popup" style="display:none;background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 		<div style="width:100%;height:40px;border-bottom:2px solid #ddd;"><h3 style="position:relative;top:0px;display:inline;">Description History</h3></div>
 		<div style="width:100%;">
 		<table style="border-collapse:collapse;margin:auto;width:100%;">
@@ -673,7 +671,7 @@ include_once(mnminclude.'user.php');
 
 	$category_index = 1;
 	echo '
-	    <div id="category_popup" style="background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
+	    <div id="category_popup" style="display:none;background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 		<div style="width:100%;height:40px;border-bottom:2px solid #ddd;"><h3 style="position:relative;top:0px;display:inline;">Tags History</h3></div>
 		<div style="width:100%;">
 		<table style="border-collapse:collapse;margin:auto;width:100%;">
@@ -711,7 +709,7 @@ include_once(mnminclude.'user.php');
 		
 	$tags_index = 1;
 	echo '
-	    <div id="tags_popup" style="background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
+	    <div id="tags_popup" style="display:none;background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 		<div style="width:100%;height:40px;border-bottom:2px solid #ddd;"><h3 style="position:relative;top:0px;display:inline;">Tags History</h3></div>
 		<div style="width:100%;">
 		<table style="border-collapse:collapse;margin:auto;width:100%;">
@@ -747,7 +745,7 @@ include_once(mnminclude.'user.php');
 		
 		
 		
-		echo '<div id="notification2" style="padding:10px;background-color:#f5f5f5;position:absolute;top: 40%;left: 30%;width:500px;min-height:250px;height:auto;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
+		echo '<div id="notification2" style="display:none;padding:10px;background-color:#f5f5f5;position:absolute;top: 40%;left: 30%;width:500px;min-height:250px;height:auto;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 			<div id="title_noti_wrap" style="display:none;margin-top:18px;"><div style="padding:5px;padding-left:10px;width:100%;height:40px;"><h4 style="">Reasons why you change TITLE?</h4></div>
 			<textarea placeholder="say something.." id="title_noti" style="width:460px;height:80px;margin:10px;margin-top:5px;"></textarea></div>
 			
@@ -781,7 +779,7 @@ include_once(mnminclude.'user.php');
 	        
 	echo '
 
-	    <span><a href="#myModal" role="button" data-toggle="modal" id="history_button" style="float:right;padding:3px;padding-right:30px;">[history]</a></span>
+	    
 	    </be>
 	    <span id="edit_button" style="float:right;padding:3px;padding-right:20px;"><a>[edit]</a></span>
 	    <span id="cancel_button" style="float:right;padding:3px;padding-right:20px;"><a>[cancel]</a></span>
