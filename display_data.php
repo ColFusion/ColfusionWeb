@@ -174,6 +174,7 @@ include_once(mnminclude.'user.php');
     echo '}';
 
 
+   
 
 
     echo '</script>';
@@ -563,6 +564,15 @@ include_once(mnminclude.'user.php');
 
     $title_index = 1;
 	echo '<br/>
+
+
+
+
+
+
+
+
+
 	<!-- history popup start -->
 	    <div id="dataedit_popup" style="display:none;background-color:#f5f5f5;position:absolute;top: 40%;left: 20%;width:700px;height:500px;z-index: 99999;-webkit-box-shadow: 0px 0px 20px #000;-moz-box-shadow: 0px 0px 20px #000;box-shadow: 0px 0px 20px #000;-webkit-border-radius: 10px;-moz-border-radius: 3px;border-radius: 3px;">
 		<div style="width:100%;height:40px;border-bottom:2px solid #ddd;"><h3 style="position:relative;top:0px;display:inline;">Dataedit History</h3></div>
@@ -729,7 +739,7 @@ include_once(mnminclude.'user.php');
 		while($row = mysql_fetch_array($result)) {
 		    echo '<tr style="background-color:#fdfdee;">';
 		    echo '<td style="padding: 0px;border:1px solid #999;width:10%;text-align:center;"><input type="radio" ';?><?php if($row['checked']) echo "checked ";?><?php echo 'name="tags_popup" value="tagsrollback-'.$tags_index.'"/></td>';
-		    echo '<td style="padding: 10px;border:1px solid #999;width:25%;">' . $row['timestamp'] . "</td>";
+		     '<td style="padding: 10px;border:1px solid #999;width:25%;">' . $row['timestamp'] . "</td>";
 		    echo '<td style="padding: 10px;border:1px solid #999;width:25%;">' . $row['value'] . "</td>";
 		    echo '<td style="padding: 10px;border:1px solid #999;width:15%;">' . $row['user_login'] . "</td>";
 		    echo '<td style="padding: 10px;border:1px solid #999;width:25%;">' . $row['notification'] . "</td>";
@@ -776,11 +786,41 @@ include_once(mnminclude.'user.php');
 		
 		
 	    
+echo '
+<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
+    <h3 id="myModalLabel">modify History</h3></div>';
+
+            echo '<div style="width:100%;height:360px;overflow:scroll;"><table class="table" style="width:100%;">';
+                    $sql_select = "SELECT r.user_id, r.timestamp, r.value, r.notification, r.comment  
+                               FROM record_history_{$link_id} AS r 
+                                ORDER BY timestamp";
+                   $sql_select = "SELECT value,timestamp,notification,comment,cid FROM record_history_{$link_id} ORDER BY timestamp";
+                   $result = mysql_query($sql_select);
+                    echo '<tr><th>timestamp</th><th>value</th><th>notification</th><th>comment</th><th>cid</th></tr>';
+
+                    while($row = mysql_fetch_array($result)) 
+                    {
+                        echo '<tr>';
+                            echo '<td>' . $row['timestamp'] . "</td>";
+                            echo '<td>' . $row['value'] . "</td>";
+                            echo '<td>' . $row['notification'] . "</td>";
+                            echo '<td>' . $row['comment'] . "</td>";
+                            echo '<td>' . $row['cid'] . "</td>";
+                            echo "</tr>";
+                    }
+                        echo '</table></div></div>';
+
+
+
+
+
+
 	        
 	echo '
 
 	    
-	    </be>
 	    <span id="edit_button" style="float:right;padding:3px;padding-right:20px;"><a>[edit]</a></span>
 	    <span id="cancel_button" style="float:right;padding:3px;padding-right:20px;"><a>[cancel]</a></span>
 	    <span id="save_button" style="float:right;padding:3px;"><a>[save]</a></span>
