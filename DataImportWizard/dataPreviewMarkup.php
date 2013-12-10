@@ -146,6 +146,8 @@ if(indexControl2 == 0)
                             <th data-bind="text: name"></th>
                         </tr>
                         <tbody class="dataPreviewTBody" data-bind="foreach: rows">
+                            <tr class="datatr" data-bind="foreach: cells">
+                                <td data-bind="text: $data"></td>
                             </tr>
                         </tbody>
                     </table>
