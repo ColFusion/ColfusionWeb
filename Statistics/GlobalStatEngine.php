@@ -312,17 +312,17 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if (strcasecmp($cidType, "STRING") == 0){
-				$oneRow[$columnName] = "--";
-				//continue;
-			}
-			else {
+			if (strtoupper($cidType) == "NUMBER"){
 				$select = "SELECT MAX($columnName) AS 'MaxValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
 				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MaxValue"];
+			}
+			else{
+				$oneRow[$columnName] = "--";
+				//continue;
 			}
 
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"max",$oneRow[$columnName]);
@@ -343,17 +343,17 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if (strtoupper($cidType) == "STRING"){
-				$oneRow[$columnName] = "--";
-				//continue;
-			}
-			else {
+			if (strtoupper($cidType) == "NUMBER"){
 				$select = "SELECT MIN($columnName) AS 'MinValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
 				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MinValue"];
+			}
+			else{
+				$oneRow[$columnName] = "--";
+				//continue;
 			}
 
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"min",$oneRow[$columnName]);
@@ -374,17 +374,17 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
-				$oneRow[$columnName] = "--";
-				//continue;
-			}
-			else {
+			if (strtoupper($cidType) == "NUMBER"){
 				$select = "SELECT ROUND(AVG($columnName),2) AS 'AvgValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
 				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["AvgValue"];
+			}
+			else{
+				$oneRow[$columnName] = "--";
+				//continue;
 			}
 
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"avg",$oneRow[$columnName]);
@@ -405,17 +405,17 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
-				$oneRow[$columnName] = "--";
-				//continue;
-			}
-			else {
+			if (strtoupper($cidType) == "NUMBER"){
 				$select = "SELECT ROUND(STD($columnName),2) AS 'Stdev' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
 				//$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $null, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["Stdev"];
+			}
+			else{
+				$oneRow[$columnName] = "--";
+				//continue;
 			}
 
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"stdev",$oneRow[$columnName]);
@@ -436,17 +436,17 @@ class GlobalStatEngine {
 			if ($missValue == ""){
 				$missValue = "-99999999";
 			}
-			if (strtoupper($cidType) == "STRING" || $cidType == "DATE"){
-				$oneRow[$columnName] = "--";
-				//continue;
-			}
-			else {
+			if (strtoupper($cidType) == "NUMBER"){
 				$select = "SELECT ROUND(MEDIAN($columnName),2) AS 'MedValue' ";
 				$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 				$fromArray = array($from);
 				$where = " WHERE $columnName <> $missValue";
         		$obj = $queryEngine->doQuery($select, $fromArray, $where, null, null, null, null);
 				$oneRow[$columnName] = $obj[0]["MedValue"];
+			}
+			else{
+				$oneRow[$columnName] = "--";
+				//continue;
 			}
 
 			$this->statisticsDAO->WriteStatistics($cid,$sid,"med",$oneRow[$columnName]);
@@ -504,17 +504,17 @@ class GlobalStatEngine {
 				$cidj = $keys[$j];
 				$columnNamej = $values[$j];
 				$cidjType = $this->statisticsDAO->GetColumnType($cidj);
-				if (strtoupper($cidiType) == "STRING" || $cidiType == "DATE" || strtoupper($cidjType) == "STRING" || $cidjType == "DATE"){
-					$oneRow[$columnNamej] = "--";
-					//continue;
-				}
-				else {
+				if (strtoupper($cidType) == "NUMBER"){
 					$select = "SELECT ROUND(CORR($values[$i], $values[$j]),2) AS 'Correlation' ";
 					$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 					$fromArray = array($from);
         			$obj = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 					$oneRow[$columnNamej] = $obj[0]["Correlation"];
 					//$oneRow[$columnNamej] = "--";
+				}
+				else{
+					$oneRow[$columnNamej] = "--";
+					//continue;
 				}
 				$this->statisticsDAO->WriteStatistics($cidi,$sid,(string)$cidj,$oneRow[$columnNamej]);
 			}
@@ -579,17 +579,17 @@ class GlobalStatEngine {
 				$cidj = $keys[$j];
 				$columnNamej = $values[$j];
 				$cidjType = $this->statisticsDAO->GetColumnType($cidj);
-				if (strtoupper($cidiType) == "STRING" || $cidiType == "DATE" || strtoupper($cidjType) == "STRING" || $cidjType == "DATE"){
-					$oneRow[$columnNamej] = "--";
-					//continue;
-				}
-				else {
+				if (strtoupper($cidType) == "NUMBER"){
 					$select = "SELECT ROUND(CORR($values[$i], $values[$j]),2) AS 'Correlation' ";
 					$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 					$fromArray = array($from);
         			$obj = $queryEngine->doQuery($select, $fromArray, null, null, null, null, null);
 					$oneRow[$columnNamej] = $obj[0]["Correlation"];
 					//$oneRow[$columnNamej] = "--";
+				}
+				else{
+					$oneRow[$columnNamej] = "--";
+					//continue;
 				}
 			}
 			$result[$row] = $oneRow;
