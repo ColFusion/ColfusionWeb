@@ -49,15 +49,15 @@ class KTRExecutor
 
         $this->addMetaDataAboutTargetDatabase($logID, $databaseConnectionInfo);
         
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "executing pan");  // loggin to db
+        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, "in progress");  // loggin to db
 
         // ACTUALL PAN SCRIPT EXECUTION
         //exec($command . "2>&1", $outA, $returnVar);
         $databaseConnectionInfo = $this->ktrManager->getConnectionInfo();
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID,$this->ktrManager->getConnectionInfo()->database); 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $this->ktrManager->getTableName()); 
+     //   $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID,$this->ktrManager->getConnectionInfo()->database); 
+     //   $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $this->ktrManager->getTableName()); 
         $file = $this->ktrManager->getFilePaths(); 
-        $this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $file[0]);
+        //$this->ktrExecutorDAO->updateExecutionInfoTupleStatus($logID, $file[0]);
 
         $sheetNamesRowsColumns = array(); 
         $sheetNamesRowsColumns = $this->ktrManager->getSheetNamesRowsColumns();
