@@ -579,7 +579,7 @@ class GlobalStatEngine {
 				$cidj = $keys[$j];
 				$columnNamej = $values[$j];
 				$cidjType = $this->statisticsDAO->GetColumnType($cidj);
-				if (strtoupper($cidType) == "NUMBER"){
+				if (strtoupper($cidiType) == "NUMBER" && strtoupper($cidjType) == "NUMBER"){
 					$select = "SELECT ROUND(CORR($values[$i], $values[$j]),2) AS 'Correlation' ";
 					$from = (object) array('sid' => $sid, 'tableName' => "[$tableName]");	
 					$fromArray = array($from);
