@@ -83,7 +83,7 @@ class KTRExecutor
     {
         $ktrFilePath = $this->ktrManager->getKtrFileURLh(); //getKtrFilePath();
 
-        $ktrFilePath = str_replace("/", "%2F", $ktrFilePath);
+        $ktrFilePath = urlencode($ktrFilePath); //str_replace("/", "%2F", $ktrFilePath);
 
         $command = "http://130.49.135.94:8081/kettle/executeTrans/?trans=$ktrFilePath&Sid={$this->sid}&Eid=$logID";
 
