@@ -358,14 +358,7 @@ var importWizard = (function () {
 
             $('#loadingProgressContainer').show();
             wizardFromFile.createKtrFiles().done(function () {
-                wizardFromFile.getFileSources().done(function (jsonResponse) {
-                    var filenames = [];
-                    for (var i = 0; i < jsonResponse.data.length; i++) {
-                        var fileSource = jsonResponse.data[i];
-                        filenames.push(fileSource.filename);
-                    }
-                    wizardFromFile.showExcelFile(filenames);
-                }).done(function () {
+                wizardFromFile.getFileSources().done(function () {
                     $('#loadingProgressContainer').hide();
                     $("#displayOptoinsStepCardFromFile").show();
                     wizard.enableNextButton();

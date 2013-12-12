@@ -3,8 +3,8 @@ function SourceWorksheetSettingsViewModel() {
     self.sourceWorksheetSettings = ko.observableArray();
     self.loadingProgress = ko.observable();
 
-    self.addSource = function(sourceName, worksheets) {
-        self.sourceWorksheetSettings.push(new SourceWorksheetSettings(sourceName, worksheets));
+    self.addSource = function(sourceName, worksheets, ext) {
+        self.sourceWorksheetSettings.push(new SourceWorksheetSettings(sourceName, worksheets, ext));
     };
 
     self.cleanSource = function() {
@@ -27,13 +27,15 @@ function SourceWorksheetSettingsViewModel() {
     };
 }
 
-function SourceWorksheetSettings(sourceName, worksheets) {
+function SourceWorksheetSettings(sourceName, worksheets, ext) {
     var self = this;
     self.sourceName = sourceName;
     self.worksheets = ko.observableArray(worksheets);
-    self.numOfWorksheets = ko.observable(0);
+    self.numOfWorksheets = ko.observable(1);
     self.numOfWorksheetsOptions = ko.observableArray([]);
     self.worksheetSettings = ko.observableArray();
+
+    self.ext = ext;
 
     for (var i = 0; i < worksheets.length; i++) {
         self.numOfWorksheetsOptions.push(i + 1);
@@ -42,7 +44,7 @@ function SourceWorksheetSettings(sourceName, worksheets) {
     self.chooseNumOfWorsheets = function() {
         self.worksheetSettings([]);
         for (var i = 0; i < self.numOfWorksheets(); i++) {
-            self.worksheetSettings.push(new WizardExcelPreviewProperties.WorksheetSetting(self.worksheets()[i], 1, 'A'));
+                self.worksheetSettings.push(new WizardExcelPreviewProperties.WorksheetSetting(self.worksheets()[i], 1, 'A'));
         }
     };
 
@@ -61,4 +63,9 @@ function SourceWorksheetSettings(sourceName, worksheets) {
 
         return sheetsRange;
     };
+
+    // if (ext == "csv") {
+    //     self.numOfWorksheets(1);
+    self.chooseNumOfWorsheets();
+    // }
 }

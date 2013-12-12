@@ -82,6 +82,7 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 			$file_tmp = $_FILES['upload_file']['tmp_name'];
 			$raw_file_name = $_FILES['upload_file']['name'];
 			$ext = pathinfo($raw_file_name, PATHINFO_EXTENSION);
+			$_SESSION["fileExt_$sid"] = $ext;
 
 			$upload_path = $upload_dir . $raw_file_name;
 
@@ -96,10 +97,10 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 				// If a csv file is provided, create a excel file and write the csv value to it.
 				if (strtolower($ext) == 'csv') {
 
-					$csvFilePath = $upload_path;
-					$xlsxFilePath = FileUtil::convertCSVtoXLSX($csvFilePath);
-					$xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
-					$raw_file_name = $xlsxFileName;
+					// $csvFilePath = $upload_path;
+					// $xlsxFilePath = FileUtil::convertCSVtoXLSX($csvFilePath);
+					// $xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
+					// $raw_file_name = $xlsxFileName;
 					//unlink($csvFilePath);
                     
 				} else if (strtolower($ext) == 'zip') {
@@ -124,12 +125,16 @@ function upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType) {
 					foreach ($dirFiles as $filename) {
 						$filePath = $upload_dir . $filename;
 						if (FileUtil::isCSVFile($filePath)) {
-							$newFilePath = $upload_dir . $i++ . '.csv';
-							rename($filePath, $newFilePath);
-							$filePath = $newFilePath;
-							$csvFilePath = $filePath;
-							$xlsxFilePath = FileUtil::convertCSVtoXLSX($csvFilePath);
-							$xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
+
+							$_SESSION["fileExt_$sid"] = "csv";
+							break;
+
+							// $newFilePath = $upload_dir . $i++ . '.csv';
+							// rename($filePath, $newFilePath);
+							// $filePath = $newFilePath;
+							// $csvFilePath = $filePath;
+							// $xlsxFilePath = FileUtil::convertCSVtoXLSX($csvFilePath);
+							// $xlsxFileName = pathinfo($xlsxFilePath, PATHINFO_BASENAME);
 						}
 						//unlink($filePath);
 					}

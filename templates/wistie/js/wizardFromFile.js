@@ -1,6 +1,8 @@
 var wizardFromFile = (function() {
     var wizardFromFile = {};
 
+    var filenames = [];
+
     /* Variables */
 
     var intervals = new Array();
@@ -52,7 +54,11 @@ var wizardFromFile = (function() {
         });
     };
 
-    wizardFromFile.showExcelFile = function(filenames) {
+    wizardFromFile.showExcelFile = function() {
+
+        $("#previewFiles").show();
+        $("#showFilePreviewButtonContainer").hide();
+
         wizardExcelPreviewViewModel.initFilePreview($('#sid').val(), filenames);
     };
 
@@ -75,7 +81,27 @@ var wizardFromFile = (function() {
                     var fileSource = jsonResponse.data[i];
                     var filename = fileSource.filename;
                     var worksheets = fileSource.worksheets;
-                    sourceWorksheetSettingsViewModel.addSource(filename, worksheets);
+                    var ext = fileSource.ext;
+                    sourceWorksheetSettingsViewModel.addSource(filename, worksheets, ext);
+
+                    filenames.push(fileSource.filename);
+
+                    if (ext == 'csv') {
+                        var gotCSVs = true;
+                    }
+                }
+
+                if (gotCSVs) {
+                    
+                    $("#liDataRangeSettingsDataSourceStep").hide();
+                    //$("#iconCaretNextToWrenchDataSourceStep").css('visibility', 'hidden');
+                    //$("#iconWrenchDataSourceStep").css('visibility', 'hidden');
+          
+                    $("#iconCaretNextTableDataSourceStep").css('visibility', 'visible');
+
+              
+                    $('#sourceSelectionNavContents').children('*').hide();
+                    $("#dataPreviewTabContent").show();
                 }
             }
         });

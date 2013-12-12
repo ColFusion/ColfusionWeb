@@ -16,14 +16,16 @@ class KTRManager {
     private $tableName;
     private $fileURLs;
     private $ktrFileURL;
+    private $ext;
 
-    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid, $fileURLs, $ktrFileURL) {
+    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid, $fileURLs, $ktrFileURL, $ext) {
         $this->ktrTemplatePath = $ktrTemplatePath;
         $this->ktrFilePath = $ktrFilePath;
         $this->filePaths = $filePaths;
         $this->sid = $sid;
         $this->fileURLs = $fileURLs;
         $this->ktrFileURL = $ktrFileURL;
+        $this->ext = $ext;
     }
 
     public function createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs) {
@@ -33,11 +35,18 @@ class KTRManager {
 
         
         $this->changeConnection();
-        $this->changeSheetType();
-        $this->addUrls($this->fileURLs);
-        $this->addSheets($sheetNamesRowsColumns);
-        $this->clearConstantAndTarget();
 
+//echo $this->ext;
+
+        if ($this->ext != "csv") { //TODO: define extention  constants, not in hardcoded string here
+            $this->changeSheetType();
+            $this->addSheets($sheetNamesRowsColumns);
+            $this->clearConstantAndTarget();
+        }
+
+        $this->addUrls($this->fileURLs);
+        
+        //TODO: rename, it actually also handels csv
         $this->addExcelInputFields($baseHeader, $dataMatchingUserInputs);
 
         // $this->addSampleTarget();
@@ -118,6 +127,10 @@ class KTRManager {
         return $this->connectionInfo;
     }
 
+    public function getExt() {
+        return $this->ext;
+    }
+
     /**
      * Return table name from Target Schema step of the ktr file.
      * @return String table name - the name of the sql table in the target database.
@@ -143,6 +156,8 @@ class KTRManager {
     private function addUrls($filePaths) {
 
         $xmldoc = $this->ktrXml;
+
+
         $fileNodes = $xmldoc->xpath('//step/file');
         $fileNode = $fileNodes[0];
 
@@ -153,13 +168,14 @@ class KTRManager {
             $fileNode->addChild('file_required', 'N');
             $fileNode->addChild('include_subfolders', 'N');
         }
-
-        // Delete template nodes.  
+             // Delete template nodes.  
         unset($fileNode->name[0]);
         unset($fileNode->filemask[0]);
         unset($fileNode->exclude_filemask[0]);
         unset($fileNode->file_required[0]);
         unset($fileNode->include_subfolders[0]);
+     
+       
     }
 
     private function addSheets($sheetNamesRowsColumns) {
@@ -274,6 +290,22 @@ class KTRManager {
 
 //                    $field->addChild('format', '0.##############;-0.##############'); //TODO: This might need some testing on different data 
                     
+                    $field->addChild('currency');
+                    $field->addChild('decimal');
+                    $field->addChild('group');
+                }
+            }
+            else if ($name == 'CSV file input') {
+                foreach ($baseHeader as $item) {
+                    $fields = $step->fields;
+
+                    $field = $fields->addChild('field');
+                    $field->addChild('name', $item);
+                    $field->addChild('type', 'String');
+                    $field->addChild('length', '-1');
+                    $field->addChild('precision', '-1');
+                    $field->addChild('trim_type', 'both');
+                   
                     $field->addChild('currency');
                     $field->addChild('decimal');
                     $field->addChild('group');

@@ -32,11 +32,12 @@ $sid = getSid();
 $dataSource_dir = "upload_raw_data/$sid/";
 $dataSource_dirPath = mnmpath . $dataSource_dir; //  my_base_url . $dataSource_dir
 $excelFileMode = $_SESSION["excelFileMode_$sid"];
+$ext = $_SESSION["fileExt_$sid"];
 
 switch ($phase) {
     case 0:
 // When submit btn in step1 is clicked, the function executes.
-        createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode);
+        createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode, $ext);
         break;
     case 1:
 // when jump to step 3, this function is called.
@@ -92,13 +93,23 @@ function getSid() {
     return $sid;
 }
 
-function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode) {
+function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode, $ext) {
 
-    $template = 'excel-to-database.ktr'; //'excel-to-target_schema.ktr';
+
+
+    if ($ext == 'csv')
+        $template = 'csv-to-database.ktr';
+    else
+        $template = 'excel-to-database.ktr'; //'excel-to-target_schema.ktr';
+
+
     $newDir = "temp/$sid";
     if (!file_exists(mnmpath . $newDir)) {
         mkdir(mnmpath . $newDir);
     }
+
+  
+
 
     if ($excelFileMode == 'append') {
         $ktrFilePath = mnmpath . "$newDir/$sid.ktr";
@@ -114,11 +125,11 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
                 $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
             }
         }
-
-        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid, $fileURLs, $ktrFileURL);
+        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid, $fileURLs, $ktrFileURL, $ext);
+        
     } else {
         foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
-            if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
+            if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename) || FileUtil::isCSVFile($dataSource_filename)) {
                 $filenames[] = $dataSource_filename;
                 $filePath = $dataSource_dirPath . $dataSource_filename;
                 $filePaths[] = $filePath;
@@ -128,9 +139,12 @@ function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMo
                 if (!file_exists($ktrFilePath)) {
                     copy($template, $ktrFilePath);
                 }
-                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid, $fileURLs, $ktrFileURL);
+                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid, $fileURLs, $ktrFileURL, $ext);
+                
             }
         }
+
+
     }
 
     $_SESSION["ktrArguments_$sid"]["ktrManagers"] = serialize($ktrManagers);
@@ -146,7 +160,10 @@ function getFileSources($sid) {
         $json["isSuccessful"] = true;
         foreach ($ktrManagers as $ktrManager) {
             $paths = $ktrManager->getFilePaths();
-            $json["data"][] = getSheets($paths[0]);
+            $sheetsInfo = getSheets($paths[0]);
+            $sheetsInfo->ext = $ktrManager->getExt();
+
+            $json["data"][] = $sheetsInfo;
         }
     } else {
         $json["isSuccessful"] = false;

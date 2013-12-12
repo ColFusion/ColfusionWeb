@@ -139,13 +139,13 @@
         <div id="displayOptoinsStepCardFromFile">                    
             <div>
                 <ul id="sourceSettingNavList" class="nav nav-list">
-                    <li title="Data Range Settings" onclick="wizardFromFile.toggleSourceSelectionPanel(this, '#dataRangeSettingsTabContent')">
-                        <i class="icon-caret-right"></i>
-                        <i class="icon-wrench"></i>
+                    <li id="liDataRangeSettingsDataSourceStep" title="Data Range Settings" onclick="wizardFromFile.toggleSourceSelectionPanel(this, '#dataRangeSettingsTabContent')">
+                        <i class="icon-caret-right" id="iconCaretNextToWrenchDataSourceStep"></i>
+                        <i class="icon-wrench" id="iconWrenchDataSourceStep"></i>
                     </li>
                     <li  title="Data Preview" onclick="wizardFromFile.toggleSourceSelectionPanel(this, '#dataPreviewTabContent')">
-                        <i class="icon-caret-right" style="visibility: hidden;"></i>
-                        <i class="icon-table"></i>
+                        <i class="icon-caret-right" style="visibility: hidden;" id="iconCaretNextTableDataSourceStep"></i>
+                        <i class="icon-table" id="iconTableDataSourceStep"></i>
                     </li>
                 </ul>
 
@@ -203,8 +203,11 @@
                     </div>
 
                     <div class="nav-content" id="dataPreviewTabContent" style="display:none;">   
-
-                        <div data-bind="foreach: previewFiles" id="previewFiles">
+                        <div id="showFilePreviewButtonContainer">
+                            <button class="btn wizard-back" type="button" onclick="return wizardFromFile.showExcelFile();">Show File(s) Preview</button>
+                            
+                        </div>
+                        <div data-bind="foreach: previewFiles" id="previewFiles" style="display:none;">
                             <p data-bind="text: filename" class="sourceName" style="margin-top: 10px;"></p>
                             <div class="previewFileContainer">
                                 <div data-bind="visible: progressBarViewModel().isProgressing()" id="loadingProgressContainer">
