@@ -154,7 +154,7 @@
     <accept_field/>
     <accept_stepname/>
     <file>
-      <name/>
+     
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>

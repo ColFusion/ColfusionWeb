@@ -163,17 +163,9 @@ class KTRManager {
 
         foreach ($filePaths as $filePath) {
             $fileNode->addChild('name', $filePath);
-            $fileNode->addChild('filemask');
-            $fileNode->addChild('exclude_filemask');
-            $fileNode->addChild('file_required', 'N');
-            $fileNode->addChild('include_subfolders', 'N');
+           
         }
-             // Delete template nodes.  
-        unset($fileNode->name[0]);
-        unset($fileNode->filemask[0]);
-        unset($fileNode->exclude_filemask[0]);
-        unset($fileNode->file_required[0]);
-        unset($fileNode->include_subfolders[0]);
+       
      
        
     }
