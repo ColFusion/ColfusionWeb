@@ -33,7 +33,7 @@ class FromLinkedServerQueryMaker {
     {
         $database = MSSQL_RC_DB_DATABASE;
 
-        $query = "select ltrim(rtrim(value)) as {$this->columnsToSelect->columnNameAndAlias} from [$database].[dbo].[$this->mssqlTableNameForCachedValues] where transformation = ltrim(rtrim('{$this->source->transformation}')) ";
+        $query = "select value as {$this->columnsToSelect->columnNameAndAlias} from [$database].[dbo].[$this->mssqlTableNameForCachedValues] where transformation = '{$this->source->transformation}' ";
 
         return $query;
     }
@@ -106,7 +106,7 @@ $counter = 0;
 
     private function prepareQueryToCleanCacheDistinctValues()
     {
-        $query = "delete from {$this->mssqlTableNameForCachedValues} where transformation = ltrim(rtrim('{$this->source->transformation}')) ";
+        $query = "delete from {$this->mssqlTableNameForCachedValues} where transformation = '{$this->source->transformation}' ";
 
         return $query;
     }
@@ -127,7 +127,7 @@ $counter = 0;
         
         $tableName = $this->source->tableName;
 
-        $selectPart = " insert into {$this->mssqlTableNameForCachedValues} select distinct ltrim(rtrim('{$this->source->transformation}')), ltrim(rtrim($columnNameAndAlias)) ";
+        $selectPart = " insert into {$this->mssqlTableNameForCachedValues} select distinct '{$this->source->transformation}', $columnNameAndAlias ";
         $fromParm = " from ";
         $where = " where $columnNameAndAlias is not NULL ";
 

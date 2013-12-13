@@ -236,7 +236,7 @@ class MergedDataSetQueryMaker {
                 }
             }
 
-            $condition = " ltrim(rtrim([{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$link->fromPart}])) = ltrim(rtrim([{$relationship->sidTo->tableName}{$relationship->sidTo->sid}].[{$link->toPart}])) ";
+            $condition = " [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$link->fromPart}] = [{$relationship->sidTo->tableName}{$relationship->sidTo->sid}].[{$link->toPart}] ";
 
             $encodeToDecodeMap = array($link->fromPartEncoded => $link->fromPart, $link->toPartEncoded => $link->toPart);
 
@@ -247,7 +247,7 @@ class MergedDataSetQueryMaker {
 
                 foreach ($synonums as $key => $syn) {
 
-                    $synStr = " ( ltrim(rtrim([{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$encodeToDecodeMap[$syn->linkFrom]}])) = ltrim(rtrim('{$syn->valueFrom}')) AND ltrim(rtrim([{$relationship->sidTo->tableName}{$relationship->sidTo->sid}].[{$encodeToDecodeMap[$syn->linkTo]}])) = ltrim(rtrim('{$syn->valueTo}')) ) ";
+                    $synStr = " ( [{$relationship->sidFrom->tableName}{$relationship->sidFrom->sid}].[{$encodeToDecodeMap[$syn->linkFrom]}] = '{$syn->valueFrom}' AND [{$relationship->sidTo->tableName}{$relationship->sidTo->sid}].[{$encodeToDecodeMap[$syn->linkTo]}] = '{$syn->valueTo}' ) ";
 
                     $synCondArr[] = $synStr;
                 }
