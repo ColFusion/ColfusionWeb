@@ -127,7 +127,7 @@ $counter = 0;
         
         $tableName = $this->source->tableName;
 
-        $selectPart = " insert into {$this->mssqlTableNameForCachedValues} select distinct '{$this->source->transformation}', $columnNameAndAlias ";
+        $selectPart = " insert into {$this->mssqlTableNameForCachedValues} select distinct '{$this->source->transformation}', convert(nvarchar(MAX), $columnNameAndAlias) ";
         $fromParm = " from ";
         $where = " where $columnNameAndAlias is not NULL ";
 
