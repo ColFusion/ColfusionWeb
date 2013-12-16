@@ -1,7 +1,7 @@
 <?php
     //include_once(realpath(dirname(__FILE__)) . '/../advancedsearch/AdvSearch.php');
 
-    require(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+    require_once(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
 
     require_once(realpath(dirname(__FILE__)) . "/../conf/neo4j.php");
 
