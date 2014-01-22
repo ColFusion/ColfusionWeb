@@ -116,8 +116,8 @@
 
             <div id='result' >
                 <a href='#' id='help1'>Click here for help</a>
-                <div id='h1'>Step 1 help:<br/>
-                    <p class='hlp'>Select from this computer option, if you have the dataset locally in your machine. Be sure that you upload only valid files (.xls, .xlsx). Otherwise, Type a valid url when choosing the second option.<br/>When the upload process completed successfully, you can go forward (next button will be actived) </p>
+                <div id='h1'>
+                    <p class='hlp'>Select from this computer option if you have the dataset locally in your machine. Be sure that you upload only valid files (.xls, .xlsx). Otherwise, type a valid url when choosing the second option. When the upload process is completed successfully, you can go forward (the next button will be activated).</p>
                     <a href='#' id='hd1' style='color:green;'>hide help</a>
                 </div>
             </div>
@@ -127,9 +127,9 @@
     <div class='wizard-card' data-cardname='displayOptionsStepCard' style='overflow: hidden;' id='opt'>
         <h3 style="display: inline-block; margin-bottom: 0;">Source Selection</h3> 
         <a href='#' id='help2' style="display: inline;margin-left: 10px;">Click here for help</a>
-        <div id='h2'>Step 2 help:
+        <div id='h2'>
             <br/>
-            <p class='hlp'> Select the number of sheets you need to get their headers.<br/> Then, for each sheet, provide the sheet name, the row and column where the header starts.</p>
+            <p class='hlp'> Select the number of sheets for which you need to get headers. Then, for each sheet, provide the sheet name, the row and column where the header starts.</p>
             <a href='#' id='hd2' style='color:green;'>hide help</a>
         </div>
         <span style="margin-left: 10px;" id="loadingProgressContainer">
@@ -269,7 +269,7 @@
             <div id='tools'></div>
 
             <a href='#' id='help4' >Show help</a>
-            <div id='h4'>Step 4 help:<br/>
+            <div id='h4'>
                 <p class='hlp'> In this step, for each Dname, you can match your its name and the related information either by accepting the default match or by giving your own definition (the left column). Also, you can help our system by providing you suggestions to some fileds (the right column).<br/>The left part, Type your own name in box if you want to redefine the dnanme and then click the ... button to complete your new definition like the type, unit, etc...<br/> The right section, Click inside this box to suggest some mathces to the data name.<br/>If the name contains any of the given fields, plase type it box and check the front of it. Also, you can add a new suggestions by choosing other and complete that section.</br/>After you are done completing the suggested matches part, click the add suggestion button to allow us to add your entries to the system.<br/>You can remove undesired dnames by checking the boxes in fornt of them.
                 </p>
                 <a href='#' id='hd4' style='color:green;'>hide help</a>
