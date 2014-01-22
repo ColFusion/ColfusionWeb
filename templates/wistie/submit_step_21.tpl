@@ -313,14 +313,16 @@
                         </tr>
                     {/if}
                     <tr>
-                        <td class="step1_input_title" style="vertical-align: top;"><span style="margin-top: 5px">{#PLIGG_Visual_Submit2_Attachments#}:</span></td>
+                        <td class="step1_input_title" style="vertical-align: top;">
+                            <span style="margin-top: 5px">{#PLIGG_Visual_Submit2_Attachments#}:</span>
+                        </td>
                         <td style="vertical-align: top;">
                             <ul class="fileList" id="attachmentList"> 
                                 <li>
                                     <span id="attachmentLoadingIcon"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
                                 </li>
                                 <li>
-                                    <span><a id="uploadAttachmentLink" style="color: #a44848;"><i class="icon-cloud-upload" style="margin-right: 5px;"></i>Add Files...</a></span>
+                                    <span><a id="uploadAttachmentLink" style="color: #a44848;"><i class="icon-cloud-upload" style="margin-right: 5px;"></i>Add Files... (NOT THE DATA YET)</a></span>
                                 </li>
                             </ul>                  
                         </td>
@@ -388,10 +390,13 @@
 </div>	
 </div>
 <div id="uploadAttachmentLightBox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
-    <div class='lightbox-header'>
-        <button type="button" class="close" data-dismiss="lightbox" aria-hidden="true">&times;</button>
-    </div>
     <div class='lightbox-content'>
-        <iframe width="1000" height="500" src="{$my_pligg_base}/fileManagers/sourceAttachmentUploadPage.php?sid={$sid}"></iframe>
+        <div class="pull-right">
+            <button class="btn btn-link" type="button" data-dismiss="lightbox" aria-hidden="true">Close this dialog &times;</button>
+               
+        </div>
+        <div>
+            <iframe width="1000" height="500" src="{$my_pligg_base}/fileManagers/sourceAttachmentUploadPage.php?sid={$sid}"></iframe>
+        </div>
     </div>
 </div>
