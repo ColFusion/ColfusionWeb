@@ -300,16 +300,8 @@
                 textCounter(this.form.summarytext, this.form.remLen, {$StorySummary_ContentTruncate});">{if $submit_url_description}{$submit_url_description}{/if}{$submit_content}</textarea><br />
                         </td>
                     </tr>
-                    <tr>
-                        <td class="step1_input_title">{#PLIGG_Visual_Submit2_Category#}:</td>
-                        <td>
-                            <select data-required="true" id="category" {if $Multiple_Categories}name="category[]" multiple size=10{else}name="category"{/if}">
-                                <option value="3">History</option>
-                                <option value="1">News</option>
-                                <option value="2">Business</option>
-                            </select>
-                        </td>
-                    </tr>
+
+                   
                     {if $enable_tags}
                         <tr>
                             <td class="step1_input_title" style="vertical-align: top;"><span style="margin-top: 5px">{#PLIGG_Visual_Submit2_Tags#}:</span></td>
