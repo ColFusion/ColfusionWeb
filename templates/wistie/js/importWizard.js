@@ -306,6 +306,9 @@ var importWizard = (function () {
     }
 
     function finishSubmittingData() {
+       $("#dockcontent"). removeClass('hidden').addClass('show');
+       $("#dataSubmissionStep3Container"). removeClass('hidden').addClass('show');
+       dataSubmissionStep3Container
         dataPreviewViewModel.getTablesList();
         relationshipViewModel.mineRelationships(10, 1);
         loadInitialFromDataSet();

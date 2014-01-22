@@ -204,27 +204,27 @@
         ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
 
         $.ajax({
-        type: 'POST',
-        url: "DataImportWizard/wizardMarkup.php",
-        data: {},
-        success: function(data) {
-        $("#wizardWrapper").append(data);
-        importWizard.Init();
-        },
-        dataType: 'html',
-        async: false
+            type: 'POST',
+            url: "DataImportWizard/wizardMarkup.php",
+            data: {},
+            success: function(data) {
+                $("#wizardWrapper").append(data);
+                importWizard.Init();
+            },
+            dataType: 'html',
+            async: false
         });
 
         $.ajax({
-        type: 'POST',
-        url: "DataImportWizard/dataPreviewMarkup.php",
-        data: {},
-        success: function(data) {
-        $("#dataPreviewContainer").append(data);
-        ko.applyBindings(dataPreviewViewModel, document.getElementById("dataPreviewContainer"));
-        },
-        dataType: 'html',
-        async: false
+            type: 'POST',
+            url: "DataImportWizard/dataPreviewMarkup.php",
+            data: {},
+            success: function(data) {
+                $("#dataPreviewContainer").append(data);
+                ko.applyBindings(dataPreviewViewModel, document.getElementById("dataPreviewContainer"));
+            },
+            dataType: 'html',
+            async: false
         });
 
         // Open attachment upload page.
@@ -331,7 +331,7 @@
 
                 <h4 class="stepHeader">Step 2: Upload Your Data</h4>
                 <span id='open-wizard' class='btn btn-primary'>Import data</span>
-                <div class="submit_right_sidebar" id="dockcontent">
+                <div class="submit_right_sidebar hidden" id="dockcontent">
                     {checkActionsTpl location="tpl_pligg_submit_preview_start"}
 
                     <div id="dataPreviewContainer">        
@@ -360,12 +360,7 @@
             </div>
         </div>
 
-        <h4 class="stepHeader">Step 3: Connect To The Puzzle (Optional)</h4>
-        <div id="step3Wrapper">
-            <div id="step3Container">    
-                {include file='relationships.tpl'}
-            </div>
-        </div>
+       
 
         <div style="clear:both;"></div>
 
@@ -376,7 +371,16 @@
         <input type="hidden" id="sid" name="sid" value="{$sid}"/>
     </form>	
 
-    {include file='addRelationships.tpl'}
+     <div id="dataSubmissionStep3Container" class="hidden">
+            <h4 class="stepHeader">Step 3: Connect To The Puzzle (Optional)</h4>
+            <div id="step3Wrapper">
+                <div id="step3Container">    
+                    {include file='relationships.tpl'}
+                </div>
+            </div>
+            {include file='addRelationships.tpl'}
+        </div>
+    
 
     {literal}
         <script>

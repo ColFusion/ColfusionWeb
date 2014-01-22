@@ -301,7 +301,7 @@
             </p>
             <p id='exe'></p>
         </div>
-        <a id='done' class='btn im-done'>Finish</a> 
+        <a id='done' class='btn im-done'>Complete Wizard</a> 
     </div>
 
 </div>

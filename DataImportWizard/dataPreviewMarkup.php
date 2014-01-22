@@ -21,7 +21,7 @@
                 Processing Data...
             </div>
             <!-- /ko -->
-            <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
+            <div data-bind="visible: isNoData" style="color: grey;">This table has no data or the data are being processed.</div>
             <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
             <div data-bind="with: currentTable">
                 <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
