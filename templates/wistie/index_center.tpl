@@ -6,7 +6,7 @@
 </p>
 
 <p class="homePageIntroText">
-    To get started visit our <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki" target="_blank">Wiki</a> and <a href="http://colfusion.exp.sis.pitt.edu/colfusion/phpBB3" target="_blank">Forum</a>. Also watch video tutorials: 
+    To get started visit our <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/index.php/Welcome_to_Col*Fusion_Help" target="_blank">Wiki</a> and <a href="http://colfusion.exp.sis.pitt.edu/colfusion/phpBB3" target="_blank">Forum</a>. Also watch video tutorials: 
 </p>
 <table style="width: 100%;">
     <tr>

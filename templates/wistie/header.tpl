@@ -96,7 +96,7 @@
 
 	   <!-- <li ><a href="{$my_base_url}{$my_pligg_base}/user_guide.php" target="_blank">How to contribute</a></li> -->
 	    <li ><a href="{$my_base_url}{$my_pligg_base}/phpBB3" target="_blank">Forum</a></li>
-	    <li ><a href="{$my_base_url}{$my_pligg_base}/wiki" target="_blank">Wiki</a></li>
+	    <li ><a href="{$my_base_url}{$my_pligg_base}/wiki/index.php/Welcome_to_Col*Fusion_Help" target="_blank">Wiki</a></li>
         <!--<li><a href="{$my_base_url}{$my_pligg_base}/visualization/dashboard.php" >Visualization</a></li>-->
 
       <!--  <li {if $pagename eq "advanced search"}class="current"{/if}><a href="{$my_base_url}{$my_pligg_base}/advancedsearch/advanced.php" >Adv Search</a></li> -->
