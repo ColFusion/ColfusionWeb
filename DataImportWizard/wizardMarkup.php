@@ -246,8 +246,6 @@
         <div id="displayOptoinsStepCardFromDB" style="height: 100%;">
         </div>
     </div>
-
-
     <div class='wizard-card' data-cardname='dataMatchingStepCard' id="dataMatchingStepCard" style=' width:600px; overflow: hidden; '><!--"+//style='width: 720px; overflow: hidden; '>-->
         <h3 style="display: inline;">Data Matching
             <img src='help.png' width='15' height='15' title='Verify the dname or type yours in the proper type box if not correct and then click submit. You can remove undesired dnames by checking the boxes in fornt of them.'/>
