@@ -314,7 +314,9 @@
                     {/if}
                     <tr>
                         <td class="step1_input_title" style="vertical-align: top;">
-                            <span style="margin-top: 5px">{#PLIGG_Visual_Submit2_Attachments#}:</span>
+                            <span style="margin-top: 5px">{#PLIGG_Visual_Submit2_Attachments#} 
+                                <img src="help.png" width="15" height="15" title="" data-original-title="You can attach any files which contain any additional information about the data being submitted in step 2.">:
+                            </span>
                         </td>
                         <td style="vertical-align: top;">
                             <ul class="fileList" id="attachmentList"> 
@@ -322,7 +324,7 @@
                                     <span id="attachmentLoadingIcon"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
                                 </li>
                                 <li>
-                                    <span><a id="uploadAttachmentLink" style="color: #a44848;"><i class="icon-cloud-upload" style="margin-right: 5px;"></i>Add Files... (NOT THE DATA YET)</a></span>
+                                    <span><a id="uploadAttachmentLink" style="color: #a44848;"><i class="icon-cloud-upload" style="margin-right: 5px;"></i>Add Files...</a></span>
                                 </li>
                             </ul>                  
                         </td>
@@ -396,7 +398,7 @@
 <div id="uploadAttachmentLightBox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
     <div class='lightbox-content'>
         <div class="pull-right">
-            <button class="btn btn-link" type="button" data-dismiss="lightbox" aria-hidden="true">Close this dialog &times;</button>
+            <button class="btn btn-link" type="button" data-dismiss="lightbox" aria-hidden="true">Close this dialog</button>
                
         </div>
         <div>
