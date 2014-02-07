@@ -16,6 +16,14 @@ include_once('FileUtil.php');
 include_once('rawHttpParser.php');
 include_once(realpath(dirname(__FILE__) . "/../DAL/DBImporters/DatabaseImporterFactory.php"));
 
+
+require_once(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+
+Logger::configure(realpath(dirname(__FILE__)) . '/../conf/log4php.xml');
+
+$logger = Logger::getLogger("generalLog");
+
+
 // module system hook
 $vars = '';
 check_actions('submit_post_authentication', $vars);
@@ -34,6 +42,8 @@ $fileType = $params['fileType'];
 //TODO FIXME: once appeding of files is resolved uncomment here;
 $excelFileMode = "join";//$params['excelFileMode'];
 $dbType = $params['dbType'];
+
+$logger->info($_FILES);
 
 upload_0($sid, $uploadTimestamp, $fileType, $excelFileMode, $dbType);
 

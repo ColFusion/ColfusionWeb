@@ -12,6 +12,13 @@ include_once('config.php');
 include_once('Smarty.class.php');
 $main_smarty = new Smarty;
 
+require_once(realpath(dirname(__FILE__)) . "/vendor/autoload.php");
+
+Logger::configure(realpath(dirname(__FILE__)) . '/conf/log4php.xml');
+
+$logger = Logger::getLogger("generalLog");
+
+
 include(mnminclude.'html1.php');
 include(mnminclude.'link.php');
 include(mnminclude.'tags.php');
@@ -23,14 +30,6 @@ include_once('DAL/QueryEngine.php');
 if (!$_COOKIE['referrer'])
 	check_referrer();
 
-// html tags allowed during submit
-if (checklevel('god'))
-	$Story_Content_Tags_To_Allow = Story_Content_Tags_To_Allow_God;
-elseif (checklevel('admin'))
-$Story_Content_Tags_To_Allow = Story_Content_Tags_To_Allow_Admin;
-else
-	$Story_Content_Tags_To_Allow = Story_Content_Tags_To_Allow_Normal;
-$main_smarty->assign('Story_Content_Tags_To_Allow', htmlspecialchars($Story_Content_Tags_To_Allow));
 
 // breadcrumbs and page titles
 $navwhere['text1'] = $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Submit');
@@ -43,8 +42,6 @@ $main_smarty = do_sidebar($main_smarty);
 //to check anonymous mode activated
 global $current_user;
 
-
-
 if($current_user->authenticated != TRUE)
 {
 	$vars = '';
@@ -54,48 +51,32 @@ if($current_user->authenticated != TRUE)
 }
 
 
-
-
 // determine which step of the submit process we are on
 $phase = isset($_POST["phase"]) && is_numeric($_POST["phase"]) ? $_POST["phase"] : 0;
 
-// If show URL input box is disabled, go straight to step 2
-if($phase == 0 && Submit_Show_URL_Input == false) {
-	$phase = 1;
-}
-
-
-
 switch ($phase) {
 	case 0:
-		// Link to this page, before starting submit process.
-		// echo 'submit0 start.';
+		// Initial rendering of the page.
 		do_submit0();
 		break;
 	case 1:
-		// echo 'submit1 start.';
+		// When the Finish your submisison butotn was clicked.
 		do_submit1();
 		break;
-	case 2:
-		// echo 'submit2 start.';
-		do_submit2();
-		break;
-	case 3:
-		// echo 'submit3 start.';
-		do_submit3();
-		break;
 }
-
-
 
 
 exit;
 
-// submit step 0
+/**
+ * Initial rendering of the page when user just come the Submit Data page.
+ * 
+ * @return [type] [description]
+ */
 function do_submit0() {
 	global $main_smarty, $db, $dblang, $current_user, $the_template;
 	
-	$linkres=new Link;
+	$linkres = new Link();
 	 if ($_POST['category']){
 		$cats = explode(',',$_POST['category']);
 		foreach ($cats as $cat){
@@ -157,8 +138,6 @@ function do_submit0() {
 	$queryEngine = new QueryEngine();
 	$sid = $queryEngine->simpleQuery->getNewSid($current_user->user_id, 'draft');
 	
-	$_SESSION["newSid"] = $sid; // still keep it for now
-
 	$main_smarty->assign('sid', $sid);
 	
 	$main_smarty->assign('tpl_extra_fields', $the_template . '/submit_extra_fields');
@@ -170,6 +149,7 @@ function do_submit0() {
 	$main_smarty->display($the_template . '/pligg.tpl');
 
 }
+
 // submit step 1
 function do_submit1() {
 	global $db, $main_smarty, $dblang, $the_template, $linkres, $current_user, $Story_Content_Tags_To_Allow;

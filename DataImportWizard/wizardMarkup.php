@@ -13,7 +13,7 @@
                     <label style="display: inline;"><input id='computer' type='radio' name='place' value="computer" /> From this computer </label>
                     <img src='help.png' width='15' height='15' title='Select a valid file (.xls,.xlsx, .csv)'/>
                     <div id='divFromComputer' >
-                        <form class='upload-form' name='upload_form[]' id='upload_form' action='DataImportWizard/acceptFileFromWizard.php' method='post' enctype='multipart/form-data'> 
+                        <form class='upload-form' name='upload_form[]' id='upload_form' action='http://localhost:8080/ColFusionServer/Wizard/acceptFileFromWizard' method='post' enctype='multipart/form-data'> 
                             <input type='hidden' name='phase' value='0'> 
                             <input type='hidden' name='sid' id="uploadFormSid" value='0'>
                             <input type='hidden' name='uploadTimestamp' id="uploadTimestamp" value='0'>

@@ -121,7 +121,7 @@ class SimpleQuery
         $sql = sprintf($sql, table_prefix, $sid, $server, $port, $user, $password, $database, $driver, $isImported, $linkedServerName);
         $db->query($sql);
 
-        $this->addLinkedServer($server, $port, $user, $password, $database, $driver, $linkedServerName);
+//        $this->addLinkedServer($server, $port, $user, $password, $database, $driver, $linkedServerName);
     }
 
     public function getSourceDBInfo($sid)

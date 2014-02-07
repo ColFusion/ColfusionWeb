@@ -254,9 +254,10 @@ var wizardFileUpload = (function() {
     function initJqueryUpload(form) {
         $(form).find('input[name="upload_file"]').fileupload({
             dataType: 'json',
-            url: 'DataImportWizard/acceptFileFromWizard.php',
+            url: 'http://localhost:8080/ColFusionServer/Wizard/acceptFileFromWizard', //'DataImportWizard/acceptFileFromWizard.php',
             acceptFileTypes: '/(\.|\/)(xlsx?|csv|sql)$/i',
             sequentialUploads: true,
+            crossDomain:    true,
             add: function(e, data) {
 
                 // When file type is db dump, we only accept one file.

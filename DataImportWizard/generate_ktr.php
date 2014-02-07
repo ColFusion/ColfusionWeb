@@ -21,6 +21,10 @@ include_once 'NothingFilter.php';
 include_once 'FileUtil.php';
 include_once 'KTRManager.php';
 
+Logger::configure(realpath(dirname(__FILE__)) . '/../conf/log4php.xml');
+
+$logger = Logger::getLogger("generalLog");
+
 if (isset($_POST["phase"]) && is_numeric($_POST["phase"]))
     $phase = $_POST["phase"];
 else if (isset($_GET["phase"]) && is_numeric($_GET["phase"]))

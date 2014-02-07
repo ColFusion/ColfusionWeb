@@ -4,7 +4,7 @@
         <layout class="LoggerLayoutPattern">
             <param name="conversionPattern" value="%date{m.d.Y H:i:s,u} %logger %-5level %message%newline%ex" />
         </layout>
-        <param name="file" value="/opt/local/apache2/htdocs/Colfusion/temp/combined.log" />
+        <param name="file" value="/opt/local/apache2/htdocs/Colfusion/cache/combined.log" />
     </appender>
 
     <logger name="generalLog">

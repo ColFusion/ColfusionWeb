@@ -16,6 +16,9 @@
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/parsley.css" />
 <link rel="stylesheet" type="text/css" href="{$my_pligg_base}/css/parsley_custom.css" />
 
+
+<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/wick.css" />
+
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/story_preview.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-ui-1.10.3.custom.min.js"></script>
@@ -282,7 +285,7 @@
 
 <!--<h2 style="font-size: 14px; color: #4a9bea; margin: 4px 0 0 0; font-weight: bold">{#PLIGG_Visual_Submit2_Details#}</h2>-->
 
-                <table id="step1_table">
+Ï                <table id="step1_table">
                     <tr>
                         <td class="step1_input_title">{#PLIGG_Visual_Submit2_Title#}:</td>
                         <td>
@@ -392,7 +395,7 @@
             });
         </script>
     {/literal}
-    <input onclick="submitDataSubmissionForm()" class="button_max" type="submit" value="{#PLIGG_Visual_Submit2_Continue#}" id ="final"  disabled = true />
+    <input onclick="submitDataSubmissionForm()" class="button_max" type="submit" value="{#PLIGG_Visual_Submit2_Continue#}" id="final"  disabled = true />
 </div>	
 </div>
 <div id="uploadAttachmentLightBox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
