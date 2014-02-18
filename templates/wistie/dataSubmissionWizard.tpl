@@ -64,10 +64,10 @@
                                 <div class='progress' id='uploadProgressBar' style='display: none;'>
                                     <div class='bar'></div>                             
                                 </div>                      
-                                <input type='button' name='Submit' value='Upload' id='uploadBtn' data-bind='click: submit, visible: fileInfos().length > 0' class='btn btn-primary' />
-                                <span id='uploadProgressText'></span>
+                                <button type='button' name='Submit' id='uploadBtn' data-bind='click: submitFiles, visible: fileInfos().length > 0' class='btn btn-primary'>Upload</button>
+                                <span id='uploadProgressText' data-bind="text: uploadProgressText"></span>
                             </div>
-                            <p id='uploadMessage'></p>
+                            <p id='uploadMessage' data-bind="text: uploadMessage, style: { color: isUploadSuccessful() ? 'green' : 'red' }"></p>
                         </form>
                     </div>
                 </div>

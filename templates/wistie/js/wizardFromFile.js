@@ -7,7 +7,7 @@ var wizardFromFile = (function() {
     var wizardExcelPreviewViewModel;
     var sourceWorksheetSettingsViewModel;
 
-    var fromComputerUploadFileViewModel;
+    wizardFromFile.fromComputerUploadFileViewModel;
 
     wizardFromFile.sid = "";
 
@@ -27,12 +27,12 @@ var wizardFromFile = (function() {
         var viewModelDom = document.getElementById('dataRangeSettingsTabContent');
         ko.applyBindings(sourceWorksheetSettingsViewModel, viewModelDom);
 
-        fromComputerUploadFileViewModel = new FromComputerUploadFileViewModel(sid);
+        wizardFromFile.fromComputerUploadFileViewModel = new FromComputerUploadFileViewModel(sid);
         var container = document.getElementById('divFromComputer');
-        ko.applyBindings(fromComputerUploadFileViewModel, container);
+        ko.applyBindings(wizardFromFile.fromComputerUploadFileViewModel, container);
 
         // bind form using 'ajaxForm' 
-        fromComputerUploadFileViewModel.initFileUploadForm($('#upload_form'));
+        wizardFromFile.fromComputerUploadFileViewModel.initFileUploadForm($('#upload_form'));
     };
 
     //Process the remote file given by the input url
@@ -54,12 +54,19 @@ var wizardFromFile = (function() {
     };
 
     wizardFromFile.createKtrFiles = function() {
-        return $.ajax({
+        $.ajax({
             url: "http://localhost:8080/ColFusionServer/Wizard/createTemplate", //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
             type: 'post',
-            data: {
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            data: JSON.stringify({
                 sid: wizardFromFile.sid,
-                fileMode: 'bl'
+                fileMode: wizardFromFile.fromComputerUploadFileViewModel.selectedFileMode().fileMode,
+                fileName: wizardFromFile.fromComputerUploadFileViewModel.uploadedFileInfos()
+            }),
+            success: function (data) {
+                alert(data);
             }
         });
     };
@@ -196,8 +203,8 @@ var wizardFromFile = (function() {
 
         var container = document.getElementById('divFromComputer');
         ko.cleanNode(container);
-        fromComputerUploadFileViewModel = new FromComputerUploadFileViewModel(wizardFromFile.sid);
-        ko.applyBindings(fromComputerUploadFileViewModel, container);
+        wizardFromFile.fromComputerUploadFileViewModel = new FromComputerUploadFileViewModel(wizardFromFile.sid);
+        ko.applyBindings(wizardFromFile.fromComputerUploadFileViewModel, container);
     };
 
     wizardFromFile.toggleSourceSelectionPanel = function(liDom, contentSelector){
@@ -219,13 +226,16 @@ function FromComputerUploadFileViewModel(sid) {
     var self = this;
     self.sid = sid;
     
-    self.progressAll = 0;
+    var progressAll = 0;
     var progressSingle = 0;
     var completeCount = 0;
     var isUploadError = false;
 
     self.uploadFormSid = ko.observable(sid);
     self.uploadTimestamp = ko.observable();
+    self.uploadProgressText = ko.observable();
+    self.isUploadSuccessful = ko.observable(true);
+    self.uploadMessage = ko.observable();
 
     // Info about chosen files to be uploaded
     self.fileInfos = ko.observableArray([]);
@@ -283,7 +293,7 @@ function FromComputerUploadFileViewModel(sid) {
             url: 'http://localhost:8080/ColFusionServer/Wizard/acceptFileFromWizard', //'DataImportWizard/acceptFileFromWizard.php',
             acceptFileTypes: '/(\.|\/)(xlsx?|csv|sql)$/i',
             sequentialUploads: true,
-            crossDomain:    true,
+            crossDomain: true,
             add: function(e, data) {
 
                 // When file type is db dump, we only accept one file.
@@ -303,59 +313,55 @@ function FromComputerUploadFileViewModel(sid) {
                 completeCount++;
                 progressAll += progressSingle;
                 var resultJson = data.result;
-                var messageDom = $('#uploadMessage');
+                self.isUploadSuccessful(resultJson.isSuccessful);
 
-                if (resultJson.isSuccessful && completeCount == wizardFileUpload.fileListViewModel.fileInfos().length) {
+                if (resultJson.isSuccessful && completeCount == self.fileInfos().length) {
 
-                    $('#uploadPanel').fadeOut();
                     $('#isImport').val(false);
 
-                    $(messageDom).css('color', 'green');
                     $('#uploadFileType').add('#fromComputerDatabaseDump').add('#excelFileMode').prop('disabled', true);
                     $('input[name="place"]').prop('disabled', true);
 
                     self.fileInfos([]);
 
-                    self.addUploadedFileInfos(resultJson.payload[0].files);
+                    self.addUploadedFileInfos(resultJson.payload[0]);
 
-                    if ($('#uploadFileType').val() == 'dbDump') {
+                    if (self.selectedFileType().fileType == 'dbDump') {
                         connectFromDumpFile();
                     } else {
-                        $(messageDom).text(resultJson.message);
+                        self.uploadMessage(resultJson.message);
                         wizard.enableNextButton();
                     }
                 } else if (resultJson.isSuccessful === false) {
                     isUploadError = true; // Used to cancel subsquent uploadings.
-                    $('#uploadPanel').fadeOut();
-                    $(messageDom).css('color', 'red').text(resultJson.message);
+                    self.uploadMessage(resultJson.message);
                 }
             },
             progress: function(e, data) {
                 progressSingle = Math.round(data.loaded / data.total * 100, 10) / self.fileInfos().length;
                 var progressAllTemp = progressAll + progressSingle / self.fileInfos().length;
                 if (progressAllTemp >= 99) {
-                    if ($('#uploadFileType').val() == 'dataFile') {
-                        var processingText = 'Processing...';
-                    } else {
-                        var processingText = 'Importing dump file...';
+                    var processingText = 'Processing...';
+                    if (self.selectedFileType().fileType == 'dbDump') {
+                        processingText = 'Importing dump file...';
                     }
-                    $('#uploadMessage').css('color', '').text(processingText);
+                    self.isUploadSuccessful(true);
+                    self.uploadMessage(processingText);
                 }
 
-                $('#uploadProgressText').text(Math.round(progressAllTemp) + '%');
+                self.uploadProgressText(Math.round(progressAllTemp) + '%');
                 $('#uploadProgressBar').find('.bar').css('width', Math.round(progressAllTemp) + '%');
             }
         });
     }
 
     self.submitFiles =  function() {
-        var fileType = $('#uploadFileType').val();
-        if (fileType == 'dataFile') {
-            var acceptedFileTypes = /\.(xlsx?|csv|zip)$/i;
-            var fileNotAcceptedMsg = '(.csv, .excel, or .zip file)';
-        } else {
-            var acceptedFileTypes = /\.(zip|sql)$/i;
-            var fileNotAcceptedMsg = '(.sql or .zip file)';
+        var acceptedFileTypes = /\.(zip|sql)$/i;
+        var fileNotAcceptedMsg = '(.sql or .zip file)';
+
+        if (self.selectedFileType().fileType == 'dataFile') {
+            acceptedFileTypes = /\.(xlsx?|csv|zip)$/i;
+            fileNotAcceptedMsg = '(.csv, .excel, or .zip file)';
         }
 
         for (var i = 0; i < self.fileInfos().length; i++) {
@@ -366,7 +372,7 @@ function FromComputerUploadFileViewModel(sid) {
             }
         }
 
-        self.progressAll = 0;
+        progressAll = 0;
         completeCount = 0;
         isUploadError = false;
 
@@ -374,7 +380,7 @@ function FromComputerUploadFileViewModel(sid) {
         self.uploadTimestamp(new Date().getTime());
 
         $('#uploadProgressBar').add($('#uploadProgressText')).show();
-        for (i = 0; i < fileInfos().length && !isUploadError; i++) {
+        for (i = 0; i < self.fileInfos().length && !isUploadError; i++) {
             var fileInfo = self.fileInfos()[i];
             fileInfo.submit();
         }
@@ -384,8 +390,8 @@ function FromComputerUploadFileViewModel(sid) {
 
         $('input[id="database"]').attr('checked', true);
 
-        var messageDom = $('#uploadMessage');
-        $(messageDom).text('Connecting to database...');
+        self.isUploadSuccessful(true);
+        self.uploadMessage('Connecting to database...');
 
         // Jump to "From database" and fill inputs to tell user the database is built from dump file.
         var dbType = $('#dbType').val();
@@ -401,7 +407,8 @@ function FromComputerUploadFileViewModel(sid) {
         $('#isImport').val(true);
 
         wizardFromDB.TestDBConnection(null, null, null, null, null, $('#dbType').val(), null, true).done(function(data) {
-            $(messageDom).css('color', data.isSuccessful ? 'green' : 'red').text(data.message);
+            self.isUploadSuccessful(data.isSuccessful);
+            self.uploadMessage(data.message);
         });
     }
 };
