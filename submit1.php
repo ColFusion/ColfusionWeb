@@ -142,6 +142,9 @@ function do_submit0() {
 	
 	$main_smarty->assign('tpl_extra_fields', $the_template . '/submit_extra_fields');
 	$main_smarty->assign('tpl_center', $the_template . '/submit_step_21');
+	$main_smarty->assign('tpl_jsFilesAtBottom', $the_template . '/submit_step_21_jsFilesAtBottom');
+	$main_smarty->assign('tpl_cssInHTMLHead', $the_template . '/submit_step_21_cssInHTMLHead');
+	
 
 	define('pagename', 'submit');
 	$main_smarty->assign('pagename', pagename);

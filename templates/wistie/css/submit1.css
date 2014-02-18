@@ -6,10 +6,6 @@
 	color: grey;
 }
 
-#open-wizard {
-margin-top: 15px;
-}
-
 #step1_table {
 margin: 20px 0 15px 0;
 }
@@ -26,6 +22,3 @@ width: 100px;
 	margin-bottom: 0;
 }
 
-#bodytext{
-	width: 500px;
-}

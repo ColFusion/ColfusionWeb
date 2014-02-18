@@ -4,17 +4,24 @@ var importWizard = (function () {
     importWizard.loadingGif = "";
     importWizard.dataMatchingProgressViewModel = new ProgressBarViewModel();
 
-    importWizard.Init = function () {
-        wizardFromFile.Init();
+    importWizard.wizardUploadDatasetViewModel = new WizardUploadDatasetViewModel();
 
-        $.ajaxSetup({
-            data: {
-                sid: sid
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                triggerError();
-            }
-        });
+    importWizard.sid = "";
+
+    importWizard.Init = function (sid) {
+        importWizard.sid = sid;
+        wizardFromFile.Init(sid);
+
+       
+
+        // $.ajaxSetup({
+        //     data: {
+        //         sid: sid
+        //     },
+        //     error: function (jqXHR, textStatus, errorThrown) {
+        //         triggerError();
+        //     }
+        // });
 
         $("#computer").click(function () {
             $('#divFromComputer').show();
@@ -102,12 +109,15 @@ var importWizard = (function () {
 
         $("img").tooltip();
 
+        
         initBootstrapWizard();
-        importWizard.loadingGif = "<img src='" + my_pligg_base
-				+ "/templates/wistie/images/ajax-loader_cp.gif'/>";
 
-        ko.applyBindings(importWizard.dataMatchingProgressViewModel, document
-				.getElementById('dataMatchingStepCard'));
+        
+        importWizard.loadingGif = "<img src='" + my_pligg_base + "/templates/wistie/images/ajax-loader_cp.gif'/>";
+
+        //ko.applyBindings(importWizard.wizardUploadDatasetViewModel, document.getElementById('filenameListContainer'));
+
+        ko.applyBindings(importWizard.dataMatchingProgressViewModel, document.getElementById('dataMatchingStepCard'));
     };
 
     // ***********************************************************************************************
@@ -198,7 +208,7 @@ var importWizard = (function () {
     function initBootstrapWizard() {
         $.fn.wizard.logging = false;
 
-        wizard = $("#wizard-demo").wizard();
+        wizard = $("#dataSubmissionWizardContainer").wizard();
 
         wizard.cards['displayOptionsStepCard']
 				.on(
@@ -280,8 +290,6 @@ var importWizard = (function () {
         wizard.on("reset", function (wizard) {
             wizardFromFile.resetFileUploadForm();
             wizard.setSubtitle("");
-            wizard.el.find("#new-server-fqdn").val("");
-            wizard.el.find("#new-server-name").val("");
         });
 
         wizard.el.find(".wizard-success .im-done").click(function () {

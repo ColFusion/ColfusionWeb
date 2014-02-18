@@ -20,6 +20,9 @@
 
 	{checkForCss}
 
+	{if $tpl_cssInHTMLHead|count_characters > 0}
+		{include file=$tpl_cssInHTMLHead.".tpl"}
+	{/if}
 
 	{* For Google Analytics *}
 	{literal}
@@ -35,6 +38,27 @@
 	</script>
 	{/literal}
 	
+
+	{* Need to Move all the way to the bottom of the page *}
+	{if not $no_jquery_in_pligg}
+		<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
+	{/if}
+
+	{checkForJs}		
+
+	{if $pagename neq "published" && $pagename neq "upcoming"}
+		{if $Spell_Checker eq 1}			
+			<script src="{$my_pligg_base}/3rdparty/speller/spellChecker.js" type="text/javascript"></script>
+		{/if}
+	{/if}	
+	
+    <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
+	<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/vis.js"></script>
+
+	{if $tpl_jsFilesAtBottom}
+		{include file=$tpl_jsFilesAtBottom.".tpl"}
+	{/if}
+
 	
 
 	{if preg_match('/index.php$/',$templatelite.server.SCRIPT_NAME)}	
@@ -169,20 +193,7 @@
 	
 
 
-	{if not $no_jquery_in_pligg}
-		<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery-1.9.1.min.js"></script>
-	{/if}
-
-	{checkForJs}		
-
-	{if $pagename neq "published" && $pagename neq "upcoming"}
-		{if $Spell_Checker eq 1}			
-			<script src="{$my_pligg_base}/3rdparty/speller/spellChecker.js" type="text/javascript"></script>
-		{/if}
-	{/if}	
 	
-    <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
-	<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/vis.js"></script>
 
 	{* this line HAS to be towards the END of pligg.tpl *}
 	<script src="{$my_pligg_base}/templates/xmlhttp.php" type="text/javascript"></script> 
