@@ -64,10 +64,7 @@ var wizardFromFile = (function() {
                 sid: wizardFromFile.sid,
                 fileMode: wizardFromFile.fromComputerUploadFileViewModel.selectedFileMode().fileMode,
                 fileName: wizardFromFile.fromComputerUploadFileViewModel.uploadedFileInfos()
-            }),
-            success: function (data) {
-                alert(data);
-            }
+            })
         });
     };
 

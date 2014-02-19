@@ -368,16 +368,15 @@ var importWizard = (function () {
             wizard.disableNextButton();
 
             $('#loadingProgressContainer').show();
-            wizardFromFile.createKtrFiles();
-            //.done(function () {
-            //     wizardFromFile.getFileSources().done(function () {
-            //         $('#loadingProgressContainer').hide();
-            //         $("#displayOptoinsStepCardFromFile").show();
-            //         wizard.enableNextButton();
-            //     });
-            // }).fail(function () {
-            //     $('#loadingProgressContainer').hide();
-            // });
+            wizardFromFile.createKtrFiles().done(function () {
+                wizardFromFile.getFileSources().done(function () {
+                    $('#loadingProgressContainer').hide();
+                    $("#displayOptoinsStepCardFromFile").show();
+                    wizard.enableNextButton();
+                });
+            }).fail(function () {
+                $('#loadingProgressContainer').hide();
+            });
         }
     }
 

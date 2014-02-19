@@ -1,8 +1,7 @@
 var fileManager = (function() {
     var fileManager = {};
 
-    fileManager.loadSourceAttachments = function(sid, container) {
-        var loadingIconDom = $('#attachmentLoadingIcon');
+    fileManager.loadSourceAttachments = function(sid, container, loadingIconDom) {
         $(loadingIconDom).show();
         $.ajax({
             type: 'POST',

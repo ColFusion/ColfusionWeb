@@ -186,7 +186,7 @@
             ko.applyBindings(newRelationshipViewModel, document.getElementById("newRelWrapper"));
         });
 
-        // If sid is assigned, load from date set after page is loaded.
+        // If sid is assigned, load from dateset after page is loaded.
         function loadInitialFromDataSet() {
             var fromDataSetSidInput = $('#fromDataSetWrapper').find('.dataSetDesTable').find('.sidInput');
             var fromDataSetSidSearchBtn = $('#fromDataSetWrapper').find('.dataSetDesTable').find('button');

@@ -65,7 +65,6 @@ switch ($phase) {
 		break;
 }
 
-
 exit;
 
 /**
@@ -77,15 +76,7 @@ function do_submit0() {
 	global $main_smarty, $db, $dblang, $current_user, $the_template;
 	
 	$linkres = new Link();
-	 if ($_POST['category']){
-		$cats = explode(',',$_POST['category']);
-		foreach ($cats as $cat){
-			if ($cat_id = $db->get_var("SELECT category_id FROM ".table_categories." WHERE category_name='".$db->escape(trim($cat))."'")){
-				$linkres->category = $cat_id;
-				break;
-			}
-		}
-	}
+	
 	$edit = false;
 	if (is_numeric($_GET['id'])){
 		$linkres->id = $_GET['id'];
@@ -107,28 +98,6 @@ function do_submit0() {
 			$main_smarty->assign('submit_lastspacer', 0);
 			$main_smarty->assign('submit_cat_array', $array);
 		}
-
-	//to display group drop down
-	if(enable_group == "true")
-	{
-		$output = '';
-		$group_membered = $db->get_results("SELECT group_id,group_name FROM " . table_groups . "
-				LEFT JOIN ".table_group_member." ON member_group_id=group_id
-				WHERE member_user_id = $current_user->user_id AND group_status = 'Enable' AND member_status='active'
-				ORDER BY group_name ASC");
-		if ($group_membered)
-		{
-			$output .= "<select name='link_group_id'>";
-			$output .= "<option value = ''>".$main_smarty->get_config_vars('PLIGG_Visual_Group_Select_Group')."</option>";
-			foreach($group_membered as $results)
-			{
-				$output .= "<option value = ".$results->group_id. ($linkres->link_group_id ? ' selected' : '') . ">".$results->group_name."</option>";
-			}
-			$output .= "</select>";
-		}
-		$main_smarty->assign('output', $output);
-	}
-
 
 	if($current_user->authenticated != TRUE){
 		$vars = '';
@@ -175,17 +144,19 @@ function do_submit1() {
 
 
 
-		if(!isset($_POST['summarytext'])){
+	if(!isset($_POST['summarytext'])){
 		$linkres->link_summary = utf8_substr(sanitize($_POST['bodytext'], 4, $Story_Content_Tags_To_Allow), 0, StorySummary_ContentTruncate - 1);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	} else {
-	$linkres->link_summary = sanitize($_POST['summarytext'], 4, $Story_Content_Tags_To_Allow);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	if(utf8_strlen($linkres->link_summary) > StorySummary_ContentTruncate){
-	loghack('SubmitAStory-SummaryGreaterThanLimit', 'username: ' . sanitize($_POST["username"], 3).'|email: '.sanitize($_POST["email"], 3), true);
-	$linkres->link_summary = utf8_substr($linkres->link_summary, 0, StorySummary_ContentTruncate - 1);
-	$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	}
+		$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
+	} 
+	else {
+		$linkres->link_summary = sanitize($_POST['summarytext'], 4, $Story_Content_Tags_To_Allow);
+		$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
+		
+		if(utf8_strlen($linkres->link_summary) > StorySummary_ContentTruncate) {
+			loghack('SubmitAStory-SummaryGreaterThanLimit', 'username: ' . sanitize($_POST["username"], 3).'|email: '.sanitize($_POST["email"], 3), true);
+			$linkres->link_summary = utf8_substr($linkres->link_summary, 0, StorySummary_ContentTruncate - 1);
+			$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
+		}
 	}
 	
 	$sid = $_POST["sid"];
@@ -214,14 +185,10 @@ function do_submit1() {
 	
 	header("Location:".my_base_url.my_pligg_base."/story.php?title=$sid");
 		
-
-
-
 	$vars = '';
 	check_actions('do_submit2', $vars);
 	$_SESSION['step'] = 2;
 	$main_smarty->display($the_template . '/pligg.tpl');
-
 }
 
 // assign any errors found during submit

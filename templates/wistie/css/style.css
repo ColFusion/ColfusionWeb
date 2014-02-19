@@ -1572,3 +1572,8 @@ a:active {
 .resultText i{
     margin: 0 5px 0 3px;
 }
+
+#newRelationshipBtn {
+    margin: 0 0 13px 15px;
+    display: block;
+}

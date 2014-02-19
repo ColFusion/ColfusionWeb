@@ -331,6 +331,9 @@ if(is_numeric($requestID)) {
 	$main_smarty->assign('URL_rss_page', getmyurl('storyrss', isset($requestTitle) ? $requestTitle : urlencode($link->title_url), $link->category_safe_name($link->category)));
 
 	$main_smarty->assign('tpl_center', $the_template . '/story_center');
+	$main_smarty->assign('tpl_jsFilesAtBottom', $the_template . '/story_center_jsFilesAtBottom');
+	$main_smarty->assign('tpl_cssInHTMLHead', $the_template . '/story_center_cssInHTMLHead');
+
 	$main_smarty->display($the_template . '/pligg.tpl');
 } else {
 
