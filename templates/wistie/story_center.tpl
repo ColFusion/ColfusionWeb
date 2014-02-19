@@ -9,28 +9,56 @@
 
 <!-- End of hidden visualization form -->
 
-<div id="upload_result">
-    <table style="margin: 0 0 9px 10px;">
-        <tr>
-            <td class="step1_input_title" style="vertical-align: top; width: 100px;">
-                <span style="margin-top: 5px; font-weight: bold">{#PLIGG_Visual_Submit2_Attachments#}:</span>
-            </td>
-            <td>
-                <table class="fileList" id="attachmentList2">
-                    <tr id="attachmentLoadingIcon2">
-                        <td>
-                            <img src="{$my_pligg_base}/images/ajax-loader.gif" />
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</div>
+<!-- Cataloging Information -->
 
 <section>
-        {include file=$the_template."/storyMetadataEdit.tpl"}
-    </section>
+    <div class="preview-story">
+        <h3 class="preview-title">Data Information</h3>
+        <div class="storycontent">
+
+            <div id="showMetadataSection">
+                <span id="metadataLoadingIcon" data-bind="visible: isFetchCurrentValuesInProgress()"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
+                <table data-bind="visible: !isFetchCurrentValuesInProgress()" class="table">
+                    <tr>
+                        <td>Dataset Title</td>
+                        <td><span data-bind="text: title"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Submitted by</td>
+                        <td><span data-bind="text: title"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Date Submitted</td>
+                        <td><span data-bind="text: title"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td><span data-bind="text: description"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="step1_input_title" style="vertical-align: top; width: 100px;">{#PLIGG_Visual_Submit2_Attachments#}</td>
+                        <td>
+                            <table class="fileList" id="attachmentList2">
+                                <tr id="attachmentLoadingIcon2">
+                                    <td>
+                                        <img src="{$my_pligg_base}/images/ajax-loader.gif" />
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>      
+            </div>
+            <div id="editMetadataSection">
+                {include file=$the_template."/storyMetadataEdit.tpl"}
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<!-- End of cataloging information -->
+
 
 <!-- Status Section -->
 {literal}
@@ -84,10 +112,10 @@
 
         $(document).ready(function () {
             
-            fetchDatasetProfile();
-            
             storyMetadataViewModel = new StoryMetadataViewModel($("#sid").val());
             ko.applyBindings(storyMetadataViewModel, document.getElementById("storyMetadataDiv"));
+            ko.applyBindings(storyMetadataViewModel, document.getElementById("showMetadataSection"));
+            
 
             // Load attachment list one for showing one for editing
             // TODO: change to knockout model and do call to the server only once.
@@ -115,17 +143,6 @@
             relationshipViewModel.mineRelationships(10, 1);
         });
 
-        function fetchDatasetProfile() {
-            $.ajax({
-                url: my_pligg_base + "/display_data.php?count=5",
-                success: function(data) {
-                    $('#upload_result').prepend(data);
-                    var datasetTitle = $('#dataset_title').text() || "New Dataset";
-                    $('#fromDataSetWrapper').find('.dataSetDesTable').find('.sidInput').val(datasetTitle);
-                }
-            });
-        }
-       
         function openVisualizationPage() {
             $('#visualizationParaForm').find('#visualTableNameParam').val(dataPreviewViewModel.currentTable().tableName);
             $('#visualizationParaForm').find('#visualTitleParam').val($('#dataset_title').text());

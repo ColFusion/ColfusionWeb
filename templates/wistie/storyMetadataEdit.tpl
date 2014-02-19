@@ -7,7 +7,7 @@
         <div class="control-group">
             <label class="control-label" for="title">{#PLIGG_Visual_Submit2_Title#}:</label>
             <div class="controls">
-                <input id="title" name="title" data-required="true" type="text" class="input-block-level" />
+                <input id="title" name="title" data-required="true" type="text" class="input-block-level" data-bind="value: title" />
             </div>
         </div>
         <div class="control-group">
@@ -17,31 +17,31 @@
             </div>
         </div>
 
-        {if $enable_tags}
+       
 
-            <div class="control-group">
-                <label class="control-label" for="tags">{#PLIGG_Visual_Submit2_Tags#}:</label>
-                <div class="controls">
-                    <input  type="text" id="tags" class="wickEnabled input-block-level" name="tags" />
-                    <script type="text/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/tag_data.js"></script> 
-                    <script type="txt/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/wick.js"></script> 
-                </div>
+        <div class="control-group">
+            <label class="control-label" for="tags">{#PLIGG_Visual_Submit2_Tags#}:</label>
+            <div class="controls">
+                <input  type="text" id="tags" class="wickEnabled input-block-level" name="tags" />
+                <script type="text/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/tag_data.js"></script> 
+                <script type="txt/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/wick.js"></script> 
             </div>
+        </div>
 
-        {/if}
+      
 
         <div class="control-group">
             <label class="control-label" for="attachmentList">{#PLIGG_Visual_Submit2_Attachments#}
                 <img src="help.png" width="15" height="15" title="" data-original-title="You can attach any files which contain any additional information about the data being submitted in step 2.">:</label>
             <div class="controls">
-                <ul class="fileList" id="attachmentList"> 
-                    <li>
-                        <span id="attachmentLoadingIcon"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
+                <table class="fileList" id="attachmentList"> 
+                    <li id="attachmentLoadingIcon">
+                        <span ><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
                     </li>
                     <li>
                         <span><a id="uploadAttachmentLink" style="color: #a44848;"><i class="icon-cloud-upload" style="margin-right: 5px;"></i>Add Files...</a></span>
                     </li>
-                </ul>  
+                </table>  
             </div>
         </div>
 
