@@ -1,4 +1,5 @@
 //wrapper for an observable that protects value until committed
+// found here: http://www.knockmeout.net/2013/01/simple-editor-pattern-knockout-js.html
 ko.protectedObservable = function(initialValue) {
     //private variables
     var _temp = initialValue;
