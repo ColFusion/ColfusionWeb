@@ -13,12 +13,12 @@
 
 <section>
     <div class="preview-story">
-        <h3 class="preview-title">Data Information</h3>
-        <div class="storycontent">
-
-            <div id="showMetadataSection">
+        <h3 class="preview-title">Dataset Information</h3>
+        <div class="storycontent" style="padding-top: 0px;">
+            <div id="showMetadataSection" data-bind="visible: !isInEditMode()">
+                <span class="pull-right btn-link" data-bind="visible: !isInEditMode(), click: switchToEditMode">[Edit]</span>
                 <span id="metadataLoadingIcon" data-bind="visible: isFetchCurrentValuesInProgress()"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
-                <table data-bind="visible: !isFetchCurrentValuesInProgress()" class="table">
+                <table data-bind="visible: !isFetchCurrentValuesInProgress()" class="table" style="margin-bottom: 0px;">
                     <tr>
                         <td>Dataset Title</td>
                         <td><span data-bind="text: title"></span></td>
@@ -49,8 +49,12 @@
                     </tr>
                 </table>      
             </div>
-            <div id="editMetadataSection">
+            <div id="editMetadataSection" data-bind="visible: isInEditMode()">
                 {include file=$the_template."/storyMetadataEdit.tpl"}
+                <div class="pull-right">
+                    <button class="btn btn-primary" data-bind="click: saveChanges">Save</button>
+                    <button class="btn" data-bind="click: cancelChanges">Cancel</button>
+                </div>
             </div>
         </div>
     </div>
@@ -113,7 +117,8 @@
         $(document).ready(function () {
             
             storyMetadataViewModel = new StoryMetadataViewModel($("#sid").val());
-            ko.applyBindings(storyMetadataViewModel, document.getElementById("storyMetadataDiv"));
+            storyMetadataViewModel.hideFormLegend();
+            ko.applyBindings(storyMetadataViewModel, document.getElementById("editMetadataSection"));
             ko.applyBindings(storyMetadataViewModel, document.getElementById("showMetadataSection"));
             
 

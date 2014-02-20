@@ -1,14 +1,47 @@
+//wrapper for an observable that protects value until committed
+ko.protectedObservable = function(initialValue) {
+    //private variables
+    var _temp = initialValue;
+    var _actual = ko.observable(initialValue);
+
+    var result = ko.dependentObservable({
+        read: _actual,
+        write: function(newValue) {
+            _temp = newValue;
+        }
+    });
+    
+    //commit the temporary value to our observable, if it is different
+    result.commit = function() {
+        if (_temp !== _actual()) {
+            _actual(_temp);
+        }
+    };
+
+    //notify subscribers to update their value with the original
+    result.reset = function() {
+        _actual.valueHasMutated();
+        _temp = _actual();
+    };
+
+    return result;
+};
+
+
 function StoryMetadataViewModel(sid){
 	var self = this;
     self.sid = sid;
 
-    self.title = ko.observable();
-    self.description = ko.observable();
-    self.sourceType = ko.observable();
-    self.status = ko.observable();
-    self.tags = ko.observable();
+    self.title = ko.protectedObservable();
+    self.description = ko.protectedObservable();
+    self.sourceType = ko.protectedObservable();
+    self.status = ko.protectedObservable();
+    self.tags = ko.protectedObservable();
 
     self.isFetchCurrentValuesInProgress = ko.observable(false);
+
+    self.isInEditMode = ko.observable(false);
+    self.showFormLegend = ko.observable(true);
 
     self.fetchCurrentValues = function() {
     	self.isFetchCurrentValuesInProgress(true);
@@ -28,10 +61,49 @@ function StoryMetadataViewModel(sid){
 	           		self.tags(data.payload.tags);
 
 	           		self.isFetchCurrentValuesInProgress(false);
+	           		self.commitAll();
            		}
             }
         });
     };
+
+    self.switchToEditMode = function() {
+    	self.isInEditMode(true);
+    }
+
+    self.switchToReadMode = function() {
+    	self.isInEditMode(false);
+    }
+
+    self.hideFormLegend = function() {
+    	self.showFormLegend(false);
+    }
+
+    self.commitAll = function() {
+    	self.title.commit();
+    	self.description.commit();
+    	self.sourceType.commit();
+    	self.status.commit();
+    	self.tags.commit();
+    }
+
+    self.resetAll = function() {
+    	self.title.reset();
+    	self.description.reset();
+    	self.sourceType.reset();
+    	self.status.reset();
+    	self.tags.reset();
+    }
+
+    self.saveChanges = function() {
+    	self.commitAll();
+    	self.switchToReadMode();
+    }
+
+    self.cancelChanges = function() {
+    	self.resetAll();
+    	self.switchToReadMode();
+    }
 
     self.fetchCurrentValues();
 }

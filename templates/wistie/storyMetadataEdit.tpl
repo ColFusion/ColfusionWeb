@@ -2,12 +2,15 @@
     <span id="metadataLoadingIcon" data-bind="visible: isFetchCurrentValuesInProgress()"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
     <form id="submitNewDataForm" class="form-horizontal" name="submitNewDataForm" action="submit1.php" method="post" enctype="multipart/form-data" data-bind="visible: !isFetchCurrentValuesInProgress()">
 
-        <legend class="stepHeader">Step 1: Describe Your Data</legend>
+        <legend class="stepHeader" data-bind="visible: showFormLegend()">Step 1: Describe Your Data</legend>
+
+        <span data-bind="visible: isInEditMode()">Edit dataset descriptin:</span>
 
         <div class="control-group">
             <label class="control-label" for="title">{#PLIGG_Visual_Submit2_Title#}:</label>
             <div class="controls">
                 <input id="title" name="title" data-required="true" type="text" class="input-block-level" data-bind="value: title" />
+                <span data-bind="visible: isInEditMode()">[History]</span>
             </div>
         </div>
         <div class="control-group">
@@ -16,8 +19,6 @@
                 <textarea id="bodytext"  name="bodytext"  data-required="true" class="input-block-level"> </textarea>
             </div>
         </div>
-
-       
 
         <div class="control-group">
             <label class="control-label" for="tags">{#PLIGG_Visual_Submit2_Tags#}:</label>
