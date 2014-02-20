@@ -38,6 +38,7 @@ function StoryMetadataViewModel(sid){
     self.sourceType = ko.protectedObservable();
     self.status = ko.protectedObservable();
     self.tags = ko.protectedObservable();
+    self.dateSubmitted = ko.protectedObservable();
 
     self.isFetchCurrentValuesInProgress = ko.observable(false);
 
@@ -60,6 +61,7 @@ function StoryMetadataViewModel(sid){
 	           		self.sourceType(data.payload.sourceType);
 	           		self.status(data.payload.status);
 	           		self.tags(data.payload.tags);
+	           		self.dateSubmitted(new Date(data.payload.dateSubmitted));
 
 	           		self.isFetchCurrentValuesInProgress(false);
 	           		self.commitAll();
@@ -86,6 +88,7 @@ function StoryMetadataViewModel(sid){
     	self.sourceType.commit();
     	self.status.commit();
     	self.tags.commit();
+    	self.dateSubmitted.commit();
     }
 
     self.resetAll = function() {
@@ -94,11 +97,14 @@ function StoryMetadataViewModel(sid){
     	self.sourceType.reset();
     	self.status.reset();
     	self.tags.reset();
+    	self.dateSubmitted.reset();
     }
 
     self.saveChanges = function() {
     	self.commitAll();
     	self.switchToReadMode();
+
+    	fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"));
     }
 
     self.cancelChanges = function() {

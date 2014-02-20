@@ -12,11 +12,11 @@ var fileManager = (function() {
                 $(container).prepend(data);
                 
                 // This is only useful at story page.               
-                var fileTable = $(container).parents('#upload_result').children('table');            
+                var fileTable = $(container).parents('#attachedFilesRow');
                 if ($(container).children('.fileListItem').length < 1) {
                       $(fileTable).hide();
                 } else {
-                      $(fileTable).prev('br').remove();
+                      $(fileTable).show();
                 }
                 
                 $(loadingIconDom).hide();

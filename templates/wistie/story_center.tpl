@@ -20,22 +20,26 @@
                 <span id="metadataLoadingIcon" data-bind="visible: isFetchCurrentValuesInProgress()"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
                 <table data-bind="visible: !isFetchCurrentValuesInProgress()" class="table" style="margin-bottom: 0px;">
                     <tr>
-                        <td>Dataset Title</td>
+                        <td style="vertical-align: top; width: 100px;">Dataset Title</td>
                         <td><span data-bind="text: title"></span></td>
                     </tr>
                     <tr>
-                        <td>Submitted by</td>
+                        <td style="vertical-align: top; width: 100px;">Submitted by</td>
                         <td><span data-bind="text: title"></span></td>
                     </tr>
                     <tr>
-                        <td>Date Submitted</td>
-                        <td><span data-bind="text: title"></span></td>
+                        <td style="vertical-align: top; width: 100px;">Date Submitted</td>
+                        <td><span data-bind="text: dateSubmitted"></span></td>
                     </tr>
                     <tr>
-                        <td>Description</td>
-                        <td><span data-bind="text: description"></span></td>
+                        <td style="vertical-align: top; width: 100px;">Description</td>
+                        <td><span data-bind="text: description" style="white-space: pre-wrap"></span></td>
                     </tr>
-                    <tr>
+                    <tr data-bind="visible: tags">
+                        <td style="vertical-align: top; width: 100px;">Tags</td>
+                        <td><span data-bind="text: tags" style="white-space: pre-wrap"></span></td>
+                    </tr>
+                    <tr id="attachedFilesRow">
                         <td class="step1_input_title" style="vertical-align: top; width: 100px;">{#PLIGG_Visual_Submit2_Attachments#}</td>
                         <td>
                             <table class="fileList" id="attachmentList2">
