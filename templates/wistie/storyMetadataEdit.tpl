@@ -4,32 +4,34 @@
 
         <legend class="stepHeader" data-bind="visible: showFormLegend()">Step 1: Describe Your Data</legend>
 
-        <span data-bind="visible: isInEditMode()">Edit dataset descriptin:</span>
+        <span data-bind="visible: isInEditMode()">Edit dataset description. Please click Save button after you finish editing. You can also click the Cancel button to ignore the changes you make and go back to previous version. </span>
 
         <div class="control-group">
             <label class="control-label" for="title">{#PLIGG_Visual_Submit2_Title#}:</label>
             <div class="controls">
                 <input id="title" name="title" data-required="true" type="text" class="input-block-level" data-bind="value: title" />
-                <span data-bind="visible: isInEditMode()">[History]</span>
+                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode()">[History]</span>
             </div>
         </div>
         <div class="control-group">
             <label class="control-label" for="bodytext">{#PLIGG_Visual_Submit2_Description#}:</label>
             <div class="controls">
                 <textarea id="bodytext"  name="bodytext"  data-required="true" class="input-block-level"> </textarea>
+                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode()">[History]</span>
             </div>
         </div>
 
         <div class="control-group">
             <label class="control-label" for="tags">{#PLIGG_Visual_Submit2_Tags#}:</label>
             <div class="controls">
-                <input  type="text" id="tags" class="wickEnabled input-block-level" name="tags" />
+                <input type="text" id="tags" class="wickEnabled input-block-level" name="tags" />
+                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode()">[History]</span>
                 <script type="text/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/tag_data.js"></script> 
                 <script type="txt/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/wick.js"></script> 
             </div>
         </div>
 
-      
+        <span data-bind="visible: isInEditMode()">Note, that if you remove an attached file, you will NOT be able to restore it by clicking Cancel button. </span>
 
         <div class="control-group">
             <label class="control-label" for="attachmentList">{#PLIGG_Visual_Submit2_Attachments#}

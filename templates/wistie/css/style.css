@@ -1577,3 +1577,7 @@ a:active {
     margin: 0 0 13px 15px;
     display: block;
 }
+
+.inputHistoryLink {
+    font-size: 12px;
+}
