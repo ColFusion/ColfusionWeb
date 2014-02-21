@@ -103,7 +103,7 @@ var importWizard = (function () {
         });
 
         $("#done").click(function () {
-            document.getElementById("final").disabled = false;
+            document.getElementById("finishYourSubmissionButton").disabled = false;
             finishSubmittingData();
         });
 
@@ -316,7 +316,7 @@ var importWizard = (function () {
     function finishSubmittingData() {
        $("#dockcontent"). removeClass('hidden').addClass('show');
        $("#dataSubmissionStep3Container"). removeClass('hidden').addClass('show');
-       dataSubmissionStep3Container
+       
         dataPreviewViewModel.getTablesList();
         relationshipViewModel.mineRelationships(10, 1);
         loadInitialFromDataSet();

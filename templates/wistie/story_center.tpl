@@ -57,10 +57,10 @@
                 {include file=$the_template."/storyMetadataEdit.tpl"}
                 
                 <div class="pull-right">
-                    <span id="saveMetadataErrorMessage" class="hide"></span>
+                    <span id="saveMetadataErrorMessage" class="hide text-error"></span>
                     <span id="saveMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
                     <button id="saveMetadataButton" class="btn btn-primary" onclick="saveMetadataForm()" data-loading-text="Saving..." data-complete-text="Saved!">Save</button>
-                    <button id="canceleMetadataButton" class="btn" data-bind="click: cancelChanges" data-loading-text="Cancel">Cancel</button>
+                    <button id="canceleMetadataButton" class="btn" onclick="cancelMetadataForm()" data-loading-text="Cancel">Cancel</button>
                 </div>
             </div>
         </div>
@@ -164,7 +164,7 @@
                 var canceleMetadataButton = $("#canceleMetadataButton");
 
                 
-
+                errorMessage.hide();
                 saveMetadataButton.button('loading');
                 canceleMetadataButton.button('loading');
                 loadingIcon.show();
@@ -180,8 +180,9 @@
                         errorMessage.show();
                         errorMessage.text("An error occured while trying to save. Please try again.");
                     }
-                })
-                .fail(function(data){
+                });
+                
+                defferedAjax.fail(function(data, textStatus){
                     loadingIcon.hide();
                     saveMetadataButton.button('reset');
                     canceleMetadataButton.button('reset');
@@ -189,6 +190,20 @@
                     errorMessage.text("An error occured while trying to save. Please try again.");
                 });
             }
+        }
+
+        function cancelMetadataForm() {
+            var loadingIcon = $("#saveMetadataLoadingIcon");
+            var errorMessage = $("#saveMetadataErrorMessage");
+            var saveMetadataButton = $("#saveMetadataButton");
+            var canceleMetadataButton = $("#canceleMetadataButton");
+
+            loadingIcon.hide();
+            saveMetadataButton.button('reset');
+            canceleMetadataButton.button('reset');
+            errorMessage.hide();
+
+            storyMetadataViewModel.cancelChanges();
         }
 
         function openVisualizationPage() {

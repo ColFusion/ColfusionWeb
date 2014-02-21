@@ -57,7 +57,11 @@
 
     <hr />
 
-    <input onclick="submitDataSubmissionForm()" class="btn " type="submit" value="{#PLIGG_Visual_Submit2_Continue#}" id="final"  disabled = true />
+    <div class>
+        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm()" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" disabled = true>Finish your submission</button>
+        <span id="submitMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
+        <span id="submitMetadataErrorMessage" class="hide text-error"></span>
+    </div>
 
 </div>
 
@@ -73,9 +77,31 @@
     function submitDataSubmissionForm() {
         if (isSubmitFormValid()) {
             var defferedAjax = storyMetadataViewModel.submitStoryMetadata();
-
+            var loadingIcon = $("#submitMetadataLoadingIcon");
+            var errorMessage = $("#submitMetadataErrorMessage");
+            var saveMetadataButton = $("#finishYourSubmissionButton");
+            
+            errorMessage.hide();
+            saveMetadataButton.button('loading');
+            loadingIcon.show();
             defferedAjax.done(function(data) {
-                
+                loadingIcon.hide();
+                if (data.isSuccessful) {
+                    saveMetadataButton.button('complete');
+                    
+                }
+                else {
+                    saveMetadataButton.button('reset');
+                    canceleMetadataButton.button('reset');
+                    errorMessage.show();
+                    errorMessage.text("An error occured while trying to save. Please try again.");
+                }
+            })
+            .fail(function(data){
+                loadingIcon.hide();
+                saveMetadataButton.button('reset');
+                errorMessage.show();
+                errorMessage.text("An error occured while trying to save. Please try again.");
             });
         }
     }
