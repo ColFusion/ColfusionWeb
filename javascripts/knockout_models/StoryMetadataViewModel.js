@@ -115,12 +115,13 @@ function StoryMetadataViewModel(sid){
             crossDomain: true,
             data: JSON.stringify({
             	sid : self.sid(),
+            	userId : self.userId(),
             	title : self.title.getTemp(),
             	description : self.description.getTemp(),
             	status : self.status.getTemp(),
             	sourceType : self.sourceType.getTemp(),
             	tags : self.tags.getTemp(),
-            	dateSubmitted : self.dateSubmitted.getTemp(),
+            	dateSubmitted : self.dateSubmitted.getTemp()
             })
         });       
     }    
