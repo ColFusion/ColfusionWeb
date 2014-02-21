@@ -68,7 +68,7 @@
 {literal}
 <script>
     
-    storyMetadataViewModel = new StoryMetadataViewModel($("#sid").val());
+    storyMetadataViewModel = new StoryMetadataViewModel("new");
     ko.applyBindings(storyMetadataViewModel, document.getElementById("storyMetadataDiv"));
 
     // Load attachment list.
@@ -76,6 +76,8 @@
 
     function submitDataSubmissionForm() {
         if (isSubmitFormValid()) {
+            storyMetadataViewModel.status("queued");
+
             var defferedAjax = storyMetadataViewModel.submitStoryMetadata();
             var loadingIcon = $("#submitMetadataLoadingIcon");
             var errorMessage = $("#submitMetadataErrorMessage");

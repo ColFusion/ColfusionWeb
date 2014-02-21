@@ -104,10 +104,10 @@ function do_submit0() {
 		check_actions('register_showform', $vars);
 	}
 
-	$queryEngine = new QueryEngine();
-	$sid = $queryEngine->simpleQuery->getNewSid($current_user->user_id, 'draft');
+	//$queryEngine = new QueryEngine();
+	//$sid = $queryEngine->simpleQuery->getNewSid($current_user->user_id, 'draft');
 	
-	$main_smarty->assign('sid', $sid);
+	$main_smarty->assign('user_id', $current_user->user_id);
 	
 	$main_smarty->assign('tpl_extra_fields', $the_template . '/submit_extra_fields');
 	$main_smarty->assign('tpl_center', $the_template . '/submit_step_21');

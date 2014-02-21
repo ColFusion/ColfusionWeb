@@ -36,6 +36,7 @@ ko.protectedObservable = function(initialValue) {
 function StoryMetadataViewModel(sid){
 	var self = this;
     self.sid = ko.observable(sid);
+    self.userId = ko.observable();
 
     self.title = ko.protectedObservable();
     self.description = ko.protectedObservable();
@@ -50,29 +51,16 @@ function StoryMetadataViewModel(sid){
     self.showFormLegend = ko.observable(true);
 
     self.fetchCurrentValues = function() {
-    	self.isFetchCurrentValuesInProgress(true);
+    	var url = "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid();
 
-    	$.ajax({
-            url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
-            type: 'GET',
-            dataType: 'json',
-            contentType: "application/json",
-            crossDomain: true,
-            success: function(data) {
-            	if (data.isSuccessful) {
-	            	self.title(data.payload.title);
-	            	self.description(data.payload.description);
-	           		self.sourceType(data.payload.sourceType);
-	           		self.status(data.payload.status);
-	           		self.tags(data.payload.tags);
-	           		self.dateSubmitted(new Date(data.payload.dateSubmitted));
-
-	           		self.isFetchCurrentValuesInProgress(false);
-	           		self.commitAll();
-           		}
-            }
-        });
+    	doAjaxForFetchOrCreate(url);
     };
+
+    self.createNewStory = function(userId) {
+    	var url = "http://localhost:8080/ColFusionServer/Story/metadata/new" + self.userId();
+
+    	doAjaxForFetchOrCreate(url);
+    }
 
     self.switchToEditMode = function() {
     	self.isInEditMode(true);
@@ -136,6 +124,33 @@ function StoryMetadataViewModel(sid){
             })
         });       
     }    
+
+    function doAjaxForFetchOrCreate(url) {
+    	self.isFetchCurrentValuesInProgress(true);
+
+    	$.ajax({
+            url: url, //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+            	if (data.isSuccessful) {
+            		self.sid(data.payload.sid);
+            		self.userId(data.payload.userId);
+	            	self.title(data.payload.title);
+	            	self.description(data.payload.description);
+	           		self.sourceType(data.payload.sourceType);
+	           		self.status(data.payload.status);
+	           		self.tags(data.payload.tags);
+	           		self.dateSubmitted(new Date(data.payload.dateSubmitted));
+
+	           		self.isFetchCurrentValuesInProgress(false);
+	           		self.commitAll();
+           		}
+            }
+        });
+    }
 
     self.fetchCurrentValues();
 }
