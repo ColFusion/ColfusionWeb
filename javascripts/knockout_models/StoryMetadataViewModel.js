@@ -25,20 +25,24 @@ ko.protectedObservable = function(initialValue) {
         _temp = _actual();
     };
 
+    result.getTemp = function() {
+    	return _temp;
+    }
+
     return result;
 };
 
 
 function StoryMetadataViewModel(sid){
 	var self = this;
-    self.sid = sid;
+    self.sid = ko.observable(sid);
 
     self.title = ko.protectedObservable();
     self.description = ko.protectedObservable();
     self.sourceType = ko.protectedObservable();
-    self.status = ko.protectedObservable();
+    self.status = ko.protectedObservable("draft");
     self.tags = ko.protectedObservable();
-    self.dateSubmitted = ko.protectedObservable();
+    self.dateSubmitted = ko.protectedObservable(new Date());
 
     self.isFetchCurrentValuesInProgress = ko.observable(false);
 
@@ -49,7 +53,7 @@ function StoryMetadataViewModel(sid){
     	self.isFetchCurrentValuesInProgress(true);
 
     	$.ajax({
-            url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid, //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
+            url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -111,6 +115,27 @@ function StoryMetadataViewModel(sid){
     	self.resetAll();
     	self.switchToReadMode();
     }
+
+    self.submitStoryMetadata = function() {
+    	//self.commitAll();
+
+    	return $.ajax({
+            url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
+            type: 'POST',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            data: JSON.stringify({
+            	sid : self.sid(),
+            	title : self.title.getTemp(),
+            	description : self.description.getTemp(),
+            	status : self.status.getTemp(),
+            	sourceType : self.sourceType.getTemp(),
+            	tags : self.tags.getTemp(),
+            	dateSubmitted : self.dateSubmitted.getTemp(),
+            })
+        });       
+    }    
 
     self.fetchCurrentValues();
 }

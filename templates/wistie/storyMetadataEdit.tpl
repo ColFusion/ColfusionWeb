@@ -52,7 +52,7 @@
         <input type="hidden" name="phase" value="1" />
         <input type="hidden" name="randkey" value="{$randkey}" />
         <input type="hidden" name="id" value="{$submit_id}" />
-        <input type="hidden" id="sid" name="sid" value="{$sid}"/>
+        <input type="hidden" id="sid" name="sid" data-bind="value: sid"/>
     </form> 
 </div>
 
@@ -94,17 +94,14 @@
             $(iframeDom).appendTo(lightBoxContentDom);
         });
 
-        // Validates story metadata form and submits if it is valid.
-        function submitDataSubmissionForm() {
+        function isSubmitFormValid() {
             var form = $('#submitNewDataForm');
             form.parsley({
                 'excluded': 'input[type=radio], input[type=checkbox]'
             });
             
-            if (form.parsley('validate')){
-                form.submit();
-            }
-        }    
+            return form.parsley('validate');
+        }
     </script>
 {/literal}
 <!-- End of apply KO bindings -->

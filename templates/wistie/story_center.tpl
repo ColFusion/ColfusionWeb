@@ -55,9 +55,12 @@
             </div>
             <div id="editMetadataSection" data-bind="visible: isInEditMode()">
                 {include file=$the_template."/storyMetadataEdit.tpl"}
+                
                 <div class="pull-right">
-                    <button class="btn btn-primary" data-bind="click: saveChanges">Save</button>
-                    <button class="btn" data-bind="click: cancelChanges">Cancel</button>
+                    <span id="saveMetadataErrorMessage" class="hide"></span>
+                    <span id="saveMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
+                    <button id="saveMetadataButton" class="btn btn-primary" onclick="saveMetadataForm()" data-loading-text="Saving..." data-complete-text="Saved!">Save</button>
+                    <button id="canceleMetadataButton" class="btn" data-bind="click: cancelChanges" data-loading-text="Cancel">Cancel</button>
                 </div>
             </div>
         </div>
@@ -120,7 +123,7 @@
 
         $(document).ready(function () {
             
-            storyMetadataViewModel = new StoryMetadataViewModel($("#sid").val());
+            storyMetadataViewModel = new StoryMetadataViewModel(sid);
             storyMetadataViewModel.hideFormLegend();
             ko.applyBindings(storyMetadataViewModel, document.getElementById("editMetadataSection"));
             ko.applyBindings(storyMetadataViewModel, document.getElementById("showMetadataSection"));
@@ -151,6 +154,42 @@
 
             relationshipViewModel.mineRelationships(10, 1);
         });
+
+        function saveMetadataForm() {
+            if (isSubmitFormValid()) {
+                var defferedAjax = storyMetadataViewModel.submitStoryMetadata();
+                var loadingIcon = $("#saveMetadataLoadingIcon");
+                var errorMessage = $("#saveMetadataErrorMessage");
+                var saveMetadataButton = $("#saveMetadataButton");
+                var canceleMetadataButton = $("#canceleMetadataButton");
+
+                
+
+                saveMetadataButton.button('loading');
+                canceleMetadataButton.button('loading');
+                loadingIcon.show();
+                defferedAjax.done(function(data) {
+                    loadingIcon.hide();
+                    if (data.isSuccessful) {
+                        saveMetadataButton.button('complete');
+                        storyMetadataViewModel.saveChanges();
+                    }
+                    else {
+                        saveMetadataButton.button('reset');
+                        canceleMetadataButton.button('reset');
+                        errorMessage.show();
+                        errorMessage.text("An error occured while trying to save. Please try again.");
+                    }
+                })
+                .fail(function(data){
+                    loadingIcon.hide();
+                    saveMetadataButton.button('reset');
+                    canceleMetadataButton.button('reset');
+                    errorMessage.show();
+                    errorMessage.text("An error occured while trying to save. Please try again.");
+                });
+            }
+        }
 
         function openVisualizationPage() {
             $('#visualizationParaForm').find('#visualTableNameParam').val(dataPreviewViewModel.currentTable().tableName);

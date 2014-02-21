@@ -68,7 +68,17 @@
     ko.applyBindings(storyMetadataViewModel, document.getElementById("storyMetadataDiv"));
 
     // Load attachment list.
-    fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));   
+    fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));
+
+    function submitDataSubmissionForm() {
+        if (isSubmitFormValid()) {
+            var defferedAjax = storyMetadataViewModel.submitStoryMetadata();
+
+            defferedAjax.done(function(data) {
+                
+            });
+        }
+    }
 
 </script>
 {/literal}
