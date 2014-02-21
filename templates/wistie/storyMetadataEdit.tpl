@@ -52,7 +52,7 @@
         <input type="hidden" name="phase" value="1" />
         <input type="hidden" name="randkey" value="{$randkey}" />
         <input type="hidden" name="id" value="{$submit_id}" />
-        <input type="hidden" name="user_id" value="{$user_id}" />
+        <input type="hidden" name="user_id" id="user_id" value="{$user_id}" />
         <input type="hidden" id="sid" name="sid" data-bind="value: sid" value="{$sid}"/>
     </form> 
 </div>

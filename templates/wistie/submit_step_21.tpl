@@ -68,8 +68,10 @@
 {literal}
 <script>
     
-    storyMetadataViewModel = new StoryMetadataViewModel("new");
+    storyMetadataViewModel = new StoryMetadataViewModel("");
     ko.applyBindings(storyMetadataViewModel, document.getElementById("storyMetadataDiv"));
+
+    storyMetadataViewModel.createNewStory($("#user_id").val(), initNewStoryPage);
 
     // Load attachment list.
     fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));

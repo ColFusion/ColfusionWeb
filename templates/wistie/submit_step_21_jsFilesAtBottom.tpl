@@ -49,7 +49,13 @@
 
             $(document).ready(function() {
 
-                sid = $('#sid').val();
+                
+
+                        
+            });
+
+            var initNewStoryPage = function(sid) {
+                sid = sid;
                 dataPreviewViewModel = new DataPreviewViewModel(sid);
                 relationshipViewModel = new RelationshipViewModel(sid);
                 ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
@@ -67,9 +73,7 @@
                     dataType: 'html',
                     async: false
                 });
-
-                        
-            });
+            }
 
             
             $('#newRelContainer').css({

@@ -53,13 +53,13 @@ function StoryMetadataViewModel(sid){
     self.fetchCurrentValues = function() {
     	var url = "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid();
 
-    	doAjaxForFetchOrCreate(url);
+    	doAjaxForFetchOrCreate(url, "");
     };
 
-    self.createNewStory = function(userId) {
-    	var url = "http://localhost:8080/ColFusionServer/Story/metadata/new" + self.userId();
+    self.createNewStory = function(userId, callBack) {
+    	var url = "http://localhost:8080/ColFusionServer/Story/metadata/new/" + userId;
 
-    	doAjaxForFetchOrCreate(url);
+    	doAjaxForFetchOrCreate(url, callBack);
     }
 
     self.switchToEditMode = function() {
@@ -125,7 +125,7 @@ function StoryMetadataViewModel(sid){
         });       
     }    
 
-    function doAjaxForFetchOrCreate(url) {
+    function doAjaxForFetchOrCreate(url, callBack) {
     	self.isFetchCurrentValuesInProgress(true);
 
     	$.ajax({
@@ -147,10 +147,11 @@ function StoryMetadataViewModel(sid){
 
 	           		self.isFetchCurrentValuesInProgress(false);
 	           		self.commitAll();
+
+	           		if (callBack)
+	           			callBack(self.sid());
            		}
             }
         });
     }
-
-    self.fetchCurrentValues();
 }

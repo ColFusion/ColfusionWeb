@@ -127,6 +127,7 @@
             storyMetadataViewModel.hideFormLegend();
             ko.applyBindings(storyMetadataViewModel, document.getElementById("editMetadataSection"));
             ko.applyBindings(storyMetadataViewModel, document.getElementById("showMetadataSection"));
+            storyMetadataViewModel.fetchCurrentValues();
             
 
             // Load attachment list one for showing one for editing
@@ -181,7 +182,7 @@
                         errorMessage.text("An error occured while trying to save. Please try again.");
                     }
                 });
-                
+
                 defferedAjax.fail(function(data, textStatus){
                     loadingIcon.hide();
                     saveMetadataButton.button('reset');
