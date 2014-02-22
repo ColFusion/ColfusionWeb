@@ -161,7 +161,10 @@ class Link {
 		global $db, $current_user, $cached_links;
 		$id = $this->id;
 		$this->rating = 0;
-		if(!is_numeric($id)){return false;}
+		if(!is_numeric($id)) {
+
+			return false;
+		}
 		// check to see if the link is cached
 		// if it is, use it
 		// if not, get from mysql and save to cache
@@ -174,6 +177,8 @@ class Link {
 		}
     
 		if($link) {
+
+
 			$this->author=$link->link_author;
 			$this->userid=$link->link_author;
 			$this->status=$link->link_status;
@@ -242,6 +247,7 @@ class Link {
 			
 			return true;
 		}
+
 		$this->fullread = $this->read = false;
 		return false;
 	}

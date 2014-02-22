@@ -58,7 +58,7 @@
     <hr />
 
     <div class>
-        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm()" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" disabled = true>Finish your submission</button>
+        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm()" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" >Finish your submission</button>
         <span id="submitMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
         <span id="submitMetadataErrorMessage" class="hide text-error"></span>
     </div>

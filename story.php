@@ -34,7 +34,10 @@ if(isset($_GET['category']) && sanitize($_GET['category'], 3) != '')
 $main_smarty->assign('sid', $_GET['title']);
 $main_smarty->assign('isAuthenticated', $current_user->authenticated);
 
+
+
 if($requestID > 0 && enable_friendly_urls == true){
+	
 	// if we're using friendly urls, don't call /story.php?id=XX  or /story/XX/
 	// this is to prevent google from thinking it's spam
 	// more work needs to be done on this
@@ -45,6 +48,8 @@ if($requestID > 0 && enable_friendly_urls == true){
 				      (array_diff($thecat, $link->additional_cats, array($link->category)) || 
 				       sizeof($thecat)!=sizeof($link->additional_cats)+1)))
 	{
+
+
 		header("Location: $my_pligg_base/404error.php");
 		die();
 	}
@@ -66,6 +71,8 @@ if(isset($requestTitle)){
 }
 
 if(is_numeric($requestID)) {
+
+
 	$id = $requestID;
 	$link = new Link;
 	$link->id=$requestID;
