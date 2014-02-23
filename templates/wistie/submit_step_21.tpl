@@ -96,7 +96,7 @@
                 }
                 else {
                     saveMetadataButton.button('reset');
-                    canceleMetadataButton.button('reset');
+                    
                     errorMessage.show();
                     errorMessage.text("An error occured while trying to save. Please try again.");
                 }

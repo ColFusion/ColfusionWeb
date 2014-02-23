@@ -6,21 +6,71 @@
 
         <span data-bind="visible: isInEditMode()">Edit dataset description. Please click Save button after you finish editing. You can also click the Cancel button to ignore the changes you make and go back to previous version. </span>
 
+        <!-- Title -->
         <div class="control-group">
-            <label class="control-label" for="title">{#PLIGG_Visual_Submit2_Title#}:</label>
+            <label class="control-label" for="title">{#PLIGG_Visual_Submit2_Title#} <span class="text-error">*</span>:</label>
             <div class="controls">
                 <input id="title" name="title" data-required="true" type="text" class="input-block-level" data-bind="value: title" />
                 <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode()">[History]</span>
             </div>
         </div>
+        
+        <!-- Authors -->
         <div class="control-group">
-            <label class="control-label" for="bodytext">{#PLIGG_Visual_Submit2_Description#}:</label>
+            <label class="control-label" for="title">Authors:</label>
+            <div class="controls">
+                <button class="btn btn-primary" data-bind='click: addAuthor'>Add Author</button>
+                <table class="table">
+                    <thead data-bind="visible: storyAuthors().length > 0">
+                        <tr>
+                            <th>Last Name, First Name <span class="text-error">*</span></th>
+                            <th>Role <span class="text-error">*</span></th>
+                            <th> </th>
+                        </tr>
+                    </thead>
+                    <tbody data-bind='foreach: storyAuthors'>
+                        <tr>
+                            <td>
+                                <input style="width: 100%" data-bind='value: lastName' placeholder="Type author's last name and firt name..." data-required="true" />
+                            </td>
+                            <td>
+                            <select style="width: 100%" data-required="true" data-trigger="change" 
+                            data-bind="value: roleId" >
+                                <option value="">Select Role...</option>
+                                
+                                <!-- ko foreach: authorRoles -->
+                                    <option data-bind="value: $data.roleId, text: $data.roleName ">
+                                        
+                                    </option>
+                                <!-- /ko -->
+                            </select>
+
+<!--
+                                <select style="width: 100%" data-bind='options: authorRoles, optionsText: "storyUserRoleName", optionsCaption: "Select...", value: authorRole' data-required="true" data-trigger="change"> </select>
+                                -->
+                            </td>
+                            
+                            <td>
+                                <a href='#' data-bind='click: $parent.removeAuthor'>Remove</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+               
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div class="control-group">
+            <label class="control-label" for="bodytext">{#PLIGG_Visual_Submit2_Description#} <span class="text-error">*</span>:</label>
             <div class="controls">
                 <textarea id="bodytext"  name="bodytext"  data-required="true" class="input-block-level" data-bind="value: description"> </textarea>
                 <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode()">[History]</span>
             </div>
         </div>
 
+        <!-- Tags -->
         <div class="control-group">
             <label class="control-label" for="tags">{#PLIGG_Visual_Submit2_Tags#}:</label>
             <div class="controls">
@@ -97,6 +147,10 @@
 
         function isSubmitFormValid() {
             var form = $('#submitNewDataForm');
+
+            //TODO, FIXME not the best solution
+            form.parsley('destroy');
+
             form.parsley({
                 'excluded': 'input[type=radio], input[type=checkbox]'
             });

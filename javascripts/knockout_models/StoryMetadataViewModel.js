@@ -32,8 +32,34 @@ ko.protectedObservable = function(initialValue) {
     return result;
 };
 
-var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource, karma, storyUserRoleId, storyUserRoleName,
- 								storyUserRoleDescription) {
+
+
+var AuthorRoleModel = function (roleId, roleName, roleDescription) {
+	var self = this;
+
+	self.roleId = ko.protectedObservable(roleId);
+	self.roleName = ko.protectedObservable(roleName);
+	self.roleDescription = ko.protectedObservable(roleDescription);
+
+	self.commit = function () {
+		self.roleId.commit();
+		self.roleName.commit();
+		self.roleDescription.commit();
+	}
+
+	self.reset = function () {
+		self.roleId.reset();
+		self.roleName.reset();
+		self.roleDescription.reset();
+	}
+}
+
+//TODO, FIXME: should be read from the server
+var authorRoles = [ new AuthorRoleModel(1, "submitter", "the person who submits the data to Col*Fusion"), 
+	new AuthorRoleModel(2, "owner", "the person who owns the data to Col*Fusion")
+];
+
+var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource, karma, roleId) {
 	var self = this;
 
 	self.userId = ko.protectedObservable(userId);
@@ -42,9 +68,8 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 	self.login = ko.protectedObservable(login);
 	self.avatarSource = ko.protectedObservable(avatarSource);
 	self.karma = ko.protectedObservable(karma);
-	self.storyUserRoleId = ko.protectedObservable(storyUserRoleId);
-	self.storyUserRoleName = ko.protectedObservable(storyUserRoleName);
-	self.storyUserRoleDescription = ko.protectedObservable(storyUserRoleDescription);
+	self.roleId = ko.protectedObservable(roleId);
+	
 
 	self.commit = function() {
 		self.userId.commit();
@@ -53,9 +78,7 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 		self.login.commit();
 		self.avatarSource.commit();
 		self.karma.commit();
-		self.storyUserRoleId.commit();
-		self.storyUserRoleName.commit();
-		self.storyUserRoleDescription.commit();
+		self.roleId.commit();
 	}
 
 	self.reset = function() {
@@ -65,9 +88,12 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 		self.login.reset();
 		self.avatarSource.reset();
 		self.karma.reset();
-		self.storyUserRoleId.reset();
-		self.storyUserRoleName.reset();
-		self.storyUserRoleDescription.reset();
+		self.roleId.reset();
+	}
+
+	self.getTemp = function() {
+		return new StoryAuthorModel(self.userId.getTemp(), self.firstName.getTemp(), self.lastName.getTemp(), self.login.getTemp(), 
+			self.avatarSource.getTemp(), self.karma.getTemp(), self.roleId.getTemp());
 	}
 };
 
@@ -76,6 +102,7 @@ function StoryMetadataViewModel(sid){
     self.sid = ko.observable(sid);
     
     self.submitter = ko.protectedObservable();
+    self.storyAuthors = ko.observableArray();
 
     self.title = ko.protectedObservable();
     self.description = ko.protectedObservable();
@@ -121,6 +148,11 @@ function StoryMetadataViewModel(sid){
     	self.tags.commit();
     	self.dateSubmitted.commit();
     	self.submitter.commit();
+
+    	//TODO: might be better to do with map.
+    	for (var i = 0; i < self.storyAuthors().length; i++) {
+    		self.storyAuthors()[i].commit();
+    	};
     }
 
     self.resetAll = function() {
@@ -131,6 +163,11 @@ function StoryMetadataViewModel(sid){
     	self.tags.reset();
     	self.dateSubmitted.reset();
     	self.submitter.reset();
+
+    	//TODO: might be better to do with map.
+    	for (var i = 0; i < self.storyAuthors().length; i++) {
+    		self.storyAuthors()[i].reset();
+    	};
     }
 
     self.saveChanges = function() {
@@ -156,16 +193,26 @@ function StoryMetadataViewModel(sid){
             crossDomain: true,
             data: JSON.stringify({
             	sid : self.sid(),
-            	userId : self.userId(),
             	title : self.title.getTemp(),
             	description : self.description.getTemp(),
             	status : self.status.getTemp(),
             	sourceType : self.sourceType.getTemp(),
             	tags : self.tags.getTemp(),
-            	dateSubmitted : self.dateSubmitted.getTemp()
-            })
+            	dateSubmitted : self.dateSubmitted.getTemp(),
+            	storySubmitter: ko.toJSON(self.submitter.getTemp()),
+            	storyAuthors : ko.toJSON($.map(self.storyAuthors(), function (item) {
+            		return 	item.getTemp(); }))
+            	})
         });       
     }    
+
+    self.addAuthor = function() {
+    	self.storyAuthors.push(new StoryAuthorModel());
+    }
+
+    self.removeAuthor = function (author) {
+    	self.storyAuthors.remove(author);
+    }
 
     function doAjaxForFetchOrCreate(url, callBack) {
     	self.isFetchCurrentValuesInProgress(true);
@@ -179,11 +226,15 @@ function StoryMetadataViewModel(sid){
             success: function(data) {
             	if (data.isSuccessful) {
             		self.sid(data.payload.sid);
-            		self.submitter(new StoryAuthorModel(data.payload.storySubmitter.userId, data.payload.storySubmitter.firstName, 
+
+         //    		var submitterRole = new AuthorRoleModel(data.payload.storySubmitter.storyUserRoleId, data.payload.storySubmitter.storyUserRoleName,
+ 								// data.payload.storySubmitter.storyUserRoleDescription);
+
+            		var submitterModel = new StoryAuthorModel(data.payload.storySubmitter.userId, data.payload.storySubmitter.firstName, 
             			data.payload.storySubmitter.lastName, data.payload.storySubmitter.login, 
-            			data.payload.storySubmitter.avatarSource, data.payload.storySubmitter.karma, 
-            			data.payload.storySubmitter.storyUserRoleId, data.payload.storySubmitter.storyUserRoleName,
- 								data.payload.storySubmitter.storyUserRoleDescription));
+            			data.payload.storySubmitter.avatarSource, data.payload.storySubmitter.karma, data.payload.storySubmitter.roleId);
+
+            		self.submitter(submitterModel);
 
 	            	self.title(data.payload.title);
 	            	self.description(data.payload.description);
@@ -191,6 +242,20 @@ function StoryMetadataViewModel(sid){
 	           		self.status(data.payload.status);
 	           		self.tags(data.payload.tags);
 	           		self.dateSubmitted(new Date(data.payload.dateSubmitted));
+
+	           		var authors = data.payload.storyAuthors;
+	           		if (authors) {
+		           		for (var i = 0; i < authors.length - 1; i++) {
+
+		           			// var authorRole = new AuthorRoleModel(authors[i].storyUserRoleId, authors[i].storyUserRoleName, 
+		           			// 					authors[i].storyUserRoleDescription);
+
+		           			var authorModel = new StoryAuthorModel(authors[i].userId, authors[i].firstName, 
+	            			authors[i].lastName, authors[i].login, authors[i].avatarSource, authors[i].karma, authors[i].roleId);
+	            			
+	            			self.storyAuthors.push(authorModel);
+		           		};
+		           	};
 
 	           		self.isFetchCurrentValuesInProgress(false);
 	           		self.commitAll();

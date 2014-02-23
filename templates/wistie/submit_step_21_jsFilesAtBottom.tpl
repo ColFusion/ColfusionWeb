@@ -47,13 +47,6 @@
             var dataPreviewViewModel;
             var relationshipViewModel;
 
-            $(document).ready(function() {
-
-                
-
-                        
-            });
-
             var initNewStoryPage = function(sid) {
                 sid = sid;
                 dataPreviewViewModel = new DataPreviewViewModel(sid);
