@@ -25,7 +25,9 @@
                     </tr>
                     <tr>
                         <td style="vertical-align: top; width: 100px;">Submitted by</td>
-                        <td><span data-bind="text: title"></span></td>
+                        <!-- ko with: submitter -->
+                        <td><span data-bind="text: login"></span></td>
+                        <!-- /ko -->
                     </tr>
                     <tr>
                         <td style="vertical-align: top; width: 100px;">Date Submitted</td>

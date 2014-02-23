@@ -32,11 +32,50 @@ ko.protectedObservable = function(initialValue) {
     return result;
 };
 
+var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource, karma, storyUserRoleId, storyUserRoleName,
+ 								storyUserRoleDescription) {
+	var self = this;
+
+	self.userId = ko.protectedObservable(userId);
+	self.firstName = ko.protectedObservable(firstName);
+	self.lastName = ko.protectedObservable(lastName);
+	self.login = ko.protectedObservable(login);
+	self.avatarSource = ko.protectedObservable(avatarSource);
+	self.karma = ko.protectedObservable(karma);
+	self.storyUserRoleId = ko.protectedObservable(storyUserRoleId);
+	self.storyUserRoleName = ko.protectedObservable(storyUserRoleName);
+	self.storyUserRoleDescription = ko.protectedObservable(storyUserRoleDescription);
+
+	self.commit = function() {
+		self.userId.commit();
+		self.firstName.commit();
+		self.lastName.commit();
+		self.login.commit();
+		self.avatarSource.commit();
+		self.karma.commit();
+		self.storyUserRoleId.commit();
+		self.storyUserRoleName.commit();
+		self.storyUserRoleDescription.commit();
+	}
+
+	self.reset = function() {
+		self.userId.reset();
+		self.firstName.reset();
+		self.lastName.reset();
+		self.login.reset();
+		self.avatarSource.reset();
+		self.karma.reset();
+		self.storyUserRoleId.reset();
+		self.storyUserRoleName.reset();
+		self.storyUserRoleDescription.reset();
+	}
+};
 
 function StoryMetadataViewModel(sid){
 	var self = this;
     self.sid = ko.observable(sid);
-    self.userId = ko.observable();
+    
+    self.submitter = ko.protectedObservable();
 
     self.title = ko.protectedObservable();
     self.description = ko.protectedObservable();
@@ -81,6 +120,7 @@ function StoryMetadataViewModel(sid){
     	self.status.commit();
     	self.tags.commit();
     	self.dateSubmitted.commit();
+    	self.submitter.commit();
     }
 
     self.resetAll = function() {
@@ -90,6 +130,7 @@ function StoryMetadataViewModel(sid){
     	self.status.reset();
     	self.tags.reset();
     	self.dateSubmitted.reset();
+    	self.submitter.reset();
     }
 
     self.saveChanges = function() {
@@ -138,7 +179,12 @@ function StoryMetadataViewModel(sid){
             success: function(data) {
             	if (data.isSuccessful) {
             		self.sid(data.payload.sid);
-            		self.userId(data.payload.userId);
+            		self.submitter(new StoryAuthorModel(data.payload.storySubmitter.userId, data.payload.storySubmitter.firstName, 
+            			data.payload.storySubmitter.lastName, data.payload.storySubmitter.login, 
+            			data.payload.storySubmitter.avatarSource, data.payload.storySubmitter.karma, 
+            			data.payload.storySubmitter.storyUserRoleId, data.payload.storySubmitter.storyUserRoleName,
+ 								data.payload.storySubmitter.storyUserRoleDescription));
+
 	            	self.title(data.payload.title);
 	            	self.description(data.payload.description);
 	           		self.sourceType(data.payload.sourceType);
