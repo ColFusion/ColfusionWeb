@@ -132,6 +132,7 @@ function StoryMetadataViewModel(sid){
     
     self.submitter = ko.observable();
     self.storyAuthors = ko.observableArray();
+    self.removedStoryAuthors = ko.observableArray();
 
     self.title = ko.observable();
     self.description = ko.observable();
@@ -203,6 +204,8 @@ function StoryMetadataViewModel(sid){
         data.storySubmitter = self.submitter().getTempAsJSONObj();
         data.storyAuthors = $.map(self.storyAuthors(), function (item) {
             		return 	item.getTempAsJSONObj();});
+        data.removedStoryAuthors = $.map(self.removedStoryAuthors(), function (item) {
+            		return 	item.getTempAsJSONObj();});
 
     	return $.ajax({
             url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
@@ -223,6 +226,7 @@ function StoryMetadataViewModel(sid){
     }
 
     self.removeAuthor = function (author) {
+    	self.removedStoryAuthors.push(author);
     	self.storyAuthors.remove(author);
     }
 

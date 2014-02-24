@@ -92,6 +92,10 @@
                 loadingIcon.hide();
                 if (data.isSuccessful) {
                     saveMetadataButton.button('complete');
+                    
+                    saveMetadataButton.button('reset');
+                    
+
                     //TODO, FIXME: the url should be read from some settings.
                     window.location.href = "/Colfusion/story.php?title=" + storyMetadataViewModel.sid();
                     

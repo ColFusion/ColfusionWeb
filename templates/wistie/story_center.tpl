@@ -175,6 +175,9 @@
                     loadingIcon.hide();
                     if (data.isSuccessful) {
                         saveMetadataButton.button('complete');
+                        saveMetadataButton.button('reset');
+                        canceleMetadataButton.button('reset');
+                        errorMessage.hide();
                         storyMetadataViewModel.switchToReadModeAndUpdateAttachments();
                     }
                     else {
