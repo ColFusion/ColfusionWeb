@@ -15,10 +15,12 @@
     <div class="preview-story">
         <h3 class="preview-title">Dataset Information</h3>
         <div class="storycontent" style="padding-top: 0px;">
+
+<!-- Read mode UI -->
             <div id="showMetadataSection" data-bind="visible: !isInEditMode()">
                 <span class="pull-right btn-link" data-bind="visible: !isInEditMode(), click: switchToEditMode">[Edit]</span>
                 <span id="metadataLoadingIcon" data-bind="visible: isFetchCurrentValuesInProgress()"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
-                <table data-bind="visible: !isFetchCurrentValuesInProgress()" class="table" style="margin-bottom: 0px;">
+                <table data-bind="visible: !isFetchCurrentValuesInProgress()" class="table table-hover" style="margin-bottom: 0px;">
                     <tr>
                         <td style="vertical-align: top; width: 100px;">Dataset Title</td>
                         <td><span data-bind="text: title"></span></td>
@@ -26,8 +28,22 @@
                     <tr>
                         <td style="vertical-align: top; width: 100px;">Submitted by</td>
                         <!-- ko with: submitter -->
-                        <td><span data-bind="text: login"></span></td>
+                        <td><span data-bind="text: authorInfo"></span></td>
                         <!-- /ko -->
+                    </tr>
+                    <tr>
+                        <td style="vertical-align: top; width: 100px;">Authors</td>
+                        
+                        <td>
+                            <table class="table table-hover">
+                                <tbody data-bind="foreach: storyAuthors">
+                                    <tr>
+                                        <td><span data-bind="text: authorInfo"></span> (<span data-bind="text: roleName"></span>)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        
                     </tr>
                     <tr>
                         <td style="vertical-align: top; width: 100px;">Date Submitted</td>
@@ -55,6 +71,9 @@
                     </tr>
                 </table>      
             </div>
+
+<!-- Edit UI -->
+
             <div id="editMetadataSection" data-bind="visible: isInEditMode()">
                 {include file=$the_template."/storyMetadataEdit.tpl"}
                 

@@ -113,6 +113,10 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 		return info;
 	});
 
+	self.roleName = ko.computed(function() {
+		return authorRoles[self.roleId() - 1].roleName();
+	});
+
 	self.getTempAsJSONObj = function() {
 		return 	{
             		userId : self.userId(),
