@@ -42,20 +42,9 @@
                                 <input style="width: 100%; " disabled="true" data-required="true" data-bind="value: authorInfo" />
                             </td>
                             <td>
-                            <select style="width: 100%" data-required="true" data-trigger="change" 
-                            data-bind="value: roleId" >
-                                <option value="">Select Role...</option>
-                                
-                                <!-- ko foreach: authorRoles -->
-                                    <option data-bind="value: $data.roleId, text: $data.roleName ">
-                                        
-                                    </option>
-                                <!-- /ko -->
-                            </select>
+                            <select data-bind="options: authorRoles, optionsText: 'roleName', optionsValue: 'roleId', value: roleId, optionsCaption: 'Select Role...'"></select>
 
-<!--
-                                <select style="width: 100%" data-bind='options: authorRoles, optionsText: "storyUserRoleName", optionsCaption: "Select...", value: authorRole' data-required="true" data-trigger="change"> </select>
-                                -->
+                               
                             </td>
                             
                             <td>

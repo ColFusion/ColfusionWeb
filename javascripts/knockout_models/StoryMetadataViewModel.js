@@ -89,7 +89,7 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 	self.avatarSource = ko.observable(avatarSource);
 	self.karma = ko.observable(karma);
 	self.roleId = ko.observable(roleId);
-	
+
 	self.authorInfo = ko.computed(function() {
 		var info = "";
 
@@ -265,6 +265,10 @@ function StoryMetadataViewModel(sid){
 		           			var authorModel = new StoryAuthorModel(authors[i].userId, authors[i].firstName, 
 	            			authors[i].lastName, authors[i].login, authors[i].avatarSource, authors[i].karma, authors[i].roleId);
 	            			
+		           			authorModel.roleId.subscribe(function(newValue) {
+						    	alert("Change happen " + newValue);
+							});
+
 		           			self.storyAuthors.push(authorModel);
 		           		};
 		           	};
