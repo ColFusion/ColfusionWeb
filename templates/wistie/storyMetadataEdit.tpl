@@ -20,15 +20,17 @@
             <label class="control-label" for="title">Authors:</label>
             <div class="controls">
  
-                <div class="input-append">
-                    <input type="text" class="sidInput" data-bind="searchUsersTypeahead: $data" placeholder="Type here" />
-                    <button class="btn add-on searchDatasetBtn" data-bind="click: addAuthor">Add Author </button>
+                <div class="input-append" id="userAuthorLookupDiv">
+                    <input id="lookUpUsersAuthors" type="text" class="sidInput" data-bind="searchUsersTypeahead: $data" placeholder="Search for users..." />
+                    <button class="btn add-on searchDatasetBtn" data-bind="click: addAuthor, enable: selectedLookedUpUser()">Add Author </button>
+                    <img class="userAuthorSearchLoadingIcon hide" src="images/ajax-loader.gif"/>
+                    <span class="userAuthorSearchLoadingText hide">Searching...</span>
                 </div>
 
                 <table class="table">
                     <thead data-bind="visible: storyAuthors().length > 0">
                         <tr>
-                            <th>Last Name, First Name <span class="text-error">*</span></th>
+                            <th>Last Name, First Name or Col*Fusion login <span class="text-error">*</span></th>
                             <th>Role <span class="text-error">*</span></th>
                             <th> </th>
                         </tr>
@@ -37,7 +39,7 @@
                         <tr>
                             <td>
 
-                                <input style="width: 100%; " disabled="true" data-required="true" data-bind="value: login" />
+                                <input style="width: 100%; " disabled="true" data-required="true" data-bind="value: authorInfo" />
                             </td>
                             <td>
                             <select style="width: 100%" data-required="true" data-trigger="change" 

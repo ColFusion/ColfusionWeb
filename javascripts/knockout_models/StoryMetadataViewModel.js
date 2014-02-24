@@ -13,13 +13,26 @@ ko.bindingHandlers.searchUsersTypeahead = {
 
         var search_typeahead_tpl = addAuthorTypeaheadTemplate;
 
-        $(element).typeahead({
+        var storyModel = valueAccessor();
+
+        $(element).on('keyup', function(event) {
+            var code = event.keyCode || event.which;
+            if (code != 13) { //Enter keycode
+                storyModel.selectedLookedUpUser(null);
+                $(element).parents("#userAuthorLookupDiv").find('.userAuthorSearchLoadingIcon').show();
+                $(element).parents("#userAuthorLookupDiv").find('.userAuthorSearchLoadingText').show();
+            }
+        }).typeahead({
             name: 'users',
             remote: {
                 url: "http://localhost:8080/ColFusionServer/User/lookup?searchTerm=%QUERY&limit=10",//'datasetController/findDataset.php?searchTerm=%QUERY',
                 cache: false,
                 maxParallelRequests: 2,
                 filter: function(data) {
+
+                	$(element).parents("#userAuthorLookupDiv").find('.userAuthorSearchLoadingIcon').hide();
+                	$(element).parents("#userAuthorLookupDiv").find('.userAuthorSearchLoadingText').hide();
+
                     if (data === null) {
                         return [];
                     }
@@ -39,9 +52,12 @@ ko.bindingHandlers.searchUsersTypeahead = {
             template: search_typeahead_tpl,
             engine: Hogan
         }).bind('typeahead:selected', function(event, datum) {
-            
+            storyModel.selectedLookedUpUser(new StoryAuthorModel(datum.userId, datum.firstName, datum.lastName, datum.login, 
+            	datum.avatarSource, datum.karma, datum.roleId));
+            $(this).parent().next('button').prop("disabled", false);
         }).bind('typeahead:opened', function() {
-            
+            $(element).parents("#userAuthorLookupDiv").find('.userAuthorSearchLoadingIcon').hide();
+            $(element).parents("#userAuthorLookupDiv").find('.userAuthorSearchLoadingText').hide();
         });
     },
     update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -122,6 +138,28 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 	self.karma = ko.protectedObservable(karma);
 	self.roleId = ko.protectedObservable(roleId);
 	
+	self.authorInfo = ko.computed(function() {
+		var info = "";
+
+		if (self.lastName()) {
+			info = info + self.lastName(); + ", " + self.firstName;
+		}
+
+		if (self.firstName()) {
+			if (info.length > 0) {
+				info = info + ", " + self.firstName();
+			}
+			else {
+				info = self.firstName();
+			}
+		}
+
+		if (info.length == 0) {
+			info = self.login();
+		}
+
+		return info;
+	});
 
 	self.commit = function() {
 		self.userId.commit();
@@ -158,8 +196,8 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 					avatarSource : temp.avatarSource(),
 					karma : temp.karma(),
 					roleId : temp.roleId()
-        		};        		
-	}
+        		};
+    }
 };
 
 function StoryMetadataViewModel(sid){
@@ -175,6 +213,8 @@ function StoryMetadataViewModel(sid){
     self.status = ko.protectedObservable("draft");
     self.tags = ko.protectedObservable();
     self.dateSubmitted = ko.protectedObservable(new Date());
+
+    self.selectedLookedUpUser = ko.observable();
 
     self.isFetchCurrentValuesInProgress = ko.observable(false);
 
@@ -274,7 +314,11 @@ function StoryMetadataViewModel(sid){
     }    
 
     self.addAuthor = function() {
-    	self.storyAuthors.push(new StoryAuthorModel());
+    	if (self.selectedLookedUpUser) {
+    		self.storyAuthors.push(self.selectedLookedUpUser().getTemp());
+    		self.selectedLookedUpUser(null);
+    		$("#lookUpUsersAuthors").typeahead("setQuery", "");
+    	}
     }
 
     self.removeAuthor = function (author) {
