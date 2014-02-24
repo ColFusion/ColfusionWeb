@@ -364,6 +364,8 @@ function StoryMetadataViewModel(sid){
 		           			var authorModel = new StoryAuthorModel(authors[i].userId, authors[i].firstName, 
 	            			authors[i].lastName, authors[i].login, authors[i].avatarSource, authors[i].karma, authors[i].roleId);
 	            			
+		           			authorModel.commit();
+
 	            			self.storyAuthors.push(authorModel);
 		           		};
 		           	};
