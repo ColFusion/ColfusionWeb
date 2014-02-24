@@ -175,7 +175,7 @@
                     loadingIcon.hide();
                     if (data.isSuccessful) {
                         saveMetadataButton.button('complete');
-                        storyMetadataViewModel.saveChanges();
+                        storyMetadataViewModel.switchToReadModeAndUpdateAttachments();
                     }
                     else {
                         saveMetadataButton.button('reset');

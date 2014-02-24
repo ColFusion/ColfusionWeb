@@ -66,60 +66,12 @@ ko.bindingHandlers.searchUsersTypeahead = {
 };
 
 
-//wrapper for an observable that protects value until committed
-// found here: http://www.knockmeout.net/2013/01/simple-editor-pattern-knockout-js.html
-ko.protectedObservable = function(initialValue) {
-    //private variables
-    var _temp = initialValue;
-    var _actual = ko.observable(initialValue);
-
-    var result = ko.dependentObservable({
-        read: _actual,
-        write: function(newValue) {
-            _temp = newValue;
-        }
-    });
-    
-    //commit the temporary value to our observable, if it is different
-    result.commit = function() {
-        if (_temp !== _actual()) {
-            _actual(_temp);
-        }
-    };
-
-    //notify subscribers to update their value with the original
-    result.reset = function() {
-        _actual.valueHasMutated();
-        _temp = _actual();
-    };
-
-    result.getTemp = function() {
-    	return _temp;
-    }
-
-    return result;
-};
-
-
-
 var AuthorRoleModel = function (roleId, roleName, roleDescription) {
 	var self = this;
 
-	self.roleId = ko.protectedObservable(roleId);
-	self.roleName = ko.protectedObservable(roleName);
-	self.roleDescription = ko.protectedObservable(roleDescription);
-
-	self.commit = function () {
-		self.roleId.commit();
-		self.roleName.commit();
-		self.roleDescription.commit();
-	}
-
-	self.reset = function () {
-		self.roleId.reset();
-		self.roleName.reset();
-		self.roleDescription.reset();
-	}
+	self.roleId = ko.observable(roleId);
+	self.roleName = ko.observable(roleName);
+	self.roleDescription = ko.observable(roleDescription);
 }
 
 //TODO, FIXME: should be read from the server
@@ -130,13 +82,13 @@ var authorRoles = [ new AuthorRoleModel(1, "submitter", "the person who submits 
 var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource, karma, roleId) {
 	var self = this;
 
-	self.userId = ko.protectedObservable(userId);
-	self.firstName = ko.protectedObservable(firstName);
-	self.lastName = ko.protectedObservable(lastName);
-	self.login = ko.protectedObservable(login);
-	self.avatarSource = ko.protectedObservable(avatarSource);
-	self.karma = ko.protectedObservable(karma);
-	self.roleId = ko.protectedObservable(roleId);
+	self.userId = ko.observable(userId);
+	self.firstName = ko.observable(firstName);
+	self.lastName = ko.observable(lastName);
+	self.login = ko.observable(login);
+	self.avatarSource = ko.observable(avatarSource);
+	self.karma = ko.observable(karma);
+	self.roleId = ko.observable(roleId);
 	
 	self.authorInfo = ko.computed(function() {
 		var info = "";
@@ -161,41 +113,15 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 		return info;
 	});
 
-	self.commit = function() {
-		self.userId.commit();
-		self.firstName.commit();
-		self.lastName.commit();
-		self.login.commit();
-		self.avatarSource.commit();
-		self.karma.commit();
-		self.roleId.commit();
-	}
-
-	self.reset = function() {
-		self.userId.reset();
-		self.firstName.reset();
-		self.lastName.reset();
-		self.login.reset();
-		self.avatarSource.reset();
-		self.karma.reset();
-		self.roleId.reset();
-	}
-
-	self.getTemp = function() {
-		return new StoryAuthorModel(self.userId.getTemp(), self.firstName.getTemp(), self.lastName.getTemp(), self.login.getTemp(), 
-			self.avatarSource.getTemp(), self.karma.getTemp(), self.roleId.getTemp());
-	}
-
 	self.getTempAsJSONObj = function() {
-		var temp = self.getTemp();
 		return 	{
-            		userId : temp.userId(),
-					firstName : temp.firstName(),
-					lastName : temp.lastName(),
-					login : temp.login(),
-					avatarSource : temp.avatarSource(),
-					karma : temp.karma(),
-					roleId : temp.roleId()
+            		userId : self.userId(),
+					firstName : self.firstName(),
+					lastName : self.lastName(),
+					login : self.login(),
+					avatarSource : self.avatarSource(),
+					karma : self.karma(),
+					roleId : self.roleId()
         		};
     }
 };
@@ -204,15 +130,15 @@ function StoryMetadataViewModel(sid){
 	var self = this;
     self.sid = ko.observable(sid);
     
-    self.submitter = ko.protectedObservable();
+    self.submitter = ko.observable();
     self.storyAuthors = ko.observableArray();
 
-    self.title = ko.protectedObservable();
-    self.description = ko.protectedObservable();
-    self.sourceType = ko.protectedObservable();
-    self.status = ko.protectedObservable("draft");
-    self.tags = ko.protectedObservable();
-    self.dateSubmitted = ko.protectedObservable(new Date());
+    self.title = ko.observable();
+    self.description = ko.observable();
+    self.sourceType = ko.observable();
+    self.status = ko.observable("draft");
+    self.tags = ko.observable();
+    self.dateSubmitted = ko.observable(new Date());
 
     self.selectedLookedUpUser = ko.observable();
 
@@ -245,58 +171,33 @@ function StoryMetadataViewModel(sid){
     	self.showFormLegend(false);
     }
 
-    self.commitAll = function() {
-    	self.title.commit();
-    	self.description.commit();
-    	self.sourceType.commit();
-    	self.status.commit();
-    	self.tags.commit();
-    	self.dateSubmitted.commit();
-    	self.submitter.commit();
-
-    	//TODO: might be better to do with map.
-    	for (var i = 0; i < self.storyAuthors().length; i++) {
-    		self.storyAuthors()[i].commit();
-    	};
-    }
-
-    self.resetAll = function() {
-    	self.title.reset();
-    	self.description.reset();
-    	self.sourceType.reset();
-    	self.status.reset();
-    	self.tags.reset();
-    	self.dateSubmitted.reset();
-    	self.submitter.reset();
-
-    	//TODO: might be better to do with map.
-    	for (var i = 0; i < self.storyAuthors().length; i++) {
-    		self.storyAuthors()[i].reset();
-    	};
-    }
-
-    self.saveChanges = function() {
-    	self.commitAll();
+    
+    self.switchToReadModeAndUpdateAttachments = function() {
+    	
     	self.switchToReadMode();
 
     	fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"));
     }
 
+    //TODO: read from server old data again
     self.cancelChanges = function() {
-    	self.resetAll();
     	self.switchToReadMode();
+
+    	self.storyAuthors.removeAll();
+
+    	self.fetchCurrentValues();
     }
 
     self.submitStoryMetadata = function() {
     	//self.commitAll();
     	var data = {
             	sid : self.sid(),
-            	title : self.title.getTemp(),
-            	description : self.description.getTemp(),
-            	status : self.status.getTemp(),
-            	sourceType : self.sourceType.getTemp(),
-            	tags : self.tags.getTemp(),
-            	dateSubmitted : self.dateSubmitted.getTemp()
+            	title : self.title(),
+            	description : self.description(),
+            	status : self.status(),
+            	sourceType : self.sourceType(),
+            	tags : self.tags(),
+            	dateSubmitted : self.dateSubmitted()
         	};
 
         data.storySubmitter = self.submitter().getTempAsJSONObj();
@@ -356,7 +257,7 @@ function StoryMetadataViewModel(sid){
 
 	           		var authors = data.payload.storyAuthors;
 	           		if (authors) {
-		           		for (var i = 0; i < authors.length - 1; i++) {
+		           		for (var i = 0; i < authors.length; i++) {
 
 		           			// var authorRole = new AuthorRoleModel(authors[i].storyUserRoleId, authors[i].storyUserRoleName, 
 		           			// 					authors[i].storyUserRoleDescription);
@@ -364,15 +265,12 @@ function StoryMetadataViewModel(sid){
 		           			var authorModel = new StoryAuthorModel(authors[i].userId, authors[i].firstName, 
 	            			authors[i].lastName, authors[i].login, authors[i].avatarSource, authors[i].karma, authors[i].roleId);
 	            			
-		           			authorModel.commit();
-
-	            			self.storyAuthors.push(authorModel);
+		           			self.storyAuthors.push(authorModel);
 		           		};
 		           	};
 
 	           		self.isFetchCurrentValuesInProgress(false);
-	           		self.commitAll();
-
+	           		
 	           		if (callBack)
 	           			callBack(self.sid());
            		}
