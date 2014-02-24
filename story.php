@@ -340,6 +340,10 @@ if(is_numeric($requestID)) {
 	$main_smarty->assign('tpl_center', $the_template . '/story_center');
 	$main_smarty->assign('tpl_jsFilesAtBottom', $the_template . '/story_center_jsFilesAtBottom');
 	$main_smarty->assign('tpl_cssInHTMLHead', $the_template . '/story_center_cssInHTMLHead');
+	
+	if ($current_user->authenticated) {
+		$main_smarty->assign('user_id', $current_user->user_id);
+	}
 
 	$main_smarty->display($the_template . '/pligg.tpl');
 } else {

@@ -10,7 +10,7 @@
 <!-- End of hidden visualization form -->
 
 <!-- Cataloging Information -->
-
+<input type="hidden" name="user_id" id="user_id" value="{$user_id}" />
 <section>
     <div class="preview-story">
         <h3 class="preview-title">Dataset Information</h3>
@@ -18,7 +18,11 @@
 
 <!-- Read mode UI -->
             <div id="showMetadataSection" data-bind="visible: !isInEditMode()">
-                <span class="pull-right btn-link" data-bind="visible: !isInEditMode(), click: switchToEditMode">[Edit]</span>
+
+                {if $isAuthenticated}
+                 <span class="pull-right btn-link" data-bind="visible: showEditButton(), click: switchToEditMode">[Edit]</span>
+                {/if}
+
                 <span id="metadataLoadingIcon" data-bind="visible: isFetchCurrentValuesInProgress()"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
                 <table data-bind="visible: !isFetchCurrentValuesInProgress()" class="table table-hover" style="margin-bottom: 0px;">
                     <tr>
@@ -72,18 +76,21 @@
                 </table>      
             </div>
 
-<!-- Edit UI -->
+            {if $isAuthenticated}
+            <!-- Edit UI     -->
 
-            <div id="editMetadataSection" data-bind="visible: isInEditMode()">
-                {include file=$the_template."/storyMetadataEdit.tpl"}
-                
-                <div class="pull-right">
-                    <span id="saveMetadataErrorMessage" class="hide text-error"></span>
-                    <span id="saveMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
-                    <button id="saveMetadataButton" class="btn btn-primary" onclick="saveMetadataForm()" data-loading-text="Saving..." data-complete-text="Saved!">Save</button>
-                    <button id="canceleMetadataButton" class="btn" onclick="cancelMetadataForm()" data-loading-text="Cancel">Cancel</button>
+                <div id="editMetadataSection" data-bind="visible: isInEditMode()">
+                    {include file=$the_template."/storyMetadataEdit.tpl"}
+                    
+                    <div class="pull-right">
+                        <span id="saveMetadataErrorMessage" class="hide text-error"></span>
+                        <span id="saveMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
+                        <button id="saveMetadataButton" class="btn btn-primary" onclick="saveMetadataForm()" data-loading-text="Saving..." data-complete-text="Saved!">Save</button>
+                        <button id="canceleMetadataButton" class="btn" onclick="cancelMetadataForm()" data-loading-text="Cancel">Cancel</button>
+                    </div>
                 </div>
-            </div>
+
+            {/if}
         </div>
     </div>
 
@@ -120,15 +127,6 @@
         {include file='addRelationships.tpl'}
     {/if}
 
-    {literal}
-        <script type="text/javascript">
-            $(function () {
-                $('.searchDatasetBtn').prop('disabled', true);
-                loadInitialFromDataSet();
-            });
-        </script>
-    {/literal}
-
 <!-- End of Relationships section -->
 
 <input type="hidden" id="sid" value="{$sid}" />
@@ -144,10 +142,17 @@
 
         $(document).ready(function () {
             
-            storyMetadataViewModel = new StoryMetadataViewModel(sid);
+            storyMetadataViewModel = new StoryMetadataViewModel(sid, $("#user_id").val());
             storyMetadataViewModel.hideFormLegend();
-            ko.applyBindings(storyMetadataViewModel, document.getElementById("editMetadataSection"));
+            
+            var editMedataContainer = document.getElementById("editMetadataSection");
+
+            if (editMedataContainer) {
+                 ko.applyBindings(storyMetadataViewModel, editMedataContainer);
+            }
+           
             ko.applyBindings(storyMetadataViewModel, document.getElementById("showMetadataSection"));
+            
             storyMetadataViewModel.fetchCurrentValues();
             
 

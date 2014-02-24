@@ -10,6 +10,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/dataSourceUtil.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/generalUtils.js"></script>
+
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/Utils.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/RelationshipModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/DataPreviewViewModel.js"></script>
@@ -17,6 +18,8 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StoryStatusViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/NewRelationshipViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/ProgressBarViewModel.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StoryMetadataViewModel.js"></script>
+
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/fileManager.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/hogan.min.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/typeahead.min.js"></script>

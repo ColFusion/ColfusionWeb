@@ -39,7 +39,7 @@
                         <tr>
                             <td>
 
-                                <input style="width: 100%; " disabled="true" data-required="true" data-bind="value: authorInfo" />
+                                <span style="width: 100%; " disabled="true" data-required="true" data-bind="text: authorInfo" />
                             </td>
                             <td>
                             <select data-bind="options: authorRoles, optionsText: 'roleName', optionsValue: 'roleId', value: roleId, optionsCaption: 'Select Role...'"></select>
@@ -122,7 +122,6 @@
 
 <!-- Apply KO bindings -->
 
-<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StoryMetadataViewModel.js"></script>
 
 {literal}
     <script>

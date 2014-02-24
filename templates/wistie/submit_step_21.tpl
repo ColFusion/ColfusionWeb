@@ -68,10 +68,10 @@
 {literal}
 <script>
     
-    storyMetadataViewModel = new StoryMetadataViewModel("");
+    storyMetadataViewModel = new StoryMetadataViewModel("", $("#user_id").val());
     ko.applyBindings(storyMetadataViewModel, document.getElementById("storyMetadataDiv"));
 
-    storyMetadataViewModel.createNewStory($("#user_id").val(), initNewStoryPage);
+    storyMetadataViewModel.createNewStory(initNewStoryPage);
 
     // Load attachment list.
     fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));
@@ -94,7 +94,7 @@
                     saveMetadataButton.button('complete');
                     
                     saveMetadataButton.button('reset');
-                    
+
 
                     //TODO, FIXME: the url should be read from some settings.
                     window.location.href = "/Colfusion/story.php?title=" + storyMetadataViewModel.sid();

@@ -186,6 +186,9 @@
 
         $(function() {
             ko.applyBindings(newRelationshipViewModel, document.getElementById("newRelWrapper"));
+
+            $('.searchDatasetBtn').prop('disabled', true);
+            loadInitialFromDataSet();
         });
 
         // If sid is assigned, load from dateset after page is loaded.

@@ -114,7 +114,9 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 	});
 
 	self.roleName = ko.computed(function() {
-		return authorRoles[self.roleId() - 1].roleName();
+		if (self.roleId() >= 1)
+			return authorRoles[self.roleId() - 1].roleName();
+		return "";
 	});
 
 	self.getTempAsJSONObj = function() {
@@ -130,9 +132,10 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
     }
 };
 
-function StoryMetadataViewModel(sid){
+function StoryMetadataViewModel(sid, userId){
 	var self = this;
     self.sid = ko.observable(sid);
+    self.userId = ko.observable(userId);
     
     self.submitter = ko.observable();
     self.storyAuthors = ko.observableArray();
@@ -158,8 +161,8 @@ function StoryMetadataViewModel(sid){
     	doAjaxForFetchOrCreate(url, "");
     };
 
-    self.createNewStory = function(userId, callBack) {
-    	var url = "http://localhost:8080/ColFusionServer/Story/metadata/new/" + userId;
+    self.createNewStory = function(callBack) {
+    	var url = "http://localhost:8080/ColFusionServer/Story/metadata/new/" + self.userId();
 
     	doAjaxForFetchOrCreate(url, callBack);
     }
@@ -176,7 +179,19 @@ function StoryMetadataViewModel(sid){
     	self.showFormLegend(false);
     }
 
-    
+    self.showEditButton = function() {
+    	var isUserAuthor = false;
+
+    	for (var i = 0; i < self.storyAuthors().length; i++) {
+    		if (self.storyAuthors()[i].userId() == self.userId()) {
+    			isUserAuthor = true;
+    			break;
+    		}
+    	};
+
+    	return isUserAuthor && ! self.isInEditMode();
+    }
+
     self.switchToReadModeAndUpdateAttachments = function() {
     	
     	self.switchToReadMode();
@@ -223,7 +238,7 @@ function StoryMetadataViewModel(sid){
 
     self.addAuthor = function() {
     	if (self.selectedLookedUpUser) {
-    		self.storyAuthors.push(self.selectedLookedUpUser().getTemp());
+    		self.storyAuthors.push(self.selectedLookedUpUser());
     		self.selectedLookedUpUser(null);
     		$("#lookUpUsersAuthors").typeahead("setQuery", "");
     	}
