@@ -1581,3 +1581,12 @@ a:active {
 .inputHistoryLink {
     font-size: 12px;
 }
+
+.authorLookupInput {
+    width: 320px !important;
+}
+
+.dataColumnSuggestion-Author {
+    float: left;
+    font-size: 16px;
+}

@@ -1,3 +1,55 @@
+var addAuthorTypeaheadTemplate = '<div class="dataColumnSuggestion">' +
+        '<div style="overflow: auto; margin-bottom: 5px;">' +
+        '<p class="dataColumnSuggestion-Author">' +
+        '{{userInfo}} ({{login}})' +
+        '</p>' +
+        '</div>' +
+        '</div>';
+
+// valueAccessor should be dataset.
+// Dom element should be input.
+ko.bindingHandlers.searchUsersTypeahead = {
+    init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+
+        var search_typeahead_tpl = addAuthorTypeaheadTemplate;
+
+        $(element).typeahead({
+            name: 'users',
+            remote: {
+                url: "http://localhost:8080/ColFusionServer/User/lookup?searchTerm=%QUERY&limit=10",//'datasetController/findDataset.php?searchTerm=%QUERY',
+                cache: false,
+                maxParallelRequests: 2,
+                filter: function(data) {
+                    if (data === null) {
+                        return [];
+                    }
+                    else if (!data.isSuccessful) {
+						return [];
+                    }
+                    
+                    return $.map(data.payload, function(user) {
+                    	var userInfo = user;
+                    	user.userInfo = user.lastName + ", " + user.firstName;
+
+                    	return userInfo;
+                    });
+                }
+            },
+            valueKey: 'userInfo',
+            template: search_typeahead_tpl,
+            engine: Hogan
+        }).bind('typeahead:selected', function(event, datum) {
+            
+        }).bind('typeahead:opened', function() {
+            
+        });
+    },
+    update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+
+    }
+};
+
+
 //wrapper for an observable that protects value until committed
 // found here: http://www.knockmeout.net/2013/01/simple-editor-pattern-knockout-js.html
 ko.protectedObservable = function(initialValue) {
@@ -95,6 +147,19 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 		return new StoryAuthorModel(self.userId.getTemp(), self.firstName.getTemp(), self.lastName.getTemp(), self.login.getTemp(), 
 			self.avatarSource.getTemp(), self.karma.getTemp(), self.roleId.getTemp());
 	}
+
+	self.getTempAsJSONObj = function() {
+		var temp = self.getTemp();
+		return 	{
+            		userId : temp.userId(),
+					firstName : temp.firstName(),
+					lastName : temp.lastName(),
+					login : temp.login(),
+					avatarSource : temp.avatarSource(),
+					karma : temp.karma(),
+					roleId : temp.roleId()
+        		};        		
+	}
 };
 
 function StoryMetadataViewModel(sid){
@@ -184,6 +249,19 @@ function StoryMetadataViewModel(sid){
 
     self.submitStoryMetadata = function() {
     	//self.commitAll();
+    	var data = {
+            	sid : self.sid(),
+            	title : self.title.getTemp(),
+            	description : self.description.getTemp(),
+            	status : self.status.getTemp(),
+            	sourceType : self.sourceType.getTemp(),
+            	tags : self.tags.getTemp(),
+            	dateSubmitted : self.dateSubmitted.getTemp()
+        	};
+
+        data.storySubmitter = self.submitter().getTempAsJSONObj();
+        data.storyAuthors = $.map(self.storyAuthors(), function (item) {
+            		return 	item.getTempAsJSONObj();});
 
     	return $.ajax({
             url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
@@ -191,19 +269,8 @@ function StoryMetadataViewModel(sid){
             dataType: 'json',
             contentType: "application/json",
             crossDomain: true,
-            data: JSON.stringify({
-            	sid : self.sid(),
-            	title : self.title.getTemp(),
-            	description : self.description.getTemp(),
-            	status : self.status.getTemp(),
-            	sourceType : self.sourceType.getTemp(),
-            	tags : self.tags.getTemp(),
-            	dateSubmitted : self.dateSubmitted.getTemp(),
-            	storySubmitter: ko.toJSON(self.submitter.getTemp()),
-            	storyAuthors : ko.toJSON($.map(self.storyAuthors(), function (item) {
-            		return 	item.getTemp(); }))
-            	})
-        });       
+            data: JSON.stringify(data)       
+    	});
     }    
 
     self.addAuthor = function() {

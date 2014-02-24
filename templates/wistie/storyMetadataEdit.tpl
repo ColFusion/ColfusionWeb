@@ -19,7 +19,12 @@
         <div class="control-group">
             <label class="control-label" for="title">Authors:</label>
             <div class="controls">
-                <button class="btn btn-primary" data-bind='click: addAuthor'>Add Author</button>
+ 
+                <div class="input-append">
+                    <input type="text" class="sidInput" data-bind="searchUsersTypeahead: $data" placeholder="Type here" />
+                    <button class="btn add-on searchDatasetBtn" data-bind="click: addAuthor">Add Author </button>
+                </div>
+
                 <table class="table">
                     <thead data-bind="visible: storyAuthors().length > 0">
                         <tr>
@@ -31,7 +36,8 @@
                     <tbody data-bind='foreach: storyAuthors'>
                         <tr>
                             <td>
-                                <input style="width: 100%" data-bind='value: lastName' placeholder="Type author's last name and firt name..." data-required="true" />
+
+                                <input style="width: 100%; " disabled="true" data-required="true" data-bind="value: login" />
                             </td>
                             <td>
                             <select style="width: 100%" data-required="true" data-trigger="change" 
