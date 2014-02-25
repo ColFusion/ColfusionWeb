@@ -97,7 +97,7 @@
 
 
                     //TODO, FIXME: the url should be read from some settings.
-                    window.location.href = "/Colfusion/story.php?title=" + storyMetadataViewModel.sid();
+                    window.location.href = ColFusionDomain + "/" + ColFusionAppName + "/story.php?title=" + storyMetadataViewModel.sid();
                     
                 }
                 else {

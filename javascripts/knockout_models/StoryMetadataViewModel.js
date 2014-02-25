@@ -25,7 +25,7 @@ ko.bindingHandlers.searchUsersTypeahead = {
         }).typeahead({
             name: 'users',
             remote: {
-                url: "http://localhost:8080/ColFusionServer/User/lookup?searchTerm=%QUERY&limit=10",//'datasetController/findDataset.php?searchTerm=%QUERY',
+                url: ColFusionServerUrl + "/User/lookup?searchTerm=%QUERY&limit=10",//'datasetController/findDataset.php?searchTerm=%QUERY',
                 cache: false,
                 maxParallelRequests: 2,
                 filter: function(data) {
@@ -178,13 +178,13 @@ function StoryMetadataViewModel(sid, userId){
     self.showFormLegend = ko.observable(true);
 
     self.fetchCurrentValues = function() {
-    	var url = "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid();
+    	var url = ColFusionServerUrl + "/Story/metadata/" + self.sid();
 
     	doAjaxForFetchOrCreate(url, "");
     };
 
     self.createNewStory = function(callBack) {
-    	var url = "http://localhost:8080/ColFusionServer/Story/metadata/new/" + self.userId();
+    	var url = ColFusionServerUrl + "/Story/metadata/new/" + self.userId();
 
     	doAjaxForFetchOrCreate(url, callBack);
     }
@@ -250,7 +250,7 @@ function StoryMetadataViewModel(sid, userId){
             		return 	item.getTempAsJSONObj();});
 
     	return $.ajax({
-            url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
+            url: ColFusionServerUrl + "/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
             type: 'POST',
             dataType: 'json',
             contentType: "application/json",
@@ -277,7 +277,7 @@ function StoryMetadataViewModel(sid, userId){
     	self.historyLogHeaderText("Edit History Log for " + historyItem);
 
     	$.ajax({
-            url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid() + "/history/" + historyItem,
+            url: ColFusionServerUrl + "/Story/metadata/" + self.sid() + "/history/" + historyItem,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",

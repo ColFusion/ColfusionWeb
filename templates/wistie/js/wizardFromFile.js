@@ -55,7 +55,7 @@ var wizardFromFile = (function() {
 
     wizardFromFile.createKtrFiles = function() {
         $.ajax({
-            url: "http://localhost:8080/ColFusionServer/Wizard/createTemplate", //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
+            url: ColFusionServerUrl + "/Wizard/createTemplate", //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
             type: 'post',
             dataType: 'json',
             contentType: "application/json",
@@ -272,10 +272,6 @@ function FromComputerUploadFileViewModel(sid) {
         }
     };
 
-    self.addUploadedFileInfos = function(uploadedFileInfo) {
-        self.uploadedFileInfos.push(uploadedFileInfo);
-    };
-    
     self.initFileUploadForm = function(form) {
 
         initJqueryUpload(form);
@@ -287,7 +283,7 @@ function FromComputerUploadFileViewModel(sid) {
     function initJqueryUpload(form) {
         $(form).find('input[name="upload_file"]').fileupload({
             dataType: 'json',
-            url: 'http://localhost:8080/ColFusionServer/Wizard/acceptFileFromWizard', //'DataImportWizard/acceptFileFromWizard.php',
+            url: ColFusionServerUrl + '/Wizard/acceptFileFromWizard', //'DataImportWizard/acceptFileFromWizard.php',
             acceptFileTypes: '/(\.|\/)(xlsx?|csv|sql)$/i',
             sequentialUploads: true,
             crossDomain: true,
@@ -312,22 +308,26 @@ function FromComputerUploadFileViewModel(sid) {
                 var resultJson = data.result;
                 self.isUploadSuccessful(resultJson.isSuccessful);
 
-                if (resultJson.isSuccessful && completeCount == self.fileInfos().length) {
+                if (resultJson.isSuccessful) {
+                    self.uploadedFileInfos.push(resultJson.payload[0]);
+                   
 
-                    $('#isImport').val(false);
+                    if (completeCount == self.fileInfos().length) {
+                        $('#isImport').val(false);
 
-                    $('#uploadFileType').add('#fromComputerDatabaseDump').add('#excelFileMode').prop('disabled', true);
-                    $('input[name="place"]').prop('disabled', true);
+                        $('#uploadFileType').add('#fromComputerDatabaseDump').add('#excelFileMode').prop('disabled', true);
+                        $('input[name="place"]').prop('disabled', true);
 
-                    self.fileInfos([]);
+                        self.fileInfos([]);
 
-                    self.addUploadedFileInfos(resultJson.payload[0]);
+                        
 
-                    if (self.selectedFileType().fileType == 'dbDump') {
-                        connectFromDumpFile();
-                    } else {
-                        self.uploadMessage(resultJson.message);
-                        wizard.enableNextButton();
+                        if (self.selectedFileType().fileType == 'dbDump') {
+                            connectFromDumpFile();
+                        } else {
+                            self.uploadMessage(resultJson.message);
+                            wizard.enableNextButton();
+                        }
                     }
                 } else if (resultJson.isSuccessful === false) {
                     isUploadError = true; // Used to cancel subsquent uploadings.

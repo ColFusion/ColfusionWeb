@@ -24,6 +24,8 @@
 		{include file=$tpl_cssInHTMLHead.".tpl"}
 	{/if}
 
+	<script type="text/javascript" src="{$my_pligg_base}/javascripts/global.js"></script> 
+
 	{* For Google Analytics *}
 	{literal}
 	<script>
