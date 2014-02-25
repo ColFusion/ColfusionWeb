@@ -11,7 +11,7 @@
             <label class="control-label" for="title">{#PLIGG_Visual_Submit2_Title#} <span class="text-error">*</span>:</label>
             <div class="controls">
                 <input id="title" name="title" data-required="true" type="text" class="input-block-level" data-bind="value: title" />
-                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode()">[History]</span>
+                <a href="#historyModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'title')">[History]</span>
             </div>
         </div>
         
@@ -63,7 +63,7 @@
             <label class="control-label" for="bodytext">{#PLIGG_Visual_Submit2_Description#} <span class="text-error">*</span>:</label>
             <div class="controls">
                 <textarea id="bodytext"  name="bodytext"  data-required="true" class="input-block-level" data-bind="value: description"> </textarea>
-                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode()">[History]</span>
+                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'description')">[History]</span>
             </div>
         </div>
 
@@ -72,7 +72,7 @@
             <label class="control-label" for="tags">{#PLIGG_Visual_Submit2_Tags#}:</label>
             <div class="controls">
                 <input type="text" id="tags" class="wickEnabled input-block-level" name="tags" data-bind="value: tags"/>
-                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode()">[History]</span>
+                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'tags')">[History]</span>
                 <script type="text/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/tag_data.js"></script> 
                 <script type="txt/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/wick.js"></script> 
             </div>
@@ -102,6 +102,53 @@
         <input type="hidden" name="user_id" id="user_id" value="{$user_id}" />
         <input type="hidden" id="sid" name="sid" data-bind="value: sid" value="{$sid}"/>
     </form> 
+
+    <!-- History Pop Up. It should be whiting this outter div to have knockout model bindings -->
+
+        <div id="historyModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel" aria-hidden="true">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+            <h3 id="historyModalLabel" data-bind="text: historyLogHeaderText"></h3>
+          </div>
+          <div class="modal-body">
+            <div id="fetchInProgressDiv" data-bind="visible: isFetchHistoryInProgress">
+                <span id="fetchInProgressLoadingIcon" data-bind="visible: isFetchHistoryInProgress()">
+                    <img src="{$my_pligg_base}/images/ajax-loader.gif"/>
+                </span>
+            </div>
+            <div id="contentDiv" >
+                <table class="table table-hover" data-bind="with: storyMetadataHistory">
+                    <tr>
+                        <th>Date Saved</th>
+                        <th>Author</th>
+                        <th>Value</th>
+                        <th>Reason</th>
+                    </tr>
+                    <tbody data-bind="foreach: historyLogRecords">
+                        <tr>
+                            <td data-bind="text: whenSaved"></td>
+                            <td data-bind="with: author">
+                                <span data-bind="text: authorInfo"></span>
+                            </td>
+                            <td data-bind="text: itemValue"></td>
+                            <td data-bind="text: reason"></td>
+                        </tr>
+                    </tbody>               
+                </table>
+            </div>
+            <div id="fetchFailedMsgDiv" data-bind="visible: isFetchHistoryErrorMessage().length > 0">
+                <span data-bind="text: isFetchHistoryErrorMessage" class="text-error"></span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <!-- <button class="btn btn-primary">Save changes</button> -->
+          </div>
+        </div>
+
+    <!-- End of History Pop up -->
+
+
 </div>
 
 
@@ -119,6 +166,7 @@
 </div>
 
 <!-- End of Attachments Pop Up -->
+
 
 <!-- Apply KO bindings -->
 

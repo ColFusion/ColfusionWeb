@@ -132,6 +132,23 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
     }
 };
 
+var StoryMetadataHistoryLogRecordViewModel = function() {
+	self = this;
+	self.hid = ko.observable();
+	self.author = ko.observable();
+	self.whenSaved = ko.observable();
+	self.item = ko.observable();
+	self.reason = ko.observable();
+	self.itemValue = ko.observable();
+}
+
+var StoryMetadataHistoryViewModel = function() {
+	self = this;
+	self.sid = ko.observable();
+	self.historyItem = ko.observable();
+	self.historyLogRecords = ko.observableArray();
+}
+
 function StoryMetadataViewModel(sid, userId){
 	var self = this;
     self.sid = ko.observable(sid);
@@ -148,9 +165,14 @@ function StoryMetadataViewModel(sid, userId){
     self.tags = ko.observable();
     self.dateSubmitted = ko.observable(new Date());
 
+    self.storyMetadataHistory = ko.observable();
+
     self.selectedLookedUpUser = ko.observable();
 
     self.isFetchCurrentValuesInProgress = ko.observable(false);
+    self.isFetchHistoryInProgress = ko.observable(false)
+    self.isFetchHistoryErrorMessage = ko.observable("");
+    self.historyLogHeaderText = ko.observable();
 
     self.isInEditMode = ko.observable(false);
     self.showFormLegend = ko.observable(true);
@@ -250,11 +272,65 @@ function StoryMetadataViewModel(sid, userId){
     	self.storyAuthors.remove(author);
     }
 
+    self.showHistory = function(historyItem) {
+    	self.isFetchHistoryInProgress(true);
+    	self.historyLogHeaderText("Edit History Log for " + historyItem);
+
+    	$.ajax({
+            url: "http://localhost:8080/ColFusionServer/Story/metadata/" + self.sid() + "/history/" + historyItem,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+            	self.isFetchHistoryInProgress(false);
+            	if (data.isSuccessful) {
+            		var payload = data.payload;
+
+            		var storyMetadataEditHistory = new StoryMetadataHistoryViewModel();
+            		storyMetadataEditHistory.sid(payload.sid);
+            		storyMetadataEditHistory.historyItem(payload.historyItem);
+
+            		for (var i = 0; i < payload.historyLogRecords.length; i++) {
+            			var historyRecord = payload.historyLogRecords[i];
+
+            			var storyMetadataHistoryLogRecord = new StoryMetadataHistoryLogRecordViewModel();
+
+            			storyMetadataHistoryLogRecord.hid(historyRecord.hid);
+            			storyMetadataHistoryLogRecord.whenSaved(historyRecord.whenSaved);
+            			storyMetadataHistoryLogRecord.item(historyRecord.item);
+            			storyMetadataHistoryLogRecord.reason(historyRecord.reason);
+            			storyMetadataHistoryLogRecord.itemValue(historyRecord.itemValue);
+
+            			var author = new StoryAuthorModel(historyRecord.author.userId, historyRecord.author.firstName, 
+            			historyRecord.author.lastName, historyRecord.author.login, 
+            			historyRecord.author.avatarSource, historyRecord.author.karma, historyRecord.author.roleId);
+
+            			storyMetadataHistoryLogRecord.author(author);
+
+            			storyMetadataEditHistory.historyLogRecords.push(storyMetadataHistoryLogRecord);
+            		};
+
+            		self.storyMetadataHistory(storyMetadataEditHistory);
+           		}
+           		else {
+           			self.isFetchHistoryErrorMessage("Something went wrong while fetching history for " + historyItem + 
+           				". Please try again.");
+           		}
+            },
+            error: function(data) {
+            	self.isFetchHistoryInProgress(false);
+            	self.isFetchHistoryErrorMessage("Something went wrong while fetching history for " + historyItem + 
+           				". Please try again.");
+            }
+        });
+    }
+
     function doAjaxForFetchOrCreate(url, callBack) {
     	self.isFetchCurrentValuesInProgress(true);
 
     	$.ajax({
-            url: url, //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
+            url: url, 
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
