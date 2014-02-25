@@ -11,7 +11,7 @@
             <label class="control-label" for="title">{#PLIGG_Visual_Submit2_Title#} <span class="text-error">*</span>:</label>
             <div class="controls">
                 <input id="title" name="title" data-required="true" type="text" class="input-block-level" data-bind="value: title" />
-                <a href="#historyModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'title')">[History]</span>
+                <a href="#historyModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'title')">[History]</a>
             </div>
         </div>
         
@@ -63,7 +63,7 @@
             <label class="control-label" for="bodytext">{#PLIGG_Visual_Submit2_Description#} <span class="text-error">*</span>:</label>
             <div class="controls">
                 <textarea id="bodytext"  name="bodytext"  data-required="true" class="input-block-level" data-bind="value: description"> </textarea>
-                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'description')">[History]</span>
+                <a href="#historyModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'description')">[History]</a>
             </div>
         </div>
 
@@ -72,7 +72,7 @@
             <label class="control-label" for="tags">{#PLIGG_Visual_Submit2_Tags#}:</label>
             <div class="controls">
                 <input type="text" id="tags" class="wickEnabled input-block-level" name="tags" data-bind="value: tags"/>
-                <span class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'tags')">[History]</span>
+                <a href="#historyModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'tags')">[History]</a>
                 <script type="text/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/tag_data.js"></script> 
                 <script type="txt/javascript" language="JavaScript" src="{$my_pligg_base}/templates/{$the_template}/js/wick.js"></script> 
             </div>
