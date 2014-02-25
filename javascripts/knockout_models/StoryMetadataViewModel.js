@@ -212,6 +212,7 @@ function StoryMetadataViewModel(sid, userId){
     	//self.commitAll();
     	var data = {
             	sid : self.sid(),
+            	userId : self.userId(),
             	title : self.title(),
             	description : self.description(),
             	status : self.status(),
