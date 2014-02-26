@@ -85,20 +85,30 @@ var wizardFromFile = (function() {
 
     wizardFromFile.getFileSources = function() {
         return $.ajax({
-            url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=8",
+            url: ColFusionServerUrl + "/Wizard/getFilesContentInfo", //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=8",
             type: 'post',
             dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            data: JSON.stringify({
+                sid: wizardFromFile.sid,
+                fileMode: wizardFromFile.fromComputerUploadFileViewModel.selectedFileMode().fileMode,
+                fileName: wizardFromFile.fromComputerUploadFileViewModel.uploadedFileInfos()
+            }),
             success: function(jsonResponse) {
                 sourceWorksheetSettingsViewModel.cleanSource();
 
-                for (var i = 0; i < jsonResponse.data.length; i++) {
-                    var fileSource = jsonResponse.data[i];
-                    var filename = fileSource.filename;
-                    var worksheets = fileSource.worksheets;
-                    var ext = fileSource.ext;
+                for (var i = 0; i < jsonResponse.payload.length; i++) {
+                    var fileSource = jsonResponse.payload[i];
+                    var filename = fileSource.fileName;
+                    var worksheets = [];
+                    for (var i = 0; i < fileSource.worksheets.length; i++) {
+                         worksheets.push(fileSource.worksheets[i].sheetName);
+                     }; 
+                    var ext = fileSource.extension;
                     sourceWorksheetSettingsViewModel.addSource(filename, worksheets, ext);
 
-                    filenames.push(fileSource.filename);
+                    filenames.push(fileSource.fileName);
 
                     if (ext == 'csv') {
                         var gotCSVs = true;
@@ -125,15 +135,17 @@ var wizardFromFile = (function() {
     
         var sheetsRanges = sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
     
-        return $.ajax({type: 'POST',
-            url: my_pligg_base + '/DataImportWizard/generate_ktr.php',
-            dataType: 'html',
-            data: {
-                phase: 1,
+        return $.ajax({
+            url: ColFusionServerUrl + "/Wizard/getFilesVariablesAndNameRecommendations", //my_pligg_base + '/DataImportWizard/generate_ktr.php',
+            type: 'post',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            data: SON.stringify({
                 sid: wizardFromFile.sid,
                 sheetsRanges: sheetsRanges,
                 source: 'file'
-            }
+            })
         });
     };
 

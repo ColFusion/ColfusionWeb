@@ -185,8 +185,7 @@ var importWizard = (function () {
     importWizard.passInfofromDisplayOptionsStep = function () {
         $('#dataMatchingTable').empty();
         if (getImportSource() == "database") {
-            var deferred = wizardFromDB
-					.passSelectedTablesFromDisplayOptionStep();
+            var deferred = wizardFromDB.passSelectedTablesFromDisplayOptionStep();
         } else {
             var deferred = wizardFromFile.passSheetInfoFromDisplayOptionStep();
         }
@@ -206,7 +205,7 @@ var importWizard = (function () {
     /* Helper functions */
 
     function initBootstrapWizard() {
-        $.fn.wizard.logging = false;
+        $.fn.wizard.logging = true;
 
         wizard = $("#dataSubmissionWizardContainer").wizard();
 
@@ -236,30 +235,31 @@ var importWizard = (function () {
         wizard.cards["UploadOptionStepCard"].on("validated", function (card) {
         });
 
-        wizard.cards["displayOptionsStepCard"].on("selected",
-				displayOptionsStepCardOnLoad);
+        wizard.cards["displayOptionsStepCard"].on("selected", function(card) {
+				displayOptionsStepCardOnLoad(card);
+            });
 
         wizard.cards["dataMatchingStepCard"].on("selected", function (card) {
             wizard.disableNextButton();
 
-            importWizard.dataMatchingProgressViewModel.isProgressing(true);
-            var deferred = importWizard.getDataMatchingLoadingProgress();
+            //importWizard.dataMatchingProgressViewModel.isProgressing(true);
+            //var deferred = importWizard.getDataMatchingLoadingProgress();
 
-            if (deferred) {
-                deferred.done(function (estimatedSeconds) {
-                    importWizard.dataMatchingProgressViewModel.start(estimatedSeconds * 1000);
-                    importWizard.passInfofromDisplayOptionsStep().done(
-							function () {
-							    wizard.enableNextButton();
-							}).always(function () {
-							    importWizard.dataMatchingProgressViewModel.stop();
-							});
-                });
-            } else {
+       //      if (deferred) {
+       //          deferred.done(function (estimatedSeconds) {
+       //              importWizard.dataMatchingProgressViewModel.start(estimatedSeconds * 1000);
+       //              importWizard.passInfofromDisplayOptionsStep().done(
+							// function () {
+							//     wizard.enableNextButton();
+							// }).always(function () {
+							//     importWizard.dataMatchingProgressViewModel.stop();
+							// });
+       //          });
+       //      } else {
                 importWizard.passInfofromDisplayOptionsStep().done(function () {
                     wizard.enableNextButton();
                 });
-            }
+            //}
         });
 
         wizard.on("submit", function (wizard) {
@@ -368,15 +368,25 @@ var importWizard = (function () {
             wizard.disableNextButton();
 
             $('#loadingProgressContainer').show();
-            wizardFromFile.createKtrFiles().done(function () {
-                wizardFromFile.getFileSources().done(function () {
+          //  var deffered = wizardFromFile.createKtrFiles();
+
+           // deffered.done(function(data) {
+          //      alert("iamdone");
+
+            try {
+                var deffered = wizardFromFile.getFileSources();
+                
+                deffered.done(function(data) {
+                        $('#loadingProgressContainer').hide();
+                        $("#displayOptoinsStepCardFromFile").show();
+                        wizard.enableNextButton();
+                }).fail(function(data) {
                     $('#loadingProgressContainer').hide();
-                    $("#displayOptoinsStepCardFromFile").show();
-                    wizard.enableNextButton();
                 });
-            }).fail(function () {
-                $('#loadingProgressContainer').hide();
-            });
+            }
+            catch(err) {
+                alert(err);
+            }
         }
     }
 
