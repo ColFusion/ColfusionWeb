@@ -3,8 +3,8 @@ function SourceWorksheetSettingsViewModel() {
     self.sourceWorksheetSettings = ko.observableArray();
     self.loadingProgress = ko.observable();
 
-    self.addSource = function(sourceName, worksheets, ext) {
-        self.sourceWorksheetSettings.push(new SourceWorksheetSettings(sourceName, worksheets, ext));
+    self.addSource = function(sourceName, fileAbsoluteName, worksheets, ext) {
+        self.sourceWorksheetSettings.push(new SourceWorksheetSettings(sourceName, fileAbsoluteName, worksheets, ext));
     };
 
     self.cleanSource = function() {
@@ -17,19 +17,42 @@ function SourceWorksheetSettingsViewModel() {
     };
 
     self.getSourceWorksheetSettings = function() {
-        var sourceWorksheetSettingsWithoutObservable = {};
+        
+        var result = [];
+
+
         for (var i = 0; i < self.sourceWorksheetSettings().length; i++) {
+
             var sourceWorksheetSettings = self.sourceWorksheetSettings()[i];
-            sourceWorksheetSettingsWithoutObservable[sourceWorksheetSettings.sourceName] =
-                    sourceWorksheetSettings.getWorksheetSettings();
+
+            var oneFile = {
+                extension : sourceWorksheetSettings.ext,
+                fileName : sourceWorksheetSettings.sourceName,
+                fileAbsoluteName : sourceWorksheetSettings.fileAbsoluteName,
+                worksheets: $.map(sourceWorksheetSettings.worksheetSettings(), function (oneSheet) {
+                    return {
+                        sheetName : oneSheet.sheetName(),
+                        headerRow : oneSheet.startRow(),
+                        startColumn : oneSheet.startColumn(),
+                        numberOfRows : 0
+                    };
+                })
+            };
+
+            result.push(oneFile);
+            
+            // sourceWorksheetSettingsWithoutObservable[sourceWorksheetSettings.sourceName] =
+            //         sourceWorksheetSettings.getWorksheetSettings();
+
         }
-        return sourceWorksheetSettingsWithoutObservable;
+        return result;
     };
 }
 
-function SourceWorksheetSettings(sourceName, worksheets, ext) {
+function SourceWorksheetSettings(sourceName, fileAbsoluteName, worksheets, ext) {
     var self = this;
     self.sourceName = sourceName;
+    self.fileAbsoluteName = fileAbsoluteName;
     self.worksheets = ko.observableArray(worksheets);
     self.numOfWorksheets = ko.observable(1);
     self.numOfWorksheetsOptions = ko.observableArray([]);
