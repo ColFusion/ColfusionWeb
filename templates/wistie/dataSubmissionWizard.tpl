@@ -276,29 +276,22 @@
         </h3>
         <img id="dataMatchingStepInProgress"  src="templates/wistie/images/ajax-loader_cp.gif" style="width: 35px; vertical-align: middle;margin-left: 20px;"/>
 
-        <div data-bind="visible: isProgressing()" id="dataMatchingLoadingProgressContainer">
+        <div data-bind="visible: progressBarViewModel().isProgressing()" id="dataMatchingLoadingProgressContainer">
             <div class="loadingTextWrapper" style="margin-top: 60px;">
                 <span class="loadingText">Preview is loading...</span>
-                <span data-bind="text: loadingProgressPercent() + '%'" style="float: right;" class='percentText'></span>
+                <span data-bind="text: progressBarViewModel().loadingProgressPercent() + '%'" style="float: right;" class='percentText'></span>
             </div>
             <div class="progress" id="dataMatchingPreviewProgressBar">
-                <div data-bind="style: {width: loadingProgressPercent() + '%'}" class="bar"></div>
+                <div data-bind="style: {width: progressBarViewModel().loadingProgressPercent() + '%'}" class="bar"></div>
             </div>                  
         </div>
 
-        <div data-bind="visible: !isProgressing()" class='wizard-input-section' style='position: relative; width: 100%; height: 100%; overflow: auto;'>
+        <div data-bind="visible: !progressBarViewModel().isProgressing()" class='wizard-input-section' style='position: relative; width: 100%; height: 100%; overflow: auto;'>
             <!--style='position: relative; width: 780px; height: 100%; overflow: auto;'>-->
             <div id='tools'></div>
-
-            <a href='#' id='help4' >Show help</a>
-            <div id='h4'>
-                <p class='hlp'> In this step, for each Dname, you can match your its name and the related information either by accepting the default match or by giving your own definition (the left column). Also, you can help our system by providing you suggestions to some fileds (the right column).<br/>The left part, Type your own name in box if you want to redefine the dnanme and then click the ... button to complete your new definition like the type, unit, etc...<br/> The right section, Click inside this box to suggest some mathces to the data name.<br/>If the name contains any of the given fields, plase type it box and check the front of it. Also, you can add a new suggestions by choosing other and complete that section.</br/>After you are done completing the suggested matches part, click the add suggestion button to allow us to add your entries to the system.<br/>You can remove undesired dnames by checking the boxes in fornt of them.
-                </p>
-                <a href='#' id='hd4' style='color:green;'>hide help</a>
-            </div>
-            <br/>
-
+                       
             <label><input type='checkbox' id='toggleAllColumns'/>toggle all</label>
+            
             <div id='dataMatchingTable'></div>
         </div>
     </div>

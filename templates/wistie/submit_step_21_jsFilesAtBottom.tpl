@@ -30,6 +30,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/WizardUploadDatasetViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/SourceWorksheetSettingsViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/ProgressBarViewModel.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/WizardDataMatchingStepViewModel.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StoryMetadataViewModel.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/importWizard.js"></script>

@@ -5,7 +5,7 @@ var wizardFromFile = (function() {
 
     /* Variables */
     var wizardExcelPreviewViewModel;
-    var sourceWorksheetSettingsViewModel;
+    wizardFromFile.sourceWorksheetSettingsViewModel;
 
     wizardFromFile.fromComputerUploadFileViewModel;
 
@@ -23,9 +23,9 @@ var wizardFromFile = (function() {
         var previewNode = document.getElementById('dataPreviewTabContent');
         ko.applyBindings(wizardExcelPreviewViewModel, previewNode);
 
-        sourceWorksheetSettingsViewModel = new SourceWorksheetSettingsViewModel();
+        wizardFromFile.sourceWorksheetSettingsViewModel = new SourceWorksheetSettingsViewModel();
         var viewModelDom = document.getElementById('dataRangeSettingsTabContent');
-        ko.applyBindings(sourceWorksheetSettingsViewModel, viewModelDom);
+        ko.applyBindings(wizardFromFile.sourceWorksheetSettingsViewModel, viewModelDom);
 
         wizardFromFile.fromComputerUploadFileViewModel = new FromComputerUploadFileViewModel(sid);
         var container = document.getElementById('divFromComputer');
@@ -96,7 +96,7 @@ var wizardFromFile = (function() {
                 fileName: wizardFromFile.fromComputerUploadFileViewModel.uploadedFileInfos()
             }),
             success: function(jsonResponse) {
-                sourceWorksheetSettingsViewModel.cleanSource();
+                wizardFromFile.sourceWorksheetSettingsViewModel.cleanSource();
 
                 for (var i = 0; i < jsonResponse.payload.length; i++) {
                     var fileSource = jsonResponse.payload[i];
@@ -107,7 +107,7 @@ var wizardFromFile = (function() {
                          worksheets.push(fileSource.worksheets[i].sheetName);
                      }; 
                     var ext = fileSource.extension;
-                    sourceWorksheetSettingsViewModel.addSource(filename, fileAbsoluteName, worksheets, ext);
+                    wizardFromFile.sourceWorksheetSettingsViewModel.addSource(filename, fileAbsoluteName, worksheets, ext);
 
                     filenames.push(fileSource.fileName);
 
@@ -134,7 +134,7 @@ var wizardFromFile = (function() {
 
     wizardFromFile.passSheetInfoFromDisplayOptionStep = function() {
     
-        var sheetsRanges = sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
+        var sheetsRanges = wizardFromFile.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
     
         return $.ajax({
             url: ColFusionServerUrl + "/Wizard/getFilesVariablesAndNameRecommendations", //my_pligg_base + '/DataImportWizard/generate_ktr.php',

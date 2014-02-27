@@ -2,7 +2,7 @@ var importWizard = (function () {
     var importWizard = {};
 
     importWizard.loadingGif = "";
-    importWizard.dataMatchingProgressViewModel = new ProgressBarViewModel();
+    importWizard.wizardDataMatchingStepViewModel = new WizardDataMatchingStepViewModel();
 
     importWizard.wizardUploadDatasetViewModel = new WizardUploadDatasetViewModel();
 
@@ -117,7 +117,7 @@ var importWizard = (function () {
 
         //ko.applyBindings(importWizard.wizardUploadDatasetViewModel, document.getElementById('filenameListContainer'));
 
-        ko.applyBindings(importWizard.dataMatchingProgressViewModel, document.getElementById('dataMatchingStepCard'));
+        ko.applyBindings(importWizard.wizardDataMatchingStepViewModel, document.getElementById('dataMatchingStepCard'));
     };
 
     // ***********************************************************************************************
@@ -181,23 +181,7 @@ var importWizard = (function () {
             return wizardFromFile.getLoadingTime();
         }
     };
-
-    importWizard.passInfofromDisplayOptionsStep = function () {
-        $('#dataMatchingTable').empty();
-        if (getImportSource() == "database") {
-            var deferred = wizardFromDB.passSelectedTablesFromDisplayOptionStep();
-        } else {
-            var deferred = wizardFromFile.passSheetInfoFromDisplayOptionStep();
-        }
-        return deferred.done(function (data) {
-            importWizard.showDataMatchingStep(data);
-        });
-    };
-
-    importWizard.showDataMatchingStep = function (data) {
-        $('#dataMatchingTable').html(data);
-        $('#dataMatchingStepInProgress').hide();
-    };
+    
     // ***********************************************************************************************
 
     /** ********** */
@@ -242,24 +226,12 @@ var importWizard = (function () {
         wizard.cards["dataMatchingStepCard"].on("selected", function (card) {
             wizard.disableNextButton();
 
-            //importWizard.dataMatchingProgressViewModel.isProgressing(true);
-            //var deferred = importWizard.getDataMatchingLoadingProgress();
-
-       //      if (deferred) {
-       //          deferred.done(function (estimatedSeconds) {
-       //              importWizard.dataMatchingProgressViewModel.start(estimatedSeconds * 1000);
-       //              importWizard.passInfofromDisplayOptionsStep().done(
-							// function () {
-							//     wizard.enableNextButton();
-							// }).always(function () {
-							//     importWizard.dataMatchingProgressViewModel.stop();
-							// });
-       //          });
-       //      } else {
-                importWizard.passInfofromDisplayOptionsStep().done(function () {
+            
+            //TODO: the settings should be send as a general json, so it should not depend on the source type.
+            var sourceSettings = wizardFromFile.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
+            importWizard.wizardDataMatchingStepViewModel.fetchVariables(getImportSource(), sourceSettings, function () {
                     wizard.enableNextButton();
                 });
-            //}
         });
 
         wizard.on("submit", function (wizard) {
