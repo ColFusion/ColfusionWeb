@@ -270,7 +270,7 @@
 
     <!-- Data Matching Step -->
 
-    <div class='wizard-card' data-cardname='dataMatchingStepCard' id="dataMatchingStepCard" style=' width:600px; overflow: hidden; '>
+    <div class='wizard-card' data-cardname='dataMatchingStepCard' id="dataMatchingStepCard" style=' overflow: hidden; '>
         <h3 style="display: inline;">Data Matching
             <img src='help.png' width='15' height='15' title='Verify the dname or type yours in the proper type box if not correct and then click submit. You can remove undesired dnames by checking the boxes in fornt of them.'/>
         </h3>
@@ -287,12 +287,65 @@
         </div>
 
         <div data-bind="visible: !progressBarViewModel().isProgressing()" class='wizard-input-section' style='position: relative; width: 100%; height: 100%; overflow: auto;'>
-            <!--style='position: relative; width: 780px; height: 100%; overflow: auto;'>-->
-            <div id='tools'></div>
-                       
             <label><input type='checkbox' id='toggleAllColumns'/>toggle all</label>
-            
-            <div id='dataMatchingTable'></div>
+
+            <div id='dataMatchingTable' data-bind="foreach: files">
+                <div>
+                    <div data-bind="foreach: worksheets">
+                        <div>
+                            <label> Variables from <span data-bind="text: $parent.fileName"></span> file - <span data-bind="text: sheetName"></span> table/sheet.</label>
+
+                            <table class="table table-hover">
+                                <tr>
+                                    <th></th>
+                                    <th>Original Variable Name</th>
+                                    <th>Selected Variable Name</th>
+                                    <th></th>
+                                </tr>
+                                <tbody data-bind="foreach: variables">
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" data-bind="checked: checked"/>
+                                        </td>
+                                        <td>
+                                            <span data-bind="text: originalName"></span>
+                                        </td>
+                                        <td><input data-bind="value: chosenName"/></td>
+                                        <td><i class="icon-wrench" data-bind="click: toggleSettingsRowVisibility"></i></td>
+                                    </tr>
+                                    <tr data-bind="visible: isSettingRowVisible">
+                                        <td></td>
+                                        <td colspan="3">
+                                            <table class="table">
+                                                <tr>
+                                                    <td>Data Type: <select data-bind='options: variableDataTypes, optionsText: "name", optionsCaption: " ", value: valueType'> </select>
+                                                    </td>
+                                                    <td data-bind="with: valueType">
+                                                        <div data-bind="visible: units.length > 0">
+                                                            Data Unit: <select data-bind='options: units, optionsCaption: " ", value: $parent.valueUnit'> </select>
+                                                        </div>
+                                                        <div data-bind="visible: format.length > 0">
+                                                            Format: <select data-bind='options: format, optionsCaption: " ", value: $parent.valueFormat'> </select>
+                                                        </div>
+                                                    
+                                                    </td>                                                    
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="2">
+                                                        Description: 
+                                                        <textarea class="input-block-level" data-bind="value: description"> </textarea>
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>    
+                                </tbody>                    
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
         </div>
     </div>
 

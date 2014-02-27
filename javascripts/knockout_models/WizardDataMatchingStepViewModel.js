@@ -1,12 +1,50 @@
+var variableDataTypes = [
+  {
+    "name": "Number",
+    "units": [ "kilometre", "metre", "mile", "kilogram", "gram", "hundreds", "thousands", "millions"],
+    "format" : []
+  },
+  {
+    "name": "String",
+    "units": [],
+    "format" : []
+  },
+  {
+    "name": "Date",
+    "units": [ ],
+    "format" : ["yy/mm/dd", "mm/dd/yy", "dd/mm/yy", "mm-dd-yy", "yy-mm-dd", "dd-mm-yy"]
+  },
+  {
+    "name": "Time",
+    "units": [ ],
+    "format" : ["hh:mm:ss", "hh:mm:ss AM/PM", "hh", "mm", "ss", "hh:mm"]
+  },
+  {
+    "name": "Location",
+    "units": [ "country", "state", "city", "street", "zipcode", "latitude", "longitude"],
+    "format" : []
+  },
+];
+
+
 var WizardVariableViewModel = function(originalName, chosenName, description, valueUnit, valueType, valueFormat) {
     self = this;
 
     self.originalName = ko.observable(originalName);
     self.chosenName = ko.observable(chosenName);
+    
     self.description = ko.observable(description);
+
     self.valueUnit = ko.observable(valueUnit);
     self.valueType = ko.observable(valueType);
     self.valueFormat = ko.observable(valueFormat);
+
+    self.checked = ko.observable(false);
+    self.isSettingRowVisible = ko.observable(false);
+
+    self.toggleSettingsRowVisibility = function(item) {
+        item.isSettingRowVisible(!item.isSettingRowVisible());
+    }
 };
 
 var WizardWorksheetViewModel = function(sheetName, headerRow, startColumn, numberOfRows, indexInTheFile, variables) {
@@ -63,8 +101,17 @@ function WizardDataMatchingStepViewModel() {
 
                                 var variable = data.payload[i].worksheets[j].variables[k];
 
+                                var dataType = variableDataTypes[1];
+
+                                for (var z = 0; z < variableDataTypes.length; z++) {
+                                    if (variableDataTypes[z].name === variable.valueType) {
+                                        dataType = variableDataTypes[z];
+                                        break;
+                                    }
+                                };
+
                                 var wizardVariable = new WizardVariableViewModel(variable.originalName, variable.chosenName, 
-                                    variable.description, variable.valueUnit, variable.valueType, variable.valueFormat);
+                                    variable.description, variable.valueUnit, dataType, variable.valueFormat);
 
                                 wizardVariables.push(wizardVariable);
                             };

@@ -97,14 +97,15 @@ var wizardFromFile = (function() {
             }),
             success: function(jsonResponse) {
                 wizardFromFile.sourceWorksheetSettingsViewModel.cleanSource();
+                filenames.lenght = 0;
 
                 for (var i = 0; i < jsonResponse.payload.length; i++) {
                     var fileSource = jsonResponse.payload[i];
                     var filename = fileSource.fileName;
                     var fileAbsoluteName = fileSource.fileAbsoluteName;
                     var worksheets = [];
-                    for (var i = 0; i < fileSource.worksheets.length; i++) {
-                         worksheets.push(fileSource.worksheets[i].sheetName);
+                    for (var j = 0; j < fileSource.worksheets.length; j++) {
+                         worksheets.push(fileSource.worksheets[j].sheetName);
                      }; 
                     var ext = fileSource.extension;
                     wizardFromFile.sourceWorksheetSettingsViewModel.addSource(filename, fileAbsoluteName, worksheets, ext);
