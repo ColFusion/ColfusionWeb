@@ -68,8 +68,12 @@ var WizardFileViewModel = function(extension, fileName, fileAbsoluteName, worksh
 };
 
 
-function WizardDataMatchingStepViewModel() {
+function WizardDataMatchingStepViewModel(sid, userId) {
     var self = this;
+
+    self.sid = sid;
+    self.userId = userId;
+
 
     self.files = ko.observableArray([]);
 
@@ -147,7 +151,7 @@ function WizardDataMatchingStepViewModel() {
     self.getSubmitDataAsDeffered = function(sourceType) {
         var modelToJS = ko.toJS(self.files);
 
-        var data = $.map(modelToJS, function(file) {
+        var files = $.map(modelToJS, function(file) {
             return {
                 extension: file.extension,
                 fileAbsoluteName: file.fileAbsoluteName,
@@ -174,6 +178,12 @@ function WizardDataMatchingStepViewModel() {
                 })
             };
         });
+
+        var data = {
+            sid : self.sid,
+            userId : self.userId,
+            files : files
+        };
          
         return $.ajax({
             url: ColFusionServerUrl + "/Wizard/putDataMatchingStepData", //my_pligg_base + '/DataImportWizard/generate_ktr.php',

@@ -46,16 +46,18 @@
             $.sheet.preLoad('jquery.sheet/');
 
             var sid;
+            var userId;
             var dataPreviewViewModel;
             var relationshipViewModel;
 
-            var initNewStoryPage = function(sid) {
+            var initNewStoryPage = function(sid, userId) {
                 sid = sid;
+                userId = userId;
                 dataPreviewViewModel = new DataPreviewViewModel(sid);
                 relationshipViewModel = new RelationshipViewModel(sid);
                 ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
             
-                importWizard.Init(sid);
+                importWizard.Init(sid, userId);
             
                 $.ajax({
                     type: 'POST',

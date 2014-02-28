@@ -376,7 +376,7 @@ function StoryMetadataViewModel(sid, userId){
 	           		self.isFetchCurrentValuesInProgress(false);
 	           		
 	           		if (callBack)
-	           			callBack(self.sid());
+	           			callBack(self.sid(), self.userId());
            		}
             }
         });

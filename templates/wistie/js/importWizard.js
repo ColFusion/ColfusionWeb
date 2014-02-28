@@ -2,13 +2,14 @@ var importWizard = (function () {
     var importWizard = {};
 
     importWizard.loadingGif = "";
-    importWizard.wizardDataMatchingStepViewModel = new WizardDataMatchingStepViewModel();
+
+    importWizard.wizardDataMatchingStepViewModel = null;
 
     importWizard.wizardUploadDatasetViewModel = new WizardUploadDatasetViewModel();
 
     importWizard.sid = "";
 
-    importWizard.Init = function (sid) {
+    importWizard.Init = function (sid, userId) {
         importWizard.sid = sid;
         wizardFromFile.Init(sid);
 
@@ -116,6 +117,8 @@ var importWizard = (function () {
         importWizard.loadingGif = "<img src='" + my_pligg_base + "/templates/wistie/images/ajax-loader_cp.gif'/>";
 
         //ko.applyBindings(importWizard.wizardUploadDatasetViewModel, document.getElementById('filenameListContainer'));
+
+        importWizard.wizardDataMatchingStepViewModel = new WizardDataMatchingStepViewModel(sid, userId);
 
         ko.applyBindings(importWizard.wizardDataMatchingStepViewModel, document.getElementById('dataMatchingStepCard'));
     };
