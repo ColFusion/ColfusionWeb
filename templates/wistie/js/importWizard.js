@@ -234,29 +234,10 @@ var importWizard = (function () {
                 });
         });
 
-        wizard.on("submit", function (wizard) {
-            $('#dataMatchingStepInProgress').show();
+        wizard.on("submit", function(wizard) {
+            //TODO: I don't know, but if not wrapping it in the functino here, the onWizard... got called on page load
 
-            $('button.wizard-close').hide();
-            execute().done(
-					function (resultJson) {
-					    $('button.wizard-close').show();
-
-					    $("#exe").html(resultJson.message);
-					    if (resultJson.isSuccessful) {
-					        wizard.trigger("success");
-
-					        wizard.hideButtons();
-					        wizard._submitting = false;
-					        wizard.showSubmitCard("success");
-
-					        $('#fromDataSetWrapper').find('.sidInput').val(
-									'New Dataset');
-					    } else {
-					        wizard.trigger("failure");
-					        $("#exe").html(resultJson.message);
-					    }
-					});
+            importWizard.onWizardSubmitClick(wizard);
         });
 
         wizard.on("reset", function (wizard) {
@@ -282,6 +263,60 @@ var importWizard = (function () {
             wizard.show();
             wizard.disableNextButton();
             return false;
+        });
+    }
+
+    // Performs submission of data matching staff and triggers data load on the server (e.g. ktr exec)
+    // Also transitions on the last page of the wizard where the message of success/or failure will be shown.
+    importWizard.onWizardSubmitClick = function(wiz) {
+        $('#dataMatchingStepInProgress').show();
+
+        $('button.wizard-close').hide();
+
+        var submitDataDeffered = importWizard.wizardDataMatchingStepViewModel.getSubmitDataAsDeffered(getImportSource());
+
+        submitDataDeffered.done(function(data) {
+            if (data.isSuccessful) {
+                var tiggerDataLoadDeffered = importWizard.triggerDataLoadOnServerAsDeffered();
+
+                tiggerDataLoadDeffered.done(function(data) {
+                    if (data.isSuccessful) {
+                        wizard.trigger("success");
+
+                        wizard.hideButtons();
+                        wizard._submitting = false;
+                        wizard.showSubmitCard("success");
+
+                        $('#fromDataSetWrapper').find('.sidInput').val('New Dataset');
+                    }
+                    else {
+                        wiz.trigger("failure");
+                        $("#messageContainer").html(data.message);
+                    }
+                })
+                .fail(function(data) {
+                    wiz.trigger("failure");
+                    $("#messageContainer").html("Could not perform submission request. Please try again later.");
+                });
+            }
+            else {
+                wiz.trigger("failure");
+                $("#messageContainer").html(data.message);
+            }
+        })
+        .fail(function(data) {
+            wiz.trigger("failure");
+            $("#messageContainer").html("Could not perform submission request. Please try again later.");
+        });
+    }
+
+    importWizard.triggerDataLoadOnServerAsDeffered = function() {
+        return $.ajax({
+            url: ColFusionServerUrl + "/Wizard/triggerDataLoad/" + importWizard.sid, //my_pligg_base + '/DataImportWizard/generate_ktr.php',
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true
         });
     }
 

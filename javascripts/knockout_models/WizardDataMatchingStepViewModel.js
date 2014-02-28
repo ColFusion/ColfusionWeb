@@ -27,7 +27,7 @@ var variableDataTypes = [
 ];
 
 
-var WizardVariableViewModel = function(originalName, chosenName, description, valueUnit, valueType, valueFormat) {
+var WizardVariableViewModel = function(originalName, chosenName, description, variableMeasuringUnit, variableValueType, variableValueFormat) {
     self = this;
 
     self.originalName = ko.observable(originalName);
@@ -35,9 +35,9 @@ var WizardVariableViewModel = function(originalName, chosenName, description, va
     
     self.description = ko.observable(description);
 
-    self.valueUnit = ko.observable(valueUnit);
-    self.valueType = ko.observable(valueType);
-    self.valueFormat = ko.observable(valueFormat);
+    self.variableMeasuringUnit = ko.observable(variableMeasuringUnit);
+    self.variableValueType = ko.observable(variableValueType);
+    self.variableValueFormat = ko.observable(variableValueFormat);
 
     self.checked = ko.observable(false);
     self.isSettingRowVisible = ko.observable(false);
@@ -104,14 +104,14 @@ function WizardDataMatchingStepViewModel() {
                                 var dataType = variableDataTypes[1];
 
                                 for (var z = 0; z < variableDataTypes.length; z++) {
-                                    if (variableDataTypes[z].name === variable.valueType) {
+                                    if (variableDataTypes[z].name === variable.variableValueType) {
                                         dataType = variableDataTypes[z];
                                         break;
                                     }
                                 };
 
                                 var wizardVariable = new WizardVariableViewModel(variable.originalName, variable.chosenName, 
-                                    variable.description, variable.valueUnit, dataType, variable.valueFormat);
+                                    variable.description, variable.variableMeasuringUnit, dataType, variable.variableValueFormat);
 
                                 wizardVariables.push(wizardVariable);
                             };
@@ -141,6 +141,47 @@ function WizardDataMatchingStepViewModel() {
             error: function(data) {
 
             }
+        });
+    }
+
+    self.getSubmitDataAsDeffered = function(sourceType) {
+        var modelToJS = ko.toJS(self.files);
+
+        var data = $.map(modelToJS, function(file) {
+            return {
+                extension: file.extension,
+                fileAbsoluteName: file.fileAbsoluteName,
+                fileName: file.fileName,
+                worksheets: $.map(file.worksheets, function(worksheet) {
+                    return {
+                        headerRow: worksheet.headerRow,
+                        indexInTheFile: worksheet.indexInTheFile,
+                        numberOfRows: worksheet.numberOfRows,
+                        sheetName: worksheet.sheetName,
+                        startColumn: worksheet.startColumn,
+                        variables: $.map(worksheet.variables, function(variable) {
+                            return {
+                                checked: variable.checked,
+                                chosenName: variable.chosenName,
+                                description: variable.description,
+                                originalName: variable.originalName,
+                                variableValueFormat: variable.variableValueFormat,
+                                variableValueType: variable.variableValueType.name,
+                                variableMeasuringUnit: variable.variableMeasuringUnit
+                            };
+                        })
+                    };
+                })
+            };
+        });
+         
+        return $.ajax({
+            url: ColFusionServerUrl + "/Wizard/putDataMatchingStepData", //my_pligg_base + '/DataImportWizard/generate_ktr.php',
+            type: 'post',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            data: JSON.stringify(data)
         });
     }
 }

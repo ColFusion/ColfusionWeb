@@ -318,14 +318,14 @@
                                         <td colspan="3">
                                             <table class="table">
                                                 <tr>
-                                                    <td>Data Type: <select data-bind='options: variableDataTypes, optionsText: "name", optionsCaption: " ", value: valueType'> </select>
+                                                    <td>Data Type: <select data-bind='options: variableDataTypes, optionsText: "name", optionsCaption: " ", value: variableValueType'> </select>
                                                     </td>
-                                                    <td data-bind="with: valueType">
+                                                    <td data-bind="with: variableValueType">
                                                         <div data-bind="visible: units.length > 0">
-                                                            Data Unit: <select data-bind='options: units, optionsCaption: " ", value: $parent.valueUnit'> </select>
+                                                            Data Unit: <select data-bind='options: units, optionsCaption: " ", value: $parent.variableMeasuringUnit'> </select>
                                                         </div>
                                                         <div data-bind="visible: format.length > 0">
-                                                            Format: <select data-bind='options: format, optionsCaption: " ", value: $parent.valueFormat'> </select>
+                                                            Format: <select data-bind='options: format, optionsCaption: " ", value: $parent.variableValueFormat'> </select>
                                                         </div>
                                                     
                                                     </td>                                                    
@@ -354,7 +354,7 @@
 
     <div class='wizard-error'>
         <div class='alert alert-error'><strong>There was a problem</strong> during your submission. Please report this to <a href='mailto:karataev.evgeny@gmail.com?subject=ErrorReported from Colfusion importing wizard'>Colfusion</a> and restart the wizard again from the main page.
-            <p id='exe'></p>
+            <p id='messageContainer'></p>
         </div>
     </div>
 
