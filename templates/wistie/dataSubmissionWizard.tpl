@@ -186,14 +186,16 @@
                                         </p>
                                     </div>
                                     <div id='sheetRowColumnsTable'>
-                                        <table border="1" style="table">             
-                                            <tr data-bind="visible: worksheetSettings().length > 0">
-                                                <th>sheet name</th>
-                                                <th>header row</th>
-                                                <th>start column</th>
-                                            </tr>
+                                        <table style="table table-hover"> 
+                                            <thead>            
+                                                <tr data-bind="visible: worksheetSettings().length > 0">
+                                                    <th>Sheet name</th>
+                                                    <th>Header row</th>
+                                                    <th>Start column</th>
+                                                </tr>
+                                            </thead>
                                             <tbody data-bind="foreach: worksheetSettings">
-                                                <tr style="height:40px;">
+                                                <tr>
                                                     <td>
                                                         <select data-bind="
                                                                 options: $parent.worksheets, 
@@ -331,8 +333,12 @@
                                                     </td>                                                    
                                                 </tr>
                                                 <tr>
+                                                    <td>Missing Value <span href="#" data-toggle="tooltip" data-placement="bottom" title="You can provide value that denotes missing value for the variable"> <i class="icon-info-sign"></i></span>: <input data-bind="value: missingValue"/></td>
+                                                    <td></td>
+                                                </tr>
+                                                <tr>
                                                     <td colspan="2">
-                                                        Description: 
+                                                        Description <span href="#" data-toggle="tooltip" data-placement="bottom" title="You can provide any textual description of this variable."> <i class="icon-info-sign"></i></span>: 
                                                         <textarea class="input-block-level" data-bind="value: description"> </textarea>
                                                     </td>
                                                 </tr>

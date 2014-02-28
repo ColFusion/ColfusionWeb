@@ -1,3 +1,4 @@
+//Second step of the wizard where user can selected how many sheets to select and specify starting row and column
 function SourceWorksheetSettingsViewModel() {
     var self = this;
     self.sourceWorksheetSettings = ko.observableArray();

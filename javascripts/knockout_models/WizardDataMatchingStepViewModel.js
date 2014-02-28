@@ -27,7 +27,9 @@ var variableDataTypes = [
 ];
 
 
-var WizardVariableViewModel = function(originalName, chosenName, description, variableMeasuringUnit, variableValueType, variableValueFormat) {
+var WizardVariableViewModel = function(originalName, chosenName, description, variableMeasuringUnit, variableValueType, 
+    variableValueFormat, missingValue) {
+
     self = this;
 
     self.originalName = ko.observable(originalName);
@@ -38,6 +40,8 @@ var WizardVariableViewModel = function(originalName, chosenName, description, va
     self.variableMeasuringUnit = ko.observable(variableMeasuringUnit);
     self.variableValueType = ko.observable(variableValueType);
     self.variableValueFormat = ko.observable(variableValueFormat);
+
+    self.missingValue = ko.observable(missingValue);
 
     self.checked = ko.observable(false);
     self.isSettingRowVisible = ko.observable(false);
@@ -115,7 +119,7 @@ function WizardDataMatchingStepViewModel(sid, userId) {
                                 };
 
                                 var wizardVariable = new WizardVariableViewModel(variable.originalName, variable.chosenName, 
-                                    variable.description, variable.variableMeasuringUnit, dataType, variable.variableValueFormat);
+                                    variable.description, variable.variableMeasuringUnit, dataType, variable.variableValueFormat, variable.missingValue);
 
                                 wizardVariables.push(wizardVariable);
                             };
@@ -171,7 +175,8 @@ function WizardDataMatchingStepViewModel(sid, userId) {
                                 originalName: variable.originalName,
                                 variableValueFormat: variable.variableValueFormat,
                                 variableValueType: variable.variableValueType.name,
-                                variableMeasuringUnit: variable.variableMeasuringUnit
+                                variableMeasuringUnit: variable.variableMeasuringUnit,
+                                missingValue : variable.missingValue
                             };
                         })
                     };
