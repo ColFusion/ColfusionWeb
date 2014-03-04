@@ -4,8 +4,8 @@ function SourceWorksheetSettingsViewModel() {
     self.sourceWorksheetSettings = ko.observableArray();
     self.loadingProgress = ko.observable();
 
-    self.addSource = function(sourceName, fileAbsoluteName, worksheets, ext) {
-        self.sourceWorksheetSettings.push(new SourceWorksheetSettings(sourceName, fileAbsoluteName, worksheets, ext));
+    self.addSource = function(sourceName, fileAbsoluteName, otherFilesAbsoluteNames, worksheets, ext) {
+        self.sourceWorksheetSettings.push(new SourceWorksheetSettings(sourceName, fileAbsoluteName, otherFilesAbsoluteNames, worksheets, ext));
     };
 
     self.cleanSource = function() {
@@ -30,6 +30,7 @@ function SourceWorksheetSettingsViewModel() {
                 extension : sourceWorksheetSettings.ext,
                 fileName : sourceWorksheetSettings.sourceName,
                 fileAbsoluteName : sourceWorksheetSettings.fileAbsoluteName,
+                otherFilesAbsoluteNames : sourceWorksheetSettings.otherFilesAbsoluteNames,
                 worksheets: $.map(sourceWorksheetSettings.worksheetSettings(), function (oneSheet) {
                     return {
                         sheetName : oneSheet.sheetName(),
@@ -50,10 +51,11 @@ function SourceWorksheetSettingsViewModel() {
     };
 }
 
-function SourceWorksheetSettings(sourceName, fileAbsoluteName, worksheets, ext) {
+function SourceWorksheetSettings(sourceName, fileAbsoluteName, otherFilesAbsoluteNames, worksheets, ext) {
     var self = this;
     self.sourceName = sourceName;
     self.fileAbsoluteName = fileAbsoluteName;
+    self.otherFilesAbsoluteNames = otherFilesAbsoluteNames;
     self.worksheets = ko.observableArray(worksheets);
     self.numOfWorksheets = ko.observable(1);
     self.numOfWorksheetsOptions = ko.observableArray([]);
