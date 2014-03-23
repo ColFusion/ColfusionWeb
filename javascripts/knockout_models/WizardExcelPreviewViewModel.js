@@ -71,12 +71,17 @@ var WizardExcelPreviewProperties = {
         self.sheetName = ko.observable(sheetName);
         self.cells = cells;
     },
-    WorksheetPreviewFile: function(filename) {
+    WorksheetPreviewFile: function(file) {
         var self = this;
-        self.filename = ko.observable(filename);
+        self.fileName = ko.observable(file.fileName);
+        self.fileAbsoluteName = ko.observable(file.fileAbsoluteName);
+
         self.worksheetPreviewTables = ko.observableArray([]);
 
         self.progressBarViewModel = ko.observable(new ProgressBarViewModel());
+
+        self.isError = ko.observable(false);
+        self.errorMessage = ko.observable();
 
         self.previewRowsPerPage = ko.observable(20);
         self.previewPage = ko.observable(1);
@@ -88,48 +93,88 @@ var WizardExcelPreviewProperties = {
             self.progressBarViewModel().isProgressing(true);
             
             // Start updating progress bar periodically until a page of data is downloaded.
-            getEstimatedLoadingSeconds().done(function (estimatedSeconds) {
+            getEstimatedLoadingSeconds().done(function (data) {
 
-                var estimatedLoadingTimestamp = estimatedSeconds * 1000;
-                self.progressBarViewModel().start(estimatedLoadingTimestamp);
-                
-                getPreviewFromServer(rowsPerPage, page).always(function() {
-                    self.progressBarViewModel().stop();
-                });
-                
+                if (data.isSuccessful) {
+                    var estimatedLoadingTimestamp = data.payload * 1000;
+                    self.progressBarViewModel().start(estimatedLoadingTimestamp);
+                    
+                    getPreviewFromServer(rowsPerPage, page).always(function() {
+                        self.progressBarViewModel().stop();
+                    });
+                }
+                else {
+                    self.isError(true);
+                    self.errorMessage(data.message);
+                }                
             }).error(function() {
-                alert("Some errors occur at server, please refresh page and try again.");
+                self.isError(true);
+                self.errorMessage("Some errors occur at server, please refresh page and try again.");
+                
             });
         };
 
         var getPreviewFromServer = function(rowsPerPage, page) {
             return $.ajax({
-                url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=10",
+                url: ColFusionServerUrl + "/Wizard/getDataPreviewFromFile", //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=10",
                 type: 'post',
                 dataType: 'json',
-                data: {
+                contentType: "application/json",
+                crossDomain: true,
+                data: JSON.stringify({
                     previewRowsPerPage: rowsPerPage,
                     previewPage: page,
-                    filename: self.filename()
-                },
+                    fileName: self.fileName(),
+                    fileAbsoluteName: self.fileAbsoluteName()
+                }),
                 success: function(data) {
-                    self.worksheetPreviewTables([]);
-                    for (var sheetName in data) {
-                        self.worksheetPreviewTables.push(new WizardExcelPreviewProperties.WorksheetPreviewTable(sheetName, data[sheetName]));
+
+                    if (data.isSuccessful) {
+
+                        self.worksheetPreviewTables([]);
+                        for (var k = 0; k < data.payload.worksheetsData.length; k++) {
+
+                            var worksheetsData = data.payload.worksheetsData[k];
+                                          
+                            var numRows = worksheetsData.worksheetData.length;
+                            var cells = new Array(numRows);
+
+                            for (var i = 0; i < numRows; i++) {
+                                var numCol = worksheetsData.worksheetData[i].worksheetDataRow.length;
+                                cells[i] = new Array(numCol);
+
+                               for (var j = 0; j < numCol; j++) {
+                                    cells[i][j] = worksheetsData.worksheetData[i].worksheetDataRow[j];
+                                };
+                            };
+
+                            self.worksheetPreviewTables.push(new WizardExcelPreviewProperties.WorksheetPreviewTable(worksheetsData.worksheetName, cells));
+                        }
                     }
+                    else {
+                        self.isError(true);
+                        self.errorMessage(data.message);
+                    }
+
                 },
                 error: function() {
-                    alert("Some errors occur at server, please refresh page and try again.");
+                    self.isError(true);
+                    self.errorMessage("Some errors occur at server, please refresh page and try again.");
                 }
             });
         };
 
         function  getEstimatedLoadingSeconds() {
             return $.ajax({
-                url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=9",
+                url: ColFusionServerUrl + "/Wizard/estimateDataPreviewFromFile", //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=9",
                 type: 'post',
-                data: {filename: self.filename()},
-                dataType: 'html'
+                contentType: "application/json",
+                crossDomain: true,
+                dataType: 'json',
+                data: JSON.stringify({
+                    fileName: self.fileName(),
+                    fileAbsoluteName: self.fileAbsoluteName()
+                }),
             });
         }
        
@@ -158,11 +203,11 @@ function WizardExcelPreviewViewModel(sid) {
     self.sid = sid;
     self.previewFiles = ko.observableArray();
 
-    self.initFilePreview = function(sid, filenames) {
+    self.initFilePreview = function(sid, files) {
         self.sid = sid;
         self.previewFiles([]);
-        for (var i = 0; i < filenames.length; i++) {
-            var worksheetPreviewFile = new WizardExcelPreviewProperties.WorksheetPreviewFile(filenames[i]);
+        for (var i = 0; i < files.length; i++) {
+            var worksheetPreviewFile = new WizardExcelPreviewProperties.WorksheetPreviewFile(files[i]);
             self.previewFiles.push(worksheetPreviewFile);
             worksheetPreviewFile.loadPreview();
         }

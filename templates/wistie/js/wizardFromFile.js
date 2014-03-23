@@ -73,7 +73,9 @@ var wizardFromFile = (function() {
         $("#previewFiles").show();
         $("#showFilePreviewButtonContainer").hide();
 
-        wizardExcelPreviewViewModel.initFilePreview(wizardFromFile.sid, filenames);
+        var sourceSettings = wizardFromFile.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
+
+        wizardExcelPreviewViewModel.initFilePreview(wizardFromFile.sid, sourceSettings);
     };
 
     wizardFromFile.getLoadingTime = function() {

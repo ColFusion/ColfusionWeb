@@ -227,7 +227,7 @@
                             
                         </div>
                         <div data-bind="foreach: previewFiles" id="previewFiles" style="display:none;">
-                            <p data-bind="text: filename" class="sourceName" style="margin-top: 10px;"></p>
+                            <p data-bind="text: fileName" class="sourceName" style="margin-top: 10px;"></p>
                             <div class="previewFileContainer">
                                 <div data-bind="visible: progressBarViewModel().isProgressing()" id="loadingProgressContainer">
                                     <div class="loadingTextWrapper" style="margin-top: 60px;">
@@ -238,7 +238,13 @@
                                         <div data-bind="style: {width: progressBarViewModel().loadingProgressPercent() + '%'}" class="bar"></div>
                                     </div>                  
                                 </div>
-                                <div data-bind="visible: !progressBarViewModel().isProgressing()" id="sheetExcelWrapper">
+                                <div data-bind="visible: isError" id="loadingProgressContainer">
+                                    <div class="loadingTextWrapper" style="margin-top: 60px;">
+                                        <span class="loadingText">Could not load file preview.</span>
+                                        <span data-bind="text: errorMessage" class='percentText'></span>
+                                    </div>                 
+                                </div>
+                                <div data-bind="visible: !progressBarViewModel().isProgressing() && !isError()" id="sheetExcelWrapper">
                                     <div id ='sheetExcel'>
                                         <ul data-bind="foreach: worksheetPreviewTables" class="nav nav-tabs">
                                             <li data-bind="attr: { class: $index() == 0 ? 'active' : '' }">
