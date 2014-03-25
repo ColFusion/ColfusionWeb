@@ -11,17 +11,14 @@ CREATE TABLE `colfusion`.`colfusion_sourceinfo_metadata_edit_history` (
 ALTER TABLE `colfusion`.`colfusion_sourceinfo_metadata_edit_history` 
 ADD INDEX `ToSourceInfo_idx` (`sid` ASC),
 ADD INDEX `ToUser_idx` (`uid` ASC);
-ALTER TABLE `colfusion`.`colfusion_sourceinfo_metadata_edit_history` 
-ADD CONSTRAINT `ToSourceInfo`
-  FOREIGN KEY (`sid`)
-  REFERENCES `colfusion`.`colfusion_sourceinfo` (`Sid`)
-  ON DELETE CASCADE
-  ON UPDATE CASCADE,
-ADD CONSTRAINT `ToUser`
-  FOREIGN KEY (`uid`)
-  REFERENCES `colfusion`.`colfusion_users` (`user_id`)
-  ON DELETE CASCADE
-  ON UPDATE CASCADE;
+ALTER TABLE  `colfusion_sourceinfo_metadata_edit_history` ADD FOREIGN KEY (  `sid` ) REFERENCES  `colfusion`.`colfusion_sourceinfo` (
+`Sid`
+) ON DELETE CASCADE ON UPDATE CASCADE ;
+
+ALTER TABLE  `colfusion_sourceinfo_metadata_edit_history` ADD FOREIGN KEY (  `uid` ) REFERENCES  `colfusion`.`colfusion_users` (
+`user_id`
+) ON DELETE CASCADE ON UPDATE CASCADE ;
+
 
 
 ALTER TABLE `colfusion`.`colfusion_sourceinfo_metadata_edit_history` 
