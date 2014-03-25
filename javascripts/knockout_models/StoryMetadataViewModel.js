@@ -212,7 +212,7 @@ function StoryMetadataViewModel(sid, userId){
     	};
 
         if (!isUserAuthor) {
-            if (self.submitter().userId == self.userId()) {
+            if (self.submitter() !== underfined && self.submitter().userId === self.userId()) {
                 isUserAuthor = true;
             }
         }
