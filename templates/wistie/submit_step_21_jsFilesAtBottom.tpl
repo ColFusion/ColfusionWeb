@@ -53,6 +53,10 @@
             var initNewStoryPage = function(sid, userId) {
                 sid = sid;
                 userId = userId;
+
+                // Load attachment list.
+                fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));
+
                 dataPreviewViewModel = new DataPreviewViewModel(sid);
                 relationshipViewModel = new RelationshipViewModel(sid);
                 ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));

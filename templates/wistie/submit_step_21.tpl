@@ -73,9 +73,6 @@
 
     storyMetadataViewModel.createNewStory(initNewStoryPage);
 
-    // Load attachment list.
-    fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));
-
     function submitDataSubmissionForm() {
         if (isSubmitFormValid()) {
             storyMetadataViewModel.status("queued");

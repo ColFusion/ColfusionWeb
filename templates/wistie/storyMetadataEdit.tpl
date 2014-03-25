@@ -149,27 +149,25 @@
     <!-- End of History Pop up -->
 
 
-</div>
-
-
-<!-- Attachments Pop Up -->
-
-<div id="uploadAttachmentLightBox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
-    <div class='lightbox-content'>
-        <div class="pull-right">
-            <button class="btn btn-link" type="button" data-dismiss="lightbox" aria-hidden="true">Close this dialog</button>
-        </div>
-        <div>
-            <iframe width="1000" height="500" src="{$my_pligg_base}/fileManagers/sourceAttachmentUploadPage.php?sid={$sid}"></iframe>
+    <!-- Attachments Pop Up -->
+{literal}
+    <div id="uploadAttachmentLightBox" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
+        <div class='lightbox-content'>
+            <div class="pull-right">
+                <button class="btn btn-link" type="button" data-dismiss="lightbox" aria-hidden="true">Close this dialog</button>
+            </div>
+            <div>
+                <iframe width="1000" height="500" 
+                data-bind="attr: {'src':  '{/literal}{$my_pligg_base}{literal}/fileManagers/sourceAttachmentUploadPage.php?sid=' + sid()}"></iframe>
+            </div>
         </div>
     </div>
+{/literal}
+    <!-- End of Attachments Pop Up   -->
+
 </div>
 
-<!-- End of Attachments Pop Up -->
-
-
 <!-- Apply KO bindings -->
-
 
 {literal}
     <script>
@@ -182,7 +180,7 @@
         // When lightbox is closed, refresh attachment list.
         $('#uploadAttachmentLightBox').bind('hidden', function(e) {
             // Refresh attachment list.
-            fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));
+            fileManager.loadSourceAttachments(storyMetadataViewModel.sid(), $("#attachmentList"), $("#attachmentLoadingIcon"));
             var lightBoxContentDom = $('#uploadAttachmentLightBox').find('.lightbox-content');
             var iframeDom = $(lightBoxContentDom).find('iframe');
             $(iframeDom).remove();
