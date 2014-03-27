@@ -95,6 +95,13 @@
             </div>
         </div>
 
+        <div class="control-group">
+            <label class="control-label" for="editReasonInput">Reason/Comment for editing:</label>
+            <div class="controls">
+                <textarea id="editReasonInput"  name="editReasonInput" class="input-block-level" data-bind="value: editReason, visible: isInEditMode()"> </textarea>               
+            </div>
+        </div>
+
         <input type="hidden" name="url" id="url" value="{$submit_url}" />
         <input type="hidden" name="phase" value="1" />
         <input type="hidden" name="randkey" value="{$randkey}" />

@@ -165,6 +165,9 @@ function StoryMetadataViewModel(sid, userId){
     self.tags = ko.observable();
     self.dateSubmitted = ko.observable(new Date());
 
+    self.editReason = ko.observable();
+
+
     self.storyMetadataHistory = ko.observable();
 
     self.selectedLookedUpUser = ko.observable();
@@ -229,6 +232,9 @@ function StoryMetadataViewModel(sid, userId){
 
     //TODO: read from server old data again
     self.cancelChanges = function() {
+
+        self.editReason("");
+        
     	self.switchToReadMode();
 
     	self.storyAuthors.removeAll();
@@ -246,8 +252,11 @@ function StoryMetadataViewModel(sid, userId){
             	status : self.status(),
             	sourceType : self.sourceType(),
             	tags : self.tags(),
-            	dateSubmitted : self.dateSubmitted()
+            	dateSubmitted : self.dateSubmitted(),
+                editReason : self.editReason()
         	};
+
+        self.editReason("");
 
         data.storySubmitter = self.submitter().getTempAsJSONObj();
         data.storyAuthors = $.map(self.storyAuthors(), function (item) {
