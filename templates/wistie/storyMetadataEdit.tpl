@@ -95,10 +95,10 @@
             </div>
         </div>
 
-        <div class="control-group">
+        <div class="control-group" data-bind="visible: isInEditMode()">
             <label class="control-label" for="editReasonInput">Reason/Comment for editing:</label>
             <div class="controls">
-                <textarea id="editReasonInput"  name="editReasonInput" class="input-block-level" data-bind="value: editReason, visible: isInEditMode()"> </textarea>               
+                <textarea id="editReasonInput"  name="editReasonInput" class="input-block-level" data-bind="value: editReason"> </textarea>               
             </div>
         </div>
 
