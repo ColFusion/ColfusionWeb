@@ -4,6 +4,10 @@ set_time_limit(0);
 include_once(realpath(dirname(__FILE__)) . '/../config.php');
 include_once(realpath(dirname(__FILE__)) . '/../DAL/QueryEngine.php');
 
+Logger::configure(realpath(dirname(__FILE__)) . '/../conf/log4php.xml');
+
+$logger = Logger::getLogger("generalLog");
+
 header('Content-type: text/html; charset=utf-8');
 if(isset($_GET["action"])){
     $action = $_GET["action"];
@@ -18,10 +22,16 @@ function GetTablesList() {
 }
 
 function GetTableDataBySidAndName(){
+
+
+
     $sid = $_POST["sid"];
     $table_name = $_POST["table_name"];
     $perPage = $_POST["perPage"];
     $pageNo = $_POST["pageNo"];
+
+    $logger->info("In GetTableDataBySidAndName for sid = $sid, tableName = $table_name, perPage = $perPage, pageNo = $pageNo");
+
     
     if (is_string($sid)) {
         $sid = json_decode($sid);
