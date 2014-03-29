@@ -35,7 +35,7 @@ class CheckdataMatchingQueryMaker {
 
         $columns = $this->GetColumnsFromSource($source);
 
-        if (DALUtils::GetSourceType($source->sid) == "database"){
+        if (DALUtils::GetSourceType($source->sid) == "data file"){
 
             $fromLinkedServerQueryMaker = new FromLinkedServerQueryMaker($source, $columns);
 

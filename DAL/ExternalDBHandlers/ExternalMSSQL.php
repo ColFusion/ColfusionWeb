@@ -174,7 +174,7 @@ class ExternalMSSQL {
 
             $sourceType = ExternalMSSQL::GetSourceType($sid);
 
-            if ($sourceType == "database") {
+            if ($sourceType == "data file") {
                 return ExternalMSSQL::wrapInLimit($pageNo, $perPage, $tableName);
             } else {
                 $colsString = "'" . implode("','", $cols) . "'";
@@ -190,7 +190,7 @@ class ExternalMSSQL {
 
                 $sourceTypeFrom = ExternalMSSQL::GetSourceType($sidFrom);
 
-                if ($sourceTypeFrom == "database") {
+                if ($sourceTypeFrom == "data file") {
 
                     $colsResult = ExternalMSSQL::getAllTableNameDotColumnsBySid($sidFrom, $tableNameFrom);
 
@@ -218,7 +218,7 @@ class ExternalMSSQL {
 
             $sourceType = ExternalMSSQL::GetSourceType($sidFrom);
 
-            if ($sourceType == "database") {
+            if ($sourceType == "data file") {
                 $colsResult = ExternalMSSQL::getAllTableNameDotColumnsBySid($sidFrom, $tableNameFrom);
 
                 $colsRenamed = $colsResult->colsRenamed;

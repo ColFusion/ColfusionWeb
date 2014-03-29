@@ -194,7 +194,7 @@ class MergedDataSetQueryMaker {
         $result = array();
 
         foreach ($sidsAndTables as $key => $sidAndTable) {
-           if (DALUtils::GetSourceType($sidAndTable->sid) == "database"){
+           if (DALUtils::GetSourceType($sidAndTable->sid) == "data file"){
                 $result[] = $this->getFromPartAsFromDatabase($sidAndTable);
             }
             else {

@@ -84,7 +84,7 @@ class QueryEngine {
 
         global $db;
 
-        if ($this->GetSourceType($from) == "database") {
+        if ($this->GetSourceType($from) == "data file") {
 
             $sql = "select * from colfusion_sourceinfo_DB where sid = $from";
             $rst = $db->get_results($sql);
@@ -217,7 +217,7 @@ class QueryEngine {
             return $this->doQuery($select, $fromArray, null, null, null, $perPage, $pageNo);
         }
         else {
-            if ($this->GetSourceType($sid) == "database") {
+            if ($this->GetSourceType($sid) == "data file") {
                 return $this->GetTableDataBySidAndNameFromExternalDB($sid, $table_name, $perPage, $pageNo);
             } else {
                 return $this->GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo);
@@ -237,7 +237,7 @@ class QueryEngine {
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
 
-        if ($this->GetSourceType($from->sid) == "database") {
+        if ($this->GetSourceType($from->sid) == "data file") {
             $externalDBCredentials = $this->GetExternalDBCredentialsBySid($from->sid);
 
             $tableName = $from->tableName;
