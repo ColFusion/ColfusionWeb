@@ -295,8 +295,6 @@
         </div>
 
         <div data-bind="visible: !progressBarViewModel().isProgressing()" class='wizard-input-section' style='position: relative; width: 100%; height: 100%; overflow: auto;'>
-            <label><input type='checkbox' id='toggleAllColumns'/>toggle all</label>
-
             <div id='dataMatchingTable' data-bind="foreach: files">
                 <div>
                     <div data-bind="foreach: worksheets">
@@ -305,7 +303,12 @@
 
                             <table class="table table-hover">
                                 <tr>
-                                    <th></th>
+                                    <th>
+                                        <input type="checkbox" data-bind="click: toggleAll, checked: allToggled"/>
+                                        <span href="#" data-toggle="tooltip" data-placement="bottom" title="Toggle all for this table"> 
+                                            <i class="icon-info-sign"></i>
+                                        </span>
+                                    </th>
                                     <th>Original Variable Name</th>
                                     <th>Selected Variable Name</th>
                                     <th></th>

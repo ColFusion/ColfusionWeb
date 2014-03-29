@@ -99,10 +99,6 @@ var importWizard = (function () {
             $('#h4').hide();
         });
 
-        $('#toggleAllColumns').change(function () {
-            $('input[name="columns[]"]').prop('checked', this.checked);
-        });
-
         $("#done").click(function () {
             document.getElementById("finishYourSubmissionButton").disabled = false;
             finishSubmittingData();

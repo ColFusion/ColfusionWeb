@@ -27,7 +27,7 @@ var variableDataTypes = [
 ];
 
 
-var WizardVariableViewModel = function(originalName, chosenName, description, variableMeasuringUnit, variableValueType, 
+var WizardVariableViewModel = function(originalName, chosenName, description, variableMeasuringUnit, variableValueType,
     variableValueFormat, missingValue) {
 
     self = this;
@@ -48,7 +48,7 @@ var WizardVariableViewModel = function(originalName, chosenName, description, va
 
     self.toggleSettingsRowVisibility = function(item) {
         item.isSettingRowVisible(!item.isSettingRowVisible());
-    }
+    };
 };
 
 var WizardWorksheetViewModel = function(sheetName, headerRow, startColumn, numberOfRows, indexInTheFile, variables) {
@@ -60,6 +60,19 @@ var WizardWorksheetViewModel = function(sheetName, headerRow, startColumn, numbe
     self.numberOfRows = ko.observable(numberOfRows);
     self.indexInTheFile = ko.observable(indexInTheFile);
     self.variables = ko.observableArray(variables);
+
+    self.allToggled = ko.observable(false);
+
+    self.toggleAll = function(wsheet) {
+
+        var all = wsheet.allToggled();
+
+        ko.utils.arrayForEach(wsheet.variables(), function(variable) {
+            variable.checked(!all);
+        });
+
+        return true;
+    };
 };
 
 var WizardFileViewModel = function(extension, fileName, fileAbsoluteName, worksheets) {
