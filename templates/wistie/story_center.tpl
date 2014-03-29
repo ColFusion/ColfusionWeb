@@ -158,8 +158,8 @@
 
             // Load attachment list one for showing one for editing
             // TODO: change to knockout model and do call to the server only once.
-            fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));   
-            fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"));   
+            fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"), true);   
+            fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"), false);   
 
             $.ajax({
                 type: 'POST',

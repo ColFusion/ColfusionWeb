@@ -1,12 +1,12 @@
 var fileManager = (function() {
     var fileManager = {};
 
-    fileManager.loadSourceAttachments = function(sid, container, loadingIconDom) {
+    fileManager.loadSourceAttachments = function(sid, container, loadingIconDom, allowDeleteFiles) {
         $(loadingIconDom).show();
         $.ajax({
             type: 'POST',
             url: "fileManagers/attachmentList.php",
-            data: {sid: sid},
+            data: {sid: sid, allowDeleteFiles: allowDeleteFiles},
             success: function(data) {
                 $(container).children('.fileListItem').remove();
                 $(container).prepend(data);

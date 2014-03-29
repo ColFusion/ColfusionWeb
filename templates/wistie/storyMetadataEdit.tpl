@@ -187,7 +187,7 @@
         // When lightbox is closed, refresh attachment list.
         $('#uploadAttachmentLightBox').bind('hidden', function(e) {
             // Refresh attachment list.
-            fileManager.loadSourceAttachments(storyMetadataViewModel.sid(), $("#attachmentList"), $("#attachmentLoadingIcon"));
+            fileManager.loadSourceAttachments(storyMetadataViewModel.sid(), $("#attachmentList"), $("#attachmentLoadingIcon"), true);
             var lightBoxContentDom = $('#uploadAttachmentLightBox').find('.lightbox-content');
             var iframeDom = $(lightBoxContentDom).find('iframe');
             $(iframeDom).remove();
