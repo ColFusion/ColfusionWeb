@@ -229,11 +229,13 @@ var importWizard = (function () {
         wizard.cards["dataMatchingStepCard"].on("selected", function (card) {
             wizard.disableNextButton();
 
+            $('#dataMatchingStepInProgress').show();
             
             //TODO: the settings should be send as a general json, so it should not depend on the source type.
             var sourceSettings = wizardFromFile.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
             importWizard.wizardDataMatchingStepViewModel.fetchVariables(getImportSource(), sourceSettings, function () {
                     wizard.enableNextButton();
+                    $('#dataMatchingStepInProgress').hide();
                 });
         });
 
