@@ -1,7 +1,7 @@
 var addAuthorTypeaheadTemplate = '<div class="dataColumnSuggestion">' +
         '<div style="overflow: auto; margin-bottom: 5px;">' +
         '<p class="dataColumnSuggestion-Author">' +
-        '{{userInfo}} ({{login}})' +
+        '{{userInfo}}' +
         '</p>' +
         '</div>' +
         '</div>';
@@ -41,10 +41,32 @@ ko.bindingHandlers.searchUsersTypeahead = {
                     }
                     
                     return $.map(data.payload, function(user) {
-                    	var userInfo = user;
-                    	user.userInfo = user.lastName + ", " + user.firstName;
+                    	
+                        var userIntoString = "";
 
-                    	return userInfo;
+                        if (user.lastName.length !== 0) {
+                            userIntoString += user.lastName;
+                        }
+
+                        if (user.firstName.length !== 0) {
+                            if (userIntoString.length === 0) {
+                                userIntoString += user.firstName;
+                            }
+                            else {
+                                userIntoString += ", " + user.firstName;
+                            }
+                        }
+
+                        if (userIntoString.length === 0) {
+                            userIntoString = user.login;
+                        }
+                        else {
+                            userIntoString += " (" + user.login + ")";
+                        }
+
+                    	user.userInfo = userIntoString;
+
+                        return user;
                     });
                 }
             },
@@ -52,7 +74,7 @@ ko.bindingHandlers.searchUsersTypeahead = {
             template: search_typeahead_tpl,
             engine: Hogan
         }).bind('typeahead:selected', function(event, datum) {
-            storyModel.selectedLookedUpUser(new StoryAuthorModel(datum.userId, datum.firstName, datum.lastName, datum.login, 
+            storyModel.selectedLookedUpUser(new StoryAuthorModel(datum.userId, datum.firstName, datum.lastName, datum.login,
             	datum.avatarSource, datum.karma, datum.roleId));
             $(this).parent().next('button').prop("disabled", false);
         }).bind('typeahead:opened', function() {
@@ -72,10 +94,10 @@ var AuthorRoleModel = function (roleId, roleName, roleDescription) {
 	self.roleId = ko.observable(roleId);
 	self.roleName = ko.observable(roleName);
 	self.roleDescription = ko.observable(roleDescription);
-}
+};
 
 //TODO, FIXME: should be read from the server
-var authorRoles = [ new AuthorRoleModel(1, "submitter", "the person who submits the data to Col*Fusion"), 
+var authorRoles = [ new AuthorRoleModel(1, "submitter", "the person who submits the data to Col*Fusion"),
 	new AuthorRoleModel(2, "owner", "the person who owns the data to Col*Fusion")
 ];
 
