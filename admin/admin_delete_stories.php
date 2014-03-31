@@ -99,7 +99,10 @@ function delete_storylink($linkid) {
 
         //delete the sourceinfo which should triget casding deleting of all related info except cached queries and visualization stuff.
         $query="DELETE FROM ".table_prefix."sourceinfo WHERE sid = $sid";
-        if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        if (! $result=mysql_query($query)) {
+            $logger->error("in admin delete story " . mysql_error());
+            echo mysql_error();
+        }
 
         //now the only thing left is Neo4J, need to delete node and all realtionships.
         $neo4JDAO = new Neo4JDAO();
