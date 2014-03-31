@@ -82,7 +82,13 @@
 
         <div class="control-group">
             <label class="control-label" for="attachmentList">{#PLIGG_Visual_Submit2_Attachments#}
-                <img src="help.png" width="15" height="15" title="" data-original-title="You can attach any files which contain any additional information about the data being submitted in step 2.">:</label>
+                
+                <span href="#" data-toggle="tooltip" data-placement="bottom" title="You can attach any files which contain any additional information about the data being submitted in step 2."> 
+                    <i class="icon-info-sign"></i>
+                </span>
+
+                :
+            </label>
             <div class="controls">
                 <table class="fileList" id="attachmentList"> 
                     <li id="attachmentLoadingIcon">
