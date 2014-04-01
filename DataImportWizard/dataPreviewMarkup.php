@@ -22,7 +22,8 @@
             </div>
             <!-- /ko -->
             <div data-bind="visible: isNoData" style="color: grey;">This table has no data or the data are being processed.</div>
-            <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
+            <!-- Since we would need to rewrite it the back end in java anyway, for now here is a hack to not show error message if for example the target database is not created yet-->
+            <div data-bind="visible: isError" style="color: grey;">This table has no data or the data are being processed.</div>
             <div data-bind="with: currentTable">
                 <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
                     <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">

@@ -24,7 +24,8 @@
                 </div>
             </div>
 
-            <div class="submit_right_sidebar hidden" id="dockcontent">                   
+            <div class="submit_right_sidebar hidden" id="dockcontent">   
+            <!-- Data Preview section markup is inserted here. The insertin is triggered at submit_step_21_jsFilesAtBottom.tpl -->                
                 <div id="dataPreviewContainer"></div>
             </div>
             <div>
