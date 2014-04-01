@@ -30,7 +30,7 @@ function GetTableDataBySidAndName(){
     $perPage = $_POST["perPage"];
     $pageNo = $_POST["pageNo"];
 
-    $logger->info("In GetTableDataBySidAndName for sid = $sid, tableName = $table_name, perPage = $perPage, pageNo = $pageNo");
+    //$logger->info("In GetTableDataBySidAndName for sid = $sid, tableName = $table_name, perPage = $perPage, pageNo = $pageNo");
 
     
     if (is_string($sid)) {
