@@ -294,6 +294,9 @@ class RelationshipDAO
      */
     public function getAllRelationshipInfoBySid($sid)
     {
+
+// status <> 1 condition is used to exclude deleted relationships.
+
         $query = <<< EOQ
                 SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
        siFrom.sid as sidFrom, siTo.sid as sidTo,
@@ -311,12 +314,13 @@ FROM
 
 where
         rel.creator = u.user_id
-        and rel.status = 0
+        and rel.status <> 1
         and rel.rel_id = statOnVerdicts.rel_id
         and rel.sid1 = siFrom.Sid
         and rel.sid2 = siTo.Sid
         and (rel.sid1 = $sid or rel.sid2 = $sid)
 EOQ;
+
 
         $res = $this->ezSql->get_results($query);
 
