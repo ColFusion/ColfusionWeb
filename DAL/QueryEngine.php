@@ -373,7 +373,7 @@ class QueryEngine {
     public function MineRelationships($sid) {
         $relationshipDao = new RelationshipDAO();
 
-        // get ids of relationships which were minded (not existed before) for given sid.
+        // get ids of relationships which were mined (not existed before) for given sid.
         $newRelsMined = $relationshipDao->mineRelationships($sid);
 
 //var_dump($newRelsMined);
@@ -386,8 +386,8 @@ class QueryEngine {
             $neo4JDAO->addRelationshipsByRelIds($newRelsMined);
 
             // triger background execution of data matching ration calcualtion.
-            $dataMatcher = new DataMatcher();
-            $dataMatcher->calculateDataMatchingRatios($newRelsMined);
+        //    $dataMatcher = new DataMatcher();
+        //    $dataMatcher->calculateDataMatchingRatios($newRelsMined);
         }
 
         // get info to display in Relatiosnhips table of all relationships for given sid.
