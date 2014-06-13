@@ -12,8 +12,9 @@ var DataPreviewViewModelProperties = {
         self.isChoosen = ko.observable(false);
         self.tableName = ko.observable(tableName);
     },
-    Table: function(tableName, cols, rows, rawData, totalPage, currentPage, perPage) {
+    Table: function(sid, tableName, cols, rows, rawData, totalPage, currentPage, perPage) {
         var self = this;
+        self.sid = sid;
         self.tableName = tableName;
         self.totalPage = ko.observable(totalPage);
         self.currentPage = ko.observable(currentPage);
@@ -59,7 +60,34 @@ var DataPreviewViewModelProperties = {
                     self.isEditLinkVisible(false);
                 }
             });
-        }
+        };
+
+        self.openRefineURL = ko.observable("");
+
+
+        self.swithToOpenRefine = function() {
+            // var test = 12;
+            $.ajax({
+                url: "http://localhost/OpenRefine/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+                crossDomain: true,
+                success: function(data) {
+                    // alert("userId: " + data.testMsg);
+                    if (data.successful) {
+                        if(data.isEditing && !data.isTimeOut) {
+                            alert(data.msg);
+                             
+                            self.openRefineURL(data.openrefineURL);
+
+                            $('#editpopup').lightbox({resizeToFit: false});
+       
+                        }
+                    }
+                }
+            });
+        };
 
     }
 };
@@ -131,7 +159,7 @@ function DataPreviewViewModel(sid) {
         var currentPage = tableData.Control.pageNo;
 
         var transformedData = dataSourceUtil.transformRawDataToColsAndRows(tableData);
-        self.currentTable(new DataPreviewViewModelProperties.Table(tableName, transformedData.columns, transformedData.rows, tableData.data, totalPage, currentPage, perPage));
+        self.currentTable(new DataPreviewViewModelProperties.Table(self.sid, tableName, transformedData.columns, transformedData.rows, tableData.data, totalPage, currentPage, perPage));
         self.currentTable().checkIfBeingEdited(self.sid);
     }
 
@@ -173,24 +201,7 @@ function DataPreviewViewModel(sid) {
         }
     };
 
-    self.swithToOpenRefine = function() {
-        // var test = 12;
-        $.ajax({
-            url: "http://localhost/OpenRefine/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
-            type: 'GET',
-            dataType: 'json',
-            contentType: "application/json",
-            crossDomain: true,
-            success: function(data) {
-                // alert("userId: " + data.testMsg);
-                if (data.successful) {
-                    if(data.isEditing && !data.isTimeOut) {
-                        alert(data.msg);
-                    }
-                }
-            }
-        });
-    };
+   
 
     self.refreshPreview = function() {
 
