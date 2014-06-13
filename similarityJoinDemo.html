@@ -1,0 +1,148 @@
+<html>
+<head>
+	<script type="text/javascript" src="javascripts/jquery-1.9.1.min.js"></script>
+	<style>
+		.tftable {
+    font-size:12px;
+    color:#333333;
+    border-width: 1px;
+    border-color: #729ea5;
+    border-collapse: collapse;
+    margin-bottom: 10px;
+    line-height: 13px;
+    min-width: 100%;
+}
+
+.tftable th {
+    font-size:12px;
+    background-color:#acc8cc;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #729ea5;
+    text-align:left;
+}
+
+.tftable tr {
+    background-color:#EEF3F4;
+}
+
+.tftable .datatr:hover{
+    background-color: white;
+}
+
+.tftable td {
+    font-size:12px;
+    border-width: 1px;
+    padding: 8px;
+    border-style: solid;
+    border-color: #729ea5;
+}
+
+	</style>
+</head>
+<body>
+<h2>Similarity Join Demo</h2>
+<table>
+	<tr>
+		<td><div id="table1Container"></div></td>
+		<td><div id="table2Container"></div></td>
+	</tr>
+</table>
+<h3>Similarity Threshold</h3>
+<table>
+	<tr>
+		<td><input id="simThreshold" type="text" value="1"/></td>
+		<td><button id="runSimJoin" onclick="runSimJoin()">Run Similarity Join</button></td>
+	</tr>
+</table>
+<h3>Joint Table</h3>
+
+<div id="table3Container"></div>
+
+<script>
+	
+	var sid1 = 1717;
+	var tableName1= "Sheet1";
+	var sid2 = 1718;
+	var tableName2 = "Sheet1";
+
+	function getTableData(container, sid, tableName) {
+
+		var data = {sid: sid, table_name: tableName, perPage: 10, pageNo: 1};
+
+        $.ajax({
+            url: "http://localhost/Colfusion/visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
+            type: 'POST',
+            // dataType: 'json',
+            //contentType: "application/json",
+            crossDomain: true,
+            data: data,//JSON.stringify(data),
+            success: function(json) {
+            	var jsonObj = JSON.parse(json);
+            	
+            	var cols = jsonObj.Control.cols.split(",");
+            	var rows = jsonObj.data;
+
+            	
+            	var tableHtml = createTableDom(cols, rows);
+                $("#" + container).html(tableHtml);
+            }
+        });
+	}
+
+	function createTableDom(cols, rows) {
+		var tableHtml = "<table class='tftable'>";
+		tableHtml += "<tr>";
+
+		for (var j = 0; j < cols.length; j++) {
+			tableHtml += "<th>";
+			tableHtml += cols[j];
+			tableHtml += "</th>";
+		};
+
+		tableHtml += "</tr>";
+
+
+		for (var i = 0; i < rows.length; i++) {
+			var row = rows[i];
+
+			tableHtml += "<tr class='datatr'>";
+
+			for (var j = 0; j < cols.length; j++) {
+				tableHtml += "<td>";
+				tableHtml += row[cols[j]];
+				tableHtml += "</td>";
+			};
+
+			tableHtml += "</tr>";
+		};
+
+		tableHtml += "</table>";
+
+		return tableHtml;
+	}
+
+	function runSimJoin() {
+		var data = {sid1: sid1, tableName1: tableName1, sid2: sid2, tableName2: tableName2, similarityThreshold: $("#simThreshold").val()};
+
+		$.ajax({
+            url: "http://localhost:8080/ColFusionServer/SimilarityJoin/Join",
+            type: 'POST',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            data: JSON.stringify(data),
+            success: function(json) {
+            	alert(json);
+            }
+        });
+	}
+
+	getTableData("table1Container", sid1, tableName1);
+	getTableData("table2Container", sid2, tableName2);
+
+</script>
+
+</body>
+</html>
