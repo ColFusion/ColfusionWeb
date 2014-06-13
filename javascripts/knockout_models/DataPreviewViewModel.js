@@ -39,6 +39,28 @@ var DataPreviewViewModelProperties = {
         self.addRow = function(row) {
             self.rows.push(new DataPreviewViewModelProperties.Row(row));
         };
+
+        /*
+        ** Added 06/13/2014
+        ** Aim to check if the table is edit and by whom 
+        */
+
+        self.isEditLinkVisible = ko.observable(true);
+
+        self.checkIfBeingEdited = function(sid) {
+           $.ajax({
+            url: "http://localhost/OpenRefine/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                if(data.isTableLocked)
+                    self.isEditLinkVisible(false);
+                }
+            });
+        }
+
     }
 };
 
@@ -110,6 +132,7 @@ function DataPreviewViewModel(sid) {
 
         var transformedData = dataSourceUtil.transformRawDataToColsAndRows(tableData);
         self.currentTable(new DataPreviewViewModelProperties.Table(tableName, transformedData.columns, transformedData.rows, tableData.data, totalPage, currentPage, perPage));
+        self.currentTable().checkIfBeingEdited(self.sid);
     }
 
     self.chooseTable = function(tableListItem) {
@@ -151,6 +174,7 @@ function DataPreviewViewModel(sid) {
     };
 
     self.swithToOpenRefine = function() {
+        // var test = 12;
         $.ajax({
             url: "http://localhost/OpenRefine/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
             type: 'GET',
