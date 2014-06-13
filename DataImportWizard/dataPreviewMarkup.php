@@ -7,6 +7,7 @@
         </button>
         -->
         <h3 class="preview-title">Data Preview</h3>
+
         <div class="storycontent" id="dataPreviewContainer">
             <ul data-bind="visible: tableList().length > 1, foreach: tableList" class="tableList" id="previewTableList">
                 <li data-bind="click: $root.chooseTable" class="tableListItem">
@@ -26,6 +27,15 @@
             <div data-bind="visible: isError" style="color: grey;">This table has no data or the data are being processed.</div>
             <div data-bind="with: currentTable">
                 <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
+                    
+                    <span class="pull-right btn-link" data-bind="click: $root.swithToOpenRefine">[Edit]</span><!--Alex-->
+                    <!-- <span class="pull-right btn-link">&nbsp;&nbsp;</span>
+                    <span class="pull-right btn-link" data-bind="click: $root.cancelButton">[Cancel]</span>
+                    <span class="pull-right btn-link">&nbsp;&nbsp;</span>
+                    <span class="pull-right btn-link" data-bind="click: $root.saveToDb">[Save]</span>-->
+                    <span class="pull-right btn-link">&nbsp;&nbsp;</span><!--Alex-->
+                    <span class="pull-right btn-link" data-bind="click: $root.refreshPreview">[Refresh]</span><!--Alex-->
+                    
                     <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
                         <tr data-bind="foreach: headers">
                             <th data-bind="text: name"></th>

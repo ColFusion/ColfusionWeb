@@ -149,4 +149,69 @@ function DataPreviewViewModel(sid) {
             self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
         }
     };
+
+    self.swithToOpenRefine = function() {
+        $.ajax({
+            url: "http://localhost/OpenRefine/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                // alert("userId: " + data.testMsg);
+                if (data.successful) {
+                    if(data.isEditing && !data.isTimeOut) {
+                        alert(data.msg);
+                    }
+                }
+            }
+        });
+    };
+
+    self.refreshPreview = function() {
+
+        var currentTable = self.currentTable();
+       
+        self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
+    }
+/*
+* The following two functions "saveToDb" and "cancelButton" will not be used anymore, because
+* related buttons have been removed from "published data -> dataPreview page", but just keep these
+* functions for future use  ------ by Alex
+*/
+    self.saveToDb = function() {
+        $.ajax({
+            url: ColFusionServerUrl + "/OpenRefine/savePreview/" + self.sid + "/" + self.currentTable().tableName, 
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                if (data.successful) {
+                    var testMsg = data.payload;
+                    alert(testMsg);
+                }
+            }
+        });
+        alert("Save Button!");
+    }
+
+    self.cancelButton = function() {
+        $.ajax({
+            url: ColFusionServerUrl + "/OpenRefine/cancelPreview/" + self.sid + "/" + self.currentTable().tableName, 
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                if (data.successful) {
+                    var testMsg = data.payload;
+                    alert(testMsg);
+                    if(testMsg == "Change has been cancelled!")
+                        location.reload(true);
+                }
+            }
+        });
+    }
+
 }
