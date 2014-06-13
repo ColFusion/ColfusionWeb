@@ -28,7 +28,19 @@
             <div data-bind="with: currentTable">
                 <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
                     
-                    <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: $root.swithToOpenRefine">[Edit]</span><!--Alex-->
+                    <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: swithToOpenRefine">[Edit]</span><!--Alex-->
+                 
+                     <div id="editpopup" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
+                       <div class='lightbox-content'>
+                            <div class="pull-right">
+                                <button class="btn btn-link" type="button" data-dismiss="lightbox" aria-hidden="true">Close this dialog</button>
+                            </div>
+                            <div>
+                                <iframe width="1000" height="500" 
+                                data-bind="attr: {'src':  openRefineURL()}"></iframe>
+                            </div>
+                        </div>
+                     </div>
                     <!-- <span class="pull-right btn-link">&nbsp;&nbsp;</span>
                     <span class="pull-right btn-link" data-bind="click: $root.cancelButton">[Cancel]</span>-->
                     <span class="pull-right btn-link">&nbsp;&nbsp;</span>
