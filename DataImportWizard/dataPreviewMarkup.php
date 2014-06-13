@@ -28,7 +28,7 @@
             <div data-bind="with: currentTable">
                 <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
                     
-                    <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: swithToOpenRefine">[Edit]</span><!--Alex-->
+                    
                  
                      <div id="editpopup" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
                        <div class='lightbox-content'>
@@ -41,10 +41,12 @@
                             </div>
                         </div>
                      </div>
+
+                    <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: swithToOpenRefine">[Edit]</span><!--Alex-->
                     <!-- <span class="pull-right btn-link">&nbsp;&nbsp;</span>
-                    <span class="pull-right btn-link" data-bind="click: $root.cancelButton">[Cancel]</span>-->
+                    <span class="pull-right btn-link" data-bind="click: $root.cancelButton">[Cancel]</span>
                     <span class="pull-right btn-link">&nbsp;&nbsp;</span>
-                    <span class="pull-right btn-link" data-bind="click: $root.saveToDb">[Test]</span>
+                    <span class="pull-right btn-link" data-bind="click: $root.saveToDb">[Test]</span>-->
                     <span class="pull-right btn-link">&nbsp;&nbsp;</span><!--Alex-->
                     <span class="pull-right btn-link" data-bind="click: $root.refreshPreview">[Refresh]</span><!--Alex-->
                     

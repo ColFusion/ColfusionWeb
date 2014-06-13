@@ -49,6 +49,7 @@ var DataPreviewViewModelProperties = {
         self.isEditLinkVisible = ko.observable(true);
 
         self.checkIfBeingEdited = function(sid) {
+            // alert("check edit");
            $.ajax({
             url: "http://localhost/OpenRefine/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
             type: 'GET',
@@ -62,11 +63,16 @@ var DataPreviewViewModelProperties = {
             });
         };
 
-        self.openRefineURL = ko.observable("");
+        self.openRefineURL = ko.observable();
 
 
         self.swithToOpenRefine = function() {
+
+            if (self.sid == -1)
+                return;
+
             // var test = 12;
+            // alert("swithToOpenRefine");
             $.ajax({
                 url: "http://localhost/OpenRefine/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
                 type: 'GET',
@@ -78,11 +84,10 @@ var DataPreviewViewModelProperties = {
                     if (data.successful) {
                         if(data.isEditing && !data.isTimeOut) {
                             alert(data.msg);
-                             
+                        } else {
                             self.openRefineURL(data.openrefineURL);
 
                             $('#editpopup').lightbox({resizeToFit: false});
-       
                         }
                     }
                 }
