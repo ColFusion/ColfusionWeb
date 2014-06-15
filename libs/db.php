@@ -156,7 +156,7 @@ class ezSQL_mysql extends ezSQLcore {
      */
 
     function escape($str) {
-        return mysql_real_escape_string($str);
+        return $str;//mysql_real_escape_string($str);
     }
 
     /*     * ********************************************************************

@@ -87,6 +87,8 @@ var DataPreviewViewModelProperties = {
                         } else {
                             self.openRefineURL(data.openrefineURL);
 
+                            $("#storyTitleOpenRefinePopUp").text(storyMetadataViewModel.title());
+
                             $('#editpopup').lightbox({resizeToFit: false});
                         }
                     }
