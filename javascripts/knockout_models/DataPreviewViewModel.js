@@ -46,6 +46,21 @@ var DataPreviewViewModelProperties = {
         ** Aim to check if the table is edit and by whom 
         */
 
+        self.isEditingMsgShown = function(sid) {
+            $.ajax({
+            url: "http://localhost/OpenRefine/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                if(data.isTableLocked)
+                    self.isEditLinkVisible(false);
+                    isMsgShown = false;
+                }
+            });
+        }
+
         self.isEditLinkVisible = ko.observable(true);
 
         self.checkIfBeingEdited = function(sid) {
@@ -57,14 +72,19 @@ var DataPreviewViewModelProperties = {
             contentType: "application/json",
             crossDomain: true,
             success: function(data) {
-                if(data.isTableLocked)
-                    self.isEditLinkVisible(false);
+                if(data.isTableLocked) {
+                    // alert("{" + data.userLogin + "}");
+                    // var msgShown = "Table is being edited by <b><a href='user.php?login=" + data.userLogin + "'>" + data.userLogin + "</a></b>.";
+                    var msgShown = "<span style='font-size:12px'><i>You cannot edit this table now, because the table is being edited by </i></span><b><a href='user.php?login=" + data.userLogin  + "'>" + data.userLogin + "</a></b><span style='font-size:12px'><i>, but you can see latest changes by clicking on Refresh button.</i></span>"
+                    document.getElementById('isEditingMsg').innerHTML=msgShown;
+                }
                 }
             });
         };
 
         self.openRefineURL = ko.observable();
 
+        // self.user_idFromPage = $("#user_id").val();
 
         self.swithToOpenRefine = function() {
 
@@ -81,11 +101,13 @@ var DataPreviewViewModelProperties = {
                 crossDomain: true,
                 success: function(data) {
                     // alert("userId: " + data.testMsg);
+
                     if (data.successful) {
                         if(data.isEditing && !data.isTimeOut) {
                             alert(data.msg);
                         } else {
-                            self.openRefineURL(data.openrefineURL);
+                            // use '#' to pass userid to OpenRefine page's 'save' button
+                            self.openRefineURL(data.openrefineURL + "#" + $("#user_id").val());
 
                             $("#storyTitleOpenRefinePopUp").text(storyMetadataViewModel.title());
 
@@ -94,6 +116,25 @@ var DataPreviewViewModelProperties = {
                     }
                 }
             });
+
+
+            timeId = setInterval(function() {
+                $.ajax({
+                    url: "http://localhost/OpenRefine/command/core/timeout-notice?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json",
+                    crossDomain: true,
+                    success: function(data) {
+                        if(!data.isTableLocked) {
+                            clearInterval(timeId);
+                        } else if(data.isTimeOuting) {
+                            alert("You have 5 mins left");
+                            clearInterval(timeId);
+                        }
+                    }
+                });
+            },30000);
         };
 
     }
@@ -168,6 +209,7 @@ function DataPreviewViewModel(sid) {
         var transformedData = dataSourceUtil.transformRawDataToColsAndRows(tableData);
         self.currentTable(new DataPreviewViewModelProperties.Table(self.sid, tableName, transformedData.columns, transformedData.rows, tableData.data, totalPage, currentPage, perPage));
         self.currentTable().checkIfBeingEdited(self.sid);
+        self.currentTable().isEditingMsgShown(self.sid);
     }
 
     self.chooseTable = function(tableListItem) {
@@ -208,10 +250,35 @@ function DataPreviewViewModel(sid) {
         }
     };
 
+    self.refreshTablePreview = function() {
+        var currentTable = self.currentTable();
+       
+        self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
+    }
    
 
     self.refreshPreview = function() {
+        /*
+        ** Add an ajax call to make clicking the "close this dialog" to release the table instead of clicking "save" button
+        */
+        $.ajax({
+                url: "http://localhost/OpenRefine/command/core/release-table?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+                crossDomain: true,
+                success: function(data) {
+                    // alert("userId: " + data.testMsg);
+                    if (data.successful) {
+                        // alert(data.msg);
+                    }
+                }
+            });
 
+/* TODO:
+** If tableName is renamed, we need to update the knockout model to make the change shown, but for now
+** have no idea how to update it except refreshing the whole page.
+*/
         var currentTable = self.currentTable();
        
         self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());

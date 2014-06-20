@@ -43,14 +43,16 @@
                               </div>                        
                             </div>
                             <div>
-                                  <iframe width="1500" height="800" 
+                                  <iframe name="testframe" width="1200" height="1100" 
+
                                 data-bind="attr: {'src':  openRefineURL()}"></iframe>
                             </div>
                         </div>
                      </div>
 
-                    <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: swithToOpenRefine">[Edit]</span><!--Alex-->
-                    <span class="pull-right btn-link" data-bind="click: $root.refreshPreview">[Refresh]</span><!--Alex-->
+                    <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: swithToOpenRefine">&nbsp;&nbsp;[Edit]</span><!--Alex-->
+                    <span class="pull-right btn-link" data-bind="click: $root.refreshTablePreview">[Refresh]</span><!--Alex-->
+                    <span id="isEditingMsg" class="pull-right"></span>
                     
                     <table id="tfhover" class="tftable" border="1" style="white-space: nowrap;">
                         <tr data-bind="foreach: headers">
