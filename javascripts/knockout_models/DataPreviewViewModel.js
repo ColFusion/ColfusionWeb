@@ -1,6 +1,18 @@
 var DataPreviewViewModelProperties = {
-    Header: function(name) {
+    Header: function(name, cid, originalName, description, variableMeasuringUnit, variableValueType, variableValueFormat, missingValue) {
         var self = this;
+        self.cid = ko.observable(cid);
+        self.name = ko.observable(name);
+        self.originalName = ko.observable(originalName);
+        self.description = ko.observable(description);
+        self.variableMeasuringUnit = ko.observable(variableMeasuringUnit);
+        self.variableValueType = ko.observable(variableValueType);
+        self.variableValueFormat = ko.observable(variableValueFormat);
+        self.missingValue = ko.observable(missingValue);
+        
+    },
+    ColumnMetaData: function(name){
+        var selt = this;
         self.name = ko.observable(name);
     },
     Row: function(cells) {
@@ -14,6 +26,7 @@ var DataPreviewViewModelProperties = {
     },
     Table: function(sid, tableName, cols, rows, rawData, totalPage, currentPage, perPage) {
         var self = this;
+        self.metabutton=1;
         self.sid = sid;
         self.tableName = tableName;
         self.totalPage = ko.observable(totalPage);
@@ -45,10 +58,9 @@ var DataPreviewViewModelProperties = {
         ** Added 06/13/2014
         ** Aim to check if the table is edit and by whom 
         */
-
         self.isEditingMsgShown = function(sid) {
             $.ajax({
-            url: OpenRefineUrl + "/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+            url: OpenRefineUrl+"/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -62,11 +74,15 @@ var DataPreviewViewModelProperties = {
         }
 
         self.isEditLinkVisible = ko.observable(true);
+        self.isHeaderVisible = ko.observable(true);
+        self.isHeaderMetaVisible = ko.observable(false);
+        self.isProjectLoading = ko.observable(false);
+        
 
         self.checkIfBeingEdited = function(sid) {
             // alert("check edit");
            $.ajax({
-            url: OpenRefineUrl + "/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+            url: OpenRefineUrl+"/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -87,6 +103,8 @@ var DataPreviewViewModelProperties = {
         // self.user_idFromPage = $("#user_id").val();
 
         self.swithToOpenRefine = function() {
+            self.isProjectLoading(!self.isProjectLoading());
+            self.isEditLinkVisible(!self.isEditLinkVisible());
 
             if (self.sid == -1)
                 return;
@@ -94,7 +112,7 @@ var DataPreviewViewModelProperties = {
             // var test = 12;
             // alert("swithToOpenRefine");
             $.ajax({
-                url: OpenRefineUrl + "/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+                url: OpenRefineUrl+"/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
                 type: 'GET',
                 dataType: 'json',
                 contentType: "application/json",
@@ -112,6 +130,8 @@ var DataPreviewViewModelProperties = {
                             $("#storyTitleOpenRefinePopUp").text(storyMetadataViewModel.title());
 
                             $('#editpopup').lightbox({resizeToFit: false});
+                            self.isProjectLoading(!self.isProjectLoading());
+                            self.isEditLinkVisible(!self.isEditLinkVisible());
                         }
                     }
                 }
@@ -120,7 +140,7 @@ var DataPreviewViewModelProperties = {
 
             timeId = setInterval(function() {
                 $.ajax({
-                    url: OpenRefineUrl + "/command/core/timeout-notice?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+                    url: OpenRefineUrl+"/command/core/timeout-notice?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
                     type: 'GET',
                     dataType: 'json',
                     contentType: "application/json",
@@ -137,18 +157,105 @@ var DataPreviewViewModelProperties = {
             },30000);
         };
 
-    }
-};
+        self.loadMetaData = function() {
+               $.ajax({
+                url: ColFusionServerUrl + "/Story/" + self.sid + "/" + self.tableName + "/metadata/columns",
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+                crossDomain: true,
+                success: function(data) {
+                   
+                    self.headers.removeAll();
+
+                   $.map(data.payload, function(column) {
+                            self.headers.push(new DataPreviewViewModelProperties.Header(
+                                column.chosenName,
+                                column.cid,
+                                column.originalName,
+                                column.description ,
+                                column.variableMeasuringUnit,
+                                column.variableValueType,
+                                column.variableValueFormat,
+                                column.missingValue));
+                    }); 
+                    
+                   
+                }
+
+            }) 
+
+        }
+
+        self.showColumnMetaData =function() {
+            if(self.metabutton==1){
+                $('#metabutton').text("[Hide]");
+                self.metabutton=2;
+            }
+            else{
+                $('#metabutton').text("[Display]");
+                self.metabutton=1;
+            }
+             self.isHeaderVisible(!self.isHeaderVisible());
+                    self.isHeaderMetaVisible(!self.isHeaderMetaVisible());
+            
+          };
+
+        self.refreshPage = function() {
+            self.loadMetaData();
+            alert("Changes have been saved!");
+        }
+
+     self.loadMetaData();
+     
+ }
+}
 
 function DataPreviewViewModel(sid) {
     var self = this;
     self.sid = sid;
+    self.oldname;
     self.tableList = ko.observableArray();
     self.currentTable = ko.observable();
+    self.columnName = ko.observable();
+    self.variableValueType = ko.observable();
+    self.originalName = ko.observable();
+    self.description = ko.observable();
+    self.variableMeasuringUnit = ko.observable();
+    self.variableValueFormat = ko.observable();
+    self.missingValue = ko.observable();
     
     self.isLoading = ko.observable(false);
     self.isError = ko.observable(false);
     self.isNoData = ko.observable(false);
+    self.isPreviewStory = ko.observable(true);
+    self.isEditColumnData = ko.observable(false);
+
+    self.Modify = function(name,variableValueType,originalName,description,variableMeasuringUnit,variableValueFormat,missingValue){
+        self.isPreviewStory(!self.isPreviewStory());
+        self.isEditColumnData(!self.isEditColumnData());
+        self.oldname=name;
+        self.columnName(name);
+        self.variableValueType(variableValueType);
+        self.originalName(originalName);
+        self.description(description);
+        self.variableMeasuringUnit(variableMeasuringUnit);
+        self.variableValueFormat(variableValueFormat);
+        self.missingValue(missingValue);
+        
+     }
+
+    self.editColumnSave = function(){
+        dataSourceUtil.updateColumnMetaData(self.sid,self.oldname,self.columnName(),self.variableValueType(),self.originalName(),self.description(),self.variableMeasuringUnit(),self.variableValueFormat(),self.missingValue());
+     self.currentTable().refreshPage();
+     self.isPreviewStory(!self.isPreviewStory());
+        self.isEditColumnData(!self.isEditColumnData());
+     }
+
+    self.editColumnCancel = function(){
+        self.isPreviewStory(!self.isPreviewStory());
+        self.isEditColumnData(!self.isEditColumnData());
+    }
 
     self.setTableList = function (tableList) {
         self.tableList($.map(tableList, function(tableName) {

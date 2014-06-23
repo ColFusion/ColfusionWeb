@@ -93,6 +93,24 @@ function GetTablesInfo(){
     echo json_encode($result);
 }
 
+function UpdateColumnMetaData(){
+    $queryEngine = new QueryEngine();
+    $sid = $_POST["sid"];
+    $oldname = $_POST["oldname"];
+    $name = $_POST["name"];
+    $variableValueType = $_POST["variableValueType"];
+    $originalName = $_POST["originalName"];
+    $description = $_POST["description"];
+    $variableMeasuringUnit = $_POST["variableMeasuringUnit"];
+    $variableValueFormat = $_POST["variableValueFormat"];
+    $missingValue = $_POST["missingValue"];
+
+
+
+    $queryEngine->UpdateColumnMetaData($sid,$oldname,$name,$variableValueType,$originalName,$description,$variableMeasuringUnit,$variableValueFormat,$missingValue);
+
+}
+
 
 function AddRelationship() {
 	global $current_user;
