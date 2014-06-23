@@ -1,4 +1,4 @@
-CREATE TABLE `colfusion`.`colfusion_dnameinfo_metadata_edit_history` (
+CREATE TABLE `colfusion_dnameinfo_metadata_edit_history` (
   `hid` INT NOT NULL AUTO_INCREMENT COMMENT 'id of history record',
   `cid` INT NOT NULL COMMENT 'column id',
   `uid` INT NOT NULL COMMENT 'userid who made edit',
@@ -8,18 +8,18 @@ CREATE TABLE `colfusion`.`colfusion_dnameinfo_metadata_edit_history` (
   `value` TEXT NOT NULL,
   PRIMARY KEY (`hid`));
 
-ALTER TABLE `colfusion`.`colfusion_dnameinfo_metadata_edit_history` 
+ALTER TABLE `colfusion_dnameinfo_metadata_edit_history` 
 ADD INDEX `ToDnameInfo_idx` (`cid` ASC),
 ADD INDEX `ToUsersTable_idx` (`uid` ASC);
-ALTER TABLE `colfusion`.`colfusion_dnameinfo_metadata_edit_history` 
+ALTER TABLE `colfusion_dnameinfo_metadata_edit_history` 
 ADD CONSTRAINT `ToDnameInfo`
   FOREIGN KEY (`cid`)
-  REFERENCES `colfusion`.`colfusion_dnameinfo` (`cid`)
+  REFERENCES `colfusion_dnameinfo` (`cid`)
   ON DELETE CASCADE
   ON UPDATE CASCADE,
 ADD CONSTRAINT `ToUsersTable`
   FOREIGN KEY (`uid`)
-  REFERENCES `colfusion`.`colfusion_users` (`user_id`)
+  REFERENCES `colfusion_users` (`user_id`)
   ON DELETE CASCADE
   ON UPDATE CASCADE;
 

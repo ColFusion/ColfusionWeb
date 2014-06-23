@@ -48,7 +48,7 @@ var DataPreviewViewModelProperties = {
 
         self.isEditingMsgShown = function(sid) {
             $.ajax({
-            url: "http://localhost/OpenRefine/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+            url: OpenRefineUrl + "/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -66,7 +66,7 @@ var DataPreviewViewModelProperties = {
         self.checkIfBeingEdited = function(sid) {
             // alert("check edit");
            $.ajax({
-            url: "http://localhost/OpenRefine/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+            url: OpenRefineUrl + "/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -94,7 +94,7 @@ var DataPreviewViewModelProperties = {
             // var test = 12;
             // alert("swithToOpenRefine");
             $.ajax({
-                url: "http://localhost/OpenRefine/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+                url: OpenRefineUrl + "/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
                 type: 'GET',
                 dataType: 'json',
                 contentType: "application/json",
@@ -120,7 +120,7 @@ var DataPreviewViewModelProperties = {
 
             timeId = setInterval(function() {
                 $.ajax({
-                    url: "http://localhost/OpenRefine/command/core/timeout-notice?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+                    url: OpenRefineUrl + "/command/core/timeout-notice?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
                     type: 'GET',
                     dataType: 'json',
                     contentType: "application/json",
@@ -262,7 +262,7 @@ function DataPreviewViewModel(sid) {
         ** Add an ajax call to make clicking the "close this dialog" to release the table instead of clicking "save" button
         */
         $.ajax({
-                url: "http://localhost/OpenRefine/command/core/release-table?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
+                url: OpenRefineUrl + "/command/core/release-table?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
                 type: 'GET',
                 dataType: 'json',
                 contentType: "application/json",

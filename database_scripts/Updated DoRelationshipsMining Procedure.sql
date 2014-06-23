@@ -1,4 +1,3 @@
-USE `colfusion`;
 DROP procedure IF EXISTS `doRelationshipMining`;
 
 DELIMITER $$
