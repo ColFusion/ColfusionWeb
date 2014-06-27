@@ -57,7 +57,7 @@
                                                     
                             
                             <div>
-                                  <iframe width="1500" height="770" 
+                                  <iframe id="OpenRefineIframe"
                                 data-bind="attr: {'src':  openRefineURL()}">
                             </iframe>
                             </div>
@@ -148,5 +148,12 @@
         <button id="canceleMetadataButton" class="btn" data-bind="click: $root.editColumnCancel" data-loading-text="Cancel">Cancel</button>
     </div>
     </div>
+    <script type="text/javascript" language="javascript">
+        var autoHeight = document.documentElement.clientHeight*0.8;
+        var autoWidth = document.documentElement.clientWidth*0.8;
+        $("#OpenRefineIframe").height(autoHeight);
+        $("#OpenRefineIframe").width(autoWidth);
+
+    </script>
     <script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script>    
 </div>
