@@ -60,7 +60,7 @@ function RelationshipViewModel(sid) {
                 self.isRelationshipInfoLoaded[data.data[i].rel_id] = ko.observable(false);
             }
 
-            self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table('mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
+            self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table(self.sid, 'mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
            
         }).error(function() {
             self.isMiningRelationshipsError(true);
