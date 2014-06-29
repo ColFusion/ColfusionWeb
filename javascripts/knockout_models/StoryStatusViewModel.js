@@ -123,8 +123,35 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
             });
         } else {
             self.isRefreshingUpdateStatus(false);
+
+            triggerDataMatchingRatioCalculations(self.sid);
         }
     }
+
+    function triggerDataMatchingRatioCalculations(sid) {
+        console.log("triggerDataMatchingRatioCalculations");
+
+        $.ajax({
+            url: ColFusionServerUrl + "/Relationship/triggerDataMatching/" + sid + "/" + 1, //my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(jsonResponse) {
+
+                console.log(jsonResponse);
+
+                if (jsonResponse.successful) {
+                    console.log("triggerDataMatchingRatioCalculations SUCCESS");
+                } else {
+                    console.log("triggerDataMatchingRatioCalculations NOT SUCCESS");
+                }
+            }
+        }).error(function() {
+            console.log("triggerDataMatchingRatioCalculations FAILED");
+        });
+    }
+
 
     // class value for i element using font-awesome.
     self.getStatusIcon = function (status) {

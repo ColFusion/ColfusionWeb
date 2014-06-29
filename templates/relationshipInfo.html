@@ -26,6 +26,12 @@
             <td class="profileHeader">Description:</td>
             <td data-bind='text: description' class="profileContent"></td>
         </tr>
+        <tr>
+            <td class="profileHeader">Similarity Threshold:</td>
+            <td><input type="text" data-bind="value: simThreshold" />
+            <button data-bind="click: $root.updateLinksDataMatching">Update</button></td>
+            
+        </tr>
     </table>
     <div class="linkProfileContainer">
         <div data-bind="template: { name: 'linkProfile-template', data: fromDataset }" class="fromProfile linkProfile">

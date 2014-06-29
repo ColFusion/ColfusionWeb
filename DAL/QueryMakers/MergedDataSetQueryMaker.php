@@ -220,7 +220,7 @@ class MergedDataSetQueryMaker {
 
     public function GetCondisionsByRelationship($relationship) {
         $relstionshipDAO = new RelationshipDAO();
-        $links = $relstionshipDAO->GetLinksByRelId($relationship->relId);
+        $links = $relstionshipDAO->GetLinksByRelId($relationship->relId, 1);
 
         $conditionsArr = array();
 

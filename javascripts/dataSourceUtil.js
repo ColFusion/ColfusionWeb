@@ -103,10 +103,10 @@ var dataSourceUtil = (function() {
         return obj;
     };
 
-    dataSourceUtil.loadRelationshipInfo = function(relId) {
+    dataSourceUtil.loadRelationshipInfo = function(relId, simThreshold) {
         return $.ajax({
             url: my_pligg_base + '/datasetController/relationshipInfo.php',
-            data: { relId: relId },
+            data: { relId: relId, simThreshold: simThreshold },
             type: 'POST',
             dataType: 'json'           
         });

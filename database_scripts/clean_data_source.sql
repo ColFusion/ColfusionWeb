@@ -10,3 +10,8 @@ delete from colfusion_synonyms_to;
 delete from colfusion_links;
 delete from colfusion_relationships_columns_cachingExecutionInfo;
 delete from colfusion_cached_queries_info;
+delete from colfusion_pentaho_log_logging_channels;
+delete from colfusion_pentaho_log_performance;
+delete from colfusion_pentaho_log_step;
+delete from colfusion_pentaho_log_transformaion;
+delete from colfusion_processes;

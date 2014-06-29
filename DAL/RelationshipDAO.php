@@ -56,7 +56,7 @@ class RelationshipDAO
         return $rel_id;
     }
 
-    public function getRelationship($relId) {
+    public function getRelationship($relId, $simThreshold) {
         $sql = "SELECT name, description, user_id, user_login, sid1, sid2, tableName1, tableName2, creation_time 
             FROM  `colfusion_relationships` CR INNER JOIN  `colfusion_users` U ON CR.creator = U.user_id 
             WHERE CR.rel_id = '" . mysql_real_escape_string($relId) . "'";
@@ -84,18 +84,18 @@ class RelationshipDAO
         $relationship->toTableName = $relInfo->tableName2;
         
         // $relationship->links[] = $this->GetLinksByRelId($relId);
-        $relationship->links = $this->GetLinksByRelId($relId);
+        $relationship->links = $this->GetLinksByRelId($relId, $simThreshold);
 
         return $relationship;
     }
 
-    public function GetLinksByRelId($relId) {
+    public function GetLinksByRelId($relId, $simThreshold) {
         $links = array();
 
         $linksSql = "select cl_from, cl_to from `colfusion_relationships_columns` where rel_id = '" . mysql_real_escape_string($relId) . "'";
         $linkInfos = $this->ezSql->get_results($linksSql);
         
-        $linkRatioSql = "select cl_from, cl_to, dataMatchingFromRatio, dataMatchingToRatio from colfusion_relationships_columns where rel_id = $relId";
+        $linkRatioSql = "select cl_from, cl_to, dataMatchingFromRatio, dataMatchingToRatio from colfusion_relationships_columns_dataMathing_ratios where similarity_threshold = $simThreshold";
         $linkRatios = $this->ezSql->get_results($linkRatioSql);
         $linkRatioValues = array();
         

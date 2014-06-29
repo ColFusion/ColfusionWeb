@@ -23,6 +23,7 @@ var RelationshipModel = {
         self.creator = ko.observable(relJson.creator);
         self.createdTime = ko.observable(relJson.createdTime);
         self.isOwned = ko.observable(relJson.isOwned);
+        self.simThreshold = ko.observable(relJson.simThreshold);
 
         self.fromDataset = ko.observable(createDatasetModel(relJson.fromDataset, relJson.fromTableName));
         self.toDataset = ko.observable(createDatasetModel(relJson.toDataset, relJson.toTableName));
