@@ -53,11 +53,11 @@
            <div id="ajax_response" style=" font-size: 15px;font-style: verdana; "></div>
 
 
-<!--        
+       
         <div id="advsearch">
             <a href="{$my_base_url}{$my_pligg_base}/advancedsearch/advanced.php"><img src="{$my_pligg_base}/templates/{$the_template}/images/searchimg.png"/>Advanced Search</a>
         </div>
--->
+
 
     </div>
     
