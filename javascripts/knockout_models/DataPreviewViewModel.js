@@ -9,6 +9,13 @@ var DataPreviewViewModelProperties = {
         self.variableValueType = ko.observable(variableValueType);
         self.variableValueFormat = ko.observable(variableValueFormat);
         self.missingValue = ko.observable(missingValue);
+        self.isColumnMetaEdit = ko.observable();
+        if($("#user_id").val()==0){
+            self.isColumnMetaEdit(false);
+        }
+        else{
+            self.isColumnMetaEdit(true);
+        }
         
     },
     ColumnMetaData: function(name){
@@ -77,6 +84,12 @@ var DataPreviewViewModelProperties = {
         self.isHeaderVisible = ko.observable(true);
         self.isHeaderMetaVisible = ko.observable(false);
         self.isProjectLoading = ko.observable(false);
+
+        self.checkIfLoggedin = function(sid){
+            if($("#user_id").val()==0){
+                self.isEditLinkVisible(false);
+            }
+        }
         
 
         self.checkIfBeingEdited = function(sid) {
@@ -103,6 +116,7 @@ var DataPreviewViewModelProperties = {
         // self.user_idFromPage = $("#user_id").val();
 
         self.swithToOpenRefine = function() {
+            
             self.isProjectLoading(!self.isProjectLoading());
             self.isEditLinkVisible(!self.isEditLinkVisible());
 
@@ -216,7 +230,7 @@ function DataPreviewViewModel(sid) {
     var self = this;
     self.sid = sid;
     self.cid;
-    self.userid = $("#user_id").val();
+    self.userid;
 
     self.oldname;
     self.oldvariableValueType;
@@ -251,6 +265,7 @@ function DataPreviewViewModel(sid) {
     self.isFetchHistoryErrorMessage = ko.observable("");
 
     self.Modify = function(cid,name,variableValueType,description,variableMeasuringUnit,variableValueFormat,missingValue){
+        self.userid = $("#user_id").val();
         self.isPreviewStory(!self.isPreviewStory());
         self.isEditColumnData(!self.isEditColumnData());
         self.columnName(name);
@@ -456,6 +471,7 @@ function DataPreviewViewModel(sid) {
 
         var transformedData = dataSourceUtil.transformRawDataToColsAndRows(tableData);
         self.currentTable(new DataPreviewViewModelProperties.Table(self.sid, tableName, transformedData.columns, transformedData.rows, tableData.data, totalPage, currentPage, perPage));
+        self.currentTable().checkIfLoggedin(self.sid);
         self.currentTable().checkIfBeingEdited(self.sid);
         self.currentTable().isEditingMsgShown(self.sid);
     }

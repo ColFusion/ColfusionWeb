@@ -94,7 +94,7 @@
                                 <br/><br/>
                                 MissingValue: <span data-bind="text: missingValue" style="font-weight:normal;font-style:normal"></span>
                                 <br/>
-                                <span class="pull-right btn-link" data-bind="click: $root.Modify.bind($data,cid(),name(),variableValueType(),description(),variableMeasuringUnit(),variableValueFormat(),missingValue())" style="font-weight:normal;font-style:normal">[Edit]</span>
+                                <span class="pull-right btn-link" data-bind="visible:isColumnMetaEdit(),click: $root.Modify.bind($data,cid(),name(),variableValueType(),description(),variableMeasuringUnit(),variableValueFormat(),missingValue())" style="font-weight:normal;font-style:normal">[Edit]</span>
                             </th>
                         </tr>
                         <tbody class="dataPreviewTBody" data-bind="foreach: rows">
