@@ -99,7 +99,6 @@ function UpdateColumnMetaData(){
     $oldname = $_POST["oldname"];
     $name = $_POST["name"];
     $variableValueType = $_POST["variableValueType"];
-    $originalName = $_POST["originalName"];
     $description = $_POST["description"];
     $variableMeasuringUnit = $_POST["variableMeasuringUnit"];
     $variableValueFormat = $_POST["variableValueFormat"];
@@ -107,7 +106,7 @@ function UpdateColumnMetaData(){
 
 
 
-    $queryEngine->UpdateColumnMetaData($sid,$oldname,$name,$variableValueType,$originalName,$description,$variableMeasuringUnit,$variableValueFormat,$missingValue);
+    $queryEngine->UpdateColumnMetaData($sid,$oldname,$name,$variableValueType,$description,$variableMeasuringUnit,$variableValueFormat,$missingValue);
 
 }
 

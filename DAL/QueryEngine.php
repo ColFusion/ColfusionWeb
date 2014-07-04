@@ -170,10 +170,10 @@ class QueryEngine {
 
     }
 
-    public function UpdateColumnMetaData($sid,$oldname,$name,$variableValueType,$originalName,$description,$variableMeasuringUnit,$variableValueFormat,$missingValue){
+    public function UpdateColumnMetaData($sid,$oldname,$name,$variableValueType,$description,$variableMeasuringUnit,$variableValueFormat,$missingValue){
         global $db;
         mysql_select_db("colfusion", $con);
-         $query = "UPDATE colfusion_dnameinfo SET dname_chosen='$name', dname_value_type='$variableValueType', dname_original_name='$originalName', dname_value_description='$description', dname_value_unit='$variableMeasuringUnit', dname_value_format='$variableValueFormat', missing_value='$missingValue' WHERE sid=$sid AND dname_chosen='$oldname'";
+         $query = "UPDATE colfusion_dnameinfo SET dname_chosen='$name', dname_value_type='$variableValueType', dname_value_description='$description', dname_value_unit='$variableMeasuringUnit', dname_value_format='$variableValueFormat', missing_value='$missingValue' WHERE sid=$sid AND dname_chosen='$oldname'";
          $db->query($query);
     }
 

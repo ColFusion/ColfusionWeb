@@ -132,6 +132,7 @@ var DataPreviewViewModelProperties = {
                             $('#editpopup').lightbox({resizeToFit: false});
                             self.isProjectLoading(!self.isProjectLoading());
                             self.isEditLinkVisible(!self.isEditLinkVisible());
+                          
                         }
                     }
                 }
@@ -193,7 +194,7 @@ var DataPreviewViewModelProperties = {
                 self.metabutton=2;
             }
             else{
-                $('#metabutton').text("[Display]");
+                $('#metabutton').text("[Details]");
                 self.metabutton=1;
             }
              self.isHeaderVisible(!self.isHeaderVisible());
@@ -214,16 +215,27 @@ var DataPreviewViewModelProperties = {
 function DataPreviewViewModel(sid) {
     var self = this;
     self.sid = sid;
+    self.cid;
+    self.userid = $("#user_id").val();
+
     self.oldname;
+    self.oldvariableValueType;
+    self.olddescription;
+    self.oldvariableMeasuringUnit;
+    self.oldvariableValueFormat;
+    self.oldmissingValue;
+
     self.tableList = ko.observableArray();
     self.currentTable = ko.observable();
     self.columnName = ko.observable();
     self.variableValueType = ko.observable();
-    self.originalName = ko.observable();
     self.description = ko.observable();
     self.variableMeasuringUnit = ko.observable();
     self.variableValueFormat = ko.observable();
     self.missingValue = ko.observable();
+    self.reason = "";
+    self.editAttribute;
+    self.editValue;
     
     self.isLoading = ko.observable(false);
     self.isError = ko.observable(false);
@@ -231,30 +243,159 @@ function DataPreviewViewModel(sid) {
     self.isPreviewStory = ko.observable(true);
     self.isEditColumnData = ko.observable(false);
 
-    self.Modify = function(name,variableValueType,originalName,description,variableMeasuringUnit,variableValueFormat,missingValue){
+    self.historyLogHeaderText = ko.observable();
+    self.showAttribute;
+    self.columnMetadataHistory = ko.observable();
+
+    self.isFetchHistoryInProgress = ko.observable(false)
+    self.isFetchHistoryErrorMessage = ko.observable("");
+
+    self.Modify = function(cid,name,variableValueType,description,variableMeasuringUnit,variableValueFormat,missingValue){
         self.isPreviewStory(!self.isPreviewStory());
         self.isEditColumnData(!self.isEditColumnData());
-        self.oldname=name;
         self.columnName(name);
         self.variableValueType(variableValueType);
-        self.originalName(originalName);
         self.description(description);
         self.variableMeasuringUnit(variableMeasuringUnit);
         self.variableValueFormat(variableValueFormat);
         self.missingValue(missingValue);
-        
+        self.cid = cid;
+
+        self.oldname = name;
+        self.oldvariableValueType = variableValueType;
+        self.olddescription = description;
+        self.oldvariableMeasuringUnit = variableMeasuringUnit;
+        self.oldvariableValueFormat = variableValueFormat;
+        self.oldmissingValue = missingValue;
      }
 
     self.editColumnSave = function(){
-        dataSourceUtil.updateColumnMetaData(self.sid,self.oldname,self.columnName(),self.variableValueType(),self.originalName(),self.description(),self.variableMeasuringUnit(),self.variableValueFormat(),self.missingValue());
-     self.currentTable().refreshPage();
-     self.isPreviewStory(!self.isPreviewStory());
+        self.reason = $("#reason").val();
+        if(self.columnName()!=self.oldname||self.variableValueType()!=self.oldvariableValueType||self.description()!=self.olddescription||self.variableMeasuringUnit()!=self.oldvariableMeasuringUnit||self.variableValueFormat()!=self.oldvariableValueFormat||self.missingValue()!=self.oldmissingValue){
+            dataSourceUtil.updateColumnMetaData(self.sid,self.oldname,self.columnName(),self.variableValueType(),self.description(),self.variableMeasuringUnit(),self.variableValueFormat(),self.missingValue());
+            self.currentTable().refreshPage();
+        }
+        self.columnMetadataChanged();
+        //dataSourceUtil.createColumnMetaDataHistory();
+        $("#reason").val("");
+        self.isPreviewStory(!self.isPreviewStory());
         self.isEditColumnData(!self.isEditColumnData());
      }
 
     self.editColumnCancel = function(){
         self.isPreviewStory(!self.isPreviewStory());
         self.isEditColumnData(!self.isEditColumnData());
+    }
+
+
+    self.columnMetadataChanged = function(){
+        if(self.columnName()!=self.oldname){
+            self.editAttribute = "chosen name";
+            self.editValue = self.columnName();
+            self.addColumnMetadataEditHistory();
+        }
+        if(self.variableValueType()!=self.oldvariableValueType){
+            self.editAttribute = "data type";
+            self.editValue = self.variableValueType();
+            self.addColumnMetadataEditHistory();
+        }
+        if(self.description()!=self.olddescription){
+            self.editAttribute = "description";
+            self.editValue = self.description();
+            self.addColumnMetadataEditHistory();
+        }
+        if(self.variableMeasuringUnit()!=self.oldvariableMeasuringUnit){
+            self.editAttribute = "value unit";
+            self.editValue = self.variableMeasuringUnit();
+            self.addColumnMetadataEditHistory();
+        }
+        if(self.variableValueFormat()!=self.oldvariableValueFormat){
+            self.editAttribute = "format";
+            self.editValue = self.variableValueFormat();
+            self.addColumnMetadataEditHistory();
+        }
+        if(self.missingValue()!=self.oldmissingValue){
+            self.editAttribute = "missing value";
+            self.editValue = self.missingValue();
+            self.addColumnMetadataEditHistory();
+        }
+    }
+
+    self.addColumnMetadataEditHistory =  function(){
+        if(self.reason==""){
+            self.reason="null";
+        }
+        if(self.editValue==""){
+            self.editValue="null";
+        }
+              $.ajax({
+                url: ColFusionServerUrl + "/Story/metadata/columns/addEditHistory/" + self.cid + "/" + self.userid + "/" + self.editAttribute + "/" + self.reason + "/" + self.editValue,
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+                crossDomain: true
+            })
+    }
+
+    self.showColumnMetaHistory = function(attribute){
+        self.showAttribute = attribute;
+        self.historyLogHeaderText("Edit History Log for "+attribute);
+
+        self.isFetchHistoryInProgress(true);
+        self.getColumnMetaHistory();
+    }
+
+    self.getColumnMetaHistory = function(){
+         $.ajax({
+                url: ColFusionServerUrl + "/Story/metadata/columns/getEditHistory/" + self.cid + "/" + self.showAttribute,
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+                crossDomain: true,
+                success: function(data) {
+                    self.isFetchHistoryInProgress(false);
+                    if (data.isSuccessful) {
+                    var payload = data.payload;
+
+                    var columnMetadataEditHistory = new ColumnMetadataHistoryViewModel();
+                    columnMetadataEditHistory.cid(self.cid);
+                    columnMetadataEditHistory.historyItem(self.showAttribute);
+
+                    for (var i = 0; i < payload.length; i++) {
+                        var historyRecord = payload[i];
+
+                        var columnMetadataHistoryLogRecord = new ColumnMetadataHistoryLogRecordViewModel();
+
+                        columnMetadataHistoryLogRecord.hid(historyRecord.hid);
+                        columnMetadataHistoryLogRecord.whenSaved(historyRecord.whenSaved);
+                        columnMetadataHistoryLogRecord.item(historyRecord.item);
+                        columnMetadataHistoryLogRecord.reason(historyRecord.reason=="null"?"":historyRecord.reason);
+                        columnMetadataHistoryLogRecord.itemValue(historyRecord.itemValue=="null"?"":historyRecord.itemValue);
+
+                        var author = new ColumnAuthorModel(historyRecord.author.userId, historyRecord.author.firstName, 
+                        historyRecord.author.lastName, historyRecord.author.login, 
+                        historyRecord.author.avatarSource, historyRecord.author.karma, historyRecord.author.roleId);
+
+                        columnMetadataHistoryLogRecord.author(author);
+
+                        columnMetadataEditHistory.historyLogRecords.push(columnMetadataHistoryLogRecord);
+                    };
+
+                    self.columnMetadataHistory(columnMetadataEditHistory);
+                }
+                else {
+                    self.isFetchHistoryErrorMessage("Something went wrong while fetching history for " + historyItem + 
+                        ". Please try again.");
+                }
+
+                },
+                error: function(data) {
+                self.isFetchHistoryInProgress(false);
+                self.isFetchHistoryErrorMessage("Something went wrong while fetching history for " + historyItem + 
+                        ". Please try again.");
+            }
+
+            }) 
     }
 
     self.setTableList = function (tableList) {
@@ -430,4 +571,74 @@ function DataPreviewViewModel(sid) {
         });
     }
 
+}
+
+var ColumnMetadataHistoryViewModel = function() {
+    self = this;
+    self.cid = ko.observable();
+    self.historyItem = ko.observable();
+    self.historyLogRecords = ko.observableArray();
+}
+
+var ColumnMetadataHistoryLogRecordViewModel = function() {
+    self = this;
+    self.hid = ko.observable();
+    self.author = ko.observable();
+    self.whenSaved = ko.observable();
+    self.item = ko.observable();
+    self.reason = ko.observable();
+    self.itemValue = ko.observable();
+}
+
+var ColumnAuthorModel = function(userId, firstName, lastName, login, avatarSource, karma, roleId) {
+    var self = this;
+
+    self.userId = ko.observable(userId);
+    self.firstName = ko.observable(firstName);
+    self.lastName = ko.observable(lastName);
+    self.login = ko.observable(login);
+    self.avatarSource = ko.observable(avatarSource);
+    self.karma = ko.observable(karma);
+    self.roleId = ko.observable(roleId);
+
+    self.authorInfo = ko.computed(function() {
+        var info = "";
+
+        if (self.lastName()) {
+            info = info + self.lastName(); + ", " + self.firstName;
+        }
+
+        if (self.firstName()) {
+            if (info.length > 0) {
+                info = info + ", " + self.firstName();
+            }
+            else {
+                info = self.firstName();
+            }
+        }
+
+        if (info.length == 0) {
+            info = self.login();
+        }
+
+        return info;
+    });
+
+    self.roleName = ko.computed(function() {
+        if (self.roleId() >= 1)
+            return authorRoles[self.roleId() - 1].roleName();
+        return "";
+    });
+
+    self.getTempAsJSONObj = function() {
+        return  {
+                    userId : self.userId(),
+                    firstName : self.firstName(),
+                    lastName : self.lastName(),
+                    login : self.login(),
+                    avatarSource : self.avatarSource(),
+                    karma : self.karma(),
+                    roleId : self.roleId()
+                };
+    }
 }

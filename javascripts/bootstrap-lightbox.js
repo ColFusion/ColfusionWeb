@@ -165,9 +165,7 @@
 					.appendTo(document.body);
 
 				this.$backdrop.click(
-					this.options.backdrop == 'static' ?
-						$.proxy(this.$element[0].focus, this.$element[0]) :
-						$.proxy(this.hide, this)
+						$.proxy(this.$element[0].focus, this.$element[0]) 
 				);
 
 				if (doAnimate) this.$backdrop[0].offsetWidth; // force reflow

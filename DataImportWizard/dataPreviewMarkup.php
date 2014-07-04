@@ -33,7 +33,7 @@
 
 
                             <div id="hintmessage">
-                                <div align="left">
+                                <div align="left" style="margin-top:15px">
                                 <font size="5" color="#1ea4e9">Editing:</font>
                                 <font size="5"><span id="storyTitleOpenRefinePopUp"/> </font>    
                             </div>
@@ -79,22 +79,22 @@
                             </tr>
                             <tr data-bind="foreach: headers, visible: isHeaderMetaVisible()">
                             
-                            <th>
-                                Name: <span data-bind="text: name"></span>
+                            <th style="font-style:Italic">
+                                ChosenName: <span data-bind="text: name" style="font-weight:normal;font-style:normal"></span>
+                                <br/><br/>
+                                ValueType: <span data-bind="text: variableValueType" style="font-weight:normal;font-style:normal"></span>
+                                 <br/><br/>
+                                OriginalName: <span data-bind="text: originalName" style="font-weight:normal;font-style:normal"></span>
+                                <br/><br/>
+                                Description: <span data-bind="text: description" style="font-weight:normal;font-style:normal"></span>
+                                <br/><br/>
+                                VariableMeasuringUnit: <span data-bind="text: variableMeasuringUnit" style="font-weight:normal;font-style:normal"></span>
+                                <br/><br/>
+                                VariableValueFormat: <span data-bind="text: variableValueFormat" style="font-weight:normal;font-style:normal"></span>
+                                <br/><br/>
+                                MissingValue: <span data-bind="text: missingValue" style="font-weight:normal;font-style:normal"></span>
                                 <br/>
-                                ValueType: <span data-bind="text: variableValueType"></span>
-                                 <br/>
-                                OriginalName: <span data-bind="text: originalName"></span>
-                                <br/>
-                                Description: <span data-bind="text: description"></span>
-                                <br/>
-                                VariableMeasuringUnit: <span data-bind="text: variableMeasuringUnit"></span>
-                                <br/>
-                                VariableValueFormat: <span data-bind="text: variableValueFormat"></span>
-                                <br/>
-                                MissingValue: <span data-bind="text: missingValue"></span>
-                                <br/>
-                                <span class="pull-right btn-link" data-bind="click: $root.Modify.bind($data,name(),variableValueType(),originalName(),description(),variableMeasuringUnit(),variableValueFormat(),missingValue())">[Modify]</span>
+                                <span class="pull-right btn-link" data-bind="click: $root.Modify.bind($data,cid(),name(),variableValueType(),description(),variableMeasuringUnit(),variableValueFormat(),missingValue())" style="font-weight:normal;font-style:normal">[Edit]</span>
                             </th>
                         </tr>
                         <tbody class="dataPreviewTBody" data-bind="foreach: rows">
@@ -116,38 +116,102 @@
     </div>
     <div class="preview-story" id="editColumnData" data-bind="visible: isEditColumnData">
         <div style="margin-left:120px">
-        Name <span class="text-error">*</span>:
-       <input id="columName" name="columnName" data-required="true" type="text" data-bind="value: columnName" style="width:500px; margin-left:15px"/>
+       <span style="text-align:right">ChosenName <span class="text-error">*</span>:</span>
+       <span>
+       <input id="columName" name="columnName" data-required="true" type="text" data-bind="value: columnName" style="width:500px; margin-left:15px"/><br/>
+       <a href="#columnhistoryModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="click: showColumnMetaHistory.bind($data,'chosen name')">[History]</a>
+        </span>
         </div><br/>
         <div style="margin-left:120px">
-        ValueType <span class="text-error">*</span>:
-       <input id="valueType" name="valueType" data-required="true" type="text" data-bind="value: variableValueType" style="width:500px; margin-left:15px"/>
-        </div><br/>
-        <div style="margin-left:120px">
-        OriginalName <span class="text-error">*</span>:
-       <input id="originalName" name="originalName" data-required="true" type="text" data-bind="value: originalName" style="width:500px; margin-left:15px"/>
+        <span style="text-align:right">ValueType <span class="text-error">*</span>:</span>
+        <span>
+       <input id="valueType" name="valueType" data-required="true" type="text" data-bind="value: variableValueType" style="width:500px; margin-left:15px"/><br/>
+       <a href="#columnhistoryModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="click: showColumnMetaHistory.bind($data,'data type')">[History]</a>
+   </span>
         </div><br/>
         <div style="margin-left:120px">
         Description <span class="text-error">*</span>:
-       <input id="description" name="description" data-required="true" type="text" data-bind="value: description" style="width:500px; margin-left:15px"/>
+       <textarea id="description" name="description" data-required="true" type="text" data-bind="value: description" rows="5" style="width:500px; margin-left:15px"></textarea><br/>
+       <a href="#columnhistoryModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="click: showColumnMetaHistory.bind($data,'description')">[History]</a>
         </div><br/>
         <div style="margin-left:120px">
         VariableMeasuringUnit <span class="text-error">*</span>:
-       <input id="variableMeasuringUnit" name="variableMeasuringUnit" data-required="true" type="text" data-bind="value: variableMeasuringUnit" style="width:500px; margin-left:15px"/>
+       <input id="variableMeasuringUnit" name="variableMeasuringUnit" data-required="true" type="text" data-bind="value: variableMeasuringUnit" style="width:500px; margin-left:15px"/><br/>
+       <a href="#columnhistoryModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="click: showColumnMetaHistory.bind($data,'value unit')">[History]</a>
         </div><br/>
         <div style="margin-left:120px">
         VariableValueFormat <span class="text-error">*</span>:
-       <input id="variableValueFormat" name="variableValueFormat" data-required="true" type="text" data-bind="value: variableValueFormat" style="width:500px; margin-left:15px"/>
+       <input id="variableValueFormat" name="variableValueFormat" data-required="true" type="text" data-bind="value: variableValueFormat" style="width:500px; margin-left:15px"/><br/>
+       <a href="#columnhistoryModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="click: showColumnMetaHistory.bind($data,'format')">[History]</a>
         </div><br/>
         <div style="margin-left:120px">
         MissingValue <span class="text-error">*</span>:
-       <input id="missingValue" name="missingValue" data-required="true" type="text" data-bind="value: missingValue" style="width:500px; margin-left:15px"/>
+       <input id="missingValue" name="missingValue" data-required="true" type="text" data-bind="value: missingValue" style="width:500px; margin-left:15px"/><br/>
+       <a href="#columnhistoryModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="click: showColumnMetaHistory.bind($data,'missing value')">[History]</a>
+        </div><br/>
+        <div style="margin-left:120px">
+        Reason <span class="text-error">*</span>:
+       <textarea id="reason" name="missingValue" data-required="true" type="text" style="width:500px; margin-left:15px" rows="3"></textarea>
         </div><br/>
         <div style="text-align:right">
         <button id="saveMetadataButton" class="btn btn-primary" data-bind="click: $root.editColumnSave" data-loading-text="Saving..." data-complete-text="Saved!">Save</button>
         <button id="canceleMetadataButton" class="btn" data-bind="click: $root.editColumnCancel" data-loading-text="Cancel">Cancel</button>
     </div>
     </div>
+
+
+
+
+
+
+
+ <div id="columnhistoryModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="historyModalLabel" aria-hidden="false" style="display:block">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">¡Á</button>
+            <h3 id="historyModalLabel" data-bind="text: historyLogHeaderText"></h3>
+          </div>
+          <div class="modal-body">
+            <div id="fetchInProgressDiv" data-bind="visible: isFetchHistoryInProgress">
+                <span id="fetchInProgressLoadingIcon" data-bind="visible: isFetchHistoryInProgress()">
+                    <img src="/Colfusion/images/ajax-loader.gif"/>
+                </span>
+            </div>
+            <div id="contentDiv" >
+                <table class="table table-hover" data-bind="with: columnMetadataHistory">
+                    <tr>
+                        <th>Date Saved</th>
+                        <th>Author</th>
+                        <th>Value</th>
+                        <th>Reason</th>
+                    </tr>
+                    <tbody data-bind="foreach: historyLogRecords">
+                        <tr>
+                            <td data-bind="text: whenSaved"></td>
+                            <td data-bind="with: author">
+                                <span data-bind="text: authorInfo"></span>
+                            </td>
+                            <td data-bind="text: itemValue"></td>
+                            <td data-bind="text: reason"></td>
+                        </tr>
+                    </tbody>               
+                </table>
+            </div>
+            <div id="fetchFailedMsgDiv" data-bind="visible: isFetchHistoryErrorMessage().length > 0">
+                <span data-bind="text: isFetchHistoryErrorMessage" class="text-error"></span>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+            <!-- <button class="btn btn-primary">Save changes</button> -->
+          </div>
+        </div>
+
+
+
+
+
+
+    <script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script> 
     <script type="text/javascript" language="javascript">
         var autoHeight = document.documentElement.clientHeight*0.8;
         var autoWidth = document.documentElement.clientWidth*0.8;
@@ -155,5 +219,6 @@
         $("#OpenRefineIframe").width(autoWidth);
 
     </script>
-    <script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script>    
+    
 </div>
+

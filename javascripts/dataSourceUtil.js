@@ -112,11 +112,11 @@ var dataSourceUtil = (function() {
         });
     };
 
-    dataSourceUtil.updateColumnMetaData = function(sid,oldname,name,variableValueType,originalName,description,variableMeasuringUnit,variableValueFormat,missingValue) {
+    dataSourceUtil.updateColumnMetaData = function(sid,oldname,name,variableValueType,description,variableMeasuringUnit,variableValueFormat,missingValue) {
       return  $.ajax({
             type: 'POST',
             url: my_pligg_base + "/visualization/VisualizationAPI.php?action=UpdateColumnMetaData",
-            data: {'sid': sid, 'oldname': oldname, 'name': name, 'variableValueType': variableValueType, 'originalName': originalName, 'description': description, 'variableMeasuringUnit': variableMeasuringUnit, 'variableValueFormat': variableValueFormat, 'missingValue': missingValue},
+            data: {'sid': sid, 'oldname': oldname, 'name': name, 'variableValueType': variableValueType, 'description': description, 'variableMeasuringUnit': variableMeasuringUnit, 'variableValueFormat': variableValueFormat, 'missingValue': missingValue},
             dataType: 'json'
            
         });
