@@ -94,9 +94,13 @@
             </div>
 
             <div class="buttonPanel" style="float: right;">
+            <!--
                 <button data-bind="click: openVisualizationPage" class="btn" title="Visualization">
                     <i class="icon-bar-chart"></i>
                 </button>
+            -->
+
+
                 <button data-bind="click: togglePreviewTable" class="btn" title="Preview Data" data-toggle="button">
                     <i class="icon-table"></i>
                 </button>
@@ -173,9 +177,12 @@
                             <div data-bind="with: pathObj" class="pathBody">
 
                                 <div class="buttonPanel" style="float: right;">
+                                <!--
                                     <button data-bind="click: $parent.openVisualizationPage" class="btn" title="Visualization">
                                         <i class="icon-bar-chart"></i>
                                     </button>
+                                    -->
+                                    
                                     <button data-bind="click: $parent.togglePreview" class="btn" data-toggle="button">
                                         <i class="icon-table"></i>
                                     </button>
