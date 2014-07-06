@@ -54,7 +54,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <input data-bind="click: search" type="button" value="Search" />
+                    <input data-bind="click: search" type="button"  class="btn" value="Search" />
                     <img data-bind="visible: isSearching" style="margin-left: 5px;" src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />                   
                 </td>
             </tr>
@@ -169,7 +169,7 @@
                             <div data-bind="slider: pathFilter, sliderOptions: {value: 10, min: 0, max: 10, step: 1}" id="pathSliderFilter" class="sliderFilter"></div>
                             <div data-bind="slider: dataMatchFilter, sliderOptions: {min: 0, max: 100, step: 10}" id="dataMatchSliderFilter" class="sliderFilter"></div>
                         </div>
-                        <button data-bind="click: filterSearchResults" style="margin-top: 5px;">Refresh</button>
+                        <button data-bind="click: filterSearchResults" class="btn">Refresh</button>
                     </div>
 
                     <div data-bind="foreach: paths" class="paths">
@@ -182,7 +182,7 @@
                                         <i class="icon-bar-chart"></i>
                                     </button>
                                     -->
-                                    
+
                                     <button data-bind="click: $parent.togglePreview" class="btn" data-toggle="button">
                                         <i class="icon-table"></i>
                                     </button>
@@ -232,14 +232,48 @@
 
                             <div data-bind="visible: isPreviewShown()" class="pathDataPreview dataPreviewContainer">
                                 <div data-bind="visible: dataPreviewViewModel() && !dataPreviewViewModel().isLoading()" style="margin-top: 5px;">
-                                    <div>
+
+
+                                <section>
+
+                                    <h3 class="preview-title">Data Preview</h3>
+
+                                    <div class="sliderFilterContainer">
+                                        <div class="sliderFilterLabelContainer">                          
+                                            <table class="sliderFilterLabelTable">
+                                                <tr>
+                                                    <td class="labelTitle">Similarity Join Threshold</td>
+                                                    <td data-bind="text: similarityJoinSimThreshold()"></td>
+                                                </tr>                                               
+                                            </table>
+                                        </div>
+                                        <div class="sliderFilterSliderContainer">
+                                            <div data-bind="slider: similarityJoinSimThreshold, sliderOptions: {min: 0, max: 1, step: 0.1}" class="sliderFilter"></div>
+                                        </div>
+                                        <button data-bind="click: refreshPreview" class="btn">Refresh Data Preview</button>
+                                    </div>
+
+
+                                </section>
+
+
+
+
+
+
+
+
+
+
+                                   <!-- <div>
                                         <span style="color: black;">Join Similarity Threshold: </span>
                                         <input type="text" data-bind="value: similarityJoinSimThreshold" class="pathTitleText" />
                                     </div>  
 
                                     <button data-bind="click: refreshPreview" class="btn" title="Refresh Preview Data">
                                         <i class="icon-refresh"></i>
-                                    </button>                                 
+                                    </button>    
+                                    -->                             
                                 </div>
                                 <div data-bind="visible: !dataPreviewViewModel() || dataPreviewViewModel().isLoading()" style="padding-top: 10px; padding-left: 30px;">Loading...</div>
                                 <!-- ko if: dataPreviewViewModel() -->

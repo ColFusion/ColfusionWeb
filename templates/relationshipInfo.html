@@ -27,10 +27,28 @@
             <td data-bind='text: description' class="profileContent"></td>
         </tr>
         <tr>
+
+            <td class="profileHeader">Similarity Threshold:</td>
+            <td  class="profileContent">
+                <table style="width: 100%">
+                    <tr>
+                        <td style="width: 20px"><span data-bind="text: simThreshold()"></span></td>
+                        <td style="width: 60px"><div data-bind="slider: simThreshold, sliderOptions: {min: 0, max: 1, step: 0.1}" class="sliderFilter"></div></td>
+                        <td style="padding-left: 10px"><button data-bind="click: $root.updateLinksDataMatching" class="btn">Refresh Ratios</button></td>
+                    </tr>
+                </table>
+                
+                <div class="sliderFilterSliderContainer">
+                    
+                </div>
+            </td>
+          
+            <!--
             <td class="profileHeader">Similarity Threshold:</td>
             <td><input type="text" data-bind="value: simThreshold" />
             <button data-bind="click: $root.updateLinksDataMatching">Update</button></td>
-            
+            -->
+
         </tr>
     </table>
     <div class="linkProfileContainer">
