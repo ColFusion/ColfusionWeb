@@ -218,12 +218,18 @@
                                     <div>
                                         <span style="color: black;">Average Data overlap: </span>
                                         <span data-bind="text: Number($parent.avgDataMatchingRatio()).toFixed(2)" class="pathTitleText"></span>
-                                    </div>                                    
+                                    </div>    
+
                                 </div>
                             </div>
 
                             <div data-bind="visible: isPreviewShown()" class="pathDataPreview dataPreviewContainer">
                                 <div data-bind="visible: dataPreviewViewModel() && !dataPreviewViewModel().isLoading()" style="margin-top: 5px;">
+                                    <div>
+                                        <span style="color: black;">Join Similarity Threshold: </span>
+                                        <input type="text" data-bind="value: similarityJoinSimThreshold" class="pathTitleText" />
+                                    </div>  
+
                                     <button data-bind="click: refreshPreview" class="btn" title="Refresh Preview Data">
                                         <i class="icon-refresh"></i>
                                     </button>                                 

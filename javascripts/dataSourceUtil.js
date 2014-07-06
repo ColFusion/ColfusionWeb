@@ -50,6 +50,21 @@ var dataSourceUtil = (function() {
         });
     };
 
+    dataSourceUtil.getTableDataByRelIds = function (relIds, simThreshold, perPage, pageNo) {
+
+//TODO: add perPage and pageNo
+        var data = {relationshipIds: relIds, similarityThreshold: simThreshold};
+
+        return $.ajax({
+            url: ColFusionServerUrl + "/SimilarityJoin/joinByRelationships",
+            type: 'POST',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            data: JSON.stringify(data),
+        });
+    };
+
     dataSourceUtil.mineRelationship = function(sid, perPage, pageNo) {
         return $.ajax({
             type: 'POST',
@@ -83,6 +98,7 @@ var dataSourceUtil = (function() {
         //     colsChosenName[i] = colsChosenName[i].replace(/\`/g, '');
         // }
 
+        //TODO: comma is not good as column name separator, what if variable name has comma in it
         var cols = rawData.Control.cols.split(',');
         for (var i = 0; i < cols.length; i++) {
             cols[i] = cols[i].replace(/\`/g, '');
@@ -121,6 +137,48 @@ var dataSourceUtil = (function() {
            
         });
         
+    };
+
+    dataSourceUtil.mapSertverTableToDataPreviewTable = function(serverTable) {
+
+        //TODO: read page information from passed object
+        //
+       
+
+        var result = {"data":[], "Control": {"cols": "", "perPage":"10", "totalPage":1, "pageNo": 1}};
+
+        var serverTableRows = serverTable.payload.jointTable.rows;
+
+        var columnNames = [];
+        var rows = [];
+
+        for (var k = 0; k < serverTableRows.length; k++) {
+            var serverTableRow = serverTableRows[k];
+            var rowToAdd = {};
+            for (var i = 0; i < serverTableRow.columnGroups.length; i++) {
+                var columnGroup = serverTableRow.columnGroups[i];
+                var columns = columnGroup.columns;
+
+                for (var j = 0; j < columns.length; j++) {
+                    var column = columns[j];
+
+                    var columnName = columnGroup.tableName + "." + column.originalName;
+                    if (k == 0) {
+                        columnNames.push(columnName);
+                    }
+
+                    rowToAdd[columnName] = column.cell.value;
+
+                };
+            };
+
+            rows.push(rowToAdd);
+        };
+
+        result.data = rows;
+        result.Control.cols = columnNames.join(",");
+
+        return result;
     }
 
     return dataSourceUtil;

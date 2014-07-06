@@ -66,6 +66,10 @@ var DataPreviewViewModelProperties = {
         ** Aim to check if the table is edit and by whom 
         */
         self.isEditingMsgShown = function(sid) {
+            if (sid == -1) {
+                return;
+            }
+
             $.ajax({
             url: OpenRefineUrl+"/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
             type: 'GET',
@@ -93,6 +97,11 @@ var DataPreviewViewModelProperties = {
         
 
         self.checkIfBeingEdited = function(sid) {
+
+            if (sid == -1) {
+                return;
+            }
+
             // alert("check edit");
            $.ajax({
             url: OpenRefineUrl+"/command/core/is-table-locked?sid=" + sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
@@ -173,6 +182,12 @@ var DataPreviewViewModelProperties = {
         };
 
         self.loadMetaData = function() {
+            //TODO: for now just check in sid -1 then don't need to load columns metadata. For in future, each column should ask for metadata about itself.
+            
+            if (self.sid == -1) {
+                return;
+            }
+
                $.ajax({
                 url: ColFusionServerUrl + "/Story/" + self.sid + "/" + self.tableName + "/metadata/columns",
                 type: 'GET',
@@ -449,6 +464,24 @@ function DataPreviewViewModel(sid) {
 
         dataSourceUtil.getTableDataByObject(object, perPage, pageNo).done(function (data) {
             createDataTable('Merged Dataset', data);
+            self.isError(false);
+        }).error(function () {
+            self.isError(true);
+        }).always(function () {
+            self.isLoading(false);
+        });
+    };
+
+    self.getTableDataByRelIds = function (relIds, simThreshold, perPage, pageNo) {
+        self.isLoading(true);
+        self.isNoData(false);
+        self.isError(false);
+
+        dataSourceUtil.getTableDataByRelIds(relIds, simThreshold, perPage, pageNo).done(function (data) {
+
+            transformedData = dataSourceUtil.mapSertverTableToDataPreviewTable(data);
+
+            createDataTable('Merged Dataset', transformedData);
             self.isError(false);
         }).error(function () {
             self.isError(true);

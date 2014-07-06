@@ -75,6 +75,7 @@ var AdvancedSearchViewModelProperties = {
         self.pathObj = pathObj;
         self.avgConfidence = ko.observable(pathObj.avgConfidence);
         self.avgDataMatchingRatio = ko.observable(pathObj.avgDataMatchingRatio);
+        self.similarityJoinSimThreshold = ko.observable(1);
 
         self.isPreviewShown = ko.observable(false);
         self.isMoreShown = ko.observable(false);
@@ -104,7 +105,7 @@ var AdvancedSearchViewModelProperties = {
                 if (relationshipInfo) {
                     relationship.selectedLinks = [];
 
-                    ko.utils.arrayForEach(relationshipInfo().links(), function (relInfoLink) {
+                    ko.utils.arrayForEach(relationshipInfo().links(), function(relInfoLink) {
                         if (relInfoLink.isSelectedForMerge()) {
                             var selectedLink = {};
                             selectedLink.fromPartEncoded = relInfoLink.fromPartEncoded();
@@ -117,7 +118,8 @@ var AdvancedSearchViewModelProperties = {
 
             if (!self.dataPreviewViewModel()) {
                 self.dataPreviewViewModel(new DataPreviewViewModel(-1));
-                self.dataPreviewViewModel().getTableDataByObject(dataObj, 10, 1);
+
+                self.dataPreviewViewModel().getTableDataByRelIds(dataObj.relIds, self.similarityJoinSimThreshold(), 10, 1);
             }
 
             self.isPreviewShown(!self.isPreviewShown());
