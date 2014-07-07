@@ -283,37 +283,41 @@
                             </div>
 
                             <div data-bind="visible: isMoreShown()" class="pathDetail" style="margin-top: 10px; width: 99%;">
-                                <div style="color: black;">Relationships: </div>
-                                <table class="pathRelTable tftable">
-                                    <tr>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Confidence</th>
-                                    </tr>
-                                    <tbody data-bind="foreach: pathObj.relationships">
+                                 <section>
+
+                                    <h3 class="preview-title">Relationships</h3>
+                                    
+                                    <table class="pathRelTable tftable">
                                         <tr>
-                                            <td data-bind="template: { name: 'relInfo-template', data: sidFrom }"></td>
-                                            <td data-bind="template: { name: 'relInfo-template', data: sidTo }"></td>
-                                            <td data-bind="text: confidence, attr: { id:  'relConfidence_' + relId, 'class': 'relConfidence_' + relId }"></td>
-                                            <td>
-                                                <span data-bind="click: $parent.showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId, 'class': 'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
-                                            </td>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Confidence</th>
                                         </tr>
-                                        <tr data-bind="attr: { id:  'mineRelRec_' + relId }" style="display: none;">
-                                            <td class="relationshipInfo" colspan="5">
-                                                <div data-bind="attr: { id: 'relInfoLoadingIcon_' + relId }, visible: !$parent.isError[relId]()" class="relInfoLoadingIcon" style="text-align: center;">
-                                                    <img src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />
-                                                </div>
-                                                <div data-bind="attr: { id: 'relInfoErrorMessage_' + relId }, visible: $parent.isError[relId]()" style="text-align: center;">
-                                                    <span style="color: red;">Failed to load relationship information.</span>
-                                                </div>
-                                                <div data-bind="if: $parent.isRelationshipInfoLoaded[relId]() && !$parent.isError[relId]()">
-                                                    <div data-bind="with: $parent.relationshipInfos[relId]">{/literal}{include file='relationshipInfo.html'}{literal}</div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                        <tbody data-bind="foreach: pathObj.relationships">
+                                            <tr>
+                                                <td data-bind="template: { name: 'relInfo-template', data: sidFrom }"></td>
+                                                <td data-bind="template: { name: 'relInfo-template', data: sidTo }"></td>
+                                                <td data-bind="text: confidence, attr: { id:  'relConfidence_' + relId, 'class': 'relConfidence_' + relId }"></td>
+                                                <td>
+                                                    <span data-bind="click: $parent.showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId, 'class': 'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
+                                                </td>
+                                            </tr>
+                                            <tr data-bind="attr: { id:  'mineRelRec_' + relId }" style="display: none;">
+                                                <td class="relationshipInfo" colspan="5">
+                                                    <div data-bind="attr: { id: 'relInfoLoadingIcon_' + relId }, visible: !$parent.isError[relId]()" class="relInfoLoadingIcon" style="text-align: center;">
+                                                        <img src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />
+                                                    </div>
+                                                    <div data-bind="attr: { id: 'relInfoErrorMessage_' + relId }, visible: $parent.isError[relId]()" style="text-align: center;">
+                                                        <span style="color: red;">Failed to load relationship information.</span>
+                                                    </div>
+                                                    <div data-bind="if: $parent.isRelationshipInfoLoaded[relId]() && !$parent.isError[relId]()">
+                                                        <div data-bind="with: $parent.relationshipInfos[relId]">{/literal}{include file='relationshipInfo.html'}{literal}</div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </section>
                             </div>
 
                         </div>

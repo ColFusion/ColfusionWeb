@@ -103,11 +103,5 @@ function RelationshipViewModel(sid) {
         });
     }
 
-    self.updateLinksDataMatching = function(relationship, event){
-        var mineRelDom = $("#mineRelRec_" + relationship.rid);
-
-        $(mineRelDom).find('.relInfoLoadinнgIcon').show();
-        loadRelationshipInfo(relationship.rid, relationship.simThreshold(), mineRelDom);
-
-    }
+    
 }

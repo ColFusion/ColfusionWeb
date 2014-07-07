@@ -229,6 +229,45 @@ var RelationshipModel = {
             $('#dataMatchCheckingForm input[name="relSerializedString"]').val(ko.toJSON(self));
             $('#dataMatchCheckingForm').submit();
         };
+
+        self.updateLinksDataMatching = function(relationship, event){
+
+            $.ajax({
+                url: ColFusionServerUrl + "/Relationship/" + relationship.rid + "/dataMatchingRatios/" + relationship.simThreshold(),
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+                crossDomain: true,
+                success: function (data) {
+                    var links = data.payload;
+                    for (var i = 0; i < links.length; i++) {
+                        var link = links[i];
+
+                        for (var j = 0; j < self.links().length; j++) {
+                            var relLink = self.links()[j];
+
+                            if (relLink.fromPartEncoded() == link.fromPart) {
+                                relLink.fromRatio(link.fromRatio);
+                            }
+
+                            if (relLink.toPartEncoded() == link.toPart) {
+                                relLink.toRatio(link.toRatio);
+                            }
+                        };
+
+                        
+                    };
+                },
+                error: function (jqXHR, statusCode, errMessage) {
+                    alert(errMessage);
+                }
+            });
+
+            // var mineRelDom = $("#mineRelRec_" + relationship.rid);
+
+            // $(mineRelDom).find('.relInfoLoadinнgIcon').show();
+            // loadRelationshipInfo(relationship.rid, relationship.simThreshold(), mineRelDom);
+        };
     },
     Comment: function (rid, confidence, comment, userId, userName, userEmail, commentTime, isControlPanelShown) {
         var self = this;
