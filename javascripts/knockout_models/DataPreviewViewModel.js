@@ -131,9 +131,7 @@ var DataPreviewViewModelProperties = {
 
             if (self.sid == -1)
                 return;
-
-            // var test = 12;
-            // alert("swithToOpenRefine");
+var myOpenRefineUrl;
             $.ajax({
                 url: OpenRefineUrl+"/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
                 type: 'GET',
@@ -147,9 +145,9 @@ var DataPreviewViewModelProperties = {
                         if(data.isEditing && !data.isTimeOut) {
                             alert(data.msg);
                         } else {
+                            myOpenRefineUrl = data.openrefineURL;
                             // use '#' to pass userid to OpenRefine page's 'save' button
                             self.openRefineURL(data.openrefineURL + "#" + $("#user_id").val());
-
                             $("#storyTitleOpenRefinePopUp").text(storyMetadataViewModel.title());
 
                             $('#editpopup').lightbox({resizeToFit: false});
@@ -159,8 +157,19 @@ var DataPreviewViewModelProperties = {
                         }
                     }
                 }
+            }).done(function() {
+                $.ajax({
+                    url: OpenRefineUrl+"/command/core/set-check-point?url=" + myOpenRefineUrl, 
+                    type: 'GET',
+                    dataType: 'json',
+                    contentType: "application/json",
+                    crossDomain: true,
+                    success: function(data) {
+                        // alert("nnn!");
+                        //alert("Hey! New Command works!" + data.testMsg);
+                    }
+                });
             });
-
 
             timeId = setInterval(function() {
                 $.ajax({
@@ -171,10 +180,10 @@ var DataPreviewViewModelProperties = {
                     crossDomain: true,
                     success: function(data) {
                         if(!data.isTableLocked) {
-                            clearInterval(timeId);
+                            window.clearInterval(timeId);
                         } else if(data.isTimeOuting) {
                             alert("You have 5 mins left");
-                            clearInterval(timeId);
+                            window.clearInterval(timeId);
                         }
                     }
                 });
