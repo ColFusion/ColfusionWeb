@@ -240,10 +240,6 @@ var myOpenRefineUrl;
             
           };
 
-        self.refreshPage = function() {
-            self.loadMetaData();
-            alert("Changes have been saved!");
-        }
 
      self.loadMetaData();
      
@@ -255,6 +251,7 @@ function DataPreviewViewModel(sid) {
     self.sid = sid;
     self.cid;
     self.userid;
+    self.index = ko.observable();
 
     self.oldname;
     self.oldvariableValueType;
@@ -265,12 +262,12 @@ function DataPreviewViewModel(sid) {
 
     self.tableList = ko.observableArray();
     self.currentTable = ko.observable();
-    self.columnName = ko.observable();
-    self.variableValueType = ko.observable();
-    self.description = ko.observable();
-    self.variableMeasuringUnit = ko.observable();
-    self.variableValueFormat = ko.observable();
-    self.missingValue = ko.observable();
+    self.columnName;
+    self.variableValueType;
+    self.description;
+    self.variableMeasuringUnit;
+    self.variableValueFormat;
+    self.missingValue;
     self.reason = "";
     self.editAttribute;
     self.editValue;
@@ -280,6 +277,7 @@ function DataPreviewViewModel(sid) {
     self.isNoData = ko.observable(false);
     self.isPreviewStory = ko.observable(true);
     self.isEditColumnData = ko.observable(false);
+    self.isChosenNameEmpty = ko.observable(false);
 
     self.historyLogHeaderText = ko.observable();
     self.showAttribute;
@@ -288,16 +286,18 @@ function DataPreviewViewModel(sid) {
     self.isFetchHistoryInProgress = ko.observable(false)
     self.isFetchHistoryErrorMessage = ko.observable("");
 
-    self.Modify = function(cid,name,variableValueType,description,variableMeasuringUnit,variableValueFormat,missingValue){
+    self.selectValueType = ko.observableArray(['Number','String','Date','Time','Location']);
+    self.selectUnit = ko.observableArray();
+    self.selectFormat = ko.observableArray();
+
+
+    self.Modify = function(cid,name,variableValueType,description,variableMeasuringUnit,variableValueFormat,missingValue,index){
+        self.index(index);
+
         self.userid = $("#user_id").val();
         self.isPreviewStory(!self.isPreviewStory());
         self.isEditColumnData(!self.isEditColumnData());
-        self.columnName(name);
-        self.variableValueType(variableValueType);
-        self.description(description);
-        self.variableMeasuringUnit(variableMeasuringUnit);
-        self.variableValueFormat(variableValueFormat);
-        self.missingValue(missingValue);
+      
         self.cid = cid;
 
         self.oldname = name;
@@ -306,56 +306,143 @@ function DataPreviewViewModel(sid) {
         self.oldvariableMeasuringUnit = variableMeasuringUnit;
         self.oldvariableValueFormat = variableValueFormat;
         self.oldmissingValue = missingValue;
+
+        if(self.currentTable().headers()[self.index()].variableValueType()=="Number"){
+            self.selectUnit(['','kilometer','meter','mile','kilogram','gram','hundreds','thousands','millions']);
+            self.selectFormat(['']);
+        }
+        if(self.currentTable().headers()[self.index()].variableValueType()=="Location"){
+            self.selectUnit(['','country','state','city','street','zipcode','latitude','longitude']);
+            self.selectFormat(['']);
+        }
+         if(self.currentTable().headers()[self.index()].variableValueType()=="String"){
+            self.selectUnit(['']);
+            self.selectFormat(['']);
+        }
+        if(self.currentTable().headers()[self.index()].variableValueType()=="Date"){
+            self.selectFormat(['','yy/mm/dd','mm/dd/yy','dd/mm/yy','mm-dd-yy','yy-mm-dd','dd-mm-yy',]);
+            self.selectUnit(['']);
+
+        }
+        if(self.currentTable().headers()[self.index()].variableValueType()=="Time"){
+            self.selectFormat(['','hh:mm:ss','hh:mm:ss AM/PM','hh','mm','ss','hh:mm']);
+            self.selectUnit(['']);
+
+        }
+
+        self.currentTable().headers()[self.index()].name(self.oldname);
+        self.currentTable().headers()[self.index()].variableValueType(self.oldvariableValueType);
+        self.currentTable().headers()[self.index()].description(self.olddescription);
+        self.currentTable().headers()[self.index()].variableMeasuringUnit(self.oldvariableMeasuringUnit);
+        self.currentTable().headers()[self.index()].variableValueFormat(self.oldvariableValueFormat);
+        self.currentTable().headers()[self.index()].missingValue(self.oldmissingValue);
+        
      }
 
+     self.valueTypeChange = function(){
+        if(self.currentTable().headers()[self.index()].variableValueType()=="Number"){
+            self.selectUnit(['','kilometer','meter','mile','kilogram','gram','hundreds','thousands','millions']);
+            self.selectFormat(['']);
+        }
+        if(self.currentTable().headers()[self.index()].variableValueType()=="Location"){
+            self.selectUnit(['','country','state','city','street','zipcode','latitude','longitude']);
+            self.selectFormat(['']);
+        }
+         if(self.currentTable().headers()[self.index()].variableValueType()=="String"){
+            self.selectUnit(['']);
+            self.selectFormat(['']);
+        }
+        if(self.currentTable().headers()[self.index()].variableValueType()=="Date"){
+            self.selectFormat(['','yy/mm/dd','mm/dd/yy','dd/mm/yy','mm-dd-yy','yy-mm-dd','dd-mm-yy',]);
+            self.selectUnit(['']);
+
+        }
+        if(self.currentTable().headers()[self.index()].variableValueType()=="Time"){
+            self.selectFormat(['','hh:mm:ss','hh:mm:ss AM/PM','hh','mm','ss','hh:mm']);
+            self.selectUnit(['']);
+
+        }
+     }
+
+  
+
     self.editColumnSave = function(){
+
+        self.columnName = self.currentTable().headers()[self.index()].name();
+        self.variableValueType = self.currentTable().headers()[self.index()].variableValueType();
+        self.description = self.currentTable().headers()[self.index()].description();
+        self.variableMeasuringUnit = self.currentTable().headers()[self.index()].variableMeasuringUnit();
+        self.variableValueFormat = self.currentTable().headers()[self.index()].variableValueFormat();
+        self.missingValue = self.currentTable().headers()[self.index()].missingValue();
+
+
+        if(self.columnName==""){           
+            self.isChosenNameEmpty(true);
+            return;
+        }
+        else{
+            self.isChosenNameEmpty(false);
+        }
+
         self.reason = $("#reason").val();
-        if(self.columnName()!=self.oldname||self.variableValueType()!=self.oldvariableValueType||self.description()!=self.olddescription||self.variableMeasuringUnit()!=self.oldvariableMeasuringUnit||self.variableValueFormat()!=self.oldvariableValueFormat||self.missingValue()!=self.oldmissingValue){
-            dataSourceUtil.updateColumnMetaData(self.sid,self.oldname,self.columnName(),self.variableValueType(),self.description(),self.variableMeasuringUnit(),self.variableValueFormat(),self.missingValue());
-            self.currentTable().refreshPage();
+        
+
+        if(self.columnName!=self.oldname||self.variableValueType!=self.oldvariableValueType||self.description!=self.olddescription||self.variableMeasuringUnit!=self.oldvariableMeasuringUnit||self.variableValueFormat!=self.oldvariableValueFormat||self.missingValue!=self.oldmissingValue){
+            dataSourceUtil.updateColumnMetaData(self.sid,self.oldname,self.columnName,self.variableValueType,self.description,self.variableMeasuringUnit,self.variableValueFormat,self.missingValue);
+
+
         }
         self.columnMetadataChanged();
         //dataSourceUtil.createColumnMetaDataHistory();
         $("#reason").val("");
         self.isPreviewStory(!self.isPreviewStory());
-        self.isEditColumnData(!self.isEditColumnData());
+        self.isEditColumnData(!self.isEditColumnData());  
      }
 
     self.editColumnCancel = function(){
+
+        self.currentTable().headers()[self.index()].name(self.oldname);
+        self.currentTable().headers()[self.index()].variableValueType(self.oldvariableValueType);
+        self.currentTable().headers()[self.index()].description(self.olddescription);
+        self.currentTable().headers()[self.index()].variableMeasuringUnit(self.oldvariableMeasuringUnit);
+        self.currentTable().headers()[self.index()].variableValueFormat(self.oldvariableValueFormat);
+        self.currentTable().headers()[self.index()].missingValue(self.oldmissingValue);
+
+        self.isChosenNameEmpty(false);
         self.isPreviewStory(!self.isPreviewStory());
         self.isEditColumnData(!self.isEditColumnData());
     }
 
 
     self.columnMetadataChanged = function(){
-        if(self.columnName()!=self.oldname){
+        if(self.columnName!=self.oldname){
             self.editAttribute = "chosen name";
-            self.editValue = self.columnName();
+            self.editValue = self.columnName;
             self.addColumnMetadataEditHistory();
         }
-        if(self.variableValueType()!=self.oldvariableValueType){
+        if(self.variableValueType!=self.oldvariableValueType){
             self.editAttribute = "data type";
-            self.editValue = self.variableValueType();
+            self.editValue = self.variableValueType;
             self.addColumnMetadataEditHistory();
         }
-        if(self.description()!=self.olddescription){
+        if(self.description!=self.olddescription){
             self.editAttribute = "description";
-            self.editValue = self.description();
+            self.editValue = self.description;
             self.addColumnMetadataEditHistory();
         }
-        if(self.variableMeasuringUnit()!=self.oldvariableMeasuringUnit){
+        if(self.variableMeasuringUnit!=self.oldvariableMeasuringUnit){
             self.editAttribute = "value unit";
-            self.editValue = self.variableMeasuringUnit();
+            self.editValue = self.variableMeasuringUnit;
             self.addColumnMetadataEditHistory();
         }
-        if(self.variableValueFormat()!=self.oldvariableValueFormat){
+        if(self.variableValueFormat!=self.oldvariableValueFormat){
             self.editAttribute = "format";
-            self.editValue = self.variableValueFormat();
+            self.editValue = self.variableValueFormat;
             self.addColumnMetadataEditHistory();
         }
-        if(self.missingValue()!=self.oldmissingValue){
+        if(self.missingValue!=self.oldmissingValue){
             self.editAttribute = "missing value";
-            self.editValue = self.missingValue();
+            self.editValue = self.missingValue;
             self.addColumnMetadataEditHistory();
         }
     }
@@ -367,13 +454,15 @@ function DataPreviewViewModel(sid) {
         if(self.editValue==""){
             self.editValue="null";
         }
-              $.ajax({
-                url: ColFusionServerUrl + "/Story/metadata/columns/addEditHistory/" + self.cid + "/" + self.userid + "/" + self.editAttribute + "/" + self.reason + "/" + self.editValue,
+
+    
+         $.ajax({
+                url: ColFusionServerUrl + "/Story/metadata/columns/addEditHistory/" + self.cid + "/" + self.userid + "/" + self.editAttribute + "/" + self.reason.replace(/\//g,"*!~~!*") + "/" + self.editValue.replace(/\//g,"*!~~!*"),
                 type: 'GET',
                 dataType: 'json',
                 contentType: "application/json",
                 crossDomain: true
-            })
+            }) 
     }
 
     self.showColumnMetaHistory = function(attribute){
