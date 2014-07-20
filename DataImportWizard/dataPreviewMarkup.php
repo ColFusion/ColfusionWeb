@@ -40,7 +40,7 @@
                             
                            
                                 <div align="right">
-                                    <button class="btn btn-link" type="button" data-dismiss="lightbox" data-bind="click: $root.refreshPreview" aria-hidden="true">Close this dialog</button>
+                                    <button id="closeDialog" class="btn btn-link" type="button" data-bind="click: $root.refreshPreview" aria-hidden="true">Close this dialog</button>
                               </div><br>
                            
                             <div>

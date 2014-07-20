@@ -125,13 +125,18 @@ var DataPreviewViewModelProperties = {
         // self.user_idFromPage = $("#user_id").val();
 
         self.swithToOpenRefine = function() {
-            
+            // if(confirm("hello!")) {
+            //     alert("You selected Ok");
+            // } else {
+            //     alert("You selected cancel");
+            // }
             self.isProjectLoading(!self.isProjectLoading());
             self.isEditLinkVisible(!self.isEditLinkVisible());
 
             if (self.sid == -1)
                 return;
 var myOpenRefineUrl;
+var tempOpenRefineUrl;
             $.ajax({
                 url: OpenRefineUrl+"/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
                 type: 'GET',
@@ -146,6 +151,7 @@ var myOpenRefineUrl;
                             alert(data.msg);
                         } else {
                             myOpenRefineUrl = data.openrefineURL;
+                            tempOpenRefineUrl = data.openrefineURL + "#" + $("#user_id").val();
                             // use '#' to pass userid to OpenRefine page's 'save' button
                             self.openRefineURL(data.openrefineURL + "#" + $("#user_id").val());
                             $("#storyTitleOpenRefinePopUp").text(storyMetadataViewModel.title());
@@ -165,7 +171,8 @@ var myOpenRefineUrl;
                     contentType: "application/json",
                     crossDomain: true,
                     success: function(data) {
-                        // alert("nnn!");
+                        self.openRefineURL(tempOpenRefineUrl + "#" + myOpenRefineUrl + "#" + self.sid + "#" + self.tableName);
+                        // alert(tempOpenRefineUrl);
                         //alert("Hey! New Command works!" + data.testMsg);
                     }
                 });
@@ -651,32 +658,57 @@ function DataPreviewViewModel(sid) {
         self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
     }
    
-
-    self.refreshPreview = function() {
-        /*
-        ** Add an ajax call to make clicking the "close this dialog" to release the table instead of clicking "save" button
-        */
+    self.closeCurrentDialog = function() {
+        $("#closeDialog").attr('data-dismiss', "lightbox");
         $.ajax({
-                url: OpenRefineUrl + "/command/core/release-table?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
+            url: OpenRefineUrl + "/command/core/release-table?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                if (data.successful) {
+                    // alert(data.msg);
+                }
+            }
+        });
+
+        /* TODO:
+        ** If tableName is renamed, we need to update the knockout model to make the change shown, but for now
+        ** have no idea how to update it except refreshing the whole page.
+        */
+        var currentTable = self.currentTable();
+               
+        self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
+    }
+    
+    self.refreshPreview = function() {
+
+        var msg = "Are you sure you want to close the dialog without saving? If you click 'OK', you can redo your operations in the Redo/Undo list when you open this table next time;\nIf you click 'Cancel', you'll come back to the dialog.";
+        var isChangesSaved;
+
+        $.ajax({
+            // Added by Alex
+            // TODO: here I use "async: false" is because I need to set #closeDialog's properties, (see self.isChangesSaved)
+            // for an unknown reason, I cannot set them successfully if I do in ajax (no matter in the "success" nor in the ".done")
+                async: false,
+                url: OpenRefineUrl + "/command/core/is-changes-saved?sid=" + self.sid + "&tableName=" + self.currentTable().tableName, 
                 type: 'GET',
                 dataType: 'json',
                 contentType: "application/json",
                 crossDomain: true,
                 success: function(data) {
-                    // alert("userId: " + data.testMsg);
-                    if (data.successful) {
-                        // alert(data.msg);
-                    }
+                    isChangesSaved = data.isChangesSaved;
                 }
             });
 
-/* TODO:
-** If tableName is renamed, we need to update the knockout model to make the change shown, but for now
-** have no idea how to update it except refreshing the whole page.
-*/
-        var currentTable = self.currentTable();
-       
-        self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
+        if(!isChangesSaved) {
+            if(confirm(msg)) {
+                self.closeCurrentDialog();
+            }
+        } else {
+            self.closeCurrentDialog();
+        }
     }
 /*
 * The following two functions "saveToDb" and "cancelButton" will not be used anymore, because
