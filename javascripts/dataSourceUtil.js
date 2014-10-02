@@ -23,23 +23,52 @@ var dataSourceUtil = (function() {
     };
 
     // Get colmuns and their metadata of a table.
-    dataSourceUtil.getTableInfo = function(sid, tableName) {
-        return $.ajax({
-            type: 'POST',
-            url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableInfo",
-            data: {'sid': sid, 'table_name': tableName},
-            dataType: 'json'
-        });
-    };
+     // dataSourceUtil.getTableInfo = function(sid, tableName) {
+        // return $.ajax({
+            // type: 'POST',
+           // url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableInfo",
+             // data: {'sid': sid, 'table_name': tableName},
+             // dataType: 'json'
+         // });
+    // }; 
 
-    dataSourceUtil.getTableDataBySidAndName = function(sid, tableName, perPage, pageNo) {
-        return $.ajax({
-            type: 'POST',
-            url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
-            data: {'sid': sid, 'table_name': tableName, 'perPage': perPage, 'pageNo': pageNo},
-            dataType: 'json'
-        });
-    };
+	dataSourceUtil.getTableInfo = function(sid, tableName){
+	  return $.ajax({
+			// url: ColFusionServerUrl + "/Story/" + sid + "/" + tableName + "/tableInfo",
+			// type: 'GET',
+			// dataType: 'json',
+            // contentType: "application/json",
+			url: ColFusionServerUrl + "/Story/" + sid + "/" + tableName + "/metadata/columns",
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+	  });
+	}
+	
+    // dataSourceUtil.getTableDataBySidAndName = function(sid, tableName, perPage, pageNo) {
+        // return $.ajax({
+            // type: 'POST',
+            // url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
+            // data: {'sid': sid, 'table_name': tableName, 'perPage': perPage, 'pageNo': pageNo},
+            // dataType: 'json'
+        // });
+    // };
+	
+	dataSourceUtil.getTableDataBySidAndName = function(sid, tableName, perPage, pageNo) {
+	  // return $.ajax({
+             // type: 'POST',
+             // url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
+             // data: {'sid': sid, 'table_name': tableName, 'perPage': perPage, 'pageNo': pageNo},
+             // dataType: 'json'
+         // });
+     // };
+	
+		 return $.ajax({
+             type: 'GET',
+             url: ColFusionServerUrl + "/Story/" + sid + "/" + tableName + "/tableData/" + perPage + "/" +pageNo,
+             dataType: 'json'
+         });
+	 };
     
     dataSourceUtil.getTableDataByObject = function (object, perPage, pageNo) {
         return $.ajax({
@@ -177,6 +206,9 @@ var dataSourceUtil = (function() {
 
         result.data = rows;
         result.Control.cols = columnNames.join(",");
+		result.Control.perPage = serverTable.payload.perPage;
+		result.Control.totalPage = serverTable.payload.totalPage;
+		result.Control.pageNo =	serverTable.payload.pageNo;
 
         return result;
     }

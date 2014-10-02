@@ -553,7 +553,10 @@ function DataPreviewViewModel(sid) {
         self.isError(false);
 
         dataSourceUtil.getTableDataBySidAndName(self.sid, tableName, perPage, pageNo).done(function(data) {
-            createDataTable(tableName, data);
+            
+		transformedData = dataSourceUtil.mapSertverTableToDataPreviewTable(data);
+			
+		createDataTable(tableName, transformedData);
             self.isError(false);
         }).error(function() {
             self.isError(true);
@@ -637,7 +640,7 @@ function DataPreviewViewModel(sid) {
         var totalPage = currentTable.totalPage();
         if (currentPage < totalPage) {
             currentTable.currentPage(parseInt(currentPage) + 1);
-            self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
+            self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage(), currentTable.currentPage());
         }
     };
 
@@ -648,14 +651,14 @@ function DataPreviewViewModel(sid) {
         var currentPage = currentTable.currentPage();
         if (currentPage > 1) {
             currentTable.currentPage(parseInt(currentPage) - 1);
-            self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
+            self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage(), currentTable.currentPage());
         }
     };
 
     self.refreshTablePreview = function() {
         var currentTable = self.currentTable();
        
-        self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
+        self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage(), currentTable.currentPage());
     }
    
     self.closeCurrentDialog = function() {
@@ -679,7 +682,7 @@ function DataPreviewViewModel(sid) {
         */
         var currentTable = self.currentTable();
                
-        self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage, currentTable.currentPage());
+        self.getTableDataBySidAndName(currentTable.tableName, currentTable.perPage(), currentTable.currentPage());
     }
     
     self.refreshPreview = function() {

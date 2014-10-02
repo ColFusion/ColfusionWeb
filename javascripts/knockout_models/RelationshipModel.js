@@ -310,18 +310,29 @@ var RelationshipModel = {
 
             self.isLoadingTableInfo(true);
             dataSourceUtil.getTableInfo(self.sid(), self.chosenTableName()).done(function (data) {
-                if (data.length <= 0)
-                    return;
-                var cols = [];
-                for (var key in data[0]) {
-                    cols.push(key);
-                }
+                 // if (data.length <= 0)
+                     // return;
+                 // var cols = [];
+                 // for (var key in data[0]) {
+                     // cols.push(key);
+                 // }
 
-                var rows = [];
-                for (var i = 0; i < data.length; i++) {
-                    rows.push(data[i]);
-                }
-
+                 // var rows = [];
+                 // for (var i = 0; i < data.length; i++) {
+                     // rows.push(data[i]);
+                 // }
+				
+				 if (data.payload.length <= 0)
+                     return;
+				 var cols=[];
+				 for(var key in data.payload[0]){
+					 cols.push(key);
+				 }
+				 var rows = [];
+				 for(var i=0;i<data.payload.length;i++){
+					 rows.push(data.payload[i])
+				 }
+				
                 self.currentTable(new RelationshipModel.Table(cols, rows));
             }).always(function () {
                 self.isLoadingTableInfo(false);
