@@ -153,7 +153,7 @@ var tempOpenRefineUrl;
                             myOpenRefineUrl = data.openrefineURL;
                             tempOpenRefineUrl = data.openrefineURL + "#" + $("#user_id").val();
                             // use '#' to pass userid to OpenRefine page's 'save' button
-                            self.openRefineURL(data.openrefineURL + "#" + $("#user_id").val());
+                            self.openRefineURL(data.openrefineURL + "#" + $("#user_id").val() + "#" + myOpenRefineUrl + "#" + self.sid + "#" + self.tableName);
                             $("#storyTitleOpenRefinePopUp").text(storyMetadataViewModel.title());
 
                             $('#editpopup').lightbox({resizeToFit: false});
@@ -171,7 +171,7 @@ var tempOpenRefineUrl;
                     contentType: "application/json",
                     crossDomain: true,
                     success: function(data) {
-                        self.openRefineURL(tempOpenRefineUrl + "#" + myOpenRefineUrl + "#" + self.sid + "#" + self.tableName);
+                        //self.openRefineURL(tempOpenRefineUrl + "#" + myOpenRefineUrl + "#" + self.sid + "#" + self.tableName);
                         // alert(tempOpenRefineUrl);
                         //alert("Hey! New Command works!" + data.testMsg);
                     }
