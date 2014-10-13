@@ -43,8 +43,7 @@
                             </td>
                             <td>
                             <select data-bind="options: authorRoles, optionsText: 'roleName', optionsValue: 'roleId', value: roleId, optionsCaption: 'Select Role...'"></select>
-
-                               
+  
                             </td>
                             
                             <td>
@@ -100,6 +99,24 @@
                 </table>  
             </div>
         </div>
+        <!-- license -->
+        <div>
+            <label class="control-label" for="tags">License:</label>
+            <div class="controls">
+                <table>
+                    <tbody data-bind="foreach:licenseOp">
+                        <tr>
+                            <td><select data-bind="options:$root.availableLicenses, value: license, optionsText: 'licenseName', optionsCaption: 'Select a license...'"></select</td>
+                        </tr>  
+                        <tr>
+                            <td data-bind="text: formattedDescription"></td>
+                            <td><div hidden data-bind="text:formattedURL"></div><a class="licenseLink">Read More</a></td>
+                        </tr>  
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!--license end-->
 
         <div class="control-group" data-bind="visible: isInEditMode()">
             <label class="control-label" for="editReasonInput">Reason/Comment for editing:</label>
@@ -180,11 +197,19 @@
 
 </div>
 
+
 <!-- Apply KO bindings -->
 
 {literal}
     <script>
 
+        $(document).ready(function(){         
+            $(".licenseLink").click(function(){
+                var parent = $(this).parent();
+                //alert(parent.children('div').text());
+                location.href=parent.children('div').text();
+            }); 
+        }); 
         // Open attachment upload page.
         $('#uploadAttachmentLink').click(function() {
             $('#uploadAttachmentLightBox').lightbox({resizeToFit: false});
