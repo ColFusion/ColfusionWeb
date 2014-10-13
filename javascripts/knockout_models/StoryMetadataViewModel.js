@@ -6,6 +6,8 @@ var addAuthorTypeaheadTemplate = '<div class="dataColumnSuggestion">' +
         '</div>' +
         '</div>';
 
+
+
 // valueAccessor should be dataset.
 // Dom element should be input.
 ko.bindingHandlers.searchUsersTypeahead = {
@@ -101,8 +103,11 @@ var authorRoles = [ new AuthorRoleModel(1, "submitter", "the person who submits 
 	new AuthorRoleModel(2, "owner", "the person who owns the data to Col*Fusion")
 ];
 
+
+
 var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource, karma, roleId) {
-	var self = this;
+	
+    var self = this;
 
 	self.userId = ko.observable(userId);
 	self.firstName = ko.observable(firstName);
@@ -111,7 +116,6 @@ var StoryAuthorModel = function(userId, firstName, lastName, login, avatarSource
 	self.avatarSource = ko.observable(avatarSource);
 	self.karma = ko.observable(karma);
 	self.roleId = ko.observable(roleId);
-
 	self.authorInfo = ko.computed(function() {
 		var info = "";
 
@@ -172,7 +176,8 @@ var StoryMetadataHistoryViewModel = function() {
 }
 
 function StoryMetadataViewModel(sid, userId){
-	var self = this;
+    
+  	var self = this;
     self.sid = ko.observable(sid);
     self.userId = ko.observable(userId);
     
@@ -202,6 +207,55 @@ function StoryMetadataViewModel(sid, userId){
     self.isInEditMode = ko.observable(false);
     self.showFormLegend = ko.observable(true);
 
+//----------------------------------------
+    //
+    self.availableLicenses = new Array();
+
+     // sent ajax request to get license content  
+    $.ajax({
+        url: ColFusionServerUrl + "/Story/metadata/license",
+        async:false, 
+        type: 'GET',
+        dataType: 'json',
+        contentType: "application/json",
+        crossDomain: true,
+        success:function(data){
+            if (data.isSuccessful) {
+                var payload = data.payload;
+                var licenseList = payload.licenseList;
+                for (var i = 0;i<licenseList.length;i++){
+                    newLicense = new Array();
+                    newLicense['licenseName'] = licenseList[i].licenseName;
+                    newLicense['description'] =licenseList[i].licenseDes;
+                    newLicense['URL'] = licenseList[i].licenseUrl;
+                    self.availableLicenses.push(newLicense);
+                }
+            }
+
+        }
+    });
+
+    //-------------------------------------------------
+    function LicenseSelection(initial) {
+        var self = this;
+        self.license = ko.observable(initial);
+
+        self.formattedDescription = ko.computed(function() {
+            var description = self.license().description;
+            
+            return description;        
+        });  
+        self.formattedURL = ko.computed(function() {
+            var URL = self.license().URL;
+            return URL;
+        });
+    }
+    //-------------------------------------------------
+
+
+    // Editable data
+    self.licenseOp = ko.observableArray([new LicenseSelection( self.availableLicenses[0])]);
+//----------------------------------------
     self.fetchCurrentValues = function() {
     	var url = ColFusionServerUrl + "/Story/metadata/" + self.sid();
 
