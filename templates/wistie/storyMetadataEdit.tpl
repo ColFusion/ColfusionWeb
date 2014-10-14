@@ -101,12 +101,12 @@
         </div>
         <!-- license -->
         <div>
-            <label class="control-label" for="tags">License:</label>
+            <label class="control-label" for="tags">License <span class="text-error">*</span>:</label>
             <div class="controls">
                 <table>
                     <tbody data-bind="foreach:licenseOp">
                         <tr>
-                            <td><select data-bind="options:$root.availableLicenses, value: license, optionsText: 'licenseName', optionsCaption: 'Select a license...'"></select</td>
+                            <td><select data-bind="options:$root.availableLicenses, value: license, optionsText: 'licenseName'"></select</td>
                         </tr>  
                         <tr>
                             <td data-bind="text: formattedDescription"></td>
@@ -207,7 +207,7 @@
             $(".licenseLink").click(function(){
                 var parent = $(this).parent();
                 //alert(parent.children('div').text());
-                location.href=parent.children('div').text();
+                window.open(parent.children('div').text());
             }); 
         }); 
         // Open attachment upload page.
