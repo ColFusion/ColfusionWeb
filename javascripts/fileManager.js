@@ -25,15 +25,13 @@ var fileManager = (function() {
         });
     };
     
-    fileManager.deleteFile = function(deleteBtnDom, title, delete_url){
+    fileManager.deleteFile = function(title, delete_url){
         if(confirm("Do you want to remove " + title + " ?")){
             $.ajax({
                 url: delete_url,
                 type: 'POST',
                 dataType: 'html'
             });
-            
-            $(deleteBtnDom).parents('.fileListItem').remove();
         }
     };
 

@@ -61,21 +61,22 @@
                         <td style="vertical-align: top; width: 100px;">Tags</td>
                         <td><span data-bind="text: tags" style="white-space: pre-wrap"></span></td>
                     </tr>
+
                     {literal}
                     <!-- ko if: attachments().length > 0 -->
                     <tr id="attachedFilesRow">
                         <td class="step1_input_title" style="vertical-align: top; width: 100px;">Attachments</td>
                         <td>
                             
-                            <ul data-bind="foreach: attachments">
+                            <ul class="fileList" data-bind="foreach: attachments">
 
                                 <li class="fileListItem">
-                                    <span class="fileIcon"  />
+                                    <span class="fileIcon">
                                                 
                                          <img data-bind="attr : {src: iconurl}" />        
                                     </span>
                                     <span class="fileInfo">
-                                        <a data-bind="attr: { href: fileDownloadUrl}"><span data-bind="text: filename"></span></a>
+                                        <a data-bind="attr: { href: fileDownloadUrl}"><span data-bind="text: title"></span></a>
                                     </span>
 
                                     <span class="attachmentDescription" data-bind="text: description"></span>
@@ -172,8 +173,8 @@
 
             // Load attachment list one for showing one for editing
             // TODO: change to knockout model and do call to the server only once.
-            fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"), true);   
-            fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"), false);   
+//            fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"), true);   
+//            fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"), false);   
 
             $.ajax({
                 type: 'POST',

@@ -193,7 +193,8 @@ var AttachmentViewModel = function(fileId, sid, userId, title, filename, descrip
     self.iconurl =  ko.computed(function() {
             var filename = self.filename();
 
-            var extension = "jpg";
+debugger;
+            var extension = filename.substring(filename.lastIndexOf(".") + 1, filename.length);//"jpg";
             
             var icon_dir = 'icons/';
             var icon_filename = "";
@@ -223,7 +224,11 @@ var AttachmentViewModel = function(fileId, sid, userId, title, filename, descrip
             }
 
             return my_pligg_base + "/fileManagers/" + icon_dir + icon_filename;        
-        });  
+        }); 
+
+    self.deleteAttachment = function() {
+        fileManager.deleteFile(self.title(), my_pligg_base + "/fileManagers/deleteSourceAttachment.php?fileId=" + self.fileId());
+    }; 
 }
 
 function StoryMetadataViewModel(sid, userId){
@@ -542,7 +547,7 @@ function StoryMetadataViewModel(sid, userId){
                 if (data.isSuccessful) {
                     var payload = data.payload;
                     
-                    self.attachments([]);
+                    self.attachments.removeAll();
 
                     for (var i = 0; i < payload.length; i++){
                         

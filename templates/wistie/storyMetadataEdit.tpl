@@ -90,13 +90,35 @@
             </label>
             <div class="controls">
                 <table class="fileList" id="attachmentList"> 
-                    <li id="attachmentLoadingIcon">
-                        <span ><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
-                    </li>
-                    <li>
+                   
                         <span><a id="uploadAttachmentLink" style="color: #a44848;"><i class="icon-cloud-upload" style="margin-right: 5px;"></i>Add Files...</a></span>
-                    </li>
+                   
                 </table>  
+
+                {literal}
+                    <!-- ko if: attachments().length > 0 -->
+                            
+                        <ul data-bind="foreach: attachments">
+
+                            <li class="fileListItem">
+                                <span class="fileIcon"  />
+                                            
+                                     <img data-bind="attr : {src: iconurl}" />        
+                                </span>
+                                <span class="fileInfo">
+                                    <a data-bind="attr: { href: fileDownloadUrl}"><span data-bind="text: title"></span></a>
+                                </span>
+
+                                <span class="attachmentDescription" data-bind="text: description"></span>
+
+                                <span class="deleteFileBtnWrapper">
+                                <i class="deleteFileBtn icon-remove" title="remove this file" data-bind="click: deleteAttachment"></i>
+                                </span>
+                            </li>
+                        </ul>
+               
+                    <!-- /ko -->
+                     {/literal}
             </div>
         </div>
         <!-- license -->
@@ -218,7 +240,10 @@
         // When lightbox is closed, refresh attachment list.
         $('#uploadAttachmentLightBox').bind('hidden', function(e) {
             // Refresh attachment list.
-            fileManager.loadSourceAttachments(storyMetadataViewModel.sid(), $("#attachmentList"), $("#attachmentLoadingIcon"), true);
+//            fileManager.loadSourceAttachments(storyMetadataViewModel.sid(), $("#attachmentList"), $("#attachmentLoadingIcon"), true);
+
+                storyMetadataViewModel.getAttachments();
+
             var lightBoxContentDom = $('#uploadAttachmentLightBox').find('.lightbox-content');
             var iframeDom = $(lightBoxContentDom).find('iframe');
             $(iframeDom).remove();

@@ -55,7 +55,7 @@
                 userId = userId;
 
                 // Load attachment list.
-                fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));
+//                fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));
 
                 dataPreviewViewModel = new DataPreviewViewModel(sid);
                 relationshipViewModel = new RelationshipViewModel(sid);
