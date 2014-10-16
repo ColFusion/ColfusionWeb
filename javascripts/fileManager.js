@@ -12,12 +12,12 @@ var fileManager = (function() {
                 $(container).prepend(data);
                 
                 // This is only useful at story page.               
-                var fileTable = $(container).parents('#attachedFilesRow');
-                if ($(container).children('.fileListItem').length < 1) {
-                      $(fileTable).hide();
-                } else {
-                      $(fileTable).show();
-                }
+//                var fileTable = $(container).parents('#attachedFilesRow');
+//                if ($(container).children('.fileListItem').length < 1) {
+//                     $(fileTable).hide();
+//                } else {
+//                      $(fileTable).show();
+//                }
                 
                 $(loadingIconDom).hide();
             },

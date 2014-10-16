@@ -61,18 +61,31 @@
                         <td style="vertical-align: top; width: 100px;">Tags</td>
                         <td><span data-bind="text: tags" style="white-space: pre-wrap"></span></td>
                     </tr>
+                    {literal}
+                    <!-- ko if: attachments().length > 0 -->
                     <tr id="attachedFilesRow">
-                        <td class="step1_input_title" style="vertical-align: top; width: 100px;">{#PLIGG_Visual_Submit2_Attachments#}</td>
+                        <td class="step1_input_title" style="vertical-align: top; width: 100px;">Attachments</td>
                         <td>
-                            <table class="fileList" id="attachmentList2">
-                                <tr id="attachmentLoadingIcon2">
-                                    <td>
-                                        <img src="{$my_pligg_base}/images/ajax-loader.gif" />
-                                    </td>
-                                </tr>
-                            </table>
+                            
+                            <ul data-bind="foreach: attachments">
+
+                                <li class="fileListItem">
+                                    <span class="fileIcon"  />
+                                                
+                                         <img data-bind="attr : {src: iconurl}" />        
+                                    </span>
+                                    <span class="fileInfo">
+                                        <a data-bind="attr: { href: fileDownloadUrl}"><span data-bind="text: filename"></span></a>
+                                    </span>
+
+                                    <span class="attachmentDescription" data-bind="text: description"></span>
+                                </li>
+                            </ul>
+                          
                         </td>
                     </tr>
+                    <!-- /ko -->
+                     {/literal}
                 </table>      
             </div>
 

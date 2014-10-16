@@ -95,11 +95,18 @@ var dataSourceUtil = (function() {
     };
 
     dataSourceUtil.mineRelationship = function(sid, perPage, pageNo) {
+        // return $.ajax({
+        //     type: 'POST',
+        //     url: my_pligg_base + "/DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
+        //     data: {'sid': sid, 'perPage': perPage, 'pageNo': pageNo},
+        //     dataType: 'json'
+        // });
+
         return $.ajax({
-            type: 'POST',
-            url: my_pligg_base + "/DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
-            data: {'sid': sid, 'perPage': perPage, 'pageNo': pageNo},
-            dataType: 'json'
+            url: ColFusionServerUrl + "/Story/" + sid + "/MineRelationships/" + perPage + "/" + pageNo, //my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
         });
     };
 

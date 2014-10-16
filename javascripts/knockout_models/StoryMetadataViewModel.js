@@ -175,6 +175,57 @@ var StoryMetadataHistoryViewModel = function() {
 	self.historyLogRecords = ko.observableArray();
 }
 
+var AttachmentViewModel = function(fileId, sid, userId, title, filename, description, size, uploadTime) {
+    self = this;
+    self.fileId = ko.observable(fileId);
+    self.sid = ko.observable(sid);
+    self.userId = ko.observable(userId);
+    self.title = ko.observable(title);
+    self.filename = ko.observable(filename);
+    self.description = ko.observable(description);
+    self.size = ko.observable(size);
+    self.uploadTime = ko.observable(uploadTime);
+
+    self.fileDownloadUrl = ko.computed(function() {
+        return my_pligg_base + "/fileManagers/downloadSourceAttachment.php?fileId=" + self.fileId();
+    });
+
+    self.iconurl =  ko.computed(function() {
+            var filename = self.filename();
+
+            var extension = "jpg";
+            
+            var icon_dir = 'icons/';
+            var icon_filename = "";
+            switch(extension){
+                case 'doc':          
+                case 'docx':              
+                case 'xls':            
+                case 'xlsx':             
+                case 'xlsx':              
+                case 'xlsx':         
+                case 'ppt':              
+                case 'pptx':              
+                case 'pdf':             
+                case 'sql':
+                    icon_filename = extension + '.jpg';
+                    break;
+                case 'jpg':
+                case 'jpeg':
+                case 'png':
+                case 'tiff':
+                case 'gif':
+                    icon_filename = 'image.png';
+                    break;
+                default:
+                    icon_filename = 'file.jpg';
+                    break;
+            }
+
+            return my_pligg_base + "/fileManagers/" + icon_dir + icon_filename;        
+        });  
+}
+
 function StoryMetadataViewModel(sid, userId){
     
   	var self = this;
@@ -194,6 +245,7 @@ function StoryMetadataViewModel(sid, userId){
 
     self.editReason = ko.observable();
 
+    self.attachments = ko.observableArray();
 
     self.storyMetadataHistory = ko.observable();
 
@@ -303,7 +355,8 @@ function StoryMetadataViewModel(sid, userId){
     	
     	self.switchToReadMode();
 
-    	fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"));
+        self.getAttachments();
+//    	fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"));
     }
 
     //TODO: read from server old data again
@@ -464,11 +517,48 @@ function StoryMetadataViewModel(sid, userId){
 		           		};
 		           	};
 
+                    self.getAttachments();
+
 	           		self.isFetchCurrentValuesInProgress(false);
 	           		
 	           		if (callBack)
 	           			callBack(self.sid(), self.userId());
            		}
+            }
+        });
+    }
+
+    self.getAttachments = function() {
+        $.ajax({
+            url: ColFusionServerUrl + "/Story/" + self.sid() + "/AttachmentList", 
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success:function(data){
+
+                debugger;
+
+                if (data.isSuccessful) {
+                    var payload = data.payload;
+                    
+                    self.attachments([]);
+
+                    for (var i = 0; i < payload.length; i++){
+                        
+                        var attachment = new AttachmentViewModel(payload[i].fileId, 
+                            payload[i].sid, 
+                            payload[i].userId, 
+                            payload[i].title, 
+                            payload[i].filename, 
+                            payload[i].description, 
+                            payload[i].size, 
+                            payload[i].uploadTime);
+                        
+                        self.attachments.push(attachment);
+                    }
+                }
+
             }
         });
     }

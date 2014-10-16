@@ -1,4 +1,4 @@
-﻿/*
+/*
 To loose UpdateStatusViewModel's dependency on DataPreviewViewModel,
 we define a Mock DataPreviewViewModel to prevent error if there's no DataPreviewViewModel passed in UpdateStatusViewModel.
 */
@@ -68,31 +68,57 @@ function StoryStatusViewModel(sid, dataPreviewViewModel) {
     self.refreshUpdateStatus = function () {
         console.log("Refreshing Status");
 
+        // return $.ajax({
+        //     url: my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
+        //     // url: my_pligg_base + '/DataImportWizard/testStoryStatus.json',
+        //     data: { sid: self.sid },
+        //     type: 'post',
+        //     dataType: 'json',
+        //     success: function (data) {
+
+        //         self.lastStatusUpdatedTime(moment());
+
+        //         if (self.datasetStatus().length != data.length) {
+        //             ko.utils.arrayForEach(data, function () {
+        //                 self.datasetStatus.push(new StoryStatusProperties.DatasetStatus());
+        //             });
+        //         }
+
+        //         for (var i = 0; i < data.length; i++) {
+        //             var dataStatus = self.datasetStatus()[i];
+        //             dataStatus.statusObj(data[i]);
+        //             dataStatus.tickTimeElapse();
+        //         }
+
+        //         loadData();
+        //     }
+        // });
+
         return $.ajax({
-            url: my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
-            // url: my_pligg_base + '/DataImportWizard/testStoryStatus.json',
-            data: { sid: self.sid },
-            type: 'post',
+            url: ColFusionServerUrl + "/Story/" + self.sid + "/StoryStatus", //my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
+            type: 'GET',
             dataType: 'json',
+            contentType: "application/json",
             success: function (data) {
 
                 self.lastStatusUpdatedTime(moment());
-
-                if (self.datasetStatus().length != data.length) {
-                    ko.utils.arrayForEach(data, function () {
+                
+                if (self.datasetStatus().length != data.payload.length) {
+                    ko.utils.arrayForEach(data.payload, function () {
                         self.datasetStatus.push(new StoryStatusProperties.DatasetStatus());
                     });
                 }
 
-                for (var i = 0; i < data.length; i++) {
+                for (var i = 0; i < data.payload.length; i++) {
                     var dataStatus = self.datasetStatus()[i];
-                    dataStatus.statusObj(data[i]);
+                    dataStatus.statusObj(data.payload[i]);
                     dataStatus.tickTimeElapse();
                 }
 
                 loadData();
             }
         });
+
     };
 
     function loadData() {
