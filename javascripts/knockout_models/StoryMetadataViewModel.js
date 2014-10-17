@@ -193,7 +193,6 @@ var AttachmentViewModel = function(fileId, sid, userId, title, filename, descrip
     self.iconurl =  ko.computed(function() {
             var filename = self.filename();
 
-debugger;
             var extension = filename.substring(filename.lastIndexOf(".") + 1, filename.length);//"jpg";
             
             var icon_dir = 'icons/';
@@ -541,8 +540,6 @@ function StoryMetadataViewModel(sid, userId){
             contentType: "application/json",
             crossDomain: true,
             success:function(data){
-
-                debugger;
 
                 if (data.isSuccessful) {
                     var payload = data.payload;
