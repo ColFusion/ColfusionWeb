@@ -239,6 +239,8 @@ function StoryMetadataViewModel(sid, userId){
     self.submitter = ko.observable();
     self.storyAuthors = ko.observableArray();
     self.removedStoryAuthors = ko.observableArray();
+    self.licenseValue = ko.observable();
+    self.licenseName = ko.observable();
 
     self.title = ko.observable();
     self.description = ko.observable();
@@ -284,6 +286,7 @@ function StoryMetadataViewModel(sid, userId){
                     newLicense['licenseName'] = licenseList[i].licenseName;
                     newLicense['description'] =licenseList[i].licenseDes;
                     newLicense['URL'] = licenseList[i].licenseUrl;
+                    newLicense['licenseId'] = licenseList[i].licenseId;
                     self.availableLicenses.push(newLicense);
                 }
             }
@@ -292,7 +295,7 @@ function StoryMetadataViewModel(sid, userId){
     });
 
     //-------------------------------------------------
-    function LicenseSelection(initial) {
+    /*function LicenseSelection(initial) {
         var self = this;
         self.license = ko.observable(initial);
 
@@ -305,12 +308,13 @@ function StoryMetadataViewModel(sid, userId){
             var URL = self.license().URL;
             return URL;
         });
-    }
+    }*/
     //-------------------------------------------------
 
 
     // Editable data
-    self.licenseOp = ko.observableArray([new LicenseSelection( self.availableLicenses[0])]);
+    self.licenseOp = ko.observableArray(self.availableLicenses);
+    self.licenseValue = ko.observable();
 //----------------------------------------
     self.fetchCurrentValues = function() {
     	var url = ColFusionServerUrl + "/Story/metadata/" + self.sid();
@@ -386,11 +390,11 @@ function StoryMetadataViewModel(sid, userId){
             	sourceType : self.sourceType(),
             	tags : self.tags(),
             	dateSubmitted : self.dateSubmitted(),
-                editReason : self.editReason()
+                editReason : self.editReason(),
+                licenseId:self.licenseValue().licenseId
         	};
-
         self.editReason("");
-
+        //alert(self.licenseValue().licenseId);
         data.storySubmitter = self.submitter().getTempAsJSONObj();
         data.storyAuthors = $.map(self.storyAuthors(), function (item) {
             		return 	item.getTempAsJSONObj();});
@@ -476,13 +480,13 @@ function StoryMetadataViewModel(sid, userId){
 
     function doAjaxForFetchOrCreate(url, callBack) {
     	self.isFetchCurrentValuesInProgress(true);
-
+        //alert(url);
     	$.ajax({
             url: url, 
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
-            crossDomain: true,
+            //crossDomain: true,
             success: function(data) {
             	if (data.isSuccessful) {
             		self.sid(data.payload.sid);
@@ -502,8 +506,16 @@ function StoryMetadataViewModel(sid, userId){
 	           		self.status(data.payload.status);
 	           		self.tags(data.payload.tags);
 	           		self.dateSubmitted(new Date(data.payload.dateSubmitted));
-
-	           		var authors = data.payload.storyAuthors;
+                    
+                    for (var i =0;i<self.availableLicenses.length;i++){
+                        if (self.availableLicenses[i]['licenseId']==data.payload.licenseId){
+                             license = self.availableLicenses[i];
+                             self.licenseValue(self.availableLicenses[i]);
+                        }
+                    }
+                    self.licenseName(license['description']);
+                    //self.licenseName(data.payload.licenseId);
+                    var authors = data.payload.storyAuthors;
 	           		if (authors) {
 		           		for (var i = 0; i < authors.length; i++) {
 
