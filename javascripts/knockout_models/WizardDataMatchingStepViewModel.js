@@ -43,7 +43,7 @@ var WizardVariableViewModel = function(originalName, chosenName, description, va
 
     self.missingValue = ko.observable(missingValue);
 
-    self.checked = ko.observable(false);
+    self.checked = ko.observable(true);
     self.isSettingRowVisible = ko.observable(false);
 
     self.toggleSettingsRowVisibility = function(item) {
