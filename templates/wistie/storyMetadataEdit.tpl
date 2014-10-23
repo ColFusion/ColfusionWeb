@@ -125,17 +125,10 @@
         <div>
             <label class="control-label" for="tags">License <span class="text-error">*</span>:</label>
             <div class="controls">
-                <table>
-                    <tbody data-bind="foreach:licenseOp">
-                        <tr>
-                            <td><select data-bind="options:$root.availableLicenses, value: license, optionsText: 'licenseName'"></select</td>
-                        </tr>  
-                        <tr>
-                            <td data-bind="text: formattedDescription"></td>
-                            <td><div hidden data-bind="text:formattedURL"></div><a class="licenseLink">Read More</a></td>
-                        </tr>  
-                    </tbody>
-                </table>
+                <select id ="license" data-bind="options:$root.availableLicenses, value: licenseValue, optionsText: 'licenseName'"></select>
+                <br>
+                <span data-bind="text:licenseValue().description"></span>
+                <div hidden data-bind="text:licenseValue().URL"></div><a class="licenseLink">Read More</a>
             </div>
         </div>
         <!--license end-->

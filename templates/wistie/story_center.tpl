@@ -29,6 +29,12 @@
                         <td style="vertical-align: top; width: 100px;">Dataset Title</td>
                         <td><span data-bind="text: title"></span></td>
                     </tr>
+                    <!-- license -->
+                    <tr>
+                        <td style="vertical-align: top; width: 150px;">License Name</td>
+                        <td><span data-bind="text: licenseName"></span></td>
+                    </tr>
+                    <!-- license -->
                     <tr>
                         <td style="vertical-align: top; width: 100px;">Submitted by</td>
                         <!-- ko with: submitter -->
