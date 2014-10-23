@@ -73,6 +73,30 @@ var WizardWorksheetViewModel = function(sheetName, headerRow, startColumn, numbe
 
         return true;
     };
+
+    self.atLeastOneVariableChecked = ko.computed(function() {
+
+        var count = 0;
+
+        for (var i = 0; i < this.variables().length; i++) {
+            if (this.variables()[i].checked()) {
+                count++;
+            }
+        }
+
+        if (count === 0) {
+            this.allToggled(false);
+
+            return false;
+        }
+
+        if (count === this.variables().length) {
+            this.allToggled(true);
+        }
+
+        return true;
+        
+    }, self);
 };
 
 var WizardFileViewModel = function(extension, fileName, fileAbsoluteName, worksheets) {
@@ -82,6 +106,16 @@ var WizardFileViewModel = function(extension, fileName, fileAbsoluteName, worksh
     self.fileName = ko.observable(fileName);
     self.fileAbsoluteName = ko.observable(fileAbsoluteName);
     self.worksheets = ko.observableArray(worksheets);
+
+    self.atLeastOneVariableChecked = ko.computed(function() {
+        for (var i = 0; i < this.worksheets().length; i++) {
+            if (!this.worksheets()[i].atLeastOneVariableChecked()) {
+                return false;
+            }
+        }
+
+        return true;
+    }, self);
 };
 
 
@@ -212,4 +246,17 @@ function WizardDataMatchingStepViewModel(sid, userId) {
             data: JSON.stringify(data)
         });
     }
+
+    self.atLeastOneVariableChecked = ko.computed(function() {
+
+        debugger;
+
+        for (var i = 0; i < this.files().length; i++) {
+            if (!this.files()[i].atLeastOneVariableChecked()) {
+                return false;
+            }
+        }
+
+        return true;
+    }, self);
 }
