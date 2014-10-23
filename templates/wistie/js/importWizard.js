@@ -264,9 +264,7 @@ var importWizard = (function () {
             wizard.show();
             wizard.disableNextButton();
 
-
             importWizard.wizardDataMatchingStepViewModel.atLeastOneVariableChecked.subscribe(function(newValue) {
-                debugger;
 
                 if (newValue) {
                     wizard.enableNextButton();
