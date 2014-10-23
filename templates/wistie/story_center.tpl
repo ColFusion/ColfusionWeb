@@ -32,9 +32,9 @@
                     <!-- license -->
                     <tr>
                         <td style="vertical-align: top; width: 150px;">License Name</td>
-                        <td><span data-bind="text: licenseName"></span></td>
-                    </tr>
-                    <!-- license -->
+                        <td><span data-bind="text: licenseName"></span> <div hidden data-bind="text:licenseValue().URL"></div> <a class="licenseLink">Read More</a></td>
+                    </tr> 
+                    <!-- license ends-->
                     <tr>
                         <td style="vertical-align: top; width: 100px;">Submitted by</td>
                         <!-- ko with: submitter -->
