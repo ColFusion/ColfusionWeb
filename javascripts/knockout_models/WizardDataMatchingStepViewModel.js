@@ -163,21 +163,21 @@ function WizardDataMatchingStepViewModel(sid, userId) {
                                         dataType = variableDataTypes[z];
                                         break;
                                     }
-                                };
+                                }
 
-                                var wizardVariable = new WizardVariableViewModel(variable.originalName, variable.chosenName, 
+                                var wizardVariable = new WizardVariableViewModel(variable.originalName, variable.chosenName,
                                     variable.description, variable.variableMeasuringUnit, dataType, variable.variableValueFormat, variable.missingValue);
 
                                 wizardVariables.push(wizardVariable);
-                            };
+                            }
 
                             var worksheet = data.payload[i].worksheets[j];
 
-                            var wizardWorksheet = new WizardWorksheetViewModel(worksheet.sheetName, worksheet.headerRow, 
+                            var wizardWorksheet = new WizardWorksheetViewModel(worksheet.sheetName, worksheet.headerRow,
                                 worksheet.startColumn, worksheet.numberOfRows, worksheet.indexInTheFile, wizardVariables);
 
                             wizardWorksheets.push(wizardWorksheet);
-                        };
+                        }
 
 
                         var file = data.payload[i];
@@ -186,7 +186,7 @@ function WizardDataMatchingStepViewModel(sid, userId) {
 
                         self.files.push(wizardFile);
                         
-                    };
+                    }
 
                     if (callBack) {
                         callBack();
@@ -197,7 +197,7 @@ function WizardDataMatchingStepViewModel(sid, userId) {
 
             }
         });
-    }
+    };
 
     self.getSubmitDataAsDeffered = function(sourceType) {
         var modelToJS = ko.toJS(self.files);
@@ -245,11 +245,9 @@ function WizardDataMatchingStepViewModel(sid, userId) {
             crossDomain: true,
             data: JSON.stringify(data)
         });
-    }
+    };
 
     self.atLeastOneVariableChecked = ko.computed(function() {
-
-        debugger;
 
         for (var i = 0; i < this.files().length; i++) {
             if (!this.files()[i].atLeastOneVariableChecked()) {
