@@ -364,6 +364,10 @@ function StoryMetadataViewModel(sid, userId){
     	self.switchToReadMode();
 
         self.getAttachments();
+
+        
+
+
 //    	fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"));
     }
 
@@ -400,7 +404,13 @@ function StoryMetadataViewModel(sid, userId){
             		return 	item.getTempAsJSONObj();});
         data.removedStoryAuthors = $.map(self.removedStoryAuthors(), function (item) {
             		return 	item.getTempAsJSONObj();});
-
+        for (var i =0;i<self.availableLicenses.length;i++){
+            if (self.availableLicenses[i]['licenseId']==self.licenseValue().licenseId){
+                 license = self.availableLicenses[i];
+                 self.licenseValue(self.availableLicenses[i]);
+            }
+        }
+        self.licenseName(license['description']);
     	return $.ajax({
             url: ColFusionServerUrl + "/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
             type: 'POST',
@@ -409,6 +419,7 @@ function StoryMetadataViewModel(sid, userId){
             crossDomain: true,
             data: JSON.stringify(data)       
     	});
+
     }    
 
     self.addAuthor = function() {
@@ -507,13 +518,6 @@ function StoryMetadataViewModel(sid, userId){
 	           		self.tags(data.payload.tags);
 	           		self.dateSubmitted(new Date(data.payload.dateSubmitted));
                     
-                    for (var i =0;i<self.availableLicenses.length;i++){
-                        if (self.availableLicenses[i]['licenseId']==data.payload.licenseId){
-                             license = self.availableLicenses[i];
-                             self.licenseValue(self.availableLicenses[i]);
-                        }
-                    }
-                    self.licenseName(license['description']);
                     //self.licenseName(data.payload.licenseId);
                     var authors = data.payload.storyAuthors;
 	           		if (authors) {
@@ -532,6 +536,13 @@ function StoryMetadataViewModel(sid, userId){
 		           			self.storyAuthors.push(authorModel);
 		           		};
 		           	};
+                    for (var i =0;i<self.availableLicenses.length;i++){
+                        if (self.availableLicenses[i]['licenseId']==data.payload.licenseId){
+                             license = self.availableLicenses[i];
+                             self.licenseValue(self.availableLicenses[i]);
+                        }
+                    }
+                    self.licenseName(license['description']);
 
                     self.getAttachments();
 
