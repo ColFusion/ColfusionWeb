@@ -129,6 +129,9 @@
                 <br>
                 <span data-bind="text:licenseValue().description"></span>
                 <div hidden data-bind="text:licenseValue().URL"></div><a class="licenseLink">Read More</a>
+                <br>
+                <a href="#historyModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'license')">[History]</a>
+                <br></br>
             </div>
         </div>
         <!--license end-->
