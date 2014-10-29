@@ -353,6 +353,11 @@ var RelationshipModel = {
         self.loadTableList = function () {
             if (self.sid() >= 1) {
                 dataSourceUtil.getTablesList(self.sid()).done(function (data) {
+
+                    if (data == null) {
+                        return;
+                    }
+
                     if (data != null) {
                         self.tableList(data);
                     }
