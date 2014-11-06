@@ -126,7 +126,7 @@
         <div>
             <label class="control-label">License <span class="text-error">*</span>:</label>
             <div class="controls">
-                <select id ="license" data-bind="options: availableLicenses, value: licenseValue, optionsText: 'licenseName'"></select>
+                <select id ="license" data-bind="options: licenseOptions, value: licenseValue, optionsText: 'licenseName'"></select>
 
                 <!-- ko if:  licenseValue -->
 

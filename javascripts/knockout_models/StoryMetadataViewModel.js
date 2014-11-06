@@ -239,8 +239,6 @@ function StoryMetadataViewModel(sid, userId){
     self.submitter = ko.observable();
     self.storyAuthors = ko.observableArray();
     self.removedStoryAuthors = ko.observableArray();
-    self.licenseValue = ko.observable();
-    self.licenseName = ko.observable();
 
     self.title = ko.observable();
     self.description = ko.observable();
@@ -265,19 +263,18 @@ function StoryMetadataViewModel(sid, userId){
     self.isInEditMode = ko.observable(false);
     self.showFormLegend = ko.observable(true);
 
-    self.availableLicenses = [];
-    self.licenseOp = ko.observableArray(self.availableLicenses);
+    self.licenseOptions = ko.observableArray();
     self.licenseValue = ko.observable();
 
 
     self.init = function() {
         self.loadLicenses();
-    }
+    };
 
     self.fetchCurrentValues = function() {
-    	var url = ColFusionServerUrl + "/Story/metadata/" + self.sid();
+        var url = ColFusionServerUrl + "/Story/metadata/" + self.sid();
 
-    	doAjaxForFetchOrCreate(url, "");
+        doAjaxForFetchOrCreate(url, "");
     };
 
     self.createNewStory = function(callBack) {
@@ -353,20 +350,14 @@ function StoryMetadataViewModel(sid, userId){
                 licenseId:self.licenseValue().licenseId
         	};
         self.editReason("");
-        //alert(self.licenseValue().licenseId);
+        
         data.storySubmitter = self.submitter().getTempAsJSONObj();
         data.storyAuthors = $.map(self.storyAuthors(), function (item) {
             		return 	item.getTempAsJSONObj();});
         data.removedStoryAuthors = $.map(self.removedStoryAuthors(), function (item) {
             		return 	item.getTempAsJSONObj();});
-        for (var i =0;i<self.availableLicenses.length;i++){
-            if (self.availableLicenses[i]['licenseId']==self.licenseValue().licenseId){
-                 license = self.availableLicenses[i];
-                 self.licenseValue(self.availableLicenses[i]);
-            }
-        }
-        self.licenseName(license['description']);
-    	return $.ajax({
+
+        return $.ajax({
             url: ColFusionServerUrl + "/Story/metadata/" + self.sid(), //my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=0",
             type: 'POST',
             dataType: 'json',
@@ -473,7 +464,6 @@ function StoryMetadataViewModel(sid, userId){
 	           		self.tags(data.payload.tags);
 	           		self.dateSubmitted(new Date(data.payload.dateSubmitted));
                     
-                    //self.licenseName(data.payload.licenseId);
                     var authors = data.payload.storyAuthors;
 	           		if (authors) {
 		           		for (var i = 0; i < authors.length; i++) {
@@ -491,16 +481,13 @@ function StoryMetadataViewModel(sid, userId){
 		           			self.storyAuthors.push(authorModel);
 		           		};
 		           	};
-                    for (var i =0;i<self.availableLicenses.length;i++){
-                        if (self.availableLicenses[i]['licenseId']==data.payload.licenseId){
-                             license = self.availableLicenses[i];
-                             self.licenseValue(self.availableLicenses[i]);
+
+                    for (var i = 0; i < self.licenseOptions().length; i++){
+                        if (self.licenseOptions()[i]['licenseId'] == data.payload.licenseId){
+                            self.licenseValue(self.licenseOptions()[i]);
+                            break;
                         }
                     }
-
-
-
-                    self.licenseName(license['description']);
 
                     self.getAttachments();
 
@@ -549,7 +536,7 @@ function StoryMetadataViewModel(sid, userId){
     self.loadLicenses = function() {
         $.ajax({
             url: ColFusionServerUrl + "/Story/metadata/license",
-            //async:false,
+            async:false,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -558,14 +545,16 @@ function StoryMetadataViewModel(sid, userId){
                 debugger;
                 if (data.isSuccessful) {
                     var payload = data.payload;
-                    var licenseList = payload.licenseList;
-                    for (var i = 0; i < licenseList.length; i++){
+
+                    debugger;
+
+                    for (var i = 0; i < payload.length; i++){
                         newLicense = [];
-                        newLicense['licenseName'] = licenseList[i].licenseName;
-                        newLicense['description'] =licenseList[i].licenseDes;
-                        newLicense['URL'] = licenseList[i].licenseUrl;
-                        newLicense['licenseId'] = licenseList[i].licenseId;
-                        self.availableLicenses.push(newLicense);
+                        newLicense['licenseName'] = payload[i].licenseName;
+                        newLicense['description'] = payload[i].licenseDescription;
+                        newLicense['URL'] = payload[i].licenseURL;
+                        newLicense['licenseId'] = payload[i].licenseId;
+                        self.licenseOptions.push(newLicense);
                     }
                 }
                 else {

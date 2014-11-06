@@ -32,7 +32,7 @@
                     <!-- license -->
                     <tr>
                         <td style="vertical-align: top; width: 150px;">License Name</td>
-                        <td><span data-bind="text: licenseName"></span> <div hidden data-bind="text:licenseValue().URL"></div> <a class="licenseLink">Read More</a></td>
+                        <td><span data-bind="text: licenseValue().licenseName"></span> <div hidden data-bind="text: licenseValue().URL"></div> <a class="licenseLink">Read More</a></td>
                     </tr> 
                     <!-- license ends-->
                     <tr>
