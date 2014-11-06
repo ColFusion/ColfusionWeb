@@ -180,8 +180,13 @@ var dataSourceUtil = (function() {
         //TODO: read page information from passed object
         //
        
-
+debugger;
         var result = {"data":[], "Control": {"cols": "", "perPage":"10", "totalPage":1, "pageNo": 1}};
+
+        if (typeof serverTable.payload.jointTable === 'undefined' ||
+            serverTable.payload.jointTable === null) {
+            return result;
+        }
 
         var serverTableRows = serverTable.payload.jointTable.rows;
 
@@ -199,17 +204,17 @@ var dataSourceUtil = (function() {
                     var column = columns[j];
 
                     var columnName = columnGroup.tableName + "." + column.originalName;
-                    if (k == 0) {
+                    if (k === 0) {
                         columnNames.push(columnName);
                     }
 
                     rowToAdd[columnName] = column.cell.value;
 
-                };
-            };
+                }
+            }
 
             rows.push(rowToAdd);
-        };
+        }
 
         result.data = rows;
         result.Control.cols = columnNames.join(",");
@@ -218,7 +223,7 @@ var dataSourceUtil = (function() {
 		result.Control.pageNo =	serverTable.payload.pageNo;
 
         return result;
-    }
+    };
 
 
 

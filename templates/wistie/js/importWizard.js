@@ -288,8 +288,9 @@ var importWizard = (function () {
         var submitDataDeffered = importWizard.wizardDataMatchingStepViewModel.getSubmitDataAsDeffered(getImportSource());
 
         submitDataDeffered.done(function(data) {
+            debugger;
+            
             if (data.isSuccessful) {
-                debugger;
                 var tiggerDataLoadDeffered = importWizard.triggerDataLoadOnServerAsDeffered();
 
                 tiggerDataLoadDeffered.done(function(data) {
@@ -317,11 +318,11 @@ var importWizard = (function () {
                 $("#messageContainer").html(data.message);
             }
         })
-        .fail(function(data) {
+        .error(function(data) {
             wiz.trigger("failure");
             $("#messageContainer").html("Could not perform submission request. Please try again later.");
         });
-    }
+    };
 
     importWizard.triggerDataLoadOnServerAsDeffered = function() {
         return $.ajax({
