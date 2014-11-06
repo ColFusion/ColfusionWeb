@@ -258,64 +258,22 @@ function StoryMetadataViewModel(sid, userId){
     self.selectedLookedUpUser = ko.observable();
 
     self.isFetchCurrentValuesInProgress = ko.observable(false);
-    self.isFetchHistoryInProgress = ko.observable(false)
+    self.isFetchHistoryInProgress = ko.observable(false);
     self.isFetchHistoryErrorMessage = ko.observable("");
     self.historyLogHeaderText = ko.observable();
 
     self.isInEditMode = ko.observable(false);
     self.showFormLegend = ko.observable(true);
 
-//----------------------------------------
-    //
-    self.availableLicenses = new Array();
-
-     // sent ajax request to get license content  
-    $.ajax({
-        url: ColFusionServerUrl + "/Story/metadata/license",
-        async:false, 
-        type: 'GET',
-        dataType: 'json',
-        contentType: "application/json",
-        crossDomain: true,
-        success:function(data){
-            if (data.isSuccessful) {
-                var payload = data.payload;
-                var licenseList = payload.licenseList;
-                for (var i = 0;i<licenseList.length;i++){
-                    newLicense = new Array();
-                    newLicense['licenseName'] = licenseList[i].licenseName;
-                    newLicense['description'] =licenseList[i].licenseDes;
-                    newLicense['URL'] = licenseList[i].licenseUrl;
-                    newLicense['licenseId'] = licenseList[i].licenseId;
-                    self.availableLicenses.push(newLicense);
-                }
-            }
-
-        }
-    });
-
-    //-------------------------------------------------
-    /*function LicenseSelection(initial) {
-        var self = this;
-        self.license = ko.observable(initial);
-
-        self.formattedDescription = ko.computed(function() {
-            var description = self.license().description;
-            
-            return description;        
-        });  
-        self.formattedURL = ko.computed(function() {
-            var URL = self.license().URL;
-            return URL;
-        });
-    }*/
-    //-------------------------------------------------
-
-
-    // Editable data
+    self.availableLicenses = [];
     self.licenseOp = ko.observableArray(self.availableLicenses);
     self.licenseValue = ko.observable();
-//----------------------------------------
+
+
+    self.init = function() {
+        self.loadLicenses();
+    }
+
     self.fetchCurrentValues = function() {
     	var url = ColFusionServerUrl + "/Story/metadata/" + self.sid();
 
@@ -364,9 +322,6 @@ function StoryMetadataViewModel(sid, userId){
     	self.switchToReadMode();
 
         self.getAttachments();
-
-        
-
 
 //    	fileManager.loadSourceAttachments(sid, $("#attachmentList2"), $("#attachmentLoadingIcon2"));
     }
@@ -542,6 +497,9 @@ function StoryMetadataViewModel(sid, userId){
                              self.licenseValue(self.availableLicenses[i]);
                         }
                     }
+
+
+
                     self.licenseName(license['description']);
 
                     self.getAttachments();
@@ -587,4 +545,40 @@ function StoryMetadataViewModel(sid, userId){
             }
         });
     }
+
+    self.loadLicenses = function() {
+        $.ajax({
+            url: ColFusionServerUrl + "/Story/metadata/license",
+            //async:false,
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data){
+                debugger;
+                if (data.isSuccessful) {
+                    var payload = data.payload;
+                    var licenseList = payload.licenseList;
+                    for (var i = 0; i < licenseList.length; i++){
+                        newLicense = [];
+                        newLicense['licenseName'] = licenseList[i].licenseName;
+                        newLicense['description'] =licenseList[i].licenseDes;
+                        newLicense['URL'] = licenseList[i].licenseUrl;
+                        newLicense['licenseId'] = licenseList[i].licenseId;
+                        self.availableLicenses.push(newLicense);
+                    }
+                }
+                else {
+                    alert("Could not load licenses from server. Pleaset try again later.");
+                    colsole.log(data.message);
+                }
+            },
+            error: function(data) {
+                alert("Could not load licenses from server. Pleaset try again later.");
+                //colsole.log(data);
+            }
+        });
+    }
+
+    self.init();
 }

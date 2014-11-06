@@ -289,6 +289,7 @@ var importWizard = (function () {
 
         submitDataDeffered.done(function(data) {
             if (data.isSuccessful) {
+                debugger;
                 var tiggerDataLoadDeffered = importWizard.triggerDataLoadOnServerAsDeffered();
 
                 tiggerDataLoadDeffered.done(function(data) {

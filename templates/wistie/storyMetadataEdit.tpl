@@ -121,17 +121,23 @@
                      {/literal}
             </div>
         </div>
+
         <!-- license -->
         <div>
-            <label class="control-label" for="tags">License <span class="text-error">*</span>:</label>
+            <label class="control-label">License <span class="text-error">*</span>:</label>
             <div class="controls">
-                <select id ="license" data-bind="options:$root.availableLicenses, value: licenseValue, optionsText: 'licenseName'"></select>
+                <select id ="license" data-bind="options: availableLicenses, value: licenseValue, optionsText: 'licenseName'"></select>
+
+                <!-- ko if:  licenseValue -->
+
                 <br>
-                <span data-bind="text:licenseValue().description"></span>
+                <span data-bind="text: licenseValue().description"></span>
                 <div hidden data-bind="text:licenseValue().URL"></div><a class="licenseLink">Read More</a>
                 <br>
+
+                <!-- /ko -->
+
                 <a href="#historyModal" data-toggle="modal" class="inputHistoryLink btn-link" data-bind="visible: isInEditMode(), click: showHistory.bind($data,'license')">[History]</a>
-                <br></br>
             </div>
         </div>
         <!--license end-->
@@ -228,6 +234,7 @@
                 window.open(parent.children('div').text());
             }); 
         }); 
+
         // Open attachment upload page.
         $('#uploadAttachmentLink').click(function() {
             $('#uploadAttachmentLightBox').lightbox({resizeToFit: false});
