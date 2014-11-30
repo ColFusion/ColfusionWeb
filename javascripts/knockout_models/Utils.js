@@ -76,6 +76,7 @@ ko.bindingHandlers.slider = {
     }
 };
 
+//TODO: this should be rewritten as class with Decorator pattern, for now just use if to check what was input type
 ko.bindingHandlers.relationshipGraph = {
     init: function (element, valueAccessor, allBindingsAccessor) {
         var relGraphDom = $('<div class="relGraph"></div>');
@@ -87,12 +88,26 @@ ko.bindingHandlers.relationshipGraph = {
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
 
-        var pathModels = valueAccessor()();
-        var allPaths = $.map(pathModels, function (pathModel) {
-            return pathModel.pathObj;
-        });
+        debugger;
 
-        var cyGraphElements = koBindingHandlersRelationshipGraph.getCyGraphElements(allPaths);
+        var pathModels = valueAccessor()();
+
+        var cyGraphElements;
+
+        if (pathModels instanceof RelationshipGraphData) {
+            cyGraphElements = koBindingHandlersRelationshipGraph.getCyGraphElementsFromRelationshipGraphData(pathModels);
+        }
+        else {
+            var allPaths = $.map(pathModels, function (pathModel) {
+                return pathModel.pathObj;
+            });
+
+            cyGraphElements = koBindingHandlersRelationshipGraph.getCyGraphElements(allPaths);
+
+            $.each(pathModels, function (i, pathModel) {
+                koBindingHandlersRelationshipGraph.addHighlightPathButton(i, pathModel, element);
+            });
+        }
 
         $(element).children('.relGraph').empty().cytoscape({
             elements: cyGraphElements,
@@ -109,10 +124,6 @@ ko.bindingHandlers.relationshipGraph = {
 
         koBindingHandlersRelationshipGraph.bindNodeTooltipEvents(element);
         koBindingHandlersRelationshipGraph.bindEdgeTooltipEvents(element);
-
-        $.each(pathModels, function (i, pathModel) {
-            koBindingHandlersRelationshipGraph.addHighlightPathButton(i, pathModel, element);
-        });
     }
 };
 
@@ -141,6 +152,8 @@ var koBindingHandlersRelationshipGraph = (function () {
     };
 
     koBindingHandlersRelationshipGraph.getCyGraphElements = function (allPaths) {
+
+        debugger;
 
         var allDatasetTableCombs = [];
         $.each(allPaths, function (i, path) {
@@ -189,6 +202,44 @@ var koBindingHandlersRelationshipGraph = (function () {
             return {
                 group: 'edges',
                 data: relationship
+            };
+        });
+
+        return {
+            nodes: nodes,
+            edges: edges
+        };
+    };
+
+    koBindingHandlersRelationshipGraph.getCyGraphElementsFromRelationshipGraphData = function(relationshipGraphData) {
+
+        debugger;
+
+        //TODO FIXME: this might cause memory problem, better to use nodes from relationshipGraphData directly in the graph tool
+        var nodes = $.map(relationshipGraphData.nodes, function(node, i) {
+            var nodeForGraph = node;
+
+            nodeForGraph.name = node.sidTitle;
+            nodeForGraph.id = node.sid + '(' + node.tableName + ')';
+            nodeForGraph.graphLabel = node.sidTitle + ' (' + node.tableName + ')'; //too long, maybe abbreviate
+
+            return {
+                group: 'nodes',
+                data: nodeForGraph,
+                classes: 'node datasetNode'
+            };
+        });
+
+        var edges = $.map(relationshipGraphData.edges, function (edge, i) {
+            var edgeForGraph = edge;
+
+            edgeForGraph.id = String(edge.relId);
+            edgeForGraph.source = String(edge.sidFrom.sid + '(' + edge.sidFrom.tableName + ')');
+            edgeForGraph.target = String(edge.sidTo.sid + '(' + edge.sidTo.tableName + ')');
+
+            return {
+                group: 'edges',
+                data: edgeForGraph
             };
         });
 

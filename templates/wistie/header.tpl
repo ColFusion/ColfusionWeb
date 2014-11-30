@@ -82,7 +82,7 @@
 
 	        <li ><a href="{$my_base_url}{$my_pligg_base}/phpBB3" target="_blank">Forum</a></li>
 	        <li ><a href="{$my_base_url}{$my_pligg_base}/wiki/index.php/Welcome_to_Col*Fusion_Help" target="_blank">Help Wiki</a></li>
-            <li ><a href="{$my_base_url}{$my_pligg_base}/advancedSearch/relationships.php" targer="_blank">RelationShip</a></li>
+            <li ><a href="{$my_base_url}{$my_pligg_base}/advancedSearch/relationships.php" targer="_blank">Relationship Graph</a></li>
 
             {if $user_authenticated eq true}
              <li {if $pagename eq "user"}class="current"{/if}><a href="{$URL_userNoVar}">{#PLIGG_Visual_Profile#}</a></li>

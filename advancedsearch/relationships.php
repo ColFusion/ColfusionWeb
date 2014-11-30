@@ -36,16 +36,17 @@
     <!---IMPORTANT to import the relationshipViewModel.js to do functions like send ajax reqeust and etc.. Edited by Haoyu Wang -->
     <script type="text/javascript" src="../javascripts/knockout_models/RelationshipGraphViewModel.js"></script>
     <script type="text/javascript" src="../javascripts/knockout_models/DataPreviewViewModel.js"></script>
-    <!-- Not quite suer what the following two model do -->
+    <!-- Not quite sure what the following two model do -->
     <script type="text/javascript" src="../javascripts/knockout_models/RelationshipViewModel.js"></script>
     <script type="text/javascript" src="../javascripts/knockout_models/RelationshipModel.js"></script>
     <script type="text/javascript" src="../javascripts/dataSourceUtil.js"></script>
     <script type="text/javascript" src="../javascripts/generalUtils.js"></script>
     <script type="text/javascript">
             $(function() {
-                var advancedSearchViewModel = new AdvancedSearchViewModel();
-                ko.applyBindings(advancedSearchViewModel, document.getElementById('advanced'));
-                advancedSearchViewModel.search();
+                debugger;
+                var relationshipGraphViewModel = new RelationshipGraphViewModel();
+                ko.applyBindings(relationshipGraphViewModel, document.getElementById('relationshipGraphContainer'));
+                relationshipGraphViewModel.search();
             });
     </script>
 </head>
@@ -66,7 +67,7 @@
     $main_smarty->assign('value',$rst);
 
     // pagename
-    define('pagename', 'advanced search');
+    define('pagename', 'Relationship Graph');
     $main_smarty->assign('pagename', pagename);
 
     //sidebar
