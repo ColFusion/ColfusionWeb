@@ -97,18 +97,18 @@ var dataSourceUtil = (function() {
     dataSourceUtil.mineRelationship = function(sid, perPage, pageNo) {
        // This mining relationships funcitonality is not yet implmented in java. The ajax query below just return the 
        // existing relationships from db, it doesn't trigger mining the relationships.
-        $.ajax({
-            type: 'POST',
-            url: my_pligg_base + "/DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
-            data: {'sid': sid, 'perPage': perPage, 'pageNo': pageNo},
-            dataType: 'json',
-            success: function(data) {
-                console.log("Finished mining relationshps");
-            },
-            error: function(data) {
-                console.log("error while mining relationshps");
-            }
-        });
+        // $.ajax({
+        //     type: 'POST',
+        //     url: my_pligg_base + "/DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
+        //     data: {'sid': sid, 'perPage': perPage, 'pageNo': pageNo},
+        //     dataType: 'json',
+        //     success: function(data) {
+        //         console.log("Finished mining relationshps");
+        //     },
+        //     error: function(data) {
+        //         console.log("error while mining relationshps");
+        //     }
+        // });
 
         return $.ajax({
             url: ColFusionServerUrl + "/Story/" + sid + "/MineRelationships/" + perPage + "/" + pageNo, //my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
