@@ -1,0 +1,71 @@
+<!-- 
+    Document   : serviceMonitor
+    Author     : Hao Bai
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		.div_system_title{
+		    font-family: calibri;
+		    font-size: 30px;
+		    color: #000066;
+		    text-align: center;
+		    margin-bottom: 0px;
+		}
+		#div_item_list{
+		    font-family: calibri;
+		    text-align: center;
+		    color: #000066;
+		    width:450px;		
+		    margin-top:0%;
+		    margin-left:35%;
+		    margin-right:30%;
+		    margin-bottom:0%;
+		}	 
+		.div_search_main {
+		    font-family: calibri;
+		    font-size: 15px;
+		    color: #000066;
+		    text-align: center;
+		    margin-left: 20%;
+		    margin-top: 0%;
+		}
+	</style>
+	<meta charset="UTF-8">
+	<title>service monitor</title>
+</head>
+<body>
+	<div class="div_system_title"> 
+    	<p>There are ### services under monitor.</p>
+    </div>
+    <div id="div_item_list">
+    	<table id="table_itemlist" border="1" cellpadding="1">
+    	<thead>
+        	<tr>  
+            	<th>service ID</th>  
+                <th>service Name</th>
+                <th>service Address</th>  
+                <th>port Number</th>
+                <th>service Dir</th>
+                <th>service Command</th>
+                <th>service Status</th>
+            </tr> 
+        </thead> 
+        <tbody data-bind="foreach: services">
+            <tr>  
+            	<td data-bind="text: name"></td>  
+            	<td data-bind="text: name"></td>  
+            	<td data-bind="text: name"></td> 
+            	<td data-bind="text: address().addressName"></td> 
+            	<td data-bind="text: address().addressName"></td> 
+            	<td data-bind="text: address().price"></td> 
+            	<td data-bind="text: address().price"></td>  	
+           	</tr>     
+        </tbody>                                         
+        </table>  
+    </div>
+    
+    <script type="text/javascript" src="javascripts/knockout_models/serviceMonitorViewModel.js"></script>
+</body>
+</html>
