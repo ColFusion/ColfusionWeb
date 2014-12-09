@@ -4,132 +4,94 @@
 -->
 <!DOCTYPE html>
 <html>
-<head>
-	<style>
-		.div_system_title{
-		    font-family: calibri;
-		    font-size: 30px;
-		    color: #000066;
-		    text-align: center;
-		    margin-bottom: 0px;
-		}
-		#div_item_list{
-		    font-family: calibri;
-		    text-align: center;
-		    color: #000066;
-		    width:450px;		
-		    margin-top:0%;
-		    margin-left:25%;
-		    margin-right:30%;
-		    margin-bottom:1%;
-		}	 
-		.div_search_id {
-		    font-family: calibri;
-		    font-size: 15px;
-		    color: #000066;
-		    text-align: center;
-		    margin-left: 15%;
-		    margin-top: 0%;
-		    margin-bottom: 1%;
-		    float: left;
-		}
-		.div_search_name {
-		    font-family: calibri;
-		    font-size: 15px;
-		    color: #000066;
-		    text-align: center;
-		    margin-left: 45%;
-		    margin-top: 0%;
-		    margin-bottom: 1%;
-		}
-		.div_add_item {
-			margin-left: 45%;
-		}
-	</style>
-	<meta charset="UTF-8">
-	<title>service monitor</title>
-</head>
-<body>
-	<div class="div_system_title"> 
-    	<p>There are <span data-bind="text: servicesList().length"></span> services under monitor.</p>
-    </div>
-    <div class="div_system_title"> 
-    	<p><span data-bind="text: serviceStatus"></span></p>
-    </div>
-    <div id="div_item_list">
-    	<table id="table_itemlist" border="1" cellpadding="1">
-    	<thead>
-        	<tr>  
-                <th>service Name</th>
-                <th>service Address</th>  
-                <th>port Number</th>
-                <th>service Dir</th>
-                <th>service Command</th>
-                <th>service Status</th>
-            </tr> 
-        </thead> 
-        <tbody data-bind="foreach: servicesList">
-            <tr>  
-            	<td data-bind="text: serviceName"></td>  
-            	<td data-bind="text: serviceAddress"></td>  
-            	<td data-bind="text: portNumber"></td> 
-            	<td data-bind="text: serviceDir"></td> 
-            	<td data-bind="text: serviceCommand"></td> 
-            	<td data-bind="text: serviceStatus"></td>  
-            	<td style="padding-left: 15px; padding-right: 15px;">  
-            		<form action="serviceMonitor.html" method="post">
-            			<input type="hidden" name="userID" value="<%=user.getUserID()%>"/>
-            			<input type="submit" name="editUser" value="Edit" class="submit"/>                                 
-            		</form> 
-           		</td>  
-           		<td style="padding-left: 5px; padding-right: 5px;">
-           			<form action="serviceMonitor.html" method="post">
-           				<input type="hidden" name="userID" value="<%=user.getUserID()%>"/>
-           				<input type="submit" name="removeUser" value="Remove" class="submit"/>                                 
-           			</form>
-           		</td> 	
-           	</tr>     
-        </tbody>                                         
-        </table>  
-    </div>
-    
-    <div class="div_search_id">
-    	<form data-bind="submit: getServiceStatusByID">
-        	<table cellpadding="2">
-            	<tr>
-                    <td><b>Search by ID</b></td>
-                    <td><input data-bind="value: serviceID" /></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><button type="submit">Search</button></td>
-                </tr>
-            </table>
-        </form>
-    </div>
-    <div class="div_search_name">
-    	<form data-bind="submit: getServiceStatusByNamePattern">
-        	<table cellpadding="2">
-            	<tr>
-                    <td><b>Search by Name Pattern</b></td>
-                    <td><input data-bind="value: serviceNamePattern" /></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><button type="submit">Search</button></td>
-                </tr>
-            </table>
-        </form>
-    </div>
-    <div class="div_add_item">
-	    <form action="serviceMonitor.html" method="post">
-	    	<input type="submit" name="addService" value="Add Service" class="submit_add"/>
-	    </form>
-	</div> 
-    
-    <script type="text/javascript" src="javascripts/global.js"></script>
-    <script type="text/javascript" src="javascripts/jquery-1.9.1.js"></script>
-    <script type="text/javascript" src="javascripts/knockout-2.3.0.js"></script>
-    <script type="text/javascript" src="javascripts/knockout_models/serviceMonitorViewModel.js"></script>
-</body>
+    <head>
+        <meta charset="utf-8">
+    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	<title>Col*Fusion Service Monitor</title>
+        <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    </head>
+    <body>
+        <div style="margin: 40px;">
+
+            <h2>
+                There are <span data-bind="text: servicesList().length"></span> services under monitor.
+            </h2>
+            <!-- ko if: servicesList().length > 0 -->
+            <div>
+                <table class="table table-striped table-hover">
+                <thead>
+                    <tr>  
+                        <th>service Name</th>
+                        <th>service Address</th>  
+                        <th>port Number</th>
+                        <th>service Dir</th>
+                        <th>service Command</th>
+                        <th>service Status</th>
+                    </tr> 
+                </thead> 
+                <tbody data-bind="foreach: servicesList">
+                    <tr>  
+                        <td data-bind="text: serviceName"></td>  
+                        <td data-bind="text: serviceAddress"></td>  
+                        <td data-bind="text: portNumber"></td> 
+                        <td data-bind="text: serviceDir"></td> 
+                        <td data-bind="text: serviceCommand"></td> 
+                        <td data-bind="text: serviceStatus"></td>  
+                        <td>  
+                            <button class="btn btn-link" data-bind="click: $parent.editService">Edit</button> 
+                        </td>  
+                        <td>
+                            <button class="btn btn-link" data-bind="click: $parent.removeService">Remove</button> 
+                        </td>   
+                    </tr>     
+                </tbody>                                         
+                </table>  
+            </div>
+            <!-- /ko -->
+            
+            <!--
+            <div class="div_search_id">
+                <form data-bind="submit: getServiceStatusByID">
+                    <table cellpadding="2">
+                        <tr>
+                            <td><b>Search by ID</b></td>
+                            <td><input data-bind="value: serviceID" /></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><button type="submit">Search</button></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div class="div_search_name">
+                <form data-bind="submit: getServiceStatusByNamePattern">
+                    <table cellpadding="2">
+                        <tr>
+                            <td><b>Search by Name Pattern</b></td>
+                            <td><input data-bind="value: serviceNamePattern" /></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td><button type="submit">Search</button></td>
+                        </tr>
+                    </table>
+                </form>
+            </div>
+            <div class="div_add_item">
+                <form action="serviceMonitor.html" method="post">
+                    <input type="submit" name="addService" value="Add Service" class="submit_add"/>
+                </form>
+            </div> 
+            -->
+
+
+        </div>
+    	
+        <script type="text/javascript" src="javascripts/global.js"></script>
+        <script type="text/javascript" src="javascripts/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
+        <script type="text/javascript" src="javascripts/knockout-2.3.0.js"></script>
+        <script type="text/javascript" src="javascripts/knockout_models/serviceMonitorViewModel.js"></script>
+    </body>
 </html>
