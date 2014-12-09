@@ -37,7 +37,7 @@
 </head>
 <body>
 	<div class="div_system_title"> 
-    	<p>There are <strong data-bind="text: servicesList.length()"/> services under monitor.</p>
+    	<p>There are <span data-bind="text: servicesList().length"></span> services under monitor.</p>
     </div>
     <div id="div_item_list">
     	<table id="table_itemlist" border="1" cellpadding="1">
@@ -64,6 +64,8 @@
         </table>  
     </div>
     
+    <script type="text/javascript" src="javascripts/global.js"></script>
+    <script type="text/javascript" src="javascripts/jquery-1.9.1.js"></script>
     <script type="text/javascript" src="javascripts/knockout-2.3.0.js"></script>
     <script type="text/javascript" src="javascripts/knockout_models/serviceMonitorViewModel.js"></script>
 </body>
