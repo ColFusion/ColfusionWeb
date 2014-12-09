@@ -2,7 +2,7 @@ function ColfusionServicesViewModel() {
     var self = this;
     
     self.servicesList = ko.observableArray();
-    self.serviceStatus = ko.observable("");
+    self.serviceStatus = ko.observable("123");
     
     self.getServicesList = function() {
         $.ajax({
@@ -35,7 +35,7 @@ function ColfusionServicesViewModel() {
             error: function(data) {
                 alert("Something went wrong while getting service's status by its ID. Please try again.");
             }
-        });
+        }); 
     };
 
     self.removeService = function(serviceToRemove) {
