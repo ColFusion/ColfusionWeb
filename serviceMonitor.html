@@ -37,13 +37,12 @@
 </head>
 <body>
 	<div class="div_system_title"> 
-    	<p>There are ### services under monitor.</p>
+    	<p>There are <strong data-bind="text: servicesList.length()"/> services under monitor.</p>
     </div>
     <div id="div_item_list">
     	<table id="table_itemlist" border="1" cellpadding="1">
     	<thead>
         	<tr>  
-            	<th>service ID</th>  
                 <th>service Name</th>
                 <th>service Address</th>  
                 <th>port Number</th>
@@ -52,20 +51,20 @@
                 <th>service Status</th>
             </tr> 
         </thead> 
-        <tbody data-bind="foreach: services">
+        <tbody data-bind="foreach: servicesList">
             <tr>  
-            	<td data-bind="text: name"></td>  
-            	<td data-bind="text: name"></td>  
-            	<td data-bind="text: name"></td> 
-            	<td data-bind="text: address().addressName"></td> 
-            	<td data-bind="text: address().addressName"></td> 
-            	<td data-bind="text: address().price"></td> 
-            	<td data-bind="text: address().price"></td>  	
+            	<td data-bind="text: serviceName"></td>  
+            	<td data-bind="text: serviceAddress"></td>  
+            	<td data-bind="text: portNumber"></td> 
+            	<td data-bind="text: serviceDir"></td> 
+            	<td data-bind="text: serviceCommand"></td> 
+            	<td data-bind="text: serviceStatus"></td>  	
            	</tr>     
         </tbody>                                         
         </table>  
     </div>
     
+    <script type="text/javascript" src="javascripts/knockout-2.3.0.js"></script>
     <script type="text/javascript" src="javascripts/knockout_models/serviceMonitorViewModel.js"></script>
 </body>
 </html>

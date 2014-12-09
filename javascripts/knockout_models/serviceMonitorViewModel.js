@@ -1,26 +1,48 @@
-// Class to represent a row in the ColfusionServices objects grid
-function ColfusionServices(name, initialAddress) {
-    var self = this;
-    self.name = name;
-    self.address = ko.observable(initialAddress);
-}
-
-// Overall viewmodel for this screen, along with initial state
 function ColfusionServicesViewModel() {
     var self = this;
 
-    // Non-editable catalog data - would come from the server
-    self.currentServices = [
-        { addressName: "address1", price: 0 },
-        { addressName: "address2", price: 1 },
-        { addressName: "address3", price: 2 }
-    ];    
-
-    // Editable data
-    self.services = ko.observableArray([
-        new ColfusionServices("service1", self.currentServices[0]),
-        new ColfusionServices("service2", self.currentServices[1])
-    ]);
+    self.isFetchServicesInProgress = ko.observable(false);
+    self.isFetchServicesErrorMessage = ko.observable(false);
+    
+    self.servicesList = ko.observableArray();
+    
+    self.fetchServicesLists = function() {
+    	self.isFetchServicesInProgress(true);
+        self.isFetchServicesErrorMessage(false);
+        
+	    $.ajax({
+	        url: ColFusionServiceMonitorUrl + "/ServiceMonitor/getServicesStatus",
+	        type: 'GET',
+	        dataType: 'json',
+	        contentType: "application/json",
+	        crossDomain: true,
+	        success: function(data) {
+		         self.isFetchServicesInProgress(false);
+		         if (data.isSuccessful) {
+		        	 
+			          var payload = data.payload;
+			          var serviceItem;
+			          
+			          for (var i = 0; i < payload.length; i++) {
+			        	  serviceItem = new ColfusionServicesViewModel();
+			        	  serviceItem = payload[i];
+			
+			        	  self.serviceList.push(serviceItem);
+			          };
+		         }
+		         else {
+		              self.isFetchServicesErrorMessage("Something went wrong while fetching services. Please try again.");
+		         }
+	        },
+	        error: function(data) {
+		         self.isFetchServicesInProgress(false);
+		         self.isFetchServicesErrorMessage("Something went wrong while fetching services. Please try again.");
+	        }
+	    });
+    }
+    
+    self.fetchServicesLists();
 }
 
 ko.applyBindings(new ColfusionServicesViewModel());
+
