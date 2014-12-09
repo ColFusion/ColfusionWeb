@@ -19,17 +19,31 @@
 		    color: #000066;
 		    width:450px;		
 		    margin-top:0%;
-		    margin-left:35%;
+		    margin-left:25%;
 		    margin-right:30%;
-		    margin-bottom:0%;
+		    margin-bottom:1%;
 		}	 
-		.div_search_main {
+		.div_search_id {
 		    font-family: calibri;
 		    font-size: 15px;
 		    color: #000066;
 		    text-align: center;
-		    margin-left: 20%;
+		    margin-left: 15%;
 		    margin-top: 0%;
+		    margin-bottom: 1%;
+		    float: left;
+		}
+		.div_search_name {
+		    font-family: calibri;
+		    font-size: 15px;
+		    color: #000066;
+		    text-align: center;
+		    margin-left: 45%;
+		    margin-top: 0%;
+		    margin-bottom: 1%;
+		}
+		.div_add_item {
+			margin-left: 45%;
 		}
 	</style>
 	<meta charset="UTF-8">
@@ -38,6 +52,9 @@
 <body>
 	<div class="div_system_title"> 
     	<p>There are <span data-bind="text: servicesList().length"></span> services under monitor.</p>
+    </div>
+    <div class="div_system_title"> 
+    	<p><span data-bind="text: serviceStatus"></span></p>
     </div>
     <div id="div_item_list">
     	<table id="table_itemlist" border="1" cellpadding="1">
@@ -58,11 +75,57 @@
             	<td data-bind="text: portNumber"></td> 
             	<td data-bind="text: serviceDir"></td> 
             	<td data-bind="text: serviceCommand"></td> 
-            	<td data-bind="text: serviceStatus"></td>  	
+            	<td data-bind="text: serviceStatus"></td>  
+            	<td style="padding-left: 15px; padding-right: 15px;">  
+            		<form action="serviceMonitor.html" method="post">
+            			<input type="hidden" name="userID" value="<%=user.getUserID()%>"/>
+            			<input type="submit" name="editUser" value="Edit" class="submit"/>                                 
+            		</form> 
+           		</td>  
+           		<td style="padding-left: 5px; padding-right: 5px;">
+           			<form action="serviceMonitor.html" method="post">
+           				<input type="hidden" name="userID" value="<%=user.getUserID()%>"/>
+           				<input type="submit" name="removeUser" value="Remove" class="submit"/>                                 
+           			</form>
+           		</td> 	
            	</tr>     
         </tbody>                                         
         </table>  
     </div>
+    
+    <div class="div_search_id">
+    	<form data-bind="submit: getServiceStatusByID">
+        	<table cellpadding="2">
+            	<tr>
+                    <td><b>Search by ID</b></td>
+                    <td><input data-bind="value: serviceID" /></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><button type="submit">Search</button></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="div_search_name">
+    	<form data-bind="submit: getServiceStatusByNamePattern">
+        	<table cellpadding="2">
+            	<tr>
+                    <td><b>Search by Name Pattern</b></td>
+                    <td><input data-bind="value: serviceNamePattern" /></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><button type="submit">Search</button></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <div class="div_add_item">
+	    <form action="serviceMonitor.html" method="post">
+	    	<input type="submit" name="addService" value="Add Service" class="submit_add"/>
+	    </form>
+	</div> 
     
     <script type="text/javascript" src="javascripts/global.js"></script>
     <script type="text/javascript" src="javascripts/jquery-1.9.1.js"></script>
