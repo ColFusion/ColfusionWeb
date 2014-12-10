@@ -53,19 +53,17 @@
             </div>
             <!-- /ko -->
             
-            <div class="div_search_id">
-                <form data-bind="submit: getServiceStatusByID">
-                    <table cellpadding="2">
-                        <tr>
-                            <td><b>Search by ID</b></td>
-                            <td><input data-bind="value: serviceID" /></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td><button type="submit">Search</button></td>
-                        </tr>
-                    </table>
-                </form>
+            <div>    
+                <table cellpadding="2">
+                    <tr>
+                        <td><b>Search by ID</b></td>
+                        <td><input data-bind="value: serviceID" /></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><button data-bind="click: getServiceStatusByID">Search</button></td>
+                    </tr>
+                </table>
             </div>
             <div class="div_search_name">
                 <form data-bind="submit: getServiceStatusByNamePattern">

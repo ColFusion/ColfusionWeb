@@ -2,7 +2,10 @@ function ColfusionServicesViewModel() {
     var self = this;
     
     self.servicesList = ko.observableArray();
-    self.serviceStatus = ko.observable("123");
+    self.serviceStatus = ko.observable("");
+    self.serviceStatusList = ko.observableArray();
+    
+    self.serviceID = ko.observable("");
     
     self.getServicesList = function() {
         $.ajax({
@@ -22,7 +25,7 @@ function ColfusionServicesViewModel() {
         });
     };
     
-    self.getServiceStatusByID = function(serviceID) {
+    self.getServiceStatusByID = function() {
         $.ajax({
             url: ColFusionServiceMonitorUrl + "/ServiceMonitor/getServiceStatusByID/" + serviceID,
             type: 'GET',
@@ -31,6 +34,22 @@ function ColfusionServicesViewModel() {
             crossDomain: true,
             success: function(data) {
                 self.serviceStatus = data;
+            },
+            error: function(data) {
+                alert("Something went wrong while getting service's status by its ID. Please try again.");
+            }
+        }); 
+    };
+    
+    self.getServiceStatusByNamePattern = function() {
+        $.ajax({
+            url: ColFusionServiceMonitorUrl + "/ServiceMonitor/getServiceStatusByNamePattern/" + "te",
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                self.serviceStatusList.push(data);
             },
             error: function(data) {
                 alert("Something went wrong while getting service's status by its ID. Please try again.");
@@ -50,12 +69,12 @@ function ColfusionServicesViewModel() {
                 alert(data.message);
             },
             error: function(data) {
-                alert("Something went wrong while getting service's status by its ID. Please try again.");
+                alert("Something went wrong while removing service by ID. Please try again.");
             }
         });
     };
 
-    self.editService = function(serviceToRemove) {
+    self.editService = function(serviceToEdit) {
         //TODO: implement
     };
     
