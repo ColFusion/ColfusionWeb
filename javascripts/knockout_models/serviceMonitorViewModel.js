@@ -14,7 +14,6 @@ function ColfusionServicesViewModel() {
     var self = this;
     
     self.servicesList = ko.observableArray();
-    self.serviceFoundList = ko.observableArray();
     
     self.serviceNamePattern = ko.observable("");
 
@@ -34,6 +33,7 @@ function ColfusionServicesViewModel() {
             contentType: "application/json",
             crossDomain: true,
             success: function(data) {
+            	self.servicesList.removeAll();
                 for (var i = 0; i < data.length; i++) {
                     var service = new ColfusionServiceViewModel();
                     service.serviceID = data[i].serviceID;
@@ -61,8 +61,9 @@ function ColfusionServicesViewModel() {
             contentType: "application/json",
             crossDomain: true,
             success: function(data) {
+            	self.servicesList.removeAll();
                 for (var i = 0; i < data.length; i++) {
-                    self.serviceFoundList.push(data[i]);
+                    self.servicesList.push(data[i]);
                 }
             },
             error: function(data) {
@@ -112,7 +113,6 @@ function ColfusionServicesViewModel() {
             contentType: "application/json",
             crossDomain: true,
             success: function(data) {
-                //self.servicesList.push(data);
                 self.selectedService(null);
             },
             error: function(data) {
