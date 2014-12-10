@@ -88,16 +88,11 @@ ko.bindingHandlers.relationshipGraph = {
     },
     update: function (element, valueAccessor, allBindingsAccessor) {
 
-        debugger;
-
         var pathModels = valueAccessor()();
 
         var cyGraphElements;
 
-        if (pathModels instanceof RelationshipGraphData) {
-            cyGraphElements = koBindingHandlersRelationshipGraph.getCyGraphElementsFromRelationshipGraphData(pathModels);
-        }
-        else {
+        if (pathModels instanceof Array) {
             var allPaths = $.map(pathModels, function (pathModel) {
                 return pathModel.pathObj;
             });
@@ -107,6 +102,9 @@ ko.bindingHandlers.relationshipGraph = {
             $.each(pathModels, function (i, pathModel) {
                 koBindingHandlersRelationshipGraph.addHighlightPathButton(i, pathModel, element);
             });
+        }
+        else {
+            cyGraphElements = koBindingHandlersRelationshipGraph.getCyGraphElementsFromRelationshipGraphData(pathModels);
         }
 
         $(element).children('.relGraph').empty().cytoscape({
