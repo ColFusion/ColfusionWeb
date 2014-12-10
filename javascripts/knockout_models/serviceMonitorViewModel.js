@@ -24,6 +24,7 @@ function ColfusionServicesViewModel() {
         }, self);
     
     self.selectedService = ko.observable(null);
+    self.selectedBackupService = null;
     
     self.getServicesList = function() {
         $.ajax({
@@ -34,14 +35,14 @@ function ColfusionServicesViewModel() {
             crossDomain: true,
             success: function(data) {
                 for (var i = 0; i < data.length; i++) {
-                	var service = new ColfusionServiceViewModel();
-                	service.serviceID = data[i].serviceID
-                	service.serviceName(data[i].serviceName);
-                	service.serviceAddress(data[i].serviceAddress);
-                	service.portNumber(data[i].portNumber);
-                	service.serviceDir(data[i].serviceDir);
-                	service.serviceCommand(data[i].serviceCommand);
-                	service.serviceStatus(data[i].serviceStatus);
+                    var service = new ColfusionServiceViewModel();
+                    service.serviceID = data[i].serviceID;
+                    service.serviceName(data[i].serviceName);
+                    service.serviceAddress(data[i].serviceAddress);
+                    service.portNumber(data[i].portNumber);
+                    service.serviceDir(data[i].serviceDir);
+                    service.serviceCommand(data[i].serviceCommand);
+                    service.serviceStatus(data[i].serviceStatus);
                     self.servicesList.push(service);
                 }
             },
@@ -97,7 +98,9 @@ function ColfusionServicesViewModel() {
     };
     
     self.editService = function(serviceToEdit) {
+        self.cancelEditSelectedService();
         self.selectedService(serviceToEdit);
+        self.selectedBackupService = ko.toJS(serviceToEdit);
     };
 
     self.saveEditSelectedService = function() {
@@ -119,7 +122,17 @@ function ColfusionServicesViewModel() {
     };
 
     self.cancelEditSelectedService = function() {
-        self.selectedService(null);
+        if (self.selectedService() !== null) {
+
+            self.selectedService().serviceName(self.selectedBackupService.serviceName);
+            self.selectedService().serviceAddress(self.selectedBackupService.serviceAddress);
+            self.selectedService().portNumber(self.selectedBackupService.portNumber);
+            self.selectedService().serviceDir(self.selectedBackupService.serviceDir);
+            self.selectedService().serviceCommand(self.selectedBackupService.serviceCommand);
+            self.selectedService().serviceStatus(self.selectedBackupService.serviceStatus);
+
+            self.selectedService(null);
+        }
     };
     
     self.removeService = function(serviceToRemove) {
