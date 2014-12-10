@@ -15,18 +15,48 @@
             <h2>
                 There are <span data-bind="text: servicesList().length"></span> services under monitor.
             </h2> 
+            <div>
+                <button class="btn pull-right" data-bind="click: addService, visible: isAddingNewService">Add Service</button> 
+            </div>
+
+            <div data-bind="with: newService">
+                <h4>Adding new service:</h4>
+                <table class="table table-striped table-hover">
+                    <tr>  
+                        <th>Service Name</th>
+                        <th>Service Address</th>  
+                        <th>Port Number</th>
+                        <th>Service Dir</th>
+                        <th>Service Command</th>                        
+                    </tr> 
+                    <tr>  
+                        <td><input data-bind="value: serviceName" /></td>  
+                        <td><input data-bind="value: serviceAddress" /></td>  
+                        <td><input data-bind="value: portNumber" /></td> 
+                        <td><input data-bind="value: serviceDir" /></td> 
+                        <td><input data-bind="value: serviceCommand" /></td> 
+                        <td>
+                            <button class="btn btn-link" data-bind="click: $parent.saveAddNewService">Save</button> 
+                        </td>  
+                        <td>
+                            <button class="btn btn-link" data-bind="click: $parent.cancelAddNewService">Cancel</button> 
+                        </td>   
+                    </tr>                                                         
+                </table>  
+            </div>
+
             <!-- ko if: servicesList().length > 0 -->
             <div>
                 <table class="table table-striped table-hover">
                 <thead>
                     <tr>  
-                    	<th>service ID</th>
-                        <th>service Name</th>
-                        <th>service Address</th>  
-                        <th>port Number</th>
-                        <th>service Dir</th>
-                        <th>service Command</th>
-                        <th>service Status</th>
+                    	<th>Service ID</th>
+                        <th>Service Name</th>
+                        <th>Service Address</th>  
+                        <th>Port Number</th>
+                        <th>Service Dir</th>
+                        <th>Service Command</th>
+                        <th>Service Status</th>
                     </tr> 
                 </thead> 
                 <tbody data-bind="foreach: servicesList">
@@ -38,7 +68,7 @@
                         <td data-bind="text: serviceDir"></td> 
                         <td data-bind="text: serviceCommand"></td> 
                         <td data-bind="text: serviceStatus"></td>  
-                        <td>  
+                        <td>
                             <button class="btn btn-link" data-bind="click: $parent.editService">Edit</button> 
                         </td>  
                         <td>
@@ -89,13 +119,7 @@
                     </tr>
                 </table>
             </div>         
-            <div class="div_add_item">
-                <form action="serviceMonitor.html" method="post">
-                    <input type="submit" name="addService" value="Add Service" class="submit_add"/>
-                </form>
-            </div> 
-
-
+          
         </div>
     	
         <script type="text/javascript" src="javascripts/global.js"></script>
