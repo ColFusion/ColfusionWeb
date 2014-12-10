@@ -23,6 +23,8 @@ function ColfusionServicesViewModel() {
             return self.newService() === null;
         }, self);
     
+    self.selectedService = ko.observable(null);
+    
     self.getServicesList = function() {
         $.ajax({
             url: ColFusionServiceMonitorUrl + "/ServiceMonitor/getServicesStatus",
@@ -32,7 +34,15 @@ function ColfusionServicesViewModel() {
             crossDomain: true,
             success: function(data) {
                 for (var i = 0; i < data.length; i++) {
-                    self.servicesList.push(data[i]);
+                	var service = new ColfusionServiceViewModel();
+                	service.serviceID = data[i].serviceID
+                	service.serviceName(data[i].serviceName);
+                	service.serviceAddress(data[i].serviceAddress);
+                	service.portNumber(data[i].portNumber);
+                	service.serviceDir(data[i].serviceDir);
+                	service.serviceCommand(data[i].serviceCommand);
+                	service.serviceStatus(data[i].serviceStatus);
+                    self.servicesList.push(service);
                 }
             },
             error: function(data) {
@@ -86,6 +96,32 @@ function ColfusionServicesViewModel() {
         self.newService(null);
     };
     
+    self.editService = function(serviceToEdit) {
+        self.selectedService(serviceToEdit);
+    };
+
+    self.saveEditSelectedService = function() {
+        $.ajax({
+            url: ColFusionServiceMonitorUrl + "/ServiceMonitor/updateServiceByID/" + self.selectedService().serviceID,
+            type: 'POST',
+            dataType: 'json',
+            data: ko.toJSON(self.selectedService()),
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                //self.servicesList.push(data);
+                self.selectedService(null);
+            },
+            error: function(data) {
+                alert("Something went wrong while editing service. Please try again.");
+            }
+        });
+    };
+
+    self.cancelEditSelectedService = function() {
+        self.selectedService(null);
+    };
+    
     self.removeService = function(serviceToRemove) {
         $.ajax({
             url: ColFusionServiceMonitorUrl + "/ServiceMonitor/deleteServiceByID/" + serviceToRemove.serviceID,
@@ -101,10 +137,6 @@ function ColfusionServicesViewModel() {
                 alert("Something went wrong while removing service by ID. Please try again.");
             }
         });
-    };
-
-    self.editService = function(serviceToEdit) {
-        //TODO: implement
     };
     
     self.getServicesList();
