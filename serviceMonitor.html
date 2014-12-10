@@ -14,10 +14,7 @@
         <div style="margin: 40px;">
             <h2>
                 There are <span data-bind="text: servicesList().length"></span> services under monitor.
-            </h2>
-            <h2>
-				<span data-bind="text: serviceStatus"></span>
-            </h2>
+            </h2> 
             <!-- ko if: servicesList().length > 0 -->
             <div>
                 <table class="table table-striped table-hover">
@@ -52,33 +49,46 @@
                 </table>  
             </div>
             <!-- /ko -->
-            
+            <!-- ko if: serviceFoundList().length > 0 -->
+            <div>
+                <table class="table table-striped table-hover">
+                <thead>
+                    <tr>  
+                    	<th>service ID</th>
+                        <th>service Name</th>
+                        <th>service Address</th>  
+                        <th>port Number</th>
+                        <th>service Dir</th>
+                        <th>service Command</th>
+                        <th>service Status</th>
+                    </tr> 
+                </thead> 
+                <tbody data-bind="foreach: serviceFoundList">
+                    <tr>  
+                    	<td data-bind="text: serviceID"></td> 
+                        <td data-bind="text: serviceName"></td>  
+                        <td data-bind="text: serviceAddress"></td>  
+                        <td data-bind="text: portNumber"></td> 
+                        <td data-bind="text: serviceDir"></td> 
+                        <td data-bind="text: serviceCommand"></td> 
+                        <td data-bind="text: serviceStatus"></td>  
+                    </tr>     
+                </tbody>                                         
+                </table>  
+            </div>
+            <!-- /ko -->
             <div>    
                 <table cellpadding="2">
                     <tr>
-                        <td><b>Search by ID</b></td>
-                        <td><input data-bind="value: serviceID" /></td>
+                        <td><b>Search by Name Pattern</b></td>
+                        <td><input data-bind="value: serviceNamePattern" /></td>
                     </tr>
                     <tr>
                         <td></td>
-                        <td><button data-bind="click: getServiceStatusByID">Search</button></td>
+                        <td><button data-bind="click: getServiceStatusByNamePattern">Search</button></td>
                     </tr>
                 </table>
-            </div>
-            <div class="div_search_name">
-                <form data-bind="submit: getServiceStatusByNamePattern">
-                    <table cellpadding="2">
-                        <tr>
-                            <td><b>Search by Name Pattern</b></td>
-                            <td><input data-bind="value: serviceNamePattern" /></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td><button type="submit">Search</button></td>
-                        </tr>
-                    </table>
-                </form>
-            </div>
+            </div>         
             <div class="div_add_item">
                 <form action="serviceMonitor.html" method="post">
                     <input type="submit" name="addService" value="Add Service" class="submit_add"/>
