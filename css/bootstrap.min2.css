@@ -188,13 +188,13 @@ a.label:hover,a.label:focus,a.badge:hover,a.badge:focus{color:#ffffff;text-decor
 .label-inverse[href],.badge-inverse[href]{background-color:#1a1a1a;}
 .btn .label,.btn .badge{position:relative;top:-1px;}
 .btn-mini .label,.btn-mini .badge{top:0;}
-table{max-width:100%;background-color:transparent;border-collapse:collapse;border-spacing:0;}
-.table{width:100%;margin-bottom:20px;}.table th,.table td{padding:8px;line-height:20px;text-align:left;vertical-align:top;border-top:1px solid #dddddd;}
-.table th{font-weight:bold;}
-.table thead th{vertical-align:bottom;}
+table{max-width:92%;background-color:transparent;border-collapse:collapse;border-spacing:0;}
+.table{width:92%;margin-left: 30px;margin-top: 20px;padding-bottom: 30px;}
+.table td{padding:8px;line-height:80px;text-align:left; font-size:15px;font-weight:bold;color:#6699FF; vertical-align:top;border-top: 1px dotted blue;}
+.table tr{font-size: 10px; color: gray;}
 .table caption+thead tr:first-child th,.table caption+thead tr:first-child td,.table colgroup+thead tr:first-child th,.table colgroup+thead tr:first-child td,.table thead:first-child tr:first-child th,.table thead:first-child tr:first-child td{border-top:0;}
-.table tbody+tbody{border-top:2px solid #dddddd;}
-.table{background-color:#ffffff;}
+.table tbody+tbody{border-top:4px solid #dddddd;}
+.table .table{background-color:#ffffff;}
 .table-condensed th,.table-condensed td{padding:4px 5px;}
 .table-bordered{border:1px solid #dddddd;border-collapse:separate;*border-collapse:collapse;border-left:0;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px;}.table-bordered th,.table-bordered td{border-left:1px solid #dddddd;}
 .table-bordered caption+thead tr:first-child th,.table-bordered caption+tbody tr:first-child th,.table-bordered caption+tbody tr:first-child td,.table-bordered colgroup+thead tr:first-child th,.table-bordered colgroup+tbody tr:first-child th,.table-bordered colgroup+tbody tr:first-child td,.table-bordered thead:first-child tr:first-child th,.table-bordered tbody:first-child tr:first-child th,.table-bordered tbody:first-child tr:first-child td{border-top:0;}
