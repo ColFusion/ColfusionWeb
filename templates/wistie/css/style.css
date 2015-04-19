@@ -381,7 +381,7 @@ iframe.invisible {
 
 #content #leftcol-wide {
     background-color: #fdfdee;
-    width: 745px;
+    width: 720px;
     min-height: 300px;
     margin-left: 10px;
     margin-right: 20px;
@@ -441,8 +441,8 @@ iframe.invisible {
 }
 
 #stats {
-    float: right;
-    width: 260px;
+    float: left;
+    width: 230px;
 }
 
 #groups {
@@ -579,7 +579,7 @@ iframe.invisible {
 }
 
 #leftcol {
-    width: 580px;
+    width: 550px;
     float: left;
     overflow: hidden;
 }
@@ -1097,9 +1097,9 @@ a .edit-image img {
 }
 /* RIGHT COLUMN */
 #rightcol {
-    width: 140px;
+    width: 180px;
     float: left;
-    margin-right: 5px;
+    margin-right: 20px;
 }
 
 #aboutcontent {
@@ -1139,7 +1139,7 @@ a .edit-image img {
 }
 
 .sidebar-content {
-    width: 160px;
+    width: 180px;
     min-height: 50px;
     background-image: url(../images/sidebar-bg.png);
     background-position: center bottom;
@@ -1181,7 +1181,7 @@ a .edit-image img {
 }
 /*Navbar for user.php*/
 #navcontainer #navlist {
-    margin-right: 10px;
+    margin-right: 20px;
 }
 
 #navcontainer  #navlist li {
@@ -1193,7 +1193,7 @@ a .edit-image img {
 }
 
 #navcontainer ul li.navbut4 {
-    margin-left: -10px;
+    margin-left: -40px;
     background-color: #FDFDEE;
     box-shadow: 4px 0px 5px #707070;
     text-align: center;

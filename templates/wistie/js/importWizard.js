@@ -101,6 +101,7 @@ var importWizard = (function () {
 
         $("#done").click(function () {
             document.getElementById("finishYourSubmissionButton").disabled = false;
+            document.getElementById("finishYourPrivateSubmissionButton").disabled = false;
             finishSubmittingData();
         });
 

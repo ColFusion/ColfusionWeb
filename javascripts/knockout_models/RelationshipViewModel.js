@@ -1,7 +1,8 @@
-function RelationshipViewModel(sid) {
+function RelationshipViewModel(userid,sid) {
     var self = this;
 
     self.sid = sid;
+    self.userid = userid;
     
     // Properties for message control.
     self.isRelationshipDataLoading = ko.observable(false);
@@ -35,7 +36,7 @@ function RelationshipViewModel(sid) {
         self.isNoRelationshipData(false);
         self.isMiningRelationshipsError(false);
 
-        dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function (data) {
+        dataSourceUtil.mineRelationship(self.userid, self.sid, perPage, pageNo).done(function (data) {
 
             if (!data || !data.Control || !data.Control.cols || data.Control.cols.length === 0) {
                 // Show 'no data' text;

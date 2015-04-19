@@ -526,9 +526,43 @@
 	</div>	
 {/if}
 
-{if isset($user_page)}{$user_page}{/if}
+{if $user_view eq 'view'}
+123
+<div id="storiesContainer" class="stories">
+	<dl data-bind="foreach: stories" class="list-group">
+		<div class="summaryline" style="padding-left: 20px;">
+			<a href="#" data-bind="click: $root.editStory">
+				<!-- ko if: title -->
+				<h2 data-bind="text: title" class="title"></h2>
+				<!-- /ko -->
+				<!-- ko ifnot: title -->
+				<h2 class="title">&lt;No title&gt;</h2>
+				<!-- /ko -->
+			</a>
+			<span class="storycontent">
+				<!-- ko if: description -->
+				<span data-bind="text: description"></span>
+				<!-- /ko -->
+				<!-- ko ifnot: description -->
+				&lt;No description&gt;
+				<!-- /ko -->
+			</span><br />
+			<span class="subtext" style="float:left;">
+				Created By <span data-bind="text: createdBy"></span>
+				On <span data-bind="text: createdOn"></span><br />
+				Last Updated On <span data-bind="text: lastUpdated"></span><br/>
+				Status is <span data-bind="text: status"></span><br />
+			</span>
+		</div><br />
+	</dl>
+</div>
+{/if}
+
+
+<!-- commenting the php code for displaying user stories -->
+<!--{if isset($user_page)}{$user_page}{/if}
 {checkActionsTpl location="tpl_pligg_pagination_start"}
     {if isset($user_pagination)}
         {$user_pagination}{checkActionsTpl location="tpl_pligg_pagination_end"}
     {/if}
-{checkActionsTpl location="tpl_pligg_profile_end"}
+{checkActionsTpl location="tpl_pligg_profile_end"}-->

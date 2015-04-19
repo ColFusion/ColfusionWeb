@@ -105,6 +105,7 @@ $CSRF->create('user_settings', true, true);
 
 // setup the URL method 2 links
 	$main_smarty->assign('user_url_personal_data', getmyurl('user2', $login, 'profile'));
+	$main_smarty->assign('user_url_view', getmyurl('user2', $login, 'view'));
 	$main_smarty->assign('user_url_news_sent', getmyurl('user2', $login, 'history'));
 	$main_smarty->assign('user_url_news_published', getmyurl('user2', $login, 'published'));
 	$main_smarty->assign('user_url_news_unpublished', getmyurl('user2', $login, 'shaken'));
@@ -556,3 +557,8 @@ function do_member_groups()
 	}
 }
 ?>
+<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script type="text/javascript" src="javascripts/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
+<script type="text/javascript" src="javascripts/knockout-2.3.0.js"></script>
+<script type="text/javascript" src="javascripts/knockout_models/StoryMetadataViewModel.js"></script>

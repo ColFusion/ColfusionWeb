@@ -77,14 +77,35 @@
 			<img src="{$my_pligg_base}/templates/{$the_template}/images/right_arrow.png"/>&nbsp;&nbsp;&nbsp;<a href="{$user_url_personal_data}">{#PLIGG_Visual_Profile#}</a>
 		</div>
 	</div>
-
 	<div class="sidebar-content" id="navcontainer">
+		{checkActionsTpl location="tpl_pligg_profile_sort_start"}
+			<ul class="sidebarlist" id="navlist">
+				<li class="navbut{$nav_pd}"><a href="{$user_url_personal_data}"><span>{#PLIGG_Visual_User_PersonalData#}</span></a></li>
+				{if $user_login eq $user_logged_in}
+				<li class="navbut{$nav_set}"><a href="{$user_url_setting}"><span>{#PLIGG_Visual_User_Setting#}</span></a></li>
+				{/if}
+			</ul>
+		<div id="shruti">
+			<ul  class="sidebarlist" data-bind="foreach: folders" style="list-style-type:none">
+				<li class="navbut{$nav_ns}">
+					{literal}<a data-bind="text: $data, attr: {href: '{/literal}{$user_url_view}{literal}&amp;folder=' + $data}"></a></li>{/literal}
+			</ul>
+		</div>
+		{checkActionsTpl location="tpl_pligg_profile_sort_end"}
+	</div>
+	<!--<div class="sidebar-content" id="navcontainer">
 		<ul class="sidebarlist" id="navlist">
 		{checkActionsTpl location="tpl_pligg_profile_sort_start"}
 		<li class="navbut{$nav_pd}"><a href="{$user_url_personal_data}"><span>{#PLIGG_Visual_User_PersonalData#}</span></a></li>
 		{if $user_login eq $user_logged_in}
 		<li class="navbut{$nav_set}"><a href="{$user_url_setting}"><span>{#PLIGG_Visual_User_Setting#}</span></a></li>
 		{/if}
+		<li class="navbut{$nav_ns}"><a href="{$user_url_view}"><span>My Drafts</span></a></li>
+		<li class="navbut{$nav_np}"><a href="{$user_url_view}"><span>My Private Stories</span></a></li>
+		<li class="navbut{$nav_np}"><a href="{$user_url_view}"><span>My Public Stories</span></a></li>
+		<li class="navbut{$nav_ns}"><a href="{$user_url_view}"><span>My Stories</span></a></li>
+		<li class="navbut{$nav_ns}"><a href="{$user_url_view}"><span>Shared Stories</span></a></li>
+		commenting out the unwanted nav buttons
 		<li class="navbut{$nav_ns}"><a href="{$user_url_news_sent}"><span>{#PLIGG_Visual_User_NewsSent#}</span></a></li>
 		<li class="navbut{$nav_nu}"><a href="{$user_url_news_unpublished}"><span>{#PLIGG_Visual_User_NewsPublished#}</span></a></li>
 		<li class="navbut{$nav_np}"><a href="{$user_url_news_published}"><span>{#PLIGG_Visual_User_NewsUnPublished#}</span></a></li>
@@ -93,7 +114,7 @@
 		<li class="navbut{$nav_s}"><a href="{$user_url_saved}"><span>{#PLIGG_Visual_User_NewsSaved#}</span></a></li>
 		{checkActionsTpl location="tpl_pligg_profile_sort_end"}
 		</ul>
-	</div>
+	</div>-->
 {/if}
         
 {checkActionsTpl location="tpl_pligg_sidebar_middle"}

@@ -20,7 +20,13 @@
             <div id="showMetadataSection" data-bind="visible: !isInEditMode()">
 
                 {if $isAuthenticated}
-                 <span class="pull-right btn-link" data-bind="visible: showEditButton(), click: switchToEditMode">[Edit]</span>
+                <span class="pull-right btn-link" data-bind="visible: showEditButton(), click: switchToEditMode">[Edit]</span>
+                <!-- ko if: status() === "private" -->
+                    <span class="pull-right btn-link" data-bind="click: makeStoryPublic">[Make public]</span>
+                <!-- /ko -->
+                <!-- ko if: status() === "queued" -->
+                    <span class="pull-right btn-link" data-bind="click: makeStoryPrivate">[Make private]</span>
+                <!-- /ko -->
                 {/if}
 
                 <span id="metadataLoadingIcon" data-bind="visible: isFetchCurrentValuesInProgress()"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
@@ -105,8 +111,13 @@
                     <div class="pull-right">
                         <span id="saveMetadataErrorMessage" class="hide text-error"></span>
                         <span id="saveMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
-                        
                         <button id="saveMetadataButton" class="btn btn-primary" onclick="saveMetadataForm()" data-loading-text="Saving..." data-complete-text="Saved!">Save</button>
+                        <!-- ko if: status() !== "private" -->
+                        <button id="saveMetadataButton" class="btn btn-primary" onclick="publishMetadataForm('private')" data-loading-text="Publishing..." data-complete-text="Published!">Publish As Private</button>
+                        <!-- /ko -->
+                        <!-- ko if: status() !== "queued" -->
+                        <button id="saveMetadataButton" class="btn btn-primary" onclick="publishMetadataForm('queued')" data-loading-text="Publishing..." data-complete-text="Published!">Publish As Public</button>
+                        <!-- /ko -->
                         <button id="canceleMetadataButton" class="btn" onclick="cancelMetadataForm()" data-loading-text="Cancel">Cancel</button>
                     </div>
                 </div>
@@ -188,7 +199,7 @@
             });
 
             dataPreviewViewModel = new DataPreviewViewModel(sid);
-            relationshipViewModel = new RelationshipViewModel(sid);
+            relationshipViewModel = new RelationshipViewModel( $("#user_id").val(), sid);
             storyStatusViewModel = new StoryStatusViewModel(sid, dataPreviewViewModel);
 
             ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
@@ -198,7 +209,49 @@
         });
 
         function saveMetadataForm() {
+            var status = storyMetadataViewModel.status();
+            if (status == "draft" || (isSubmitFormValid() && status != "draft")) {
+                var defferedAjax = storyMetadataViewModel.submitStoryMetadata();
+                var loadingIcon = $("#saveMetadataLoadingIcon");
+                var errorMessage = $("#saveMetadataErrorMessage");
+                var saveMetadataButton = $("#saveMetadataButton");
+                var canceleMetadataButton = $("#canceleMetadataButton");
+
+                
+                errorMessage.hide();
+                saveMetadataButton.button('loading');
+                canceleMetadataButton.button('loading');
+                loadingIcon.show();
+                defferedAjax.done(function(data) {
+                    loadingIcon.hide();
+                    if (data.isSuccessful) {
+                        saveMetadataButton.button('complete');
+                        saveMetadataButton.button('reset');
+                        canceleMetadataButton.button('reset');
+                        errorMessage.hide();
+                        storyMetadataViewModel.switchToReadModeAndUpdateAttachments();
+                    }
+                    else {
+                        saveMetadataButton.button('reset');
+                        canceleMetadataButton.button('reset');
+                        errorMessage.show();
+                        errorMessage.text("An error occured while trying to save. Please try again.");
+                    }
+                });
+
+                defferedAjax.fail(function(data, textStatus){
+                    loadingIcon.hide();
+                    saveMetadataButton.button('reset');
+                    canceleMetadataButton.button('reset');
+                    errorMessage.show();
+                    errorMessage.text("An error occured while trying to save. Please try again.");
+                });
+            }
+        }
+
+        function publishMetadataForm(publishingStatus){
             if (isSubmitFormValid()) {
+                storyMetadataViewModel.status(publishingStatus);
                 var defferedAjax = storyMetadataViewModel.submitStoryMetadata();
                 var loadingIcon = $("#saveMetadataLoadingIcon");
                 var errorMessage = $("#saveMetadataErrorMessage");

@@ -1,5 +1,4 @@
 <h1 style="font-size: 24px; font-weight: bold; padding-left: 10px; margin-bottom: 0;">{#PLIGG_Visual_Submit2_Header#}</h1>
-
 <div id="submit">
     
     <!-- Step 1 Describe Your Data -->
@@ -59,7 +58,9 @@
     <hr />
 
     <div class>
-        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm()" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" disabled="true">Finish your submission</button>
+        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm('draft')" class="btn" data-loading-text="Saving..." data-complete-text="Saved!">Save as draft</button>
+        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm('private')" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" disabled="true">Publish as private</button>
+        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm('queued')" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" disabled="true">Publish as public</button>
         <span id="submitMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
         <span id="submitMetadataErrorMessage" class="hide text-error"></span>
     </div>
@@ -74,9 +75,9 @@
 
     storyMetadataViewModel.createNewStory(initNewStoryPage);
 
-    function submitDataSubmissionForm() {
-        if (isSubmitFormValid()) {
-            storyMetadataViewModel.status("queued");
+    function submitDataSubmissionForm(storyStatus) {
+        if (storyStatus == "draft" || (isSubmitFormValid() && storyStatus != "draft")) {
+            storyMetadataViewModel.status(storyStatus);
 
             var defferedAjax = storyMetadataViewModel.submitStoryMetadata();
             var loadingIcon = $("#submitMetadataLoadingIcon");

@@ -6,7 +6,7 @@ var addAuthorTypeaheadTemplate = '<div class="dataColumnSuggestion">' +
         '</div>' +
         '</div>';
 
-
+//alert('in StoryMetadataViewModel.js');
 
 // valueAccessor should be dataset.
 // Dom element should be input.
@@ -231,6 +231,8 @@ var AttachmentViewModel = function(fileId, sid, userId, title, filename, descrip
 }
 
 function StoryMetadataViewModel(sid, userId){
+
+    //alert('in StoryMetadataViewModel');
     
   	var self = this;
     self.sid = ko.observable(sid);
@@ -335,6 +337,16 @@ function StoryMetadataViewModel(sid, userId){
     	self.fetchCurrentValues();
     }
 
+    self.makeStoryPublic = function(){
+        self.status("queued");
+        self.submitStoryMetadata();
+    }
+
+    self.makeStoryPrivate = function(){
+        self.status("private");
+        self.submitStoryMetadata();
+    }
+    
     self.submitStoryMetadata = function() {
     	//self.commitAll();
     	var data = {
@@ -475,7 +487,7 @@ function StoryMetadataViewModel(sid, userId){
 	            			authors[i].lastName, authors[i].login, authors[i].avatarSource, authors[i].karma, authors[i].roleId);
 	            			
 		           			authorModel.roleId.subscribe(function(newValue) {
-						    	alert("Change happen " + newValue);
+						    	//alert("Change happen " + newValue);
 							});
 
 		           			self.storyAuthors.push(authorModel);
@@ -571,3 +583,119 @@ function StoryMetadataViewModel(sid, userId){
 
     self.init();
 }
+
+var restBaseUrl = "http://localhost:8080/ColFusionServer/rest/";
+
+function StoryListViewModel(sid, title, description, createdBy, createdOn, lastUpdated, status) {
+    var self = this;
+    self.sid = ko.observable(sid);
+    self.title = ko.observable(title);
+    self.description = ko.observable(description);
+    self.createdBy = ko.observable(createdBy);
+    self.createdOn = ko.observable(createdOn);
+    self.lastUpdated = ko.observable(lastUpdated);
+    self.status = ko.observable(status);
+    //self.url = ko.observable("http://localhost/Colfusion/story.php?title="+self.sid());
+}
+
+function StoriesViewModel() {
+    var self = this;
+    //alert('in StoriesViewModel');
+
+    var typeUrl = 'all/';
+    self.sample = "hi";
+    self.folders = ["Drafts","Private","Published","Owned","Shared","All"];
+    self.chosenFolderId = ko.observable();
+
+    function getUrlParameter(sParam) {
+        var sPageURL = window.location.search.substring(1);
+        var sURLVariables = sPageURL.split('&');
+        for (var i = 0; i < sURLVariables.length; i++) {
+            var sParameterName = sURLVariables[i].split('=');
+            
+            if (sParameterName[0] == sParam) {
+                return sParameterName[1];
+            }
+        }
+    };
+
+    // Behaviours    
+    self.goToFolder = function() { 
+debugger;
+        var folder = getUrlParameter('folder');
+
+        self.chosenFolderId(folder);
+        //alert('in goToFolder'+folder);
+        switch(folder){
+        case "Drafts":
+            typeUrl = "alldrafts/";
+            break;
+        case "Private":
+            typeUrl = "allprivate/";
+            break;
+        case "Published":
+            typeUrl = "allpublished/";
+            break;
+        case "Owned":
+            typeUrl = "allauthored/";
+            break;
+        case "Shared":
+            typeUrl = "allshared/";
+            break;
+        default:
+            typeUrl = "all/";
+            break;
+        }
+        self.findAll();
+
+    };
+
+    self.stories = ko.observableArray();
+    self.chosenStoryData = ko.observable(new StoryMetadataViewModel());
+    self.findAll = function() {
+        //alert('in findAll'+typeUrl);
+        $.ajax({
+            url: restBaseUrl + "Story/" + typeUrl + "1",
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                self.stories.removeAll();
+                var payload = data.payload;
+                for (var i = 0; i < payload.length; i++) {
+                    var story = new StoryListViewModel(payload[i].sid, payload[i].title, payload[i].description, payload[i].user.userLogin, payload[i].entryDate, payload[i].lastUpdated, payload[i].status);
+                    self.stories.push(story);
+                }
+            },
+            error: function(data) {
+                alert("Something went wrong while getting published stories. Please try again.");
+            }
+        });
+    };
+    self.editStory = function(story){
+        $.ajax({
+            url: restBaseUrl + "Story/metadata/"+story.sid(),
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true,
+            success: function(data) {
+                var payload = data.payload;
+                //var dr = new DraftViewModel(payload.sid, payload.title, payload.userId, payload.description, payload.status, payload.licenseId, payload.sourceType, payload.tags, payload.storySubmitter);
+                var sr = new StoryMetadataViewModel(payload.sid, payload.userId);
+                self.chosenStoryData(sr);
+                window.location.href = "http://localhost/Colfusion/story.php?title="+sr.sid();
+            },
+            error: function(data) {
+                alert("Something went wrong while getting the story. Please try again.");
+            }
+        });
+    }
+    
+    self.goToFolder();
+}
+
+var storiesVM = new StoriesViewModel();
+ko.applyBindings(storiesVM, $("#shruti")[0]);
+ko.applyBindings(storiesVM, $("#storiesContainer")[0]);

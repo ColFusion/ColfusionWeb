@@ -58,7 +58,7 @@
 //                fileManager.loadSourceAttachments(sid, $("#attachmentList"), $("#attachmentLoadingIcon"));
 
                 dataPreviewViewModel = new DataPreviewViewModel(sid);
-                relationshipViewModel = new RelationshipViewModel(sid);
+                relationshipViewModel = new RelationshipViewModel(userId, sid);
                 ko.applyBindings(relationshipViewModel, document.getElementById("mineRelationshipsContainer"));
             
                 importWizard.Init(sid, userId);
