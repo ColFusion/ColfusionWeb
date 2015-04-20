@@ -1,8 +1,11 @@
+12335665656
 <div id="draftsContainer" class="stories" data-bind="with: dm">
 	<dl data-bind="foreach: drafts" class="list-group">
 		<div class="summaryline" style="padding-left: 20px;">
+
 				<!-- ko if: title -->
 				<a data-bind="href: url">
+
 			    	<h2 data-bind="text: title" class="title"></h2>
 			    </a>
 			    <!-- /ko -->
