@@ -227,10 +227,10 @@ iframe.invisible {
     margin-left: 10px;
     margin-top: 35px;
     color: #FFFFFF;
-    font-family: Cambria, Times;
+    font-family: Inline, Times;
     font-size: 32px; 
     font-weight: bold;
-    text-decoration: none;
+    text-decoration: blink;
 }
 /*#header #banner #rss_slogan {
     padding-left: 115px;
@@ -282,12 +282,14 @@ iframe.invisible {
 #searchbox #advsearch {
     padding-left: 20px;
     font-size: 14px;
+    font-family: Garamond;
     font-weight: bold;
 }
 
 #searchbox #advsearch a {
     color: #ffffff;
     text-decoration: none;
+
 }
 
 #searchbox #advsearch a:hover,#searchbox #advsearch a:active {
@@ -1136,6 +1138,7 @@ a .edit-image img {
 .sidebar-headline .sidebartitle a {
     color: #4a9bea;
     text-transform: uppercase;
+    font-family: Garamond;
 }
 
 .sidebar-content {

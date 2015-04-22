@@ -30,11 +30,11 @@
 			<tr>
 			<td></td>
 			<td>
-			<span class="subtext" style="float:left;" >
+			<span class="subtext" style="float:left;"  >
 				Created By <span data-bind="text: createdBy"></span>
 				On <span data-bind="text: createdOn"></span><br />
 				Last Updated On <span data-bind="text: lastUpdated"></span><br/>
-				Status is <span data-bind="text: status"></span> </span><br />
+				Status is <span data-bind="text: status" style="color:blue; font-weight:bold"></span> </span><br />
 			</span>
 			</td>
 			</tr>
