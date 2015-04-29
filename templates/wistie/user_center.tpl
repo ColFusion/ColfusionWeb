@@ -1,4 +1,3 @@
-
 {checkActionsTpl location="tpl_pligg_profile_start"}
 <!--div class="headline">
     <div class="sectiontitle">
@@ -324,10 +323,10 @@
 		{/if}
 	</div>	
 
-	<div id="wrapper">
+	<div id="wrapper" style="width:inherit;">
 		{checkActionsTpl location="tpl_pligg_profile_info_start"}
 		
-		<div id="personal_info">
+		<div id="personal_info" style="width:inherit;">
 			<fieldset><legend>{#PLIGG_Visual_User_PersonalData#}</legend>
 			<table style="border:none">
 				<tr>
@@ -425,7 +424,7 @@
 		
 		{checkActionsTpl location="tpl_pligg_profile_info_middle"}
 		
-		<div id="stats">
+		<div id="stats" style="width:inherit;">
 			<fieldset><legend>{#PLIGG_Visual_User_Profile_User_Stats#}</legend>
 			<table style="border:none;">
 				<tr>
@@ -461,7 +460,7 @@
 		</div>
 		
 		{if $enable_group eq "true"}
-		<div id="groups">
+		<div id="groups" style="width:inherit;">
 			<fieldset><legend>{#PLIGG_Visual_User_Profile_User_Groups#}</legend>
 				<ul class="group_membership_list">{$group_display}</ul>
 			</fieldset>
@@ -528,13 +527,9 @@
 {/if}
 
 {if $user_view eq 'view'}
-
 <div id="storiesContainer" class="stories">
 	<dl data-bind="foreach: stories" class="list-group">
 		<div class="summaryline" style="padding-left: 20px;">
-		<table>
-		<tr>
-		<th>
 			<a href="#" data-bind="click: $root.editStory">
 				<!-- ko if: title -->
 				<h2 data-bind="text: title" class="title"></h2>
@@ -543,10 +538,6 @@
 				<h2 class="title">&lt;No title&gt;</h2>
 				<!-- /ko -->
 			</a>
-			</th>
-			</tr>
-			<tr>
-			<td>
 			<span class="storycontent">
 				<!-- ko if: description -->
 				<span data-bind="text: description"></span>
@@ -555,21 +546,22 @@
 				&lt;No description&gt;
 				<!-- /ko -->
 			</span><br />
-			</td>
-			</tr>
-			<tr>
-			<td></td>
-			<td>
 			<span class="subtext" style="float:left;">
 				Created By <span data-bind="text: createdBy"></span>
 				On <span data-bind="text: createdOn"></span><br />
+				<!-- ko if: lastUpdated -->
 				Last Updated On <span data-bind="text: lastUpdated"></span><br/>
-				Status is <span data-bind="text: status"></span><br />
+				<!-- /ko -->
+				<!-- ko if: status() == 'draft' -->
+				<p style="background-color: #FFFF00; font-weight: bold;">Status is <span data-bind="text: status"></span></p>
+				<!-- /ko -->
+				<!-- ko if: status() == 'private' -->
+				<p style="background-color: #FFCCCC; font-weight: bold;">Status is <span data-bind="text: status"></span></p>
+				<!-- /ko -->
+				<!-- ko if: status() == 'queued' -->
+				<p style="background-color: #CCFFFF; font-weight: bold;">Status is <span data-bind="text: status"></span></p>
+				<!-- /ko -->
 			</span>
-			</td>
-			</tr>
-			</table>
-
 		</div><br />
 	</dl>
 </div>
