@@ -384,7 +384,7 @@
             </p>
             <p id='exe'></p>
         </div>
-        <a id='done' class='btn im-done'>Complete Wizard</a> 
+        <a id='done' class='btn im-done' onclick='wizard.reset().close();'>Complete Wizard</a> 
     </div>
 
 </div>
