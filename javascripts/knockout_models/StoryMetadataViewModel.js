@@ -99,7 +99,7 @@ var AuthorRoleModel = function (roleId, roleName, roleDescription) {
 };
 
 //TODO, FIXME: should be read from the server
-var authorRoles = [ new AuthorRoleModel(1, "submitter", "the person who submits the data to Col*Fusion"),
+var authorRoles = [ new AuthorRoleModel(1, "contributor", "the person who contributes to the data in Col*Fusion"),
 	new AuthorRoleModel(2, "owner", "the person who owns the data to Col*Fusion")
 ];
 
@@ -600,10 +600,11 @@ function StoryListViewModel(sid, title, description, createdBy, createdOn, lastU
 
 function StoriesViewModel() {
     var self = this;
-    //alert('in StoriesViewModel');
 
     var typeUrl = 'all/';
-    self.sample = "hi";
+    var uid = $("#user_id").val();
+    //alert('in StoriesViewModel'+$("#user_id").val());
+    //self.sample = "hi";
     self.folders = ["Drafts","Private","Published","Owned","Shared","All"];
     self.chosenFolderId = ko.observable();
 
@@ -655,7 +656,7 @@ debugger;
     self.findAll = function() {
         //alert('in findAll'+typeUrl);
         $.ajax({
-            url: restBaseUrl + "Story/" + typeUrl + "1",
+            url: restBaseUrl + "Story/" + typeUrl + uid,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
