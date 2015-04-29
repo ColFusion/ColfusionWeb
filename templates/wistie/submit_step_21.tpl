@@ -58,8 +58,8 @@
     <hr />
 
     <div class>
-        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm('draft')" class="btn" data-loading-text="Saving..." data-complete-text="Saved!">Save as draft</button>
-        <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm('private')" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" disabled="true">Publish as private</button>
+        <button id="finishYourDraftSubmissionButton" onclick="submitDataSubmissionForm('draft')" class="btn" data-loading-text="Saving..." data-complete-text="Saved!">Save as draft</button>
+        <button id="finishYourPrivateSubmissionButton" onclick="submitDataSubmissionForm('private')" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" disabled="true">Publish as private</button>
         <button id="finishYourSubmissionButton" onclick="submitDataSubmissionForm('queued')" class="btn" data-loading-text="Submitting..." data-complete-text="Submitted!" disabled="true">Publish as public</button>
         <span id="submitMetadataLoadingIcon" class="hide"><img src="{$my_pligg_base}/images/ajax-loader.gif"/></span>
         <span id="submitMetadataErrorMessage" class="hide text-error"></span>
