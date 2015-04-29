@@ -557,8 +557,23 @@ function do_member_groups()
 	}
 }
 ?>
+
+<?php
+global $current_user;
+include_once(mnminclude.'login.php');
+if($current_user != null)
+	$user_id = $current_user->user_id;
+else
+	$user_id = null;
+echo "<input type=\"hidden\" name=\"user_id\" id=\"user_id\" value=\"$user_id\" />";
+?>
 <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
 <script type="text/javascript" src="javascripts/jquery-1.9.1.min.js"></script>
 <script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
 <script type="text/javascript" src="javascripts/knockout-2.3.0.js"></script>
-<script type="text/javascript" src="javascripts/knockout_models/StoryMetadataViewModel.js"></script>
+<script type="text/javascript" src="javascripts/knockout_models/StoryMetadataViewModel.js"></script>=======
+<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script type="text/javascript" src="javascripts/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
+<script type="text/javascript" src="javascripts/knockout-2.3.0.js"></script>
+<script type="text/javascript" src="javascripts/knockout_models/StoryMetadataViewModel.js"></script>>>>>>>> .r1518
