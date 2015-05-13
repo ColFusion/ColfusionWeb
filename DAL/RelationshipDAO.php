@@ -182,8 +182,7 @@ class RelationshipDAO
         $relId = mysql_real_escape_string($relId);
         $userId = mysql_real_escape_string($userId);
 
-        $sql = "delete from colfusion_user_relationship_verdict where rel_id = '$relId' and user_id = '$userId'";
-
+        $sql = "delete from colfusion_user_relationship_verdict where rel_id = $relId and user_id = $userId";
         return $this->ezSql->query($sql);
     }
 

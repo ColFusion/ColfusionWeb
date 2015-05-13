@@ -552,8 +552,16 @@ function getmyFullurl($x, $var1="", $var2="", $var3="") {
 }
 
 function getmyurl($x, $var1="", $var2="", $var3="") {
-	global $URLMethod;
+	global $URLMethod, $db, $current_user;
 	
+	$sql = "SELECT user_email FROM colfusion_users WHERE user_id=".$current_user->user_id;
+	$result = $db->get_results($sql);
+	if($result){
+		foreach ($result as $r) {
+		$uEmail = $r->user_email;
+		}
+	}
+
 	$var1 = sanitize($var1,1);
 	$var2 = sanitize($var2,1);
 	$var3 = sanitize($var3,1);
@@ -573,6 +581,10 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 	if ($URLMethod == 1) {
 	
 		If ($x == "index") {return my_pligg_base."/index.php";}
+		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
+
+		If ($x == "chat") {return my_pligg_base."/chat.php";}
+
 		If ($x == "maincategory") {return my_pligg_base."/index.php?category=" . $var1;}
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming.php?category=" . $var1;}
 		If ($x == "discardedcategory") {return my_pligg_base."/discarded.php?category=" . $var1;}
@@ -634,6 +646,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
         If ($x == "admin_published") {return my_pligg_base."/admin/linkadmin.php?id=" . $var1 . "&amp;action=published";}
 		If ($x == "editcomment") {return my_pligg_base."/edit.php?id=" . $var2 . "&amp;commentid=" . $var1;}
 		If ($x == "tagcloud") {return my_pligg_base."/cloud.php";}
+		If ($x == "global_statistics") {return my_pligg_base."/Statistics/GlobalStatisticsView.php";}
 		If ($x == "tagcloud_range") {return my_pligg_base."/cloud.php?range=" . $var1;}
 		If ($x == "live_comments") {return my_pligg_base."/live_comments.php";}
 		If ($x == "live_published") {return my_pligg_base."/live_published.php";}
@@ -663,7 +676,7 @@ function getmyurl($x, $var1="", $var2="", $var3="") {
 		If ($x == "user_add_links_private") {return my_pligg_base."/user_add_remove_links.php?action=addprivate&amp;link=" . $var1;}
 		If ($x == "user_add_links_public") {return my_pligg_base."/user_add_remove_links.php?action=addpublic&amp;link=" . $var1;}
 
-If ($x == "group_story_links_publish") {
+		If ($x == "group_story_links_publish") {
 			return my_pligg_base."/join_group.php?action=queued&amp;link=" . $var1;
 			}
 
@@ -692,6 +705,10 @@ If ($x == "group_story_links_publish") {
 	if ($URLMethod == 2) { 
 	
 		If ($x == "maincategory") {return my_pligg_base."/" . $var1;}
+		If ($x == "notification") {return my_pligg_base."/notification/index.php";}
+
+		If ($x == "chat") {return my_pligg_base."/chat.php";}
+		
 		If ($x == "queuedcategory") {return my_pligg_base."/upcoming/" . $var1;}
 		If ($x == "discardedcategory") {return my_pligg_base."/discarded/" . $var1 . "/";}
 //		If ($x == "queuedcategory") {return my_pligg_base."/upcoming/category/" . $var1 . "/";}
@@ -748,6 +765,9 @@ If ($x == "group_story_links_publish") {
 		If ($x == "page") {return my_pligg_base."/static/" . $var1 . "/";}
 		If ($x == "editcomment") {return my_pligg_base."/story/" . $var2 . "/editcomment/" . $var1 . "/";}
 		If ($x == "tagcloud") {return my_pligg_base."/tagcloud/";}
+
+		//If ($x == "global_statistics") {return my_pligg_base."/global_statistics/";}
+
 		If ($x == "tagcloud_range") {return my_pligg_base."/tagcloud/range/" . $var1 . "/";}
 		If ($x == "live_comments") {return my_pligg_base."/comments/";}
 		If ($x == "live_published") {return my_pligg_base."/live_published/";}
@@ -847,6 +867,7 @@ function SetSmartyURLs($main_smarty) {
 	$main_smarty->assign('URL_admin_config', getmyurl("admin_config"));
 	$main_smarty->assign('URL_admin_rss', getmyurl("admin_rss"));
 	$main_smarty->assign('URL_tagcloud', getmyurl("tagcloud"));
+	$main_smarty->assign('URL_global_statistics', getmyurl("global_statistics"));
 	$main_smarty->assign('URL_tagcloud_range', getmyurl("tagcloud_range"));
 	$main_smarty->assign('URL_live', getmyurl("live"));
 	$main_smarty->assign('URL_unpublished', getmyurl("live_unpublished"));
@@ -859,6 +880,9 @@ function SetSmartyURLs($main_smarty) {
 	$main_smarty->assign('URL_submit_groups', getmyurl("submit_groups"));
 	$main_smarty->assign('URL_join_group', getmyurl("join_group"));
 	$main_smarty->assign('unjoin_group', getmyurl("unjoin_group"));
+
+	$main_smarty->assign('URL_notification',getmyurl("notification"));
+	$main_smarty->assign('URL_chat',getmyurl("chat"));
 	return $main_smarty;
 }
 

@@ -49,23 +49,39 @@ function generateValidationCode($length) {
 }
 
 function sendValidationCode($email, $validationCode, $msg) {
-    $recipients = $email;
+//    $headers['From'] = 'SaltSystemService@gmail.com';
+//    $headers['To'] = $email;
+//    $headers['Subject'] = 'Colfusion Invitation';
 
-    $headers['From'] = 'SaltSystemService@gmail.com';
-    $headers['To'] = $email;
-    $headers['Subject'] = 'Colfusion Invitation';
+//    $body = $msg;
 
-    $body = $msg;
+    // $smtpinfo["host"] = "ssl://smtp.gmail.com";
+    // $smtpinfo["port"] = "465";
+    // $smtpinfo["auth"] = true;
+    // $smtpinfo["username"] = "SaltSystemService@gmail.com";
+    // $smtpinfo["password"] = "robertcl0310";
 
-    $smtpinfo["host"] = "ssl://smtp.gmail.com";
-    $smtpinfo["port"] = "465";
-    $smtpinfo["auth"] = true;
-    $smtpinfo["username"] = "SaltSystemService@gmail.com";
-    $smtpinfo["password"] = "robertcl0310";
-
-    $mail_object = & Mail::factory("smtp", $smtpinfo);
-    $mail_object->send($recipients, $headers, $body);
+    // $mail_object = & Mail::factory("smtp", $smtpinfo);
+    // $mail_object->send($email, $headers, $body);
        
+
+
+$headers['From']    = 'colfuion-noreply@colfusion.com';
+$headers['To']      = $email;
+$headers['Subject'] = 'Colfusion Invitation';
+
+
+
+$params['sendmail_path'] = '/usr/sbin/sendmail';
+
+// Create the mail object using the Mail::factory method
+$mail_object =& Mail::factory('sendmail', $params);
+
+    $recipients = $email . ", Karataev.Evgeny@gmail.com";
+
+$mail_object->send($recipients, $headers, $msg);
+
+
     if (PEAR::isError($mail_object)) {print($mail_object->getMessage());}
 }
 

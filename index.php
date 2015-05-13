@@ -31,4 +31,5 @@
     //show the template
     $main_smarty->assign('tpl_center', $the_template . '/index_center');
     $main_smarty->display($the_template . '/pligg.tpl');
+        
 ?>

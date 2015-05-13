@@ -3,6 +3,8 @@
 require_once realpath(dirname(__FILE__)) . '/../config.php';
 require_once realpath(dirname(__FILE__)) . '/../DAL/RelationshipDAO.php';
 require_once realpath(dirname(__FILE__)) . '/../DAL/Neo4JDAO.php';
+require_once realpath(dirname(__FILE__)) . '/../notification/notificationController.php';
+
 
 if (!$current_user->authenticated)
     die('Please login to use this function.');
@@ -18,6 +20,7 @@ $result = $action();
 $resultJson = new stdClass();
 
 if ($result !== false) {
+    addNTFtoDB($relId, $action);
     updateRelCostInNeo4J($relId, $dao);
     $resultJson->isSuccessful = true;
 }else{

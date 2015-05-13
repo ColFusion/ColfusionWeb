@@ -9,9 +9,14 @@ ini_set('error_log','cache/log.php');
    	 	if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
             $conn_str = "sqlsrv:Server=" . MSSQLWLS_DB_HOST . "," . MSSQLWLS_DB_PORT . ";Database=" . MSSQLWLS_DB_NAME;
         } else {
-            $conn_str = "dblib:dbname=" . MSSQLWLS_DB_NAME . ";host=" . MSSQLWLS_DB_HOST . ":" . MSSQLWLS_DB_PORT;
+            $conn_str = "dblib:dbname=" . MSSQLWLS_DB_NAME . ";host=" . MSSQLWLS_DB_HOST .  ":" . MSSQLWLS_DB_PORT;
         }
+//try {
 
+var_dump($conn_str);
+var_dump(MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD);
+
+//
         $pdo = new PDO($conn_str, MSSQLWLS_DB_USER, MSSQLWLS_DB_PASSWORD);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $pdo->exec('SET QUOTED_IDENTIFIER ON');
@@ -19,7 +24,14 @@ ini_set('error_log','cache/log.php');
         $pdo->exec('SET ANSI_PADDING ON');
         $pdo->exec('SET ANSI_NULLS ON');
         $pdo->exec('SET CONCAT_NULL_YIELDS_NULL ON');
+//}
+//catch (Exception $e)
+//{
+//print_r(sqlsrv_errors());
 
+//var_dump($e);
+
+//}
 
 
 

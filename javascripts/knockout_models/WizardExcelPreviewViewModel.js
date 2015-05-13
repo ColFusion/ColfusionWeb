@@ -177,6 +177,15 @@ var WizardExcelPreviewProperties = {
                 }),
             });
         }
+
+        function  generateOPM() {
+            return $.ajax({
+                url: my_pligg_base + "/DataImportWizard/generate_ktr.php?phase=11",
+                type: 'post',
+                data: {filename: self.filename()},
+                dataType: 'html'
+            });
+        }
        
         self.loadPreviewNextPage = function() {
             self.previewPage(self.previewPage() + 1);

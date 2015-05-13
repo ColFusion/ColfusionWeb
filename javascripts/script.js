@@ -91,4 +91,10 @@ $(document).ready(function(){
 			  $("#ajax_response").fadeOut("slow");
 		});
 	});
+
+
+	$('#statisticsView').on('click','button',function(){
+    var  statisticsView= $(this).closest('#statisticsView') ;
+    statisticsView.find('#storyStatisticsContainer').slideToggle();
+ });
 });

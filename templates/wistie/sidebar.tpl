@@ -112,6 +112,7 @@
 		<li class="navbut{$nav_c}"><a href="{$user_url_commented}"><span>{#PLIGG_Visual_User_NewsCommented#}</span></a></li>
 		<li class="navbut{$nav_nv}"><a href="{$user_url_news_voted}"><span>{#PLIGG_Visual_User_NewsVoted#}</span></a></li>
 		<li class="navbut{$nav_s}"><a href="{$user_url_saved}"><span>{#PLIGG_Visual_User_NewsSaved#}</span></a></li>
+		<li class="navbut{$nav_ntf}"><a href="{$user_url_notification}"><span>{#PLIGG_Visual_User_Notification#}</span></a></li>
 		{checkActionsTpl location="tpl_pligg_profile_sort_end"}
 		</ul>
 	</div>-->
@@ -228,6 +229,9 @@
 
 {if $pagename neq 'user'}
 	{if $Enable_Tags} {assign var=sidebar_module value="tags"}{include file=$the_template_sidebar_modules."/wrapper.tpl"} {/if}
+	
+	{assign var=sidebar_module value="global_stat"}{include file=$the_template_sidebar_modules."/wrapper.tpl"}
+
 	{checkActionsTpl location="tpl_pligg_sidebar_comments"}
 {/if}
 

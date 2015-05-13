@@ -224,7 +224,6 @@ function NewRelationshipViewModel() {
                 self.isAddingSuccessful(true);
                 relationshipViewModel.mineRelationships(10, 1);
                 setTimeout(function() {
-
                     reset();
                     self.isContainerShowned(false);
                 }, 2000);

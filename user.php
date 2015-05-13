@@ -3,7 +3,7 @@
 // Ricardo Galli <gallir at uib dot es>.
 // It's licensed under the AFFERO GENERAL PUBLIC LICENSE unless stated otherwise.
 // You can get copies of the licenses here:
-// 		http://www.affero.org/oagpl.html
+// http://www.affero.org/oagpl.html
 // AFFERO GENERAL PUBLIC LICENSE is also included in the file called "COPYING".
 
 include_once('Smarty.class.php');
@@ -46,7 +46,7 @@ $CSRF->create('user_settings', true, true);
 	$navwhere['link2'] = getmyurl('user2', $login, 'profile');
 
 // read the users information from the database
-	$user=new User();
+	$user = new User();
 	$user->username = $login;
 	if(!$user->read() || $user->level=='Spammer' || ($user->username=='anonymous' && !$user->user_lastip) ||
 	   // Hide users without stories/comments from unregistered visitors
@@ -54,39 +54,39 @@ $CSRF->create('user_settings', true, true);
 		header("Location: $my_pligg_base/404error.php");
 		die;
 	}
- 
-	require_once(mnminclude.'check_behind_proxy.php'); 	 
 
-	if(ShowProfileLastViewers == true){
-		$main_smarty->assign('ShowProfileLastViewers', true);		
-		// setup some arrays
-			$last_viewers_names = array();
-			$last_viewers_profile = array();
-			$last_viewers_avatar = array();
-				
-		// for each viewer, get their name, profile link and avatar and put it in an array
-			$viewers=new User();
-			if ($last_viewers) {
-				foreach($last_viewers as $viewer_id) {
-					$viewers->id=$viewer_id;
-					$viewers->read();
-					$last_viewers_names[] = $viewers->username;
-					$last_viewers_profile[] = getmyurl('user2', $viewers->username, 'profile');
-					$last_viewers_avatar[] = get_avatar('small', "", $viewers->username, $viewers->email);
-				}
-			}
-		// tell smarty about our arrays
-			$main_smarty->assign('last_viewers_names', $last_viewers_names);
-			$main_smarty->assign('last_viewers_profile', $last_viewers_profile);
-			$main_smarty->assign('last_viewers_avatar', $last_viewers_avatar);
-	} else {
-		$main_smarty->assign('ShowProfileLastViewers', false);		
+require_once(mnminclude.'check_behind_proxy.php');
+
+if(ShowProfileLastViewers == true){
+	$main_smarty->assign('ShowProfileLastViewers', true);		
+	// setup some arrays
+	$last_viewers_names = array();
+	$last_viewers_profile = array();
+	$last_viewers_avatar = array();
+
+	// for each viewer, get their name, profile link and avatar and put it in an array
+	$viewers = new User();
+	if ($last_viewers) {
+		foreach($last_viewers as $viewer_id) {
+			$viewers->id=$viewer_id;
+			$viewers->read();
+			$last_viewers_names[] = $viewers->username;
+			$last_viewers_profile[] = getmyurl('user2', $viewers->username, 'profile');
+			$last_viewers_avatar[] = get_avatar('small', "", $viewers->username, $viewers->email);
+		}
 	}
-	
-	
+
+	// tell smarty about our arrays
+	$main_smarty->assign('last_viewers_names', $last_viewers_names);
+	$main_smarty->assign('last_viewers_profile', $last_viewers_profile);
+	$main_smarty->assign('last_viewers_avatar', $last_viewers_avatar);
+} else {
+	$main_smarty->assign('ShowProfileLastViewers', false);		
+}
+
 // check to see if the profile is of a friend
-  $friend = new Friend;
-  $main_smarty->assign('is_friend', $friend->get_friend_status($user->id));
+	$friend = new Friend;
+	$main_smarty->assign('is_friend', $friend->get_friend_status($user->id));
 
 
 // avatars
@@ -100,7 +100,7 @@ $CSRF->create('user_settings', true, true);
 		}
 	} else {
 		$main_smarty->assign('user_url', '');
-	}		
+	}
 
 
 // setup the URL method 2 links
@@ -112,6 +112,7 @@ $CSRF->create('user_settings', true, true);
 	$main_smarty->assign('user_url_news_voted', getmyurl('user2', $login, 'voted'));
 	$main_smarty->assign('user_url_commented', getmyurl('user2', $login, 'commented'));
 	$main_smarty->assign('user_url_saved', getmyurl('user2', $login, 'saved'));
+	$main_smarty->assign('user_url_notification', getmyurl('user2', $login, 'notification'));
 	$main_smarty->assign('user_url_setting', getmyurl('user2', $login, 'setting'));
 	$main_smarty->assign('user_url_friends', getmyurl('user_friends', $login, 'viewfriends'));
 	$main_smarty->assign('user_url_friends2', getmyurl('user_friends', $login, 'viewfriends2'));
@@ -121,10 +122,8 @@ $CSRF->create('user_settings', true, true);
 	$main_smarty->assign('URL_Profile', getmyurl('profile'));
 	$main_smarty->assign('user_url_member_groups', getmyurl('user2', $login, 'member_groups	'));
 
-
 // tell smarty about our user
 	$main_smarty = $user->fill_smarty($main_smarty);
-
 
 // setup breadcrumbs for the various views
 	$view = isset($_GET['view']) && sanitize($_GET['view'], 3) != '' ? sanitize($_GET['view'], 3) : 'profile';
@@ -136,13 +135,14 @@ $CSRF->create('user_settings', true, true);
 
 	$main_smarty->assign('user_view', $view);
 
+	/*** Sidebar tag for Personal Information ***/
 	if ($view == 'profile') {
 		do_viewfriends($user->id);
 		$main_smarty->assign('view_href', '');
 		$main_smarty->assign('nav_pd', 4);
 	} else {
 		$main_smarty->assign('nav_pd', 3);
-		}
+	}
 
 	if ($view == 'voted') {
 		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsVoted');
@@ -172,19 +172,16 @@ $CSRF->create('user_settings', true, true);
 		$userresults = object_2_array($userresults);
 		$get_categories = $userresults['0']['user_categories'];
 		$user_categories = explode(",", $get_categories);
-		
+
 		$categorysql = "SELECT * FROM " . table_categories . " where category__auto_id!='0' ";
 		$results = $db->get_results($categorysql);
 		$results = object_2_array($results);
 		$category = array();
-		foreach($results as $key => $val)
-		{
+		foreach($results as $key => $val) {
 			$category[] = $val['category_name'];
-			
 		}
 		$sor = $_GET['err'];
-		if($sor == 1)
-		{
+		if($sor == 1) {
 			$err = "You have to select at least 1 category";
 			$main_smarty->assign('err', $err);
 		}
@@ -193,22 +190,18 @@ $CSRF->create('user_settings', true, true);
 		$main_smarty->assign('user_category', $user_categories);
 		$main_smarty->assign('view_href', 'submitted');
 
-		if (Allow_User_Change_Templates)
-		{
+		if (Allow_User_Change_Templates) {
 			$dir = "templates";
 			$templates = array();
 			foreach (scandir($dir) as $file)
-			    if (strstr($file,".")!==0 && file_exists("$dir/$file/header.tpl"))
-				$templates[] = $file;
+				if (strstr($file,".")!==0 && file_exists("$dir/$file/header.tpl"))
+					$templates[] = $file;
 			$main_smarty->assign('templates', $templates);
 			$main_smarty->assign('current_template', sanitize($_COOKIE['template'],3));
 			$main_smarty->assign('Allow_User_Change_Templates', Allow_User_Change_Templates);
 		}
-	
 		$main_smarty->assign('nav_set', 4);
-	} 
-	else 
-	{
+	} else {
 		$main_smarty->assign('nav_set', 3);
 	}
 		
@@ -218,9 +211,9 @@ $CSRF->create('user_settings', true, true);
 		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsPublished');
 		$main_smarty->assign('view_href', 'published');
 		$main_smarty->assign('nav_np', 4);
-	 } else {
+	} else {
 		$main_smarty->assign('nav_np', 3);
-		}
+	}
 
 	if ($view == 'shaken') {
 		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsUnPublished');
@@ -238,9 +231,9 @@ $CSRF->create('user_settings', true, true);
 		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsCommented');
 		$main_smarty->assign('view_href', 'commented');
 		$main_smarty->assign('nav_c', 4);
-	 } else {
+	} else {
 		$main_smarty->assign('nav_c', 3);
-		}
+	}
 
 	if ($view == 'saved') {
 		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSaved');
@@ -250,44 +243,44 @@ $CSRF->create('user_settings', true, true);
 		$main_smarty->assign('nav_s', 4);
 	 } else {
 		$main_smarty->assign('nav_s', 3);
-	}	
+	}
 
 	if ($view == 'viewfriends') {
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Viewing_Friends');
 		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Viewing_Friends');
-		}
+	}
 
+	/*** view for Peopole I'm Following ***/
 	if ($view == 'viewfriends2') {
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Viewing_Friends_2a');
 		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Viewing_Friends_2');
-		}
+	}
 
 	if ($view == 'removefriend') {
 		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Removing_Friend');
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Removing_Friend');
 		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Removing_Friend');
-		}
+	}
 
 	if ($view == 'addfriend') {
 		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Adding_Friend');
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Adding_Friend');
 		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Adding_Friend');
-		}
-	if ($view == 'member_groups') 
-	{
+	}
+
+	if ($view == 'member_groups') {
 		$main_smarty->assign('view_href', '');
 		$main_smarty->assign('nav_mg', 4);
-	}	
-	else 
-	{
+	} else {
 		$main_smarty->assign('nav_mg', 3);
-	}	
+	}
 
 	$main_smarty->assign('page_header', $page_header);
 	$main_smarty->assign('posttitle', $post_title);
 
+	/*** view for Search Users ***/
 	if ($view == 'search') {
-  	    if(isset($_REQUEST['keyword'])){$keyword = $db->escape(sanitize(trim($_REQUEST['keyword']), 3));}
+		if(isset($_REQUEST['keyword'])){$keyword = $db->escape(sanitize(trim($_REQUEST['keyword']), 3));}
 
 	    if ($keyword) 
 	    {
@@ -326,7 +319,7 @@ $CSRF->create('user_settings', true, true);
 	Global $db, $main_smarty, $view, $user, $rows, $page_size, $offset;
 	$the_page = 'profile';
 	switch ($view) {
-		case 'history':
+		case 'history': // Submitted
 			do_history();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
 			break;
@@ -342,11 +335,11 @@ $CSRF->create('user_settings', true, true);
 			do_commented();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
 			break;
-		case 'voted':
+		case 'voted': // Voted
 			do_voted();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
-			break;	
-		case 'saved':
+			break;
+		case 'saved': // Saved
 			do_stories();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
 			break;  
@@ -368,7 +361,7 @@ $CSRF->create('user_settings', true, true);
 		case 'member_groups':
 			do_member_groups();
 			//$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
-			break;  	
+			break;
 	}
 
 // display the template

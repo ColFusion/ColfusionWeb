@@ -349,7 +349,8 @@ class Link {
 		$title_short = htmlspecialchars(utf8_wordwrap($this->title, 30, " ", 1));
 
 		$smarty->assign('viewtype', $type);
-		$smarty->assign('URL_tagcloud', getmyurl("tagcloud"));		
+		$smarty->assign('URL_tagcloud', getmyurl("tagcloud"));	
+		$smarty->assign('URL_global_statistics', getmyurl("global_statistics"));
 		$smarty->assign('No_URL_Name', No_URL_Name);
 		if(track_outgoing == true && $url_short != "http://"){ 
 			if(track_outgoing_method == "id"){$smarty->assign('url', getmyurl("out", ($this->id)));}

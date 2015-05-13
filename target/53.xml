@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<opm:opmGraph xmlns:opm="http://openprovenance.org/model/v1.1.a" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://example.com/">
+    <opm:accounts>
+        <opm:account id="search"/>
+        <opm:overlaps>
+            <opm:account ref="search"/>
+        </opm:overlaps>
+    </opm:accounts>
+    <opm:processes>
+        <opm:process id="p1">
+            <opm:account ref="search"/>
+            <opm:label value="Submitted to Colfusion"/>
+        </opm:process>
+    </opm:processes>
+    <opm:artifacts>
+        <opm:artifact id="a1">
+            <opm:account ref="search"/>
+            <opm:label value="Table name is: Sheet1"/>
+            <opm:annotation id="ann3">
+                <opm:property uri="http://property.org/hasColumns">
+                    <opm:value xsi:type="xsd:string">3</opm:value>
+                </opm:property>
+                <opm:account ref="search"/>
+            </opm:annotation>
+        </opm:artifact>
+        <opm:artifact id="a2">
+            <opm:account ref="search"/>
+            <opm:label value="Table in database: Sheet1"/>
+            <opm:annotation id="ann4">
+                <opm:property uri="http://property.org/hasColumns">
+                    <opm:value xsi:type="xsd:string">3</opm:value>
+                </opm:property>
+                <opm:account ref="search"/>
+            </opm:annotation>
+        </opm:artifact>
+    </opm:artifacts>
+    <opm:agents>
+        <opm:agent id="ag1">
+            <opm:account ref="search"/>
+            <opm:label value="uid is: 0&#xA; sid is: 53"/>
+        </opm:agent>
+    </opm:agents>
+    <opm:causalDependencies>
+        <opm:used>
+            <opm:effect ref="p1"/>
+            <opm:role value="in"/>
+            <opm:cause ref="a1"/>
+            <opm:account ref="search"/>
+        </opm:used>
+        <opm:wasGeneratedBy id="wg1">
+            <opm:effect ref="a2"/>
+            <opm:role value="out"/>
+            <opm:cause ref="p1"/>
+            <opm:account ref="search"/>
+            <opm:type value=" "/>
+        </opm:wasGeneratedBy>
+        <opm:wasDerivedFrom id="wdf1">
+            <opm:effect ref="a2"/>
+            <opm:cause ref="a1"/>
+            <opm:account ref="search"/>
+            <opm:type value="wasDerivedFrom"/>
+        </opm:wasDerivedFrom>
+        <opm:wasControlledBy>
+            <opm:effect ref="p1"/>
+            <opm:cause ref="ag1"/>
+            <opm:account ref="search"/>
+        </opm:wasControlledBy>
+    </opm:causalDependencies>
+    <opm:annotations/>
+</opm:opmGraph>

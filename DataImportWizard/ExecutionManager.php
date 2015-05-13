@@ -107,7 +107,7 @@ class ExecutionManager
         foreach ($tuplesFromExecuteInfoTable as $i => $tupleFromExecuteInfoTable) {
            
             if($tupleFromExecuteInfoTable->status == 'success' || $tupleFromExecuteInfoTable->status == 'error'){                
-                $tupleFromExecuteInfoTable->numberProcessRecords = $tupleFromExecuteInfoTable->RecordsProcessed;
+                $tupleFromExecuteInfoTable->numberProcessRecords = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[{$value->tableName}]");//$tupleFromExecuteInfoTable->numberProcessRecords = $tupleFromExecuteInfoTable->RecordsProcessed;
             }else{                
                 //TODO FIXME: table name should not be wrapped into [] at this spet. Need global refactoring to move wrapping table into brackets closer to the query execution
                 $tupleFromExecuteInfoTable->numberProcessRecords = $queryEngine->GetTotalNumberTuplesInTableBySidAndName($sid, "[{$value->tableName}]");

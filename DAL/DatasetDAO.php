@@ -10,7 +10,7 @@ class DatasetDAO {
     public function __construct() {
         global $db;
         $this->ezSql = $db;
-    }
+    }    
 
     public function getTableColumns($sid, $tableName) {
         
@@ -24,6 +24,17 @@ class DatasetDAO {
         }
         
         return $columns;
+    }
+
+    public function getCidBySidTableNameColumName($sid, $tableName, $columnName) {
+        
+        $tableName = mysql_real_escape_string($tableName);
+        $columnName = mysql_real_escape_string($columnName);
+        $query = "SELECT di.cid as cid FROM `colfusion_dnameinfo` di 
+            INNER JOIN `colfusion_columnTableInfo` cti ON di.cid = cti.cid 
+            WHERE sid = $sid AND tableName = '$tableName' AND dname_chosen = '$columnName'";
+
+        return $this->ezSql->get_row($query)->cid;
     }
 
     public function getTableNameByCid($cid) {
@@ -50,6 +61,18 @@ class DatasetDAO {
             WHERE cid = $cid";
         
         return $this->ezSql->get_row($query);
+    }
+
+    public function saveProvenanceXML($sid, $provenance) {
+
+        $provenance = mysql_real_escape_string($provenance);
+
+        $query = "UPDATE colfusion_sourceinfo set provenance = '$provenance' where sid = $sid";
+        //$query = "INSERT INTO colfusion_sourceinfo(sid,provenance) VALUES ($sid,'$provenance')";
+        
+//var_dump($query);
+
+        $this->ezSql->query($query);
     }
 }
 

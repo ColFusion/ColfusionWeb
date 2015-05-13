@@ -2,7 +2,7 @@
 //error_reporting(E_ALL);
 //ini_set('display_errors', 1);
 
-require_once('Chart.php');
+require_once(realpath(dirname(__FILE__)) . '/../Chart.php');
 
 include_once(realpath(dirname(__FILE__)) . '/../../DAL/QueryEngine.php');
 //error_reporting(E_ALL);

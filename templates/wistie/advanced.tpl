@@ -369,7 +369,7 @@
 
 <script type="text/html" id="dataPreviewViewModel-template">
     <div class="storycontent" id="dataPreviewContainer">
-        <div data-bind="visible: isNoData" style="color: grey;">This table has no data</div>
+        <div data-bind="visible: isNoData" style="color: grey;">This table has no data or teh data is being processed.</div>
         <div data-bind="visible: isError" style="color: red;">Some errors occur when trying to retrieve data. Please try again.</div>
         <div data-bind="with: currentTable">
             <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data">

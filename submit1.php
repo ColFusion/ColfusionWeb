@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 set_time_limit(120);
 // The source code packaged with this file is Free Software, Copyright (C) 2005 by
