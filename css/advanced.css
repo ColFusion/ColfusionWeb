@@ -89,16 +89,16 @@
 
 .sliderFilterLabelContainer {
     float: left;
-    width: 50%;
+    width: 60%;
 }
 
 .sliderFilterSliderContainer {
     float: right;
-    width: 50%;
+    width: 40%;
     font-size: 0.8em;
 }
 
-#sliderFilterLabelTable td {
+.sliderFilterLabelTable td {
     height: 20px;
 }
 

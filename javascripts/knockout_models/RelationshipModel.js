@@ -23,6 +23,7 @@ var RelationshipModel = {
         self.creator = ko.observable(relJson.creator);
         self.createdTime = ko.observable(relJson.createdTime);
         self.isOwned = ko.observable(relJson.isOwned);
+        self.simThreshold = ko.observable(relJson.simThreshold);
 
         self.fromDataset = ko.observable(createDatasetModel(relJson.fromDataset, relJson.fromTableName));
         self.toDataset = ko.observable(createDatasetModel(relJson.toDataset, relJson.toTableName));
@@ -228,6 +229,45 @@ var RelationshipModel = {
             $('#dataMatchCheckingForm input[name="relSerializedString"]').val(ko.toJSON(self));
             $('#dataMatchCheckingForm').submit();
         };
+
+        self.updateLinksDataMatching = function(relationship, event){
+
+            $.ajax({
+                url: ColFusionServerUrl + "/Relationship/" + relationship.rid + "/dataMatchingRatios/" + relationship.simThreshold(),
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+                crossDomain: true,
+                success: function (data) {
+                    var links = data.payload;
+                    for (var i = 0; i < links.length; i++) {
+                        var link = links[i];
+
+                        for (var j = 0; j < self.links().length; j++) {
+                            var relLink = self.links()[j];
+
+                            if (relLink.fromPartEncoded() == link.fromPart) {
+                                relLink.fromRatio(link.fromRatio);
+                            }
+
+                            if (relLink.toPartEncoded() == link.toPart) {
+                                relLink.toRatio(link.toRatio);
+                            }
+                        };
+
+                        
+                    };
+                },
+                error: function (jqXHR, statusCode, errMessage) {
+                    alert(errMessage);
+                }
+            });
+
+            // var mineRelDom = $("#mineRelRec_" + relationship.rid);
+
+            // $(mineRelDom).find('.relInfoLoadinнgIcon').show();
+            // loadRelationshipInfo(relationship.rid, relationship.simThreshold(), mineRelDom);
+        };
     },
     Comment: function (rid, confidence, comment, userId, userName, userEmail, commentTime, isControlPanelShown) {
         var self = this;
@@ -270,18 +310,29 @@ var RelationshipModel = {
 
             self.isLoadingTableInfo(true);
             dataSourceUtil.getTableInfo(self.sid(), self.chosenTableName()).done(function (data) {
-                if (data.length <= 0)
-                    return;
-                var cols = [];
-                for (var key in data[0]) {
-                    cols.push(key);
-                }
+                 // if (data.length <= 0)
+                     // return;
+                 // var cols = [];
+                 // for (var key in data[0]) {
+                     // cols.push(key);
+                 // }
 
-                var rows = [];
-                for (var i = 0; i < data.length; i++) {
-                    rows.push(data[i]);
-                }
-
+                 // var rows = [];
+                 // for (var i = 0; i < data.length; i++) {
+                     // rows.push(data[i]);
+                 // }
+				
+				 if (data.payload.length <= 0)
+                     return;
+				 var cols=[];
+				 for(var key in data.payload[0]){
+					 cols.push(key);
+				 }
+				 var rows = [];
+				 for(var i=0;i<data.payload.length;i++){
+					 rows.push(data.payload[i])
+				 }
+				
                 self.currentTable(new RelationshipModel.Table(cols, rows));
             }).always(function () {
                 self.isLoadingTableInfo(false);
@@ -302,6 +353,11 @@ var RelationshipModel = {
         self.loadTableList = function () {
             if (self.sid() >= 1) {
                 dataSourceUtil.getTablesList(self.sid()).done(function (data) {
+
+                    if (data == null) {
+                        return;
+                    }
+
                     if (data != null) {
                         self.tableList(data);
                     }

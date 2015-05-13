@@ -130,7 +130,8 @@ class Link {
 			$tmpDir = mnmpath.get_misc_data('temp_directory')."$Sid.ktr";			
 			$newDir =mnmpath.get_misc_data('wrapper_directory')."$Sid.ktr";
 			rename($tmpDir,$newDir);
-				if($link_group_id>0){
+			
+			if($link_group_id>0){
 				//$sql = "INSERT INTO " .table_prefix."links set newSid='$Sid',link_date='$EntryDate', link_summary='$link_summary', link_status='queued', link_category ='$link_category', link_content='$link_content', link_title='$link_title', link_tags='$link_tags', link_title_url='$link_title_url', link_url='$htmlPath';";
 				$sql = "INSERT INTO " .table_prefix."links (link_id,link_author,link_date, link_summary, link_status, link_category, link_content, link_title, link_tags, link_title_url, link_url, link_group_id) VALUES ('$Sid','$link_author','$EntryDate','$link_summary','private','$link_category','$link_content','$link_title','$link_tags','$link_title_url', '$htmlPath', '$link_group_id');";
 				echo $sql;
@@ -160,7 +161,10 @@ class Link {
 		global $db, $current_user, $cached_links;
 		$id = $this->id;
 		$this->rating = 0;
-		if(!is_numeric($id)){return false;}
+		if(!is_numeric($id)) {
+
+			return false;
+		}
 		// check to see if the link is cached
 		// if it is, use it
 		// if not, get from mysql and save to cache
@@ -173,6 +177,8 @@ class Link {
 		}
     
 		if($link) {
+
+
 			$this->author=$link->link_author;
 			$this->userid=$link->link_author;
 			$this->status=$link->link_status;
@@ -241,6 +247,7 @@ class Link {
 			
 			return true;
 		}
+
 		$this->fullread = $this->read = false;
 		return false;
 	}

@@ -10,7 +10,7 @@ require_once(realpath(dirname(__FILE__)) . '/DALUtils.php');
 require_once(realpath(dirname(__FILE__)) . '/../DAL/LinkedServerCred.php');
 require_once(realpath(dirname(__FILE__)) . '/TransformationHandler.php');
 require_once(realpath(dirname(__FILE__)) . '/RelationshipDAO.php');
-require_once(realpath(dirname(__FILE__)) . '/NotificationDAO.php');
+
 require_once(realpath(dirname(__FILE__)) . '/Neo4JDAO.php');
 require_once(realpath(dirname(__FILE__)) . '/../dataMatchChecker/DataMatcher.php');
 
@@ -61,13 +61,10 @@ class QueryEngine {
             }
             else {
 
-
                 //NOTE: $select, $where and $group cannot have [] sybmols comming directly from column or table name
                 $select =  $transHandler->decodeTransformationInput($select, true);
                 $where =  $transHandler->decodeTransformationInput($where, true);
                 $groupby =  $transHandler->decodeTransformationInput($groupby, true);
-
-               
 
                 return $this->prepareAndRunQuery($select, $dataset, $where, $groupby, $perPage, $pageNo);
 
@@ -87,7 +84,7 @@ class QueryEngine {
 
         global $db;
 
-        if ($this->GetSourceType($from) == "database") {
+        if ($this->GetSourceType($from) == "data file") {
 
             $sql = "select * from colfusion_sourceinfo_DB where sid = $from";
             $rst = $db->get_results($sql);
@@ -173,6 +170,15 @@ class QueryEngine {
 
     }
 
+    public function UpdateColumnMetaData($sid,$oldname,$name,$variableValueType,$description,$variableMeasuringUnit,$variableValueFormat,$missingValue){
+        global $db;
+        mysql_select_db("colfusion", $con);
+         $query = "UPDATE colfusion_dnameinfo SET dname_chosen='$name', dname_value_type='$variableValueType', dname_value_description='$description', dname_value_unit='$variableMeasuringUnit', dname_value_format='$variableValueFormat', missing_value='$missingValue' WHERE sid=$sid AND dname_chosen='$oldname'";
+         $db->query($query);
+    }
+
+
+
     public function GetTablesInfoForMergedDataset($mergedDataSet) {
         // for now merged databset should have all columns already, so I will return it back.
 
@@ -204,6 +210,8 @@ class QueryEngine {
         return $tables;
     }
 
+
+
     public function GetTableDataBySidAndName($sid, $table_name, $perPage, $pageNo) {
 
         if (is_array($sid) || is_object($sid)) {
@@ -220,7 +228,7 @@ class QueryEngine {
             return $this->doQuery($select, $fromArray, null, null, null, $perPage, $pageNo);
         }
         else {
-            if ($this->GetSourceType($sid) == "database") {
+            if ($this->GetSourceType($sid) == "data file") {
                 return $this->GetTableDataBySidAndNameFromExternalDB($sid, $table_name, $perPage, $pageNo);
             } else {
                 return $this->GetTableDataBySidAndNameFromFile($sid, $table_name, $perPage, $pageNo);
@@ -240,8 +248,7 @@ class QueryEngine {
     // relationships - list of realtionship which should be used. If empty, all relationships between dataset will be used
     function prepareAndRunQuery($select, $from, $where, $groupby, $perPage, $pageNo) {
 
-
-        if ($this->GetSourceType($from->sid) == "database") {
+        if ($this->GetSourceType($from->sid) == "data file") {
             $externalDBCredentials = $this->GetExternalDBCredentialsBySid($from->sid);
 
             $tableName = $from->tableName;
@@ -415,10 +422,6 @@ class QueryEngine {
         $relationshipDao = new RelationshipDAO();
         $rel_id = $relationshipDao->addRelationship($user_id, $name, $description, $from, $to, $confidence, $comment);
 
-        // Update notifications
-        $notificationDAO = new NotificationDAO();
-        $notificationDAO->addNTFtoDB($rel_id, "addRelationship");
-        
         // add newly created relationshiop to neo4j.
         $neo4JDAO = new Neo4JDAO();
         $neo4JDAO->addRelationshipByRelId($rel_id);

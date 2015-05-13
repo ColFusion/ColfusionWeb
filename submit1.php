@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 set_time_limit(120);
 // The source code packaged with this file is Free Software, Copyright (C) 2005 by
@@ -12,6 +12,13 @@ include_once('config.php');
 include_once('Smarty.class.php');
 $main_smarty = new Smarty;
 
+require_once(realpath(dirname(__FILE__)) . "/vendor/autoload.php");
+
+Logger::configure(realpath(dirname(__FILE__)) . '/conf/log4php.xml');
+
+$logger = Logger::getLogger("generalLog");
+
+
 include(mnminclude.'html1.php');
 include(mnminclude.'link.php');
 include(mnminclude.'tags.php');
@@ -19,19 +26,10 @@ include(mnminclude.'user.php');
 include(mnminclude.'smartyvariables.php');
 
 include_once('DAL/QueryEngine.php');
-include_once('DAL/ChatDAO.php');
 
 if (!$_COOKIE['referrer'])
 	check_referrer();
 
-// html tags allowed during submit
-if (checklevel('god'))
-	$Story_Content_Tags_To_Allow = Story_Content_Tags_To_Allow_God;
-elseif (checklevel('admin'))
-$Story_Content_Tags_To_Allow = Story_Content_Tags_To_Allow_Admin;
-else
-	$Story_Content_Tags_To_Allow = Story_Content_Tags_To_Allow_Normal;
-$main_smarty->assign('Story_Content_Tags_To_Allow', htmlspecialchars($Story_Content_Tags_To_Allow));
 
 // breadcrumbs and page titles
 $navwhere['text1'] = $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Submit');
@@ -44,8 +42,6 @@ $main_smarty = do_sidebar($main_smarty);
 //to check anonymous mode activated
 global $current_user;
 
-
-
 if($current_user->authenticated != TRUE)
 {
 	$vars = '';
@@ -55,57 +51,32 @@ if($current_user->authenticated != TRUE)
 }
 
 
-
-
 // determine which step of the submit process we are on
 $phase = isset($_POST["phase"]) && is_numeric($_POST["phase"]) ? $_POST["phase"] : 0;
 
-// If show URL input box is disabled, go straight to step 2
-if($phase == 0 && Submit_Show_URL_Input == false) {
-	$phase = 1;
-}
-
-
-
 switch ($phase) {
 	case 0:
-		// Link to this page, before starting submit process.
-		// echo 'submit0 start.';
+		// Initial rendering of the page.
 		do_submit0();
 		break;
 	case 1:
-		// echo 'submit1 start.';
+		// When the Finish your submisison butotn was clicked.
 		do_submit1();
-		break;
-	case 2:
-		// echo 'submit2 start.';
-		do_submit2();
-		break;
-	case 3:
-		// echo 'submit3 start.';
-		do_submit3();
 		break;
 }
 
-
-
-
 exit;
 
-// submit step 0
+/**
+ * Initial rendering of the page when user just come the Submit Data page.
+ * 
+ * @return [type] [description]
+ */
 function do_submit0() {
 	global $main_smarty, $db, $dblang, $current_user, $the_template;
 	
-	$linkres=new Link;
-	 if ($_POST['category']){
-		$cats = explode(',',$_POST['category']);
-		foreach ($cats as $cat){
-			if ($cat_id = $db->get_var("SELECT category_id FROM ".table_categories." WHERE category_name='".$db->escape(trim($cat))."'")){
-				$linkres->category = $cat_id;
-				break;
-			}
-		}
-	}
+	$linkres = new Link();
+	
 	$edit = false;
 	if (is_numeric($_GET['id'])){
 		$linkres->id = $_GET['id'];
@@ -128,42 +99,21 @@ function do_submit0() {
 			$main_smarty->assign('submit_cat_array', $array);
 		}
 
-	//to display group drop down
-	if(enable_group == "true")
-	{
-		$output = '';
-		$group_membered = $db->get_results("SELECT group_id,group_name FROM " . table_groups . "
-				LEFT JOIN ".table_group_member." ON member_group_id=group_id
-				WHERE member_user_id = $current_user->user_id AND group_status = 'Enable' AND member_status='active'
-				ORDER BY group_name ASC");
-		if ($group_membered)
-		{
-			$output .= "<select name='link_group_id'>";
-			$output .= "<option value = ''>".$main_smarty->get_config_vars('PLIGG_Visual_Group_Select_Group')."</option>";
-			foreach($group_membered as $results)
-			{
-				$output .= "<option value = ".$results->group_id. ($linkres->link_group_id ? ' selected' : '') . ">".$results->group_name."</option>";
-			}
-			$output .= "</select>";
-		}
-		$main_smarty->assign('output', $output);
-	}
-
-
 	if($current_user->authenticated != TRUE){
 		$vars = '';
 		check_actions('register_showform', $vars);
 	}
 
-	$queryEngine = new QueryEngine();
-	$sid = $queryEngine->simpleQuery->getNewSid($current_user->user_id, 'draft');
+	//$queryEngine = new QueryEngine();
+	//$sid = $queryEngine->simpleQuery->getNewSid($current_user->user_id, 'draft');
 	
-	$_SESSION["newSid"] = $sid; // still keep it for now
-
-	$main_smarty->assign('sid', $sid);
+	$main_smarty->assign('user_id', $current_user->user_id);
 	
 	$main_smarty->assign('tpl_extra_fields', $the_template . '/submit_extra_fields');
 	$main_smarty->assign('tpl_center', $the_template . '/submit_step_21');
+	$main_smarty->assign('tpl_jsFilesAtBottom', $the_template . '/submit_step_21_jsFilesAtBottom');
+	$main_smarty->assign('tpl_cssInHTMLHead', $the_template . '/submit_step_21_cssInHTMLHead');
+	
 
 	define('pagename', 'submit');
 	$main_smarty->assign('pagename', pagename);
@@ -171,6 +121,7 @@ function do_submit0() {
 	$main_smarty->display($the_template . '/pligg.tpl');
 
 }
+
 // submit step 1
 function do_submit1() {
 	global $db, $main_smarty, $dblang, $the_template, $linkres, $current_user, $Story_Content_Tags_To_Allow;
@@ -191,16 +142,20 @@ function do_submit1() {
 	$main_smarty->assign('request_category_name', $thecat->category_name);
 
 
+
+
 	if(!isset($_POST['summarytext'])){
 		$linkres->link_summary = utf8_substr(sanitize($_POST['bodytext'], 4, $Story_Content_Tags_To_Allow), 0, StorySummary_ContentTruncate - 1);
 		$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-	} else {
+	} 
+	else {
 		$linkres->link_summary = sanitize($_POST['summarytext'], 4, $Story_Content_Tags_To_Allow);
 		$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
-		if(utf8_strlen($linkres->link_summary) > StorySummary_ContentTruncate){
-		loghack('SubmitAStory-SummaryGreaterThanLimit', 'username: ' . sanitize($_POST["username"], 3).'|email: '.sanitize($_POST["email"], 3), true);
-		$linkres->link_summary = utf8_substr($linkres->link_summary, 0, StorySummary_ContentTruncate - 1);
-		$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
+		
+		if(utf8_strlen($linkres->link_summary) > StorySummary_ContentTruncate) {
+			loghack('SubmitAStory-SummaryGreaterThanLimit', 'username: ' . sanitize($_POST["username"], 3).'|email: '.sanitize($_POST["email"], 3), true);
+			$linkres->link_summary = utf8_substr($linkres->link_summary, 0, StorySummary_ContentTruncate - 1);
+			$linkres->link_summary = close_tags(str_replace("\n", "<br />", $linkres->link_summary));
 		}
 	}
 	
@@ -227,17 +182,13 @@ function do_submit1() {
 	include(mnminclude.'redirector.php');
 	$x = new redirector($_SERVER['REQUEST_URI']);
 	//$Sid=$_SESSION['newSid'];
-
+	
 	header("Location:".my_base_url.my_pligg_base."/story.php?title=$sid");
 		
-
-
-
 	$vars = '';
 	check_actions('do_submit2', $vars);
 	$_SESSION['step'] = 2;
 	$main_smarty->display($the_template . '/pligg.tpl');
-
 }
 
 // assign any errors found during submit

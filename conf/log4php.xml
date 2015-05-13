@@ -1,0 +1,14 @@
+<configuration xmlns="http://logging.apache.org/log4php/">
+ 
+    <appender name="myFileAppender_General" class="LoggerAppenderFile">
+        <layout class="LoggerLayoutPattern">
+            <param name="conversionPattern" value="%date{m.d.Y H:i:s,u} %logger %-5level %message%newline%ex" />
+        </layout>
+        <param name="file" value="/opt/local/apache2/htdocs/Colfusion/cache/combined.log" />
+    </appender>
+
+    <logger name="generalLog">
+        <level value="TRACE" />
+        <appender_ref ref="myFileAppender_General" />
+    </logger>
+</configuration>

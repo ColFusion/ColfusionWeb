@@ -29,6 +29,8 @@ echo "OKKKK";
 ob_flush();
 flush();
 
+//TODO: fix it, we should have some kind of resource manager which will queue background exec requests.
+exit;
 
 $areDatasetsProcessed = checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo);
 
@@ -39,10 +41,10 @@ while (!$areDatasetsProcessed) {
 
     $areDatasetsProcessed = checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLinkOnePartTo);
 
-    //TODO do something to make sure that process die if this checking happens for a log time.
+    //TODO do something to make sure that process die if this checking happens for a long time.
     $count += 1;
 
-    if ($count > 10000000)
+    if ($count > 3)
         die; //write this action in some log (e.g. in some db table);
 }
 
@@ -60,7 +62,7 @@ function checkIfDatasetsAreProcessed($dataMatcherLinkOnePartFrom, $dataMatcherLi
         die("datasets are in error");
     }
 
-    if ($statusFrom->status == "success" && $statusTo->status == "success") {
+    if ($statusFrom->status == "end" && $statusTo->status == "end") {
         return true;
     }
 

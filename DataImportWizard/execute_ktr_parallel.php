@@ -15,7 +15,7 @@ ob_start();
 ignore_user_abort(1);
 
 // we will work forever
-set_time_limit(0);
+//set_time_limit(0);
 
 // we need to say something to parent to stop its waiting
 // it could be something useful like client ID or just "OK"

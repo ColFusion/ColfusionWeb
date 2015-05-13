@@ -45,6 +45,7 @@
 		<td align="right">
 			<label for="name" accesskey="1">{#PLIGG_Visual_Profile_RealName#}:</label>
 			<input type="text" name="names" id="names" tabindex="1" value="{$user_names}"><br />&nbsp;
+			<label><small>(Last Name, First Name)</small></label>
 		</td>
 		<td align="right">
 			<label for="name" accesskey="1">{#PLIGG_Visual_User_Profile_AIM#}:</label>

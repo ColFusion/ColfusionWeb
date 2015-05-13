@@ -14,26 +14,39 @@ class KTRManager {
     private $sid;
     private $connectionInfo;
     private $tableName;
-    private $sheetNamesRowsColumns;
+    private $fileURLs;
+    private $ktrFileURL;
+    private $ext;
 
-    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid) {
+    public function __construct($ktrTemplatePath, $ktrFilePath, $filePaths, $sid, $fileURLs, $ktrFileURL, $ext) {
         $this->ktrTemplatePath = $ktrTemplatePath;
         $this->ktrFilePath = $ktrFilePath;
         $this->filePaths = $filePaths;
         $this->sid = $sid;
+        $this->fileURLs = $fileURLs;
+        $this->ktrFileURL = $ktrFileURL;
+        $this->ext = $ext;
     }
 
     public function createTemplate($sheetNamesRowsColumns, $baseHeader, $dataMatchingUserInputs) {
-        $this->sheetNamesRowsColumns=$sheetNamesRowsColumns;
+
         copy($this->ktrTemplatePath, $this->ktrFilePath);
         $this->ktrXml = simplexml_load_file($this->ktrFilePath);
 
+        
         $this->changeConnection();
-        $this->changeSheetType();
-        $this->addUrls($this->filePaths);
-        $this->addSheets($sheetNamesRowsColumns);
-        $this->clearConstantAndTarget();
 
+//echo $this->ext;
+
+        if ($this->ext != "csv") { //TODO: define extention  constants, not in hardcoded string here
+            $this->changeSheetType();
+            $this->addSheets($sheetNamesRowsColumns);
+            $this->clearConstantAndTarget();
+        }
+
+        $this->addUrls($this->fileURLs);
+        
+        //TODO: rename, it actually also handels csv
         $this->addExcelInputFields($baseHeader, $dataMatchingUserInputs);
 
         // $this->addSampleTarget();
@@ -49,8 +62,27 @@ class KTRManager {
         $this->updatedColAndStreamNames = $dataMatchingUserInputs;
         $this->updateTargetSchemaStepColumnAndStreamName($dataMatchingUserInputs);
 
+        $this->changeTranasformationName($this->sid);
+
         file_put_contents($this->ktrFilePath, $this->ktrXml->asXML());
         unset($this->ktrXml);
+    }
+
+    public function changeTranasformationName($name) {
+ 
+        if (isset($this->ktrXml)) {
+            $this->ktrXml->info[0]->name = $name;
+        }
+        else {
+            $this->ktrXml = simplexml_load_file($this->ktrFilePath);
+
+            $this->ktrXml->info[0]->name = $name;
+
+            file_put_contents($this->ktrFilePath, $this->ktrXml->asXML());
+            unset($this->ktrXml);
+        }
+
+        
     }
 
     private function changeConnection() {
@@ -71,6 +103,13 @@ class KTRManager {
         $this->ktrXml->connection[0]->port = $connectionInfo->port;
         $this->ktrXml->connection[0]->type = $connectionInfo->engine;
 
+        $this->ktrXml->connection[1]->database = PENTAHO_LOG_DB;
+        $this->ktrXml->connection[1]->username = PENTAHO_LOG_DB_USER;
+        $this->ktrXml->connection[1]->password = PENTAHO_LOG_DB_PASSWORD;
+        $this->ktrXml->connection[1]->server = PENTAHO_LOG_DB_HOST;
+        $this->ktrXml->connection[1]->port = PENTAHO_LOG_DB_PORT;
+        $this->ktrXml->connection[1]->type = PENTAHO_LOG_DB_ENGINE;
+
         $this->connectionInfo = $connectionInfo;
     }
 
@@ -86,6 +125,10 @@ class KTRManager {
      */
     public function getConnectionInfo() {
         return $this->connectionInfo;
+    }
+
+    public function getExt() {
+        return $this->ext;
     }
 
     /**
@@ -113,23 +156,18 @@ class KTRManager {
     private function addUrls($filePaths) {
 
         $xmldoc = $this->ktrXml;
+
+
         $fileNodes = $xmldoc->xpath('//step/file');
         $fileNode = $fileNodes[0];
 
         foreach ($filePaths as $filePath) {
             $fileNode->addChild('name', $filePath);
-            $fileNode->addChild('filemask');
-            $fileNode->addChild('exclude_filemask');
-            $fileNode->addChild('file_required', 'N');
-            $fileNode->addChild('include_subfolders', 'N');
+           
         }
-
-        // Delete template nodes.  
-        unset($fileNode->name[0]);
-        unset($fileNode->filemask[0]);
-        unset($fileNode->exclude_filemask[0]);
-        unset($fileNode->file_required[0]);
-        unset($fileNode->include_subfolders[0]);
+       
+     
+       
     }
 
     private function addSheets($sheetNamesRowsColumns) {
@@ -228,7 +266,8 @@ class KTRManager {
                     $field->addChild('trim_type', 'both');
                     $field->addChild('repeat', 'N');
 
-                    foreach ($dataMatchingUserInputs as $key => $value) {
+
+                     foreach ($dataMatchingUserInputs as $key => $value) {
                         if ($item == $value["originalDname"]) {
                             if ($value["type"] == "INT") {
                                 $field->addChild('format', '0.##############;-0.##############'); //TODO: This might need some testing on different data 
@@ -242,6 +281,23 @@ class KTRManager {
                     }
 
 //                    $field->addChild('format', '0.##############;-0.##############'); //TODO: This might need some testing on different data 
+                    
+                    $field->addChild('currency');
+                    $field->addChild('decimal');
+                    $field->addChild('group');
+                }
+            }
+            else if ($name == 'CSV file input') {
+                foreach ($baseHeader as $item) {
+                    $fields = $step->fields;
+
+                    $field = $fields->addChild('field');
+                    $field->addChild('name', $item);
+                    $field->addChild('type', 'String');
+                    $field->addChild('length', '-1');
+                    $field->addChild('precision', '-1');
+                    $field->addChild('trim_type', 'both');
+                   
                     $field->addChild('currency');
                     $field->addChild('decimal');
                     $field->addChild('group');
@@ -338,8 +394,8 @@ class KTRManager {
         return $this->ktrFilePath;
     }
 
-    public function getSheetNamesRowsColumns(){
-        return $this->sheetNamesRowsColumns;
+    public function getKtrFileURLh(){
+        return $this->ktrFileURL;
     }
 }
 

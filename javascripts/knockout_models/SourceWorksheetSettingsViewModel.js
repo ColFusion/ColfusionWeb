@@ -1,10 +1,11 @@
+//Second step of the wizard where user can selected how many sheets to select and specify starting row and column
 function SourceWorksheetSettingsViewModel() {
     var self = this;
     self.sourceWorksheetSettings = ko.observableArray();
     self.loadingProgress = ko.observable();
 
-    self.addSource = function(sourceName, worksheets) {
-        self.sourceWorksheetSettings.push(new SourceWorksheetSettings(sourceName, worksheets));
+    self.addSource = function(sourceName, fileAbsoluteName, otherFilesAbsoluteNames, worksheets, ext) {
+        self.sourceWorksheetSettings.push(new SourceWorksheetSettings(sourceName, fileAbsoluteName, otherFilesAbsoluteNames, worksheets, ext));
     };
 
     self.cleanSource = function() {
@@ -17,23 +18,50 @@ function SourceWorksheetSettingsViewModel() {
     };
 
     self.getSourceWorksheetSettings = function() {
-        var sourceWorksheetSettingsWithoutObservable = {};
+        
+        var result = [];
+
+
         for (var i = 0; i < self.sourceWorksheetSettings().length; i++) {
+
             var sourceWorksheetSettings = self.sourceWorksheetSettings()[i];
-            sourceWorksheetSettingsWithoutObservable[sourceWorksheetSettings.sourceName] =
-                    sourceWorksheetSettings.getWorksheetSettings();
+
+            var oneFile = {
+                extension : sourceWorksheetSettings.ext,
+                fileName : sourceWorksheetSettings.sourceName,
+                fileAbsoluteName : sourceWorksheetSettings.fileAbsoluteName,
+                otherFilesAbsoluteNames : sourceWorksheetSettings.otherFilesAbsoluteNames,
+                worksheets: $.map(sourceWorksheetSettings.worksheetSettings(), function (oneSheet) {
+                    return {
+                        sheetName : oneSheet.sheetName(),
+                        headerRow : oneSheet.startRow(),
+                        startColumn : oneSheet.startColumn(),
+                        numberOfRows : 0
+                    };
+                })
+            };
+
+            result.push(oneFile);
+            
+            // sourceWorksheetSettingsWithoutObservable[sourceWorksheetSettings.sourceName] =
+            //         sourceWorksheetSettings.getWorksheetSettings();
+
         }
-        return sourceWorksheetSettingsWithoutObservable;
+        return result;
     };
 }
 
-function SourceWorksheetSettings(sourceName, worksheets) {
+function SourceWorksheetSettings(sourceName, fileAbsoluteName, otherFilesAbsoluteNames, worksheets, ext) {
     var self = this;
     self.sourceName = sourceName;
+    self.fileAbsoluteName = fileAbsoluteName;
+    self.otherFilesAbsoluteNames = otherFilesAbsoluteNames;
     self.worksheets = ko.observableArray(worksheets);
-    self.numOfWorksheets = ko.observable(0);
+    self.numOfWorksheets = ko.observable(1);
     self.numOfWorksheetsOptions = ko.observableArray([]);
     self.worksheetSettings = ko.observableArray();
+
+    self.ext = ext;
 
     for (var i = 0; i < worksheets.length; i++) {
         self.numOfWorksheetsOptions.push(i + 1);
@@ -42,7 +70,7 @@ function SourceWorksheetSettings(sourceName, worksheets) {
     self.chooseNumOfWorsheets = function() {
         self.worksheetSettings([]);
         for (var i = 0; i < self.numOfWorksheets(); i++) {
-            self.worksheetSettings.push(new WizardExcelPreviewProperties.WorksheetSetting(self.worksheets()[i], 1, 'A'));
+                self.worksheetSettings.push(new WizardExcelPreviewProperties.WorksheetSetting(self.worksheets()[i], 1, 'A'));
         }
     };
 
@@ -61,4 +89,9 @@ function SourceWorksheetSettings(sourceName, worksheets) {
 
         return sheetsRange;
     };
+
+    // if (ext == "csv") {
+    //     self.numOfWorksheets(1);
+    self.chooseNumOfWorsheets();
+    // }
 }

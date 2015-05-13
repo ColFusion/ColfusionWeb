@@ -31,7 +31,7 @@ class RelationshipDAO
      */
     public function addRelationship($user_id, $name, $description, $from, $to, $confidence, $comment)
     {
-        $sql = "INSERT INTO %srelationships (name, description, creator, creation_time, sid1, sid2, tableName1, tableName2) VALUES ('%s', '%s', %d, CURRENT_TIMESTAMP, %d, %d, '%s', '%s')";
+        $sql = "INSERT INTO %srelationships (name, description, creator, creation_time, sid1, sid2, tableName1, tableName2, status) VALUES ('%s', '%s', %d, CURRENT_TIMESTAMP, %d, %d, '%s', '%s', 2)";
         $sql = sprintf($sql, table_prefix, $name, $description, $user_id, $from["sid"], $to["sid"], $from["tableName"], $to["tableName"]);
         $rs = $this->ezSql->query($sql);
 
@@ -56,7 +56,7 @@ class RelationshipDAO
         return $rel_id;
     }
 
-    public function getRelationship($relId) {
+    public function getRelationship($relId, $simThreshold) {
         $sql = "SELECT name, description, user_id, user_login, sid1, sid2, tableName1, tableName2, creation_time 
             FROM  `colfusion_relationships` CR INNER JOIN  `colfusion_users` U ON CR.creator = U.user_id 
             WHERE CR.rel_id = '" . mysql_real_escape_string($relId) . "'";
@@ -84,18 +84,18 @@ class RelationshipDAO
         $relationship->toTableName = $relInfo->tableName2;
         
         // $relationship->links[] = $this->GetLinksByRelId($relId);
-        $relationship->links = $this->GetLinksByRelId($relId);
+        $relationship->links = $this->GetLinksByRelId($relId, $simThreshold);
 
         return $relationship;
     }
 
-    public function GetLinksByRelId($relId) {
+    public function GetLinksByRelId($relId, $simThreshold) {
         $links = array();
 
         $linksSql = "select cl_from, cl_to from `colfusion_relationships_columns` where rel_id = '" . mysql_real_escape_string($relId) . "'";
         $linkInfos = $this->ezSql->get_results($linksSql);
         
-        $linkRatioSql = "select cl_from, cl_to, dataMatchingFromRatio, dataMatchingToRatio from colfusion_relationships_columns where rel_id = $relId";
+        $linkRatioSql = "select cl_from, cl_to, dataMatchingFromRatio, dataMatchingToRatio from colfusion_relationships_columns_dataMathing_ratios where similarity_threshold = $simThreshold";
         $linkRatios = $this->ezSql->get_results($linkRatioSql);
         $linkRatioValues = array();
         
@@ -293,6 +293,9 @@ class RelationshipDAO
      */
     public function getAllRelationshipInfoBySid($sid)
     {
+
+// status <> 1 condition is used to exclude deleted relationships.
+
         $query = <<< EOQ
                 SELECT rel.rel_id, rel.name, rel.description, rel.creator, rel.creation_time as creationTime, u. user_login as creatorLogin,
        siFrom.sid as sidFrom, siTo.sid as sidTo,
@@ -310,12 +313,13 @@ FROM
 
 where
         rel.creator = u.user_id
-        and rel.status = 0
+        and rel.status <> 1
         and rel.rel_id = statOnVerdicts.rel_id
         and rel.sid1 = siFrom.Sid
         and rel.sid2 = siTo.Sid
         and (rel.sid1 = $sid or rel.sid2 = $sid)
 EOQ;
+
 
         $res = $this->ezSql->get_results($query);
 

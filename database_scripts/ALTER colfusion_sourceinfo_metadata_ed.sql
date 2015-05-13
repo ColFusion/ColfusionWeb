@@ -1,0 +1,1 @@
+ALTER TABLE  `colfusion_sourceinfo_metadata_edit_history` CHANGE  `item`  `item` ENUM(  'title',  'description',  'tags',  'status',  'license' ) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL ;

@@ -157,12 +157,12 @@ function importDataFromDumpFile($sid, DatabaseHandler $dbHandler, $userId, $file
 
         foreach($logIds as $logId){
             $ktrExeDao->updateExecutionInfoTimeEnd($logId);
-            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'success');
+            $ktrExeDao->updateExecutionInfoStatus($logId, 'success');
         }
     }
     catch(Exception $e){
         foreach($logIds as $logId){
-            $ktrExeDao->updateExecutionInfoTupleStatus($logId, 'error');
+            $ktrExeDao->updateExecutionInfoStatus($logId, 'error');
             $ktrExeDao->updateExecutionInfoErrorMessage($logId, $e->getMessage());
         }
     }

@@ -2,10 +2,6 @@
     list-style-type: none;
 }
 
-#attachmentList tr {
-    height: 20px;
-}
-
 .fileList a{
     text-decoration: none;
 }
@@ -16,6 +12,7 @@
 
 .fileListItem {
     font-size: 14px;
+    margin: 5px !important;
 }
 
 .fileListItem a{

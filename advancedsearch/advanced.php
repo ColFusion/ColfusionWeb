@@ -4,7 +4,6 @@
     <link rel="stylesheet" href="bootstrap.css" />
     <link rel="stylesheet" href="bootstrap-responsive.css" />
     <link rel="stylesheet" type="text/css" href="../css/font-awesome.css" />
-    <link rel="stylesheet" href="bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="../css/smoothness/jquery-ui-1.10.3.custom.min.css" />
     <link rel="stylesheet" href="../css/parsley.css" />
     <link rel="stylesheet" href="../css/parsley_custom.css" />

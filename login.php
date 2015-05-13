@@ -42,58 +42,77 @@ if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (is
 	if($_POST["processlogin"] == 1) { // users logs in with username and password
 		$username = sanitize(trim($_POST['username']), 3);
 		$password = sanitize(trim($_POST['password']), 3);
+
 		if(isset($_POST['persistent'])){$persistent = sanitize($_POST['persistent'], 3);}else{$persistent = '';}
 
-		$dbusername=sanitize($db->escape($username),4);
+		$dbusername = sanitize($db->escape($username),4);
+
 		require_once(mnminclude.'check_behind_proxy.php');
-		$lastip=check_ip_behind_proxy();
-		$login=$db->get_row("SELECT *, UNIX_TIMESTAMP()-UNIX_TIMESTAMP(login_time) AS time FROM " . table_login_attempts . " WHERE login_ip='$lastip'");
-		if ($login->login_id)
-		{
+		
+		$lastip = check_ip_behind_proxy();
+
+echo $lastip;
+
+		$login = $db->get_row("SELECT *, UNIX_TIMESTAMP()-UNIX_TIMESTAMP(login_time) AS time FROM " . table_login_attempts . " WHERE login_ip='$lastip'");
+		
+		if ($login->login_id) {
 		    $login_id = $login->login_id;
-		    if ($login->time < 3) $errorMsg=sprintf($main_smarty->get_config_vars('PLIGG_Visual_Login_Error'),3);
-		    elseif ($login->login_count>=3)
-		    {
-			if ($login->time < min(60*pow(2,$login->login_count-3),3600))
-			    $errorMsg=sprintf($main_smarty->get_config_vars('PLIGG_Login_Incorrect_Attempts'),$login->login_count,min(60*pow(2,$login->login_count-3),3600)-$login->time);
+		
+		    if ($login->time < 3) {
+		    	$errorMsg=sprintf($main_smarty->get_config_vars('PLIGG_Visual_Login_Error'),3);
+		    }
+		    elseif ($login->login_count>=3) {
+				if ($login->time < min(60*pow(2,$login->login_count-3),3600)) {
+			    	$errorMsg=sprintf($main_smarty->get_config_vars('PLIGG_Login_Incorrect_Attempts'),$login->login_count,min(60*pow(2,$login->login_count-3),3600)-$login->time);
+			    }
 		    }
 		}
-		elseif (!is_ip_approved($lastip))
-		{
-		    $db->query("INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', login_time=NOW(), login_ip='$lastip'");
+		elseif (!is_ip_approved($lastip)) {
+echo "not approved";
+echo "INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', login_time=NOW(), login_ip='$lastip'";
+
+		    $db->query("INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', login_time=NOW(), login_ip='$lastip', login_count=0");
 		    $login_id = $db->insert_id;
-		    if (!$login_id) $errorMsg=sprintf($main_smarty->get_config_vars('PLIGG_Visual_Login_Error'),3);
+
+
+		    if (!$login_id) {
+		    	$errorMsg=sprintf($main_smarty->get_config_vars('PLIGG_Visual_Login_Error'),3);
+		    }
 		}
+
+	echo $errorMsg;
 
 		if (!$errorMsg)
 		{
+			echo "before auth";
+
 		    if($current_user->Authenticate($username, $password, $persistent) == false) {
 		    {
 		    	$db->query("UPDATE ".table_login_attempts." SET login_username='$dbusername', login_count=login_count+1, login_time=NOW() WHERE login_id=".$login_id);
-			$errorMsg=$main_smarty->get_config_vars('PLIGG_Visual_Login_Error');
+				$errorMsg=$main_smarty->get_config_vars('PLIGG_Visual_Login_Error');
 		    }
 		    } else {
-			$sql = "DELETE FROM " . table_login_attempts . " WHERE login_ip='$lastip' ";
-			$db->query($sql);
-			
-			if(strlen(sanitize($_POST['return'], 3)) > 1) {
-				$return = sanitize($_POST['return'], 3);
-			} else {
-				$return =  my_pligg_base.'/';
-			}
-			
-			define('logindetails', $username . ";" . $password . ";" . $return);
+				$sql = "DELETE FROM " . table_login_attempts . " WHERE login_ip='$lastip' ";
+				$db->query($sql);
 
-			$vars = '';
-			check_actions('login_success_pre_redirect', $vars);
+				if(strlen(sanitize($_POST['return'], 3)) > 1) {
+					$return = sanitize($_POST['return'], 3);
+				} else {
+					$return =  my_pligg_base.'/';
+				}
+				
+				define('logindetails', $username . ";" . $password . ";" . $return);
 
-			if(strpos($_SERVER['SERVER_SOFTWARE'], "IIS") && strpos(php_sapi_name(), "cgi") >= 0){
-				echo '<SCRIPT LANGUAGE="JavaScript">window.location="' . $return . '";</script>';
-				echo $main_smarty->get_config_vars('PLIGG_Visual_IIS_Logged_In') . '<a href = "'.$return.'">' . $main_smarty->get_config_vars('PLIGG_Visual_IIS_Continue') . '</a>';
-			} else {
-				header('Location: '.$return);
-			}
-			die;
+				$vars = '';
+				check_actions('login_success_pre_redirect', $vars);
+
+				if(strpos($_SERVER['SERVER_SOFTWARE'], "IIS") && strpos(php_sapi_name(), "cgi") >= 0){
+					echo '<SCRIPT LANGUAGE="JavaScript">window.location="' . $return . '";</script>';
+					echo $main_smarty->get_config_vars('PLIGG_Visual_IIS_Logged_In') . '<a href = "'.$return.'">' . $main_smarty->get_config_vars('PLIGG_Visual_IIS_Continue') . '</a>';
+				} else {
+					header('Location: '.$return);
+				}
+				die;
 		    }
 		}
 	}

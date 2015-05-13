@@ -5,8 +5,10 @@
         {if strlen($attachmentInfo->Description) > 0}
             <span class="attachmentDescription">{$attachmentInfo->Description}</span>
         {/if}
-        <span class="deleteFileBtnWrapper">
-            <i class="deleteFileBtn icon-remove" title="remove this file" onclick="fileManager.deleteFile(this, '{$attachmentInfo->Title}', '{$appRootPath}/fileManagers/deleteSourceAttachment.php?fileId={$attachmentInfo->FileId}')"></i>
-        </span>
+        {if $allowDeleteFiles == "true"}
+            <span class="deleteFileBtnWrapper">
+                <i class="deleteFileBtn icon-remove" title="remove this file" onclick="fileManager.deleteFile(this, '{$attachmentInfo->Title}', '{$appRootPath}/fileManagers/deleteSourceAttachment.php?fileId={$attachmentInfo->FileId}')"></i>
+            </span>
+        {/if}
     </li>
 {/foreach}

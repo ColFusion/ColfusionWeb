@@ -1,0 +1,56 @@
+<html>
+<head>
+
+
+	<script type="text/javascript" src="/Colfusion/javascripts/jquery-1.9.1.min.js"></script>
+				
+		
+	
+
+</head>
+<body>
+<form class='upload-form' name='upload_form[]' id='upload_form' action='http://localhost:8080/ColFusionServer/Wizard/acceptFileFromWizard' method='post' enctype='multipart/form-data'> 
+	<input type='hidden' name='phase' value='0'> 
+    <input type='hidden' name='sid' id="uploadFormSid" value='0'>
+    <input type='hidden' name='uploadTimestamp' id="uploadTimestamp" value='0'>
+    <p id='tohide' style="margin-bottom: 0;"> 
+        <select name="fileType" id="uploadFileType">
+            <option value="dataFile">CSV, Excel File</option>
+            <option value="dbDump">Database Dump File</option>
+        </select>                              
+        <select name="excelFileMode" id="excelFileMode" style="display: none;">
+            <option value="append">Append data into one table</option>
+            <option value="join">View each file as a table</option>
+        </select>
+        <select name="dbType" id="dbType" style="display:none;">
+            <option value="MySQL">MySQL</option>
+            <option value="PostgreSQL">PostgreSQL</option>
+        </select>
+        <label for='upload_file'>
+            <b>Select file:</b>
+        </label>
+        <input name='upload_file' type='file' size='15' style="color:white;" multiple/>
+        <input name='upload_file' type='file' size='15' style="color:white;" multiple/>
+        <!--<span id='uploadWidgetCover'>No file chosen</span> -->                        
+    </p>
+    <div id="filenameListContainer">
+        <table data-bind="foreach: fileInfos" class="filenameList">                                   
+            <tr>
+                <td data-bind="text: $data.files[0].name"></td>
+                <td><i data-bind="click: $parent.removeFileInfo.bind($data, $index)" class="icon-remove-sign" style="margin-left: 10px;"></i></td>
+            </tr>
+        </table>
+    </div>
+    <div id='uploadPanel'>
+        <div class='progress' id='uploadProgressBar' style='display: none;'>
+            <div class='bar'></div>                             
+        </div>                      
+        <input type='button' name='Submit' value='Upload' id='uploadBtn' style='display:none;' class='btn btn-primary' />
+        <span id='uploadProgressText'></span>
+    </div>
+    <p id='uploadMessage'></p>
+    <input type="submit" value="go"/>
+</form>
+
+</body>
+</html>

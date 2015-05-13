@@ -2,19 +2,27 @@ var importWizard = (function () {
     var importWizard = {};
 
     importWizard.loadingGif = "";
-    importWizard.dataMatchingProgressViewModel = new ProgressBarViewModel();
 
-    importWizard.Init = function () {
-        wizardFromFile.Init();
+    importWizard.wizardDataMatchingStepViewModel = null;
 
-        $.ajaxSetup({
-            data: {
-                sid: sid
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                triggerError(jqXHR, textStatus, errorThrown);
-            }
-        });
+    importWizard.wizardUploadDatasetViewModel = new WizardUploadDatasetViewModel();
+
+    importWizard.sid = "";
+
+    importWizard.Init = function (sid, userId) {
+        importWizard.sid = sid;
+        wizardFromFile.Init(sid);
+
+       
+
+        // $.ajaxSetup({
+        //     data: {
+        //         sid: sid
+        //     },
+        //     error: function (jqXHR, textStatus, errorThrown) {
+        //         triggerError();
+        //     }
+        // });
 
         $("#computer").click(function () {
             $('#divFromComputer').show();
@@ -91,23 +99,25 @@ var importWizard = (function () {
             $('#h4').hide();
         });
 
-        $('#toggleAllColumns').change(function () {
-            $('input[name="columns[]"]').prop('checked', this.checked);
-        });
-
         $("#done").click(function () {
-            document.getElementById("final").disabled = false;
+            document.getElementById("finishYourSubmissionButton").disabled = false;
+            document.getElementById("finishYourPrivateSubmissionButton").disabled = false;
             finishSubmittingData();
         });
 
         $("img").tooltip();
 
+        
         initBootstrapWizard();
-        importWizard.loadingGif = "<img src='" + my_pligg_base
-                + "/templates/wistie/images/ajax-loader_cp.gif'/>";
 
-        ko.applyBindings(importWizard.dataMatchingProgressViewModel, document
-                .getElementById('dataMatchingStepCard'));
+        
+        importWizard.loadingGif = "<img src='" + my_pligg_base + "/templates/wistie/images/ajax-loader_cp.gif'/>";
+
+        //ko.applyBindings(importWizard.wizardUploadDatasetViewModel, document.getElementById('filenameListContainer'));
+
+        importWizard.wizardDataMatchingStepViewModel = new WizardDataMatchingStepViewModel(sid, userId);
+
+        ko.applyBindings(importWizard.wizardDataMatchingStepViewModel, document.getElementById('dataMatchingStepCard'));
     };
 
     // ***********************************************************************************************
@@ -139,37 +149,31 @@ var importWizard = (function () {
                         metadata.push({
                             'category': metaCheckboxes[j].value,
                             'suggestedValue': document
-                                    .getElementsByName(suggest)[j].value
+									.getElementsByName(suggest)[j].value
                         });
                     }
                 }
 
-                var tableName = document
-                                    .getElementsByName('dname_value_tableName')[i].value;
-
                 result
-                        .push({
-                            'originalDname': checkboxes[i].value,
-                            'newDname': document.getElementsByName('Dname')[i].value,
-                            'type': document
-                                    .getElementsByName('dname_value_type')[i].value,
-                            'unit': document
-                                    .getElementsByName('dname_value_unit')[i].value,
-                            'description': document
-                                    .getElementsByName('dname_value_description')[i].value,
-                            'tableName': tableName,
-                            'metadata': metadata,
-                            'constantValue' : document
-                                    .getElementsByName('constant_value')[i].value,
-                            'missingValue' : document
-                                    .getElementsByName('missing_value')[0].value
-                        });
+						.push({
+						    'originalDname': checkboxes[i].value,
+						    'newDname': document.getElementsByName('Dname')[i].value,
+						    'type': document
+									.getElementsByName('dname_value_type')[i].value,
+						    'unit': document
+									.getElementsByName('dname_value_unit')[i].value,
+						    'description': document
+									.getElementsByName('dname_value_description')[i].value,
+						    'tableName': document
+									.getElementsByName('dname_value_tableName')[i].value,
+						    'metadata': metadata
+						});
             }
         }
 
         return result;
     };
-    
+
     importWizard.getDataMatchingLoadingProgress = function () {
         if (getImportSource() == "database") {
             importWizard.dataMatchingProgressViewModel.stop();
@@ -177,24 +181,7 @@ var importWizard = (function () {
             return wizardFromFile.getLoadingTime();
         }
     };
-
-    importWizard.passInfofromDisplayOptionsStep = function () {
-        $('#dataMatchingTable').empty();
-        if (getImportSource() == "database") {
-            var deferred = wizardFromDB
-                    .passSelectedTablesFromDisplayOptionStep();
-        } else {
-            var deferred = wizardFromFile.passSheetInfoFromDisplayOptionStep();
-        }
-        return deferred.done(function (data) {
-            importWizard.showDataMatchingStep(data);
-        });
-    };
-
-    importWizard.showDataMatchingStep = function (data) {
-        $('#dataMatchingTable').html(data);
-        $('#dataMatchingStepInProgress').hide();
-    };
+    
     // ***********************************************************************************************
 
     /** ********** */
@@ -202,20 +189,20 @@ var importWizard = (function () {
     /* Helper functions */
 
     function initBootstrapWizard() {
-        $.fn.wizard.logging = false;
+        $.fn.wizard.logging = true;
 
-        wizard = $("#wizard-demo").wizard();
+        wizard = $("#dataSubmissionWizardContainer").wizard();
 
         wizard.cards['displayOptionsStepCard']
-                .on(
-                        "validate",
-                        function (card) {
-                            if (getImportSource() == 'database') {
-                                return isDbSourceSelected($('#displayOptoinsStepCardFromDBForm'));
-                            } else {
-                                return isFileSourceSelected($('#displayOptoinsStepCardFromFileForm'));
-                            }
-                        });
+				.on(
+						"validate",
+						function (card) {
+						    if (getImportSource() == 'database') {
+						        return isDbSourceSelected($('#displayOptoinsStepCardFromDBForm'));
+						    } else {
+						        return isFileSourceSelected($('#displayOptoinsStepCardFromFileForm'));
+						    }
+						});
 
         $(".chzn-select").chosen();
 
@@ -232,62 +219,32 @@ var importWizard = (function () {
         wizard.cards["UploadOptionStepCard"].on("validated", function (card) {
         });
 
-        wizard.cards["displayOptionsStepCard"].on("selected",
-                displayOptionsStepCardOnLoad);
+        wizard.cards["displayOptionsStepCard"].on("selected", function(card) {
+				displayOptionsStepCardOnLoad(card);
+            });
 
         wizard.cards["dataMatchingStepCard"].on("selected", function (card) {
             wizard.disableNextButton();
 
-            importWizard.dataMatchingProgressViewModel.isProgressing(true);
-            var deferred = importWizard.getDataMatchingLoadingProgress();
-
-            if (deferred) {
-                deferred.done(function (estimatedSeconds) {
-                    importWizard.dataMatchingProgressViewModel.start(estimatedSeconds * 1000);
-                    importWizard.passInfofromDisplayOptionsStep().done(
-                            function () {
-                                wizard.enableNextButton();
-                            }).always(function () {
-                                importWizard.dataMatchingProgressViewModel.stop();
-                            });
-                });
-            } else {
-                importWizard.passInfofromDisplayOptionsStep().done(function () {
+            $('#dataMatchingStepInProgress').show();
+            
+            //TODO: the settings should be send as a general json, so it should not depend on the source type.
+            var sourceSettings = wizardFromFile.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
+            importWizard.wizardDataMatchingStepViewModel.fetchVariables(getImportSource(), sourceSettings, function () {
                     wizard.enableNextButton();
+                    $('#dataMatchingStepInProgress').hide();
                 });
-            }
         });
 
-        wizard.on("submit", function (wizard) {
-            $('#dataMatchingStepInProgress').show();
+        wizard.on("submit", function(wizard) {
+            //TODO: I don't know, but if not wrapping it in the functino here, the onWizard... got called on page load
 
-            $('button.wizard-close').hide();
-            execute().done(
-                    function (resultJson) {
-                        $('button.wizard-close').show();
-
-                        $("#exe").html(resultJson.message);
-                        if (resultJson.isSuccessful) {
-                            wizard.trigger("success");
-
-                            wizard.hideButtons();
-                            wizard._submitting = false;
-                            wizard.showSubmitCard("success");
-
-                            $('#fromDataSetWrapper').find('.sidInput').val(
-                                    'New Dataset');
-                        } else {
-                            wizard.trigger("failure");
-                            $("#exe").html(resultJson.message);
-                        }
-                    });
+            importWizard.onWizardSubmitClick(wizard);
         });
 
         wizard.on("reset", function (wizard) {
             wizardFromFile.resetFileUploadForm();
             wizard.setSubtitle("");
-            wizard.el.find("#new-server-fqdn").val("");
-            wizard.el.find("#new-server-name").val("");
         });
 
         wizard.el.find(".wizard-success .im-done").click(function () {
@@ -295,9 +252,9 @@ var importWizard = (function () {
         });
 
         wizard.el.find(".wizard-success .create-another-server").click(
-                function () {
-                    wizard.reset();
-                });
+				function () {
+				    wizard.reset();
+				});
 
         $("#open-wizard").click(function () {
 
@@ -307,11 +264,81 @@ var importWizard = (function () {
 
             wizard.show();
             wizard.disableNextButton();
+
+            importWizard.wizardDataMatchingStepViewModel.atLeastOneVariableChecked.subscribe(function(newValue) {
+
+                if (newValue) {
+                    wizard.enableNextButton();
+                }
+                else {
+                    wizard.disableNextButton();
+                }
+            });
+
             return false;
         });
     }
 
+    // Performs submission of data matching staff and triggers data load on the server (e.g. ktr exec)
+    // Also transitions on the last page of the wizard where the message of success/or failure will be shown.
+    importWizard.onWizardSubmitClick = function(wiz) {
+        $('#dataMatchingStepInProgress').show();
+
+        $('button.wizard-close').hide();
+
+        var submitDataDeffered = importWizard.wizardDataMatchingStepViewModel.getSubmitDataAsDeffered(getImportSource());
+
+        submitDataDeffered.done(function(data) {
+            debugger;
+            
+            if (data.isSuccessful) {
+                var tiggerDataLoadDeffered = importWizard.triggerDataLoadOnServerAsDeffered();
+
+                tiggerDataLoadDeffered.done(function(data) {
+                    if (data.isSuccessful) {
+                        wizard.trigger("success");
+
+                        wizard.hideButtons();
+                        wizard._submitting = false;
+                        wizard.showSubmitCard("success");
+
+                        $('#fromDataSetWrapper').find('.sidInput').val('New Dataset');
+                    }
+                    else {
+                        wiz.trigger("failure");
+                        $("#messageContainer").html(data.message);
+                    }
+                })
+                .fail(function(data) {
+                    wiz.trigger("failure");
+                    $("#messageContainer").html("Could not perform submission request. Please try again later.");
+                });
+            }
+            else {
+                wiz.trigger("failure");
+                $("#messageContainer").html(data.message);
+            }
+        })
+        .error(function(data) {
+            wiz.trigger("failure");
+            $("#messageContainer").html("Could not perform submission request. Please try again later.");
+        });
+    };
+
+    importWizard.triggerDataLoadOnServerAsDeffered = function() {
+        return $.ajax({
+            url: ColFusionServerUrl + "/Wizard/triggerDataLoad/" + importWizard.sid, //my_pligg_base + '/DataImportWizard/generate_ktr.php',
+            type: 'GET',
+            dataType: 'json',
+            contentType: "application/json",
+            crossDomain: true
+        });
+    }
+
     function finishSubmittingData() {
+       $("#dockcontent"). removeClass('hidden').addClass('show');
+       $("#dataSubmissionStep3Container"). removeClass('hidden').addClass('show');
+       
         dataPreviewViewModel.getTablesList();
         relationshipViewModel.mineRelationships(10, 1);
         loadInitialFromDataSet();
@@ -326,19 +353,17 @@ var importWizard = (function () {
                 console.log("callExecuteKtr");
                 return $.ajax({
                     url: my_pligg_base
-                            + "/DataImportWizard/execute_ktr.php?sid="
-                            + $('#sid').val(),
+							+ "/DataImportWizard/execute_ktr.php?sid="
+							+ $('#sid').val(),
                     type: 'get',
                     dataType: 'json'
                 });
             };
 
             return $.when(wizardFromFile.executeFromFile())
-                    .then(callExecuteKtr);
+					.then(callExecuteKtr);
         }
     }
-
-    
 
     // Step 2
     function displayOptionsStepCardOnLoad(card) {
@@ -349,15 +374,15 @@ var importWizard = (function () {
 
             $("#displayOptoinsStepCardFromDB").append(importWizard.loadingGif);
             wizardFromDB.LoadDatabaseTables($("#dbServerName").val(),
-                    $("#dbServerUserName").val(), $("#dbServerPassword").val(),
-                    $("#dbServerDatabase").val(), $('#dbServerPort').val(),
-                    $('#selectDBServer').val(), $('#isImport').val()).done(
-                    function (JSON_Response) {
-                        $('#loadingProgressContainer').hide();
-                        printTableList($("#displayOptoinsStepCardFromDB"),
-                                JSON_Response);
-                        wizard.enableNextButton();
-                    });
+					$("#dbServerUserName").val(), $("#dbServerPassword").val(),
+					$("#dbServerDatabase").val(), $('#dbServerPort').val(),
+					$('#selectDBServer').val(), $('#isImport').val()).done(
+					function (JSON_Response) {
+					    $('#loadingProgressContainer').hide();
+					    printTableList($("#displayOptoinsStepCardFromDB"),
+								JSON_Response);
+					    wizard.enableNextButton();
+					});
         } else {
             $("#displayOptoinsStepCardFromFile").hide();
             $("#displayOptoinsStepCardFromDB").hide();
@@ -365,22 +390,25 @@ var importWizard = (function () {
             wizard.disableNextButton();
 
             $('#loadingProgressContainer').show();
-            wizardFromFile.createKtrFiles().done(function () {
-                wizardFromFile.getFileSources().done(function (jsonResponse) {
-                    var filenames = [];
-                    for (var i = 0; i < jsonResponse.data.length; i++) {
-                        var fileSource = jsonResponse.data[i];
-                        filenames.push(fileSource.filename);
-                    }
-                    wizardFromFile.showExcelFile(filenames);
-                }).done(function () {
+          //  var deffered = wizardFromFile.createKtrFiles();
+
+           // deffered.done(function(data) {
+          //      alert("iamdone");
+
+            try {
+                var deffered = wizardFromFile.getFileSources();
+                
+                deffered.done(function(data) {
+                        $('#loadingProgressContainer').hide();
+                        $("#displayOptoinsStepCardFromFile").show();
+                        wizard.enableNextButton();
+                }).fail(function(data) {
                     $('#loadingProgressContainer').hide();
-                    $("#displayOptoinsStepCardFromFile").show();
-                    wizard.enableNextButton();
                 });
-            }).fail(function () {
-                $('#loadingProgressContainer').hide();
-            });
+            }
+            catch(err) {
+                alert(err);
+            }
         }
     }
 
@@ -390,12 +418,12 @@ var importWizard = (function () {
         if (JSON_Response.isSuccessful) {
             var el = "<p>Tables in selected database:</p><div style='height: 80%; overflow-y: scroll;'>";
             for (var i = 0; JSON_Response.data
-                    && i < JSON_Response.data.length; i++) {
+					&& i < JSON_Response.data.length; i++) {
                 el += "<label style='display: inline;'><input type='checkbox' name='table[]' value='"
-                        + JSON_Response.data[i]
-                        + "'/>"
-                        + JSON_Response.data[i]
-                        + "</lable><br/>";
+						+ JSON_Response.data[i]
+						+ "'/>"
+						+ JSON_Response.data[i]
+						+ "</lable><br/>";
             }
             el += "</div>";
         } else {
@@ -407,7 +435,7 @@ var importWizard = (function () {
 
     function getImportSource() {
         if ($("input[name='place']:checked").val() == "database"
-                || $('#uploadFileType').val() == 'dbDump') {
+				|| $('#uploadFileType').val() == 'dbDump') {
             return 'database';
         } else {
             return 'file';
@@ -421,35 +449,32 @@ var importWizard = (function () {
     function isFileSourceSelected(inputContainer) {
         $(inputContainer).parsley('destroy');
         $(inputContainer).parsley(
-                {
-                    validators: {
-                        excelcol: function (val, attrVal) {
-                            var isValid = Boolean(val);
-                            var Acode = 'A'.charCodeAt(0);
-                            var Zcode = 'Z'.charCodeAt(0)
+				{
+				    validators: {
+				        excelcol: function (val, attrVal) {
+				            var isValid = Boolean(val);
+				            var Acode = 'A'.charCodeAt(0);
+				            var Zcode = 'Z'.charCodeAt(0)
 
-                            for (var i = 0; i < val.length; i++) {
-                                var charCode = val.charCodeAt(i);
-                                isValid = isValid && Acode <= charCode
-                                        && Zcode >= charCode;
-                            }
+				            for (var i = 0; i < val.length; i++) {
+				                var charCode = val.charCodeAt(i);
+				                isValid = isValid && Acode <= charCode
+										&& Zcode >= charCode;
+				            }
 
-                            return isValid;
-                        }
-                    },
-                    messages: {
-                        excelcol: "This value should be a valid excel column"
-                    }
-                });
+				            return isValid;
+				        }
+				    },
+				    messages: {
+				        excelcol: "This value should be a valid excel column"
+				    }
+				});
         var isValid = $(inputContainer).parsley('validate');
         return isValid;
     }
 
-    function triggerError(jqXHR, textStatus, errorThrown) {
+    function triggerError() {
         console.log('error is triggered');
-        console.log(jqXHR);
-        console.log(textStatus);
-        console.log(errorThrown);
         wizard.trigger("error");
         wizard._submitting = false;
         wizard.showSubmitCard("error");
@@ -457,26 +482,6 @@ var importWizard = (function () {
     }
 
     /** ***************** */
-    function selectChange(event){
-    var selValue=$(event).val();
-    if(selValue=="STRING"){
-        
-        $("#unit_number").hide();
-        $("#unit_date").hide();
-    }
-    if(selValue=="INT"){
-        $("#unit_number").show();
-        $("#unit_date").hide();
-        }
-    if(selValue=="DATE"){
-        $("#unit_date").show();
-        $("#unit_number").hide();
-        }
-    
-    }
-    $(document).ready(function(){
-    $("#unit_number").hide();
-    $("#unit_date").hide();
-    });
+
     return importWizard;
 })();

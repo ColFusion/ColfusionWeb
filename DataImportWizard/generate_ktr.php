@@ -1,9 +1,8 @@
 <?php
 
-set_time_limit(3600);
+set_time_limit(0);
 ini_set('session.gc_maxlifetime', 3 * 60 * 60);
-require_once realpath(dirname(__FILE__)) . '/../RESTCaller/CurlCaller.php';
-require_once realpath(dirname(__FILE__)) . '/../conf/ColFusion_JAVA_REST_API.php';
+
 include_once('../Smarty.class.php');
 $main_smarty = new Smarty;
 
@@ -22,6 +21,10 @@ include_once 'NothingFilter.php';
 include_once 'FileUtil.php';
 include_once 'KTRManager.php';
 
+Logger::configure(realpath(dirname(__FILE__)) . '/../conf/log4php.xml');
+
+$logger = Logger::getLogger("generalLog");
+
 if (isset($_POST["phase"]) && is_numeric($_POST["phase"]))
     $phase = $_POST["phase"];
 else if (isset($_GET["phase"]) && is_numeric($_GET["phase"]))
@@ -31,16 +34,17 @@ else
 
 $sid = getSid();
 $dataSource_dir = "upload_raw_data/$sid/";
-$dataSource_dirPath = mnmpath . $dataSource_dir;
+$dataSource_dirPath = mnmpath . $dataSource_dir; //  my_base_url . $dataSource_dir
 $excelFileMode = $_SESSION["excelFileMode_$sid"];
+$ext = $_SESSION["fileExt_$sid"];
+
 switch ($phase) {
     case 0:
-        // When submit btn in step1 is clicked, the function executes.
-        // var_dump($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode);
-        createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode);
+// When submit btn in step1 is clicked, the function executes.
+        createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode, $ext);
         break;
     case 1:
-        // when jump to step 3, this function is called.
+// when jump to step 3, this function is called.
         addSheetsSettings($sid, $dataSource_dirPath);
         match_schema($sid);
         break;
@@ -64,8 +68,7 @@ switch ($phase) {
         get_sid();
         break;
     case 8:
-        //echo $excelFileMode;
-        getFileSources($sid);
+        getFileSources($sid, $dataSource_dir, $dataSource_dirPath);
         break;
     case 9:
         $filenames = $_SESSION["ktrArguments_$sid"]["filenames"];
@@ -94,54 +97,59 @@ function getSid() {
     return $sid;
 }
 
-function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode) {
-
-    $template = 'excel-to-database.ktr'; //'excel-to-target_schema.ktr';
-    $newDir = mnmpath . "temp/$sid";
+function createTemplate($sid, $dataSource_dir, $dataSource_dirPath, $excelFileMode, $ext) {
 
 
-    try {
-        if (!file_exists($newDir)) {
-        mkdir($newDir);
+
+    if ($ext == 'csv')
+        $template = 'csv-to-database.ktr';
+    else
+        $template = 'excel-to-database.ktr'; //'excel-to-target_schema.ktr';
+
+
+    $newDir = "temp/$sid";
+    if (!file_exists(mnmpath . $newDir)) {
+        mkdir(mnmpath . $newDir);
     }
+
+  
+
+
     if ($excelFileMode == 'append') {
-        $ktrFilePath = "$newDir/$sid.ktr";
+        $ktrFilePath = mnmpath . "$newDir/$sid.ktr";
+        $ktrFileURL = my_base_url . my_pligg_base . "/$newDir/$sid.ktr";
         if (!file_exists($ktrFilePath)) {
             copy($template, $ktrFilePath);
         }
         
         foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
-            if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)  || FileUtil::isCSVFile($dataSource_filename)) {
+            if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename)) {
                 $filenames[] = $dataSource_filename;
                 $filePaths[] = $dataSource_dirPath . $dataSource_filename;
                 $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
             }
         }
-
-        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid);
+        $ktrManagers[$filenames[0]] = new KTRManager($template, $ktrFilePath, $filePaths, $sid, $fileURLs, $ktrFileURL, $ext);
+        
     } else {
-
-echo $excelFileMode ;
-
         foreach (scandir($dataSource_dirPath) as $dataSource_filename) {
             if (FileUtil::isXLSXFile($dataSource_filename) || FileUtil::isXLSFile($dataSource_filename) || FileUtil::isCSVFile($dataSource_filename)) {
                 $filenames[] = $dataSource_filename;
                 $filePath = $dataSource_dirPath . $dataSource_filename;
                 $filePaths[] = $filePath;
                 $fileURLs[] = my_base_url . my_pligg_base . "/$dataSource_dir" . $dataSource_filename;
-                $ktrFilePath = "$newDir/$dataSource_filename.ktr";
+                $ktrFilePath = mnmpath . "$newDir/$dataSource_filename.ktr";
+                $ktrFileURL = my_base_url . my_pligg_base . "/$newDir/$dataSource_filename.ktr";
                 if (!file_exists($ktrFilePath)) {
                     copy($template, $ktrFilePath);
                 }
-                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid);
+                $ktrManagers[$dataSource_filename] = new KTRManager($template, $ktrFilePath, array($filePath), $sid, $fileURLs, $ktrFileURL, $ext);
+                
             }
         }
-    }
-    } catch (Exception $e) {
-        var_dump($e);
-    }
 
-    
+
+    }
 
     $_SESSION["ktrArguments_$sid"]["ktrManagers"] = serialize($ktrManagers);
     $_SESSION["ktrArguments_$sid"]["filenames"] = $filenames;
@@ -153,37 +161,28 @@ function getFileSources($sid) {
 
     $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
     if (isset($ktrManagers)) {
-           $json["isSuccessful"] = true;
-
+        $json["isSuccessful"] = true;
         foreach ($ktrManagers as $ktrManager) {
             $paths = $ktrManager->getFilePaths();
-            //echo count($paths);
-            $json["data"][] = getSheets($paths[0]);
+            $sheetsInfo = getSheets($paths[0]);
+            $sheetsInfo->ext = $ktrManager->getExt();
+
+            $json["data"][] = $sheetsInfo;
         }
     } else {
         $json["isSuccessful"] = false;
     }
+
     echo json_encode($json);
 }
 
 function getExcelPreview($sid, $dataSource_dirPath) {
-    //global $previewArray;
-    /*$filename = $_POST['filename'];
-    $filePath = "/RESTfulProject/REST/Preview/PreviewXls?sid=" . $dataSource_dirPath . $filename;
+    $filename = $_POST['filename'];
+    $filePath = $dataSource_dirPath . $filename;
     $previewRowsPerPage = $_POST['previewRowsPerPage'];
     $previewPage = $_POST['previewPage'];
-    //loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage);
-    //echo json_encode(getSingleExcelPreview($sid, $filename));
-    $curlCaller = new CurlCaller();
-    $res = $curlCaller->CallAPI("GET", REST_HOST . ":" . REST_PORT . $filePath, false);
-    $previewArray=array();
-    $previewArray=json_decode($res);*/
-    $previewRowsPerPage = $_POST['previewRowsPerPage'];
-    $previewPage = $_POST['previewPage'];
-    $_SESSION["excelPreviewPage_$sid"][$filename] = $previewPage;
-    $_SESSION["excelPreviewRowsPerPage_$sid"][$filename] = $previewRowsPerPage;
-    $previewArray=$_SESSION["previewArray"];
-    echo json_encode($previewArray);
+    loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage);
+    echo json_encode(getSingleExcelPreview($sid, $filename));
 }
 
 function loadSingleExcelPreview($sid, $filePath, $previewPage, $previewRowsPerPage) {
@@ -202,22 +201,12 @@ function getSingleExcelPreview($sid, $filename) {
 
 function getSheets($filePath) {
     $filename = pathinfo($filePath, PATHINFO_BASENAME);
-    $filePath = "/RESTfulProject/REST/Preview/PreviewXls?sid=" . $filePath . "&function=GetSheets";
-    //$sheets = Process_excel::getSheetName($filePath);
-    //$sheetNames = new stdClass();
-    //$sheetNames->filename = $filename;
-    //$sheetNames->worksheets = $sheets;
-    $curlCaller = new CurlCaller();
-    $res = $curlCaller->CallAPI("GET", REST_HOST . ":" . REST_PORT . $filePath, false);
-    $json=array();
-    $json=json_decode($res);
+    $sheets = Process_excel::getSheetName($filePath);
+
     $sheetNames = new stdClass();
     $sheetNames->filename = $filename;
-    $sheetNames->worksheets = $json->GetSheets->worksheets;
-    $previewArray=$json->Preview;
-    $_SESSION["previewArray"] = $previewArray;
-    $_SESSION["sheetNames"] = $sheetNames->worksheets;
-    $_SESSION["columnType"] = $json->ColumnType;
+    $sheetNames->worksheets = $sheets;
+
     return $sheetNames;
 }
 
@@ -240,70 +229,31 @@ function addSheetSettings($sheetsRange, $dataSource_filePath, $sid) {
     $sheets = array($arr_sheet_name, $arr_start_row, $arr_start_column);
 
     //check the headers from different sheets
-    /*if (isReloadNeeded($filename, $arr_start_row)) {
+    if (isReloadNeeded($filename, $arr_start_row)) {
         $process = new MatchSchemaExcelProcessor($dataSource_filePath, $sheetsRange);
     } else {
         $process = unserialize($_SESSION["excelPreview_$sid"][pathinfo($dataSource_filePath, PATHINFO_BASENAME)]);
-    }*/
+    }
 
-    //$base_sheetNameNumber = Process_excel::getSheetNameIndex($dataSource_filePath, $sheets[0][0]);
-    $base_sheetNameNumber = getSheetNameIndex($dataSource_filePath, $sheets[0][0]);
-    //$baseHeader = $process->getHeader($base_sheetNameNumber, $sheets[1][0], $sheets[2][0]);var_dump($baseHeader);
-    $baseHeader = getHeader($base_sheetNameNumber, $sheets[1][0], $sheets[2][0]);
+    $base_sheetNameNumber = Process_excel::getSheetNameIndex($dataSource_filePath, $sheets[0][0]);
+    $baseHeader = $process->getHeader($base_sheetNameNumber, $sheets[1][0], $sheets[2][0]);
     for ($i = 1; $i < count($sheets[0]); $i++) {
-        $arr_sheetNameNumber = getSheetNameIndex($dataSource_filePath, $sheets[0][$i]);
-        //$arrHeader = $process->getHeader($arr_sheetNameNumber, $sheets[1][$i], $sheets[2][$i]);
-        $arrHeader = getHeader($arr_sheetNameNumber, $sheets[1][$i], $sheets[2][$i]);
+        $arr_sheetNameNumber = $process->getSheetNameIndex($dataSource_filePath, $sheets[0][$i]);
+        $arrHeader = $process->getHeader($arr_sheetNameNumber, $sheets[1][$i], $sheets[2][$i]);
         $diff_arr = array_diff($baseHeader, $arrHeader);
         if (!empty($diff_arr) || count($baseHeader) != count($arrHeader))
             exit("<div style=\"color:red\">Please choose the right row and column to get the same headers from different sheets</div>");
     }
 
     $sheetHeader[$arr_sheet_name[0]] = $baseHeader;
+
     $_SESSION["ktrArguments_$sid"][$filename]['baseHeader'] = $baseHeader;
     $_SESSION["ktrArguments_$sid"][$filename]["sheetNamesRowsColumns"] = $sheets;
 
     // each column name in option value will be prefixed with word file.
     return $sheetHeader[$arr_sheet_name[0]];
 }
-function getHeader($arr_sheetNameNumber, $sheetNameRow, $sheetNameColumn) {
-    $sheetNames=$_SESSION["sheetNames"];
-    $previewArray=$_SESSION["previewArray"];
-    $baseheader=array();
-    $judge=0;
-    $i=0;
-    foreach ($previewArray as $previewarray) {
-        if($i==$arr_sheetNameNumber){
-            $rowIndex=1;
-            foreach ($previewarray as $row) {
-                if($sheetNameRow==$rowIndex){
-                    $columnIndex=0;
-                    foreach ($row as $cell) {
-                        if(($columnIndex==(PHPExcel_Cell::columnIndexFromString($sheetNameColumn)-1))||($judge==1)){
-                            $baseheader[PHPExcel_Cell::StringFromColumnIndex($columnIndex)]=$cell;
-                            $judge=1;
-                        }
-                        $columnIndex++;
-                    }
-                    return $baseheader;
-                }
-                $judge=0;
-                $rowIndex++;
-            }
-        }   
-        $i++;
-    }
-}
-function getSheetNameIndex($filePath, $sheetName) {
-    $sheetNames=$_SESSION["sheetNames"];
-    $j=0;
-    foreach ($sheetNames as $sheetname) {
-        if($sheetname==$sheetName)
-            return $j;
-        else
-            $j++;
-    }
-}
+
 function match_schema($sid) {
 
     $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
@@ -320,9 +270,6 @@ function add_normalizer($sid, $dataSource_dir, $dataSource_dirPath) {
     $ktrManagers = unserialize($_SESSION["ktrArguments_$sid"]["ktrManagers"]);
 
     $dataMatchingUserInputs = $_POST["dataMatchingUserInputs"];
-
-
-var_dump($_POST["dataMatchingUserInputs"]);
 
     if (!isset($_POST["dataMatchingUserInputs"])) {
         throw new Exception("Invalid arguments");

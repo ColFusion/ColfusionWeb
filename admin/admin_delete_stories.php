@@ -12,6 +12,10 @@ require_once(realpath(dirname(__FILE__)) . "/../DAL/ExternalDBHandlers/DatabaseH
 require_once(realpath(dirname(__FILE__)) . "/../DAL/Neo4JDAO.php");
 require_once(realpath(dirname(__FILE__)) . "/../DAL/QueryEngine.php");
 
+Logger::configure(realpath(dirname(__FILE__)) . '/conf/log4php.xml');
+
+$logger = Logger::getLogger("generalLog");
+
 check_referrer();
 
 // require user to log in
@@ -28,78 +32,90 @@ if($canIhaveAccess == 0){
 
 
 function delete_storylink($linkid) {
-    if (!is_numeric($linkid)) return;
-   
 
-    $query="SELECT * FROM " . table_links . " WHERE link_id = '$linkid'";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
-    else {$sql_array = mysql_fetch_object($result); }
+    $logger = Logger::getLogger("generalLog");
 
-//var_dump($sql_array);
+    try {
 
-    # delete the story link
-    $query="DELETE FROM " . table_links . " WHERE link_id = '$linkid'";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        if (!is_numeric($linkid)) return;
+       
 
-    # delete the story comments
-    $query="DELETE FROM " . table_comments . " WHERE comment_link_id = '$linkid'";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        $query="SELECT * FROM " . table_links . " WHERE link_id = '$linkid'";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        else {$sql_array = mysql_fetch_object($result); }
 
-    # delete the saved links
-    $query="DELETE FROM " . table_saved_links . " WHERE saved_link_id = '$linkid'";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        //var_dump($sql_array);
 
-    # delete the story tags
-    $query="DELETE FROM " . table_tags . " WHERE tag_link_id = '$linkid'";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        # delete the story link
+        $query="DELETE FROM " . table_links . " WHERE link_id = '$linkid'";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
 
-    # delete the story trackbacks
-    $query="DELETE FROM " . table_trackbacks . " WHERE trackback_link_id = '$linkid'";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        # delete the story comments
+        $query="DELETE FROM " . table_comments . " WHERE comment_link_id = '$linkid'";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
 
-    # delete the story votes
-    $query="DELETE FROM " . table_votes . " WHERE vote_link_id = '$linkid'";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        # delete the saved links
+        $query="DELETE FROM " . table_saved_links . " WHERE saved_link_id = '$linkid'";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
 
-    # delete additional categories
-    $query="DELETE FROM ".table_additional_categories." WHERE ac_link_id = '$linkid'";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        # delete the story tags
+        $query="DELETE FROM " . table_tags . " WHERE tag_link_id = '$linkid'";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
 
-    $sid = $sql_array->link_title_url;
+        # delete the story trackbacks
+        $query="DELETE FROM " . table_trackbacks . " WHERE trackback_link_id = '$linkid'";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
 
-    # delete target database if local
-    $query="SELECT * FROM ". table_prefix ."sourceinfo_DB WHERE sid = $sid";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
-    else {
-        $sql_array = mysql_fetch_object($result); 
+        # delete the story votes
+        $query="DELETE FROM " . table_votes . " WHERE vote_link_id = '$linkid'";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
 
-//var_dump($sql_array);
+        # delete additional categories
+        $query="DELETE FROM ".table_additional_categories." WHERE ac_link_id = '$linkid'";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
 
-        if ($sql_array->is_local == 1) {
-            // deleing the target db here.
-             
-            $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($sql_array->driver, $sql_array->user_name, $sql_array->password, $sql_array->source_database, $sql_array->server_address, $sql_array->port, $sql_array->is_local, $sql_array->linked_server_name);
-            $dbHandler->dropDatabase();
+        $sid = $sql_array->link_title_url;
+
+        # delete target database if local
+        $query="SELECT * FROM ". table_prefix ."sourceinfo_DB WHERE sid = $sid";
+        if (! $result=mysql_query($query)) {error_page(mysql_error());}
+        else {
+            $sql_array = mysql_fetch_object($result); 
+
+        //var_dump($sql_array);
+
+            if ($sql_array->is_local == 1) {
+                // deleing the target db here.
+                 
+                $dbHandler = DatabaseHandlerFactory::createDatabaseHandler($sql_array->driver, $sql_array->user_name, $sql_array->password, $sql_array->source_database, $sql_array->server_address, $sql_array->port, $sql_array->is_local, $sql_array->linked_server_name);
+                $dbHandler->dropDatabase();
+            }
+
+            $queryEngine = new QueryEngine();
+            $queryEngine->simpleQuery->dropLinkedServerIfExists($sql_array->linked_server_name);
         }
 
-        $queryEngine = new QueryEngine();
-        $queryEngine->simpleQuery->dropLinkedServerIfExists($sql_array->linked_server_name);
+    //TODO Add some error checking
+
+        //delete the sourceinfo which should triget casding deleting of all related info except cached queries and visualization stuff.
+        $query="DELETE FROM ".table_prefix."sourceinfo WHERE sid = $sid";
+        if (! $result=mysql_query($query)) {
+            $logger->error("in admin delete story " . mysql_error());
+            echo mysql_error();
+        }
+
+        //now the only thing left is Neo4J, need to delete node and all realtionships.
+        $neo4JDAO = new Neo4JDAO();
+
+        $neo4JDAO->deleteNodeBySid($sid);
+
+        // module system hook
+        $vars = array('link_id' => $linkid);
+        check_actions('admin_story_delete', $vars);
     }
-
-//TODO Add some error checking
-
-    //delete the sourceinfo which should triget casding deleting of all related info except cached queries and visualization stuff.
-    $query="DELETE FROM ".table_prefix."sourceinfo WHERE sid = $sid";
-    if (! $result=mysql_query($query)) {error_page(mysql_error());}
-
-    //now the only thing left is Neo4J, need to delete node and all realtionships.
-    $neo4JDAO = new Neo4JDAO();
-
-    $neo4JDAO->deleteNodeBySid($sid);
-
-    // module system hook
-    $vars = array('link_id' => $linkid);
-    check_actions('admin_story_delete', $vars);
+    catch (Exception $e) {
+        $logger->error("in admin delete story " . $e->getMessage());
+    }
 }
 
 

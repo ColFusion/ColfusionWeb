@@ -8,6 +8,17 @@
 
 <h1>{#PLIGG_Visual_Submit2_Header#}</h1>
 
+{literal}
+			<script type="text/javascript" language="JavaScript">
+				function checkForm() {
+					answer = true;
+					if (siw && siw.selectingSomething)
+						answer = false;
+					return answer;
+				}//
+			</script>
+    {/literal}
+
 <div id="submit">
 	<div id="submit_step_1_content">
 		{checkActionsTpl location="tpl_pligg_submit_step2_start"}

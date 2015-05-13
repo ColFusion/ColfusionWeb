@@ -82,7 +82,7 @@ function DataPreviewViewModel(sid) {
             var currentPage = data.Control.pageNo;
 
             var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
-            self.currentTable(new DataPreviewViewModelProperties.Table(tableName, transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
+            self.currentTable(new DataPreviewViewModelProperties.Table(self.sid, tableName, transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
             self.isError(false);
         }).error(function() {
             self.isError(true);

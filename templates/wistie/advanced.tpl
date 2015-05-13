@@ -54,7 +54,7 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <input data-bind="click: search" type="button" value="Search" />
+                    <input data-bind="click: search" type="button"  class="btn" value="Search" />
                     <img data-bind="visible: isSearching" style="margin-left: 5px;" src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />                   
                 </td>
             </tr>
@@ -94,9 +94,13 @@
             </div>
 
             <div class="buttonPanel" style="float: right;">
+            <!--
                 <button data-bind="click: openVisualizationPage" class="btn" title="Visualization">
                     <i class="icon-bar-chart"></i>
                 </button>
+            -->
+
+
                 <button data-bind="click: togglePreviewTable" class="btn" title="Preview Data" data-toggle="button">
                     <i class="icon-table"></i>
                 </button>
@@ -165,7 +169,7 @@
                             <div data-bind="slider: pathFilter, sliderOptions: {value: 10, min: 0, max: 10, step: 1}" id="pathSliderFilter" class="sliderFilter"></div>
                             <div data-bind="slider: dataMatchFilter, sliderOptions: {min: 0, max: 100, step: 10}" id="dataMatchSliderFilter" class="sliderFilter"></div>
                         </div>
-                        <button data-bind="click: filterSearchResults" style="margin-top: 5px;">Refresh</button>
+                        <button data-bind="click: filterSearchResults" class="btn">Refresh</button>
                     </div>
 
                     <div data-bind="foreach: paths" class="paths">
@@ -173,9 +177,12 @@
                             <div data-bind="with: pathObj" class="pathBody">
 
                                 <div class="buttonPanel" style="float: right;">
+                                <!--
                                     <button data-bind="click: $parent.openVisualizationPage" class="btn" title="Visualization">
                                         <i class="icon-bar-chart"></i>
                                     </button>
+                                    -->
+
                                     <button data-bind="click: $parent.togglePreview" class="btn" data-toggle="button">
                                         <i class="icon-table"></i>
                                     </button>
@@ -218,15 +225,55 @@
                                     <div>
                                         <span style="color: black;">Average Data overlap: </span>
                                         <span data-bind="text: Number($parent.avgDataMatchingRatio()).toFixed(2)" class="pathTitleText"></span>
-                                    </div>                                    
+                                    </div>    
+
                                 </div>
                             </div>
 
                             <div data-bind="visible: isPreviewShown()" class="pathDataPreview dataPreviewContainer">
                                 <div data-bind="visible: dataPreviewViewModel() && !dataPreviewViewModel().isLoading()" style="margin-top: 5px;">
+
+
+                                <section>
+
+                                    <h3 class="preview-title">Data Preview</h3>
+
+                                    <div class="sliderFilterContainer">
+                                        <div class="sliderFilterLabelContainer">                          
+                                            <table class="sliderFilterLabelTable">
+                                                <tr>
+                                                    <td class="labelTitle">Similarity Join Threshold</td>
+                                                    <td data-bind="text: similarityJoinSimThreshold()"></td>
+                                                </tr>                                               
+                                            </table>
+                                        </div>
+                                        <div class="sliderFilterSliderContainer">
+                                            <div data-bind="slider: similarityJoinSimThreshold, sliderOptions: {min: 0, max: 1, step: 0.1}" class="sliderFilter"></div>
+                                        </div>
+                                        <button data-bind="click: refreshPreview" class="btn">Refresh Data Preview</button>
+                                    </div>
+
+
+                                </section>
+
+
+
+
+
+
+
+
+
+
+                                   <!-- <div>
+                                        <span style="color: black;">Join Similarity Threshold: </span>
+                                        <input type="text" data-bind="value: similarityJoinSimThreshold" class="pathTitleText" />
+                                    </div>  
+
                                     <button data-bind="click: refreshPreview" class="btn" title="Refresh Preview Data">
                                         <i class="icon-refresh"></i>
-                                    </button>                                 
+                                    </button>    
+                                    -->                             
                                 </div>
                                 <div data-bind="visible: !dataPreviewViewModel() || dataPreviewViewModel().isLoading()" style="padding-top: 10px; padding-left: 30px;">Loading...</div>
                                 <!-- ko if: dataPreviewViewModel() -->
@@ -236,37 +283,41 @@
                             </div>
 
                             <div data-bind="visible: isMoreShown()" class="pathDetail" style="margin-top: 10px; width: 99%;">
-                                <div style="color: black;">Relationships: </div>
-                                <table class="pathRelTable tftable">
-                                    <tr>
-                                        <th>From</th>
-                                        <th>To</th>
-                                        <th>Confidence</th>
-                                    </tr>
-                                    <tbody data-bind="foreach: pathObj.relationships">
+                                 <section>
+
+                                    <h3 class="preview-title">Relationships</h3>
+                                    
+                                    <table class="pathRelTable tftable">
                                         <tr>
-                                            <td data-bind="template: { name: 'relInfo-template', data: sidFrom }"></td>
-                                            <td data-bind="template: { name: 'relInfo-template', data: sidTo }"></td>
-                                            <td data-bind="text: confidence, attr: { id:  'relConfidence_' + relId, 'class': 'relConfidence_' + relId }"></td>
-                                            <td>
-                                                <span data-bind="click: $parent.showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId, 'class': 'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
-                                            </td>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Confidence</th>
                                         </tr>
-                                        <tr data-bind="attr: { id:  'mineRelRec_' + relId }" style="display: none;">
-                                            <td class="relationshipInfo" colspan="5">
-                                                <div data-bind="attr: { id: 'relInfoLoadingIcon_' + relId }, visible: !$parent.isError[relId]()" class="relInfoLoadingIcon" style="text-align: center;">
-                                                    <img src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />
-                                                </div>
-                                                <div data-bind="attr: { id: 'relInfoErrorMessage_' + relId }, visible: $parent.isError[relId]()" style="text-align: center;">
-                                                    <span style="color: red;">Failed to load relationship information.</span>
-                                                </div>
-                                                <div data-bind="if: $parent.isRelationshipInfoLoaded[relId]() && !$parent.isError[relId]()">
-                                                    <div data-bind="with: $parent.relationshipInfos[relId]">{/literal}{include file='relationshipInfo.html'}{literal}</div>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                        <tbody data-bind="foreach: pathObj.relationships">
+                                            <tr>
+                                                <td data-bind="template: { name: 'relInfo-template', data: sidFrom }"></td>
+                                                <td data-bind="template: { name: 'relInfo-template', data: sidTo }"></td>
+                                                <td data-bind="text: confidence, attr: { id:  'relConfidence_' + relId, 'class': 'relConfidence_' + relId }"></td>
+                                                <td>
+                                                    <span data-bind="click: $parent.showMoreClicked.bind($data, relId), attr: { id:  'mineRelRecSpan_' + relId, 'class': 'mineRelRecSpan_' + relId }" style="cursor: pointer;">More...</span>
+                                                </td>
+                                            </tr>
+                                            <tr data-bind="attr: { id:  'mineRelRec_' + relId }" style="display: none;">
+                                                <td class="relationshipInfo" colspan="5">
+                                                    <div data-bind="attr: { id: 'relInfoLoadingIcon_' + relId }, visible: !$parent.isError[relId]()" class="relInfoLoadingIcon" style="text-align: center;">
+                                                        <img src="{/literal}{$my_pligg_base}{literal}/images/ajax-loader.gif" />
+                                                    </div>
+                                                    <div data-bind="attr: { id: 'relInfoErrorMessage_' + relId }, visible: $parent.isError[relId]()" style="text-align: center;">
+                                                        <span style="color: red;">Failed to load relationship information.</span>
+                                                    </div>
+                                                    <div data-bind="if: $parent.isRelationshipInfoLoaded[relId]() && !$parent.isError[relId]()">
+                                                        <div data-bind="with: $parent.relationshipInfos[relId]">{/literal}{include file='relationshipInfo.html'}{literal}</div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </section>
                             </div>
 
                         </div>

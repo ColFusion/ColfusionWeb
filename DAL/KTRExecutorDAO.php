@@ -35,7 +35,7 @@ class KTRExecutorDAO
      */
     public function addExecutionInfoTuple($sid, $tableName, $userId)
     {
-        $sql = "INSERT INTO " . table_prefix . "executeinfo (Sid, tableName, UserId, TimeStart, status)VALUES ($sid, '$tableName', $userId, CURRENT_TIMESTAMP, 'in progress');";
+        $sql = "INSERT INTO " . table_prefix . "executeinfo (Sid, tableName, UserId, TimeStart, status, log)VALUES ($sid, '$tableName', $userId, CURRENT_TIMESTAMP, 'in progress', 'started');";
 
         try {
             $this->ezSql->query($sql);
@@ -77,24 +77,24 @@ class KTRExecutorDAO
      * @param      $status status value to set.
      * @throws Exception If query failed.
      */
-    public function updateExecutionInfoTupleStatus( $logID,  $status)
+    public function updateExecutionInfoLog( $logID,  $log)
     {
-        $oldStatus = "";
+        $oldLog = "";
 
-        $sql = "SELECT status FROM " . table_prefix . "executeinfo WHERE eid = $logID";
+        $sql = "SELECT log FROM " . table_prefix . "executeinfo WHERE eid = $logID";
 
         try {
             $res = $this->ezSql->get_row($sql);
 
-            $oldStatus = $res->status;
+            $oldLog = $res->log;
         }
         catch (Exception $e) {
             throw new Exception("Error Processing Request. Could not execute the query", 1);
         }
 
 
-        $status = mysql_real_escape_string($oldStatus . $status); 
-        $sql = "UPDATE " . table_prefix . "executeinfo SET status = '$status' WHERE Eid = $logID";
+        $log = mysql_real_escape_string($oldLog . $log); 
+        $sql = "UPDATE " . table_prefix . "executeinfo SET log = '$log' WHERE Eid = $logID";
 
         try {
             $this->ezSql->query($sql);
@@ -107,7 +107,6 @@ class KTRExecutorDAO
 
     public function updateExecutionInfoErrorMessage( $logID, $errorMessage)
     {
-        
         $errorMessage = mysql_real_escape_string($errorMessage); 
 
         $sql = "UPDATE " . table_prefix . "executeinfo SET ErrorMessage='$errorMessage' WHERE EID= $logID";
@@ -140,6 +139,21 @@ class KTRExecutorDAO
             throw new Exception("Error Processing Request. Could not execute the query", 1);
         }
     }
+
+    public function updateExecutionInfoStatus($logID, $status)
+    {
+
+        $status = mysql_real_escape_string($status); 
+        $sql = "UPDATE " . table_prefix . "executeinfo SET status='$status' WHERE EID= $logID";
+        try {
+            $this->ezSql->query($sql);
+        }
+        catch (Exception $e) {
+            throw new Exception("Error Processing Request. Could not execute the query", 1);
+        }
+    }
+
+    
 
     /**
      * Logs final messages to the execute info table depending on the returned value from pan execution.

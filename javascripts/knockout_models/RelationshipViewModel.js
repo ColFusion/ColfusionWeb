@@ -1,7 +1,8 @@
-function RelationshipViewModel(sid) {
+function RelationshipViewModel(userid,sid) {
     var self = this;
 
     self.sid = sid;
+    self.userid = userid;
     
     // Properties for message control.
     self.isRelationshipDataLoading = ko.observable(false);
@@ -35,7 +36,7 @@ function RelationshipViewModel(sid) {
         self.isNoRelationshipData(false);
         self.isMiningRelationshipsError(false);
 
-        dataSourceUtil.mineRelationship(self.sid, perPage, pageNo).done(function (data) {
+        dataSourceUtil.mineRelationship(self.userid, self.sid, perPage, pageNo).done(function (data) {
 
             if (!data || !data.Control || !data.Control.cols || data.Control.cols.length === 0) {
                 // Show 'no data' text;
@@ -60,7 +61,7 @@ function RelationshipViewModel(sid) {
                 self.isRelationshipInfoLoaded[data.data[i].rel_id] = ko.observable(false);
             }
 
-            self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table('mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
+            self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table(self.sid, 'mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
            
         }).error(function() {
             self.isMiningRelationshipsError(true);
@@ -85,19 +86,23 @@ function RelationshipViewModel(sid) {
             $(event.target).text("Less");
             if (!self.relationshipInfos[rel_id]) {
                 $(mineRelDom).find('.relInfoLoadingIcon').show();
-                loadRelationshipInfo(rel_id, mineRelDom);
+                loadRelationshipInfo(rel_id, 1, mineRelDom);
             }
         }
     };
 
-    function loadRelationshipInfo(relId, mineRelDom) {
-        dataSourceUtil.loadRelationshipInfo(relId).done(function (data) {
+    function loadRelationshipInfo(relId, simThreshold, mineRelDom) {
+        dataSourceUtil.loadRelationshipInfo(relId, simThreshold).done(function (data) {
+            self.isRelationshipInfoLoaded[data.rid](false);
             self.relationshipInfos[data.rid] = ko.observable(new RelationshipModel.Relationship(data));
             self.isRelationshipInfoLoaded[data.rid](true);
+            
             $(mineRelDom).find('.relInfoLoadingIcon').hide();
         }).error(function (jqXHR, statusCode, errMessage) {
             alert(errMessage);
             self.isError[relId](true);
         });
     }
+
+    
 }

@@ -34,7 +34,10 @@ if(isset($_GET['category']) && sanitize($_GET['category'], 3) != '')
 $main_smarty->assign('sid', $_GET['title']);
 $main_smarty->assign('isAuthenticated', $current_user->authenticated);
 
+
+
 if($requestID > 0 && enable_friendly_urls == true){
+	
 	// if we're using friendly urls, don't call /story.php?id=XX  or /story/XX/
 	// this is to prevent google from thinking it's spam
 	// more work needs to be done on this
@@ -45,6 +48,8 @@ if($requestID > 0 && enable_friendly_urls == true){
 				      (array_diff($thecat, $link->additional_cats, array($link->category)) || 
 				       sizeof($thecat)!=sizeof($link->additional_cats)+1)))
 	{
+
+
 		header("Location: $my_pligg_base/404error.php");
 		die();
 	}
@@ -66,6 +71,8 @@ if(isset($requestTitle)){
 }
 
 if(is_numeric($requestID)) {
+
+
 	$id = $requestID;
 	$link = new Link;
 	$link->id=$requestID;
@@ -331,6 +338,13 @@ if(is_numeric($requestID)) {
 	$main_smarty->assign('URL_rss_page', getmyurl('storyrss', isset($requestTitle) ? $requestTitle : urlencode($link->title_url), $link->category_safe_name($link->category)));
 
 	$main_smarty->assign('tpl_center', $the_template . '/story_center');
+	$main_smarty->assign('tpl_jsFilesAtBottom', $the_template . '/story_center_jsFilesAtBottom');
+	$main_smarty->assign('tpl_cssInHTMLHead', $the_template . '/story_center_cssInHTMLHead');
+	
+	if ($current_user->authenticated) {
+		$main_smarty->assign('user_id', $current_user->user_id);
+	}
+
 	$main_smarty->display($the_template . '/pligg.tpl');
 } else {
 

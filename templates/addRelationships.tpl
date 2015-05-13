@@ -45,50 +45,52 @@
 
                 <script type="text/html" id="dataSet-template">          
                     <table class="dataSetDesTable">
-                    <tr>
-                    <td class="dataSetDesTitle">Dataset: </td>                       
-                    <td class="datasetSearchInput">
-                    <div class="input-append" style="margin-top: -10px;margin-bottom: 0;">
-                    <input type="text" class="sidInput" data-bind="searchDatasetTypeahead: $data"/>
-                    <button class="btn add-on searchDatasetBtn" data-bind="click: loadTableList" style="margin-top: 10px;">Search</button>
-                    </div>
-                    </td>
-                    <td class="datasetSearchLoadingNotification" style="display: none;">
-                    <img class="datasetSearchLoadingIcon" src="images/ajax-loader.gif"/>
-                    <span class="datasetSearchLoadingText">Searching...</span>
-                    </td>                 
-                    </tr>
-                    <tr data-bind="style:{ visibility: tableList().length > 1 ? 'visible' : 'hidden'}">
-                    <td class="dataSetDesTitle">Table: </td>
-                    <td>
-                    <select data-bind='options: tableList, 
-                    optionsCaption: "Select a table", 
-                    value: chosenTableName'
-                    style="width: 290px;margin-bottom: 0;">                                                     
-                    </select>
-                    </td>
-                    </tr>
+                        <tr>
+                            <td class="dataSetDesTitle">Dataset: </td>                       
+                            <td class="datasetSearchInput">
+                                <div class="input-append" style="margin-top: -10px;margin-bottom: 0;">
+                                    <input type="text" class="sidInput" data-bind="searchDatasetTypeahead: $data"/>
+                                    <button class="btn add-on searchDatasetBtn" data-bind="click: loadTableList" style="margin-top: 10px;">Search</button>
+                                </div>
+                            </td>
+                            <td class="datasetSearchLoadingNotification" style="display: none;">
+                                <img class="datasetSearchLoadingIcon" src="images/ajax-loader.gif"/>
+                                <span class="datasetSearchLoadingText">Searching...</span>
+                            </td>                 
+                        </tr>
+                        <tr data-bind="style:{ visibility: tableList().length > 1 ? 'visible' : 'hidden'}">
+                            <td class="dataSetDesTitle">Table: </td>
+                            <td>
+                                <select data-bind='options: tableList, 
+                                optionsCaption: "Select a table", 
+                                value: chosenTableName'
+                                style="width: 290px;margin-bottom: 0;">                                                     
+                                </select>
+                            </td>
+                        </tr>
                     </table>
+
                     <div data-bind="visible: isLoadingTableInfo()" style="padding: 30px 0 0 200px;">
-                    <img src="images/ajax-loader.gif" />
+                        <img src="images/ajax-loader.gif" />
                     </div>
+                    
                     <div class="tableInfoTableWrapper">
-                    <table class="tableInfoTable" data-bind="with: currentTable">              
-                    <tr>                                
-                    <th style="width: 100px">Column Name</th>
-                    <th style="width: 80px">Type</th>
-                    <th style="width: 80px">Unit/Format</th>
-                    <th style="width: 150px; text-align: center;">Description</th>
-                    </tr>
-                    <tbody data-bind="foreach: rows">
-                    <tr>                                    
-                    <td data-bind="text: colfusionDataColumn.dname_chosen()"></td>
-                    <td data-bind="text: colfusionDataColumn.dname_value_type()"></td>      
-                    <td data-bind="text: colfusionDataColumn.dname_value_unit()"></td>
-                    <td data-bind="text: colfusionDataColumn.dname_value_description()"></td>                        
-                    </tr>
-                    </tbody>      
-                    </table>
+                        <table class="tableInfoTable" data-bind="with: currentTable">              
+                            <tr>                                
+                                <th style="width: 100px">Column Name</th>
+                                <th style="width: 80px">Type</th>
+                                <th style="width: 80px">Unit/Format</th>
+                                <th style="width: 150px; text-align: center;">Description</th>
+                            </tr>
+                            <tbody data-bind="foreach: rows">
+                                <tr>                                    
+                                    <td data-bind="text: colfusionDataColumn.dname_chosen()"></td>
+                                    <td data-bind="text: colfusionDataColumn.dname_value_type()"></td>      
+                                    <td data-bind="text: colfusionDataColumn.dname_value_unit()"></td>
+                                    <td data-bind="text: colfusionDataColumn.dname_value_description()"></td>                        
+                                </tr>
+                            </tbody>      
+                        </table>
                     </div>
                 </script>
 
@@ -184,9 +186,12 @@
 
         $(function() {
             ko.applyBindings(newRelationshipViewModel, document.getElementById("newRelWrapper"));
+
+            $('.searchDatasetBtn').prop('disabled', true);
+            loadInitialFromDataSet();
         });
 
-        // If sid is assigned, load from date set after page is loaded.
+        // If sid is assigned, load from dateset after page is loaded.
         function loadInitialFromDataSet() {
             var fromDataSetSidInput = $('#fromDataSetWrapper').find('.dataSetDesTable').find('.sidInput');
             var fromDataSetSidSearchBtn = $('#fromDataSetWrapper').find('.dataSetDesTable').find('button');

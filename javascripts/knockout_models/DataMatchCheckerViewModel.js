@@ -339,7 +339,7 @@ function DataMatchCheckerViewModel() {
             return headerObj.name();
         });
 
-        return new DataPreviewViewModelProperties.Table(oldTable.tableName, headerNames, newCells);
+        return new DataPreviewViewModelProperties.Table(-1, oldTable.tableName, headerNames, newCells);
     }
 
     function addValueToTable(table, synFrom, synTo) {
@@ -362,7 +362,7 @@ function DataMatchCheckerViewModel() {
             rows.push(row);
         });
 
-        return new DataPreviewViewModelProperties.Table(tableName || "FromTable", columns, rows);
+        return new DataPreviewViewModelProperties.Table(-1, tableName || "FromTable", columns, rows);
     }
 }
 
@@ -374,7 +374,7 @@ function getStaticDataTable() {
         rows.push(["fromData" + i, "toData" + i]);
     }
 
-    var table = new DataPreviewViewModelProperties.Table(tableName, cols, rows);
+    var table = new DataPreviewViewModelProperties.Table(-1, tableName, cols, rows);
     return table;
 }
 

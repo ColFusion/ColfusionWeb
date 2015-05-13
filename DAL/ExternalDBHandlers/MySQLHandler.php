@@ -20,6 +20,8 @@ class MySQLHandler extends DatabaseHandler
             $pdo = new PDO("mysql:host=$this->host;port=$this->port;dbname=$this->database;charset=utf8;", $this->user, $this->password);
         }
 
+//var_dump("mysql:host=$this->host;port=$this->port;dbname=$this->database;charset=utf8;", $this->user, $this->password);
+
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
         return $pdo;
@@ -131,6 +133,8 @@ class MySQLHandler extends DatabaseHandler
     {
         $pdo = $this->GetConnection();
 
+//var_dump($query);
+
         $res = $pdo->query($query);
         $result = array();
         while (($row = $res->fetch(PDO::FETCH_ASSOC))) {
@@ -177,7 +181,7 @@ class MySQLHandler extends DatabaseHandler
 
         foreach ($columns as $key => $column) {
             //FIXME: for now all columns are varchars, actually we could use the info provided by user abotu each column
-            $columnsDefinition[] = " `{$column['originalDname']}` varchar(400) ";
+            $columnsDefinition[] = " `{$column['originalDname']}` TEXT ";
         }
 
         $query .= implode(", ", $columnsDefinition) . " ); ";

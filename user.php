@@ -49,9 +49,8 @@ $CSRF->create('user_settings', true, true);
 	$user = new User();
 	$user->username = $login;
 	if(!$user->read() || $user->level=='Spammer' || ($user->username=='anonymous' && !$user->user_lastip) ||
-		// Hide users without stories/comments from unregistered visitors
-		!$user->all_stats() || $user->total_links+$user->total_comments+$current_user->user_id==0) {
-		
+	   // Hide users without stories/comments from unregistered visitors
+	   !$user->all_stats() || $user->total_links+$user->total_comments+$current_user->user_id==0) {
 		header("Location: $my_pligg_base/404error.php");
 		die;
 	}
@@ -106,6 +105,7 @@ if(ShowProfileLastViewers == true){
 
 // setup the URL method 2 links
 	$main_smarty->assign('user_url_personal_data', getmyurl('user2', $login, 'profile'));
+	$main_smarty->assign('user_url_view', getmyurl('user2', $login, 'view'));
 	$main_smarty->assign('user_url_news_sent', getmyurl('user2', $login, 'history'));
 	$main_smarty->assign('user_url_news_published', getmyurl('user2', $login, 'published'));
 	$main_smarty->assign('user_url_news_unpublished', getmyurl('user2', $login, 'shaken'));
@@ -144,9 +144,30 @@ if(ShowProfileLastViewers == true){
 		$main_smarty->assign('nav_pd', 3);
 	}
 
-	/*** Sidebar tag for Setting ***/
-	if ($view == 'setting') {
-		$usercategorysql = "SELECT * FROM " . table_users . " where user_login = '" . $db->escape($login) . "' ";
+	if ($view == 'voted') {
+		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsVoted');
+		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsVoted');
+		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsVoted');
+		$main_smarty->assign('view_href', 'voted');
+		$main_smarty->assign('nav_nv', 4);
+	 } else {
+		$main_smarty->assign('nav_nv', 3);
+		}	
+
+	if ($view == 'history') {
+		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSent');
+		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSent');
+		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSent');
+		$main_smarty->assign('view_href', 'submitted');
+		$main_smarty->assign('nav_ns', 4);
+	 } else {
+		$main_smarty->assign('nav_ns', 3);
+		}
+
+	if ($view == 'setting') 
+	{
+		
+		$usercategorysql = "SELECT * FROM " . table_users . " where user_login = '".$db->escape($login)."' ";
 		$userresults = $db->get_results($usercategorysql);
 		$userresults = object_2_array($userresults);
 		$get_categories = $userresults['0']['user_categories'];
@@ -164,6 +185,7 @@ if(ShowProfileLastViewers == true){
 			$err = "You have to select at least 1 category";
 			$main_smarty->assign('err', $err);
 		}
+		
 		$main_smarty->assign('category', $results);
 		$main_smarty->assign('user_category', $user_categories);
 		$main_smarty->assign('view_href', 'submitted');
@@ -182,30 +204,7 @@ if(ShowProfileLastViewers == true){
 	} else {
 		$main_smarty->assign('nav_set', 3);
 	}
-
-	/*** Sidebar tag for Submitted ***/
-	if ($view == 'history') {
-		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSent');
-		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSent');
-		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSent');
-		$main_smarty->assign('view_href', 'submitted');
-		$main_smarty->assign('nav_ns', 4);
-	} else {
-		$main_smarty->assign('nav_ns', 3);
-	}
-
-	/*** Sidebar tag for Published ***/
-	if ($view == 'shaken') {
-		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsUnPublished');
-		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsUnPublished');
-		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsUnPublished');
-		$main_smarty->assign('view_href', 'upcoming');
-		$main_smarty->assign('nav_nu', 4);
-	} else {
-	 	$main_smarty->assign('nav_nu', 3);
-	}
-
-	/*** Sidebar tag for Upcoming ***/
+		
 	if ($view == 'published') {
 		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsPublished');
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsPublished');
@@ -216,7 +215,16 @@ if(ShowProfileLastViewers == true){
 		$main_smarty->assign('nav_np', 3);
 	}
 
-	/*** Sidebar tag for Commented ***/
+	if ($view == 'shaken') {
+		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsUnPublished');
+		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsUnPublished');
+		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsUnPublished');
+		$main_smarty->assign('view_href', 'upcoming');
+		$main_smarty->assign('nav_nu', 4);
+	 } else {
+		$main_smarty->assign('nav_nu', 3);
+		}
+
 	if ($view == 'commented') {
 		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsCommented');
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsCommented');
@@ -227,18 +235,6 @@ if(ShowProfileLastViewers == true){
 		$main_smarty->assign('nav_c', 3);
 	}
 
-	/*** Sidebar tag for Voted ***/
-	if ($view == 'voted') {
-		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsVoted');
-		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsVoted');
-		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsVoted');
-		$main_smarty->assign('view_href', 'voted');
-		$main_smarty->assign('nav_nv', 4);
-	} else {
-		$main_smarty->assign('nav_nv', 3);
-	}
-
-	/*** Sidebar tag for Saved ***/
 	if ($view == 'saved') {
 		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSaved');
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_NewsSaved');
@@ -249,18 +245,6 @@ if(ShowProfileLastViewers == true){
 		$main_smarty->assign('nav_s', 3);
 	}
 
-	/*** Sidebar tag for Notification ***/
-	if ($view == 'notification') {
-		$page_header .= ' | ' . $main_smarty->get_config_vars('PLIGG_Visual_User_Notification');
-		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_Notification');
-		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_Notification');
-		$main_smarty->assign('view_href', '');
-		$main_smarty->assign('nav_ntf', 4);
-	} else {
-		$main_smarty->assign('nav_ntf', 3);
-	}
-
-	/*** view for Peopole Following Me ***/
 	if ($view == 'viewfriends') {
 		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Viewing_Friends');
 		$post_title .= " | " . $main_smarty->get_config_vars('PLIGG_Visual_User_Profile_Viewing_Friends');
@@ -298,31 +282,32 @@ if(ShowProfileLastViewers == true){
 	if ($view == 'search') {
 		if(isset($_REQUEST['keyword'])){$keyword = $db->escape(sanitize(trim($_REQUEST['keyword']), 3));}
 
-		if ($keyword) {
-			$searchsql = "SELECT * FROM " . table_users
-				. " WHERE (user_login LIKE '%" . $keyword . "%'"
-				. " OR public_email LIKE '%" . $keyword . "%')"
-				. " AND user_level != 'Spammer'";
-			$results = $db->get_results($searchsql);
-			$results = object_2_array($results);
-			foreach($results as $key => $val){
-				if ($val['user_login'] != 'anonymous' || $val['user_lastip'] > 0) {
-					$results[$key]['Avatar'] = get_avatar('large', "", $val['user_login'], $val['user_email']);
-					$results[$key]['add_friend'] = getmyurl('user_add_remove', $val['user_login'], 'addfriend');
-					$results[$key]['remove_friend'] = getmyurl('user_add_remove', $val['user_login'], 'removefriend');
-					$results[$key]['status'] = $friend->get_friend_status($val['user_id']);
-				}
-				else
-					unset ($results[$key]);
-			}
-			$main_smarty->assign('userlist', $results);
+	    if ($keyword) 
+	    {
+		$searchsql = "SELECT * FROM " . table_users . " where (user_login LIKE '%".$keyword."%' OR public_email LIKE '%".$keyword."%') AND user_level!='Spammer' ";
+		$results = $db->get_results($searchsql);
+		$results = object_2_array($results);
+		foreach($results as $key => $val){
+		    if ($val['user_login'] != 'anonymous' || $val['user_lastip'] > 0)
+		    {
+			$results[$key]['Avatar'] = get_avatar('large', "", $val['user_login'], $val['user_email']);
+			$results[$key]['add_friend'] = getmyurl('user_add_remove', $val['user_login'], 'addfriend');
+			$results[$key]['remove_friend'] = getmyurl('user_add_remove', $val['user_login'], 'removefriend');
+			$results[$key]['status'] = $friend->get_friend_status($val['user_id']);
+		    }
+		    else
+			unset ($results[$key]);
 		}
-		$main_smarty->assign('search', $keyword);
 
-		$main_smarty->assign('page_header', $user->username);
-		$navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_Search_SearchResults') . ' ' . $keyword;
-		$main_smarty->assign('posttitle', $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Profile') . " " . $login . " - " . $main_smarty->get_config_vars('PLIGG_Visual_Search_SearchResults') . ' ' . $keyword);
+		$main_smarty->assign('userlist', $results);
+	    }
+	    $main_smarty->assign('search', $keyword);
+
+	    $main_smarty->assign('page_header', $user->username);
+	    $navwhere['text3'] = $main_smarty->get_config_vars('PLIGG_Visual_Search_SearchResults') . ' ' . $keyword;
+	    $main_smarty->assign('posttitle', $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Profile') . " " . $login . " - " . $main_smarty->get_config_vars('PLIGG_Visual_Search_SearchResults') . ' ' . $keyword);
 	}
+
 	$main_smarty->assign('navbar_where', $navwhere);
 
 
@@ -338,15 +323,15 @@ if(ShowProfileLastViewers == true){
 			do_history();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
 			break;
-		case 'shaken': // Published
-			do_shaken();
-			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
-			break;
-		case 'published': // Upcoming
+		case 'published':
 			do_published();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
 			break;
-		case 'commented': // Commented
+		case 'shaken':
+			do_shaken();
+			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
+			break;	
+		case 'commented':
 			do_commented();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
 			break;
@@ -357,28 +342,21 @@ if(ShowProfileLastViewers == true){
 		case 'saved': // Saved
 			do_stories();
 			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
-			break;
-		case 'notification': // Notification
-			$main_smarty->assign('user_page', $main_smarty->fetch($the_template . '/notification_all.tpl'));
-			$main_smarty->assign('user_pagination', do_pages($rows, $page_size, $the_page, true));
-			break;
-		case 'viewfriends': // Personal Information -> People Following Me
-			do_viewfriends($current_user->user_id);
-			break;
-		case 'viewfriends2': // Personal Information -> People I'm Following
-			do_viewfriends2();
-			break;
+			break;  
 		case 'removefriend':
 			do_removefriend();
 			break;
 		case 'addfriend':
 			do_addfriend();
 			break;
+		case 'viewfriends':
+			do_viewfriends($current_user->user_id);
+			break;
+		case 'viewfriends2':
+			do_viewfriends2();
+			break;
 		case 'sendmessage':
 			do_sendmessage();
-			break;
-		case 'notification':
-			do_notification();
 			break;
 		case 'member_groups':
 			do_member_groups();
@@ -390,124 +368,58 @@ if(ShowProfileLastViewers == true){
 	$main_smarty->assign('tpl_center', $the_template . '/user_center');
 	$main_smarty->display($the_template . '/pligg.tpl');
 
-/*** for Submitted tab ***/
-function do_history() {
-	global $db, $main_smarty, $rows, $user, $offset, $page_size, $cached_links;
 
+function do_stories () {
+	global $db, $main_smarty, $rows, $user, $offset, $page_size,$current_user,$cached_links;
+	//if ($current_user->user_id == $user->id)
+	//{
 	$output = '';
 	$link = new Link;
-	$rows = $db->get_var("SELECT count(*) FROM " . table_links
-		. " WHERE link_author=$user->id AND (link_status='private' OR link_status='queued')");
-
-	$links = $db->get_results("SELECT * FROM " . table_links
-		. " WHERE link_author=$user->id AND (link_status='private' OR link_status='queued')"
-		. " ORDER BY link_date DESC LIMIT $offset,$page_size");
-
-	if($links) {
-		foreach($links as $dblink) {
-			$link->id=$dblink->link_id;
-			$cached_links[$dblink->link_id] = $dblink;
-			$link->read();
-			$output .= $link->print_summary('summary', true);
+	$rows = $db->get_var("SELECT count(*) FROM " . table_saved_links . " WHERE saved_user_id=$user->id");
+		
+		$fieldexists = checkforfield('saved_privacy', table_saved_links);
+		if($fieldexists)
+		{
+			if ($current_user->user_id == $user->id)
+			{	
+				$links = $db->get_results("SELECT * FROM " . table_saved_links . " 
+								LEFT JOIN " . table_links . " ON saved_link_id=link_id
+								WHERE saved_user_id=$user->id ORDER BY saved_link_id DESC LIMIT $offset,$page_size");
+			}
+			else
+			{
+				$links = $db->get_results("SELECT * FROM " . table_saved_links . " 
+								LEFT JOIN " . table_links . " ON saved_link_id=link_id
+								WHERE saved_user_id=$user->id and saved_privacy = 'public' ORDER BY saved_link_id DESC LIMIT $offset,$page_size");	
+			}
 		}
-	}
-
-	$main_smarty->assign('user_page', $output);
-}
-
-/*** for Published tab ***/
-function do_shaken () {
-	global $db, $main_smarty, $rows, $user, $offset, $page_size, $cached_links;
-
-	$output = '';
-	$link = new Link;
-	$rows = $db->get_var("SELECT count(*) FROM " . table_links
-		. " WHERE link_author=$user->id AND link_status='queued'");
-	
-	$links = $db->get_results("SELECT * FROM " . table_links
-		. " WHERE link_author=$user->id AND link_status='queued'"
-		. " ORDER BY link_date DESC LIMIT $offset,$page_size");
-
+		else
+		{
+			$links = $db->get_results("SELECT * FROM " . table_saved_links . " 
+							LEFT JOIN " . table_links . " ON saved_link_id=link_id
+							WHERE saved_user_id=$user->id ORDER BY saved_link_id DESC LIMIT $offset,$page_size");
+		}	
 	if ($links) {
 		foreach($links as $dblink) {
 			$link->id=$dblink->link_id;
 			$cached_links[$dblink->link_id] = $dblink;
 			$link->read();
+				//$output.= $current_user->user_id."<br/>";
+				//$output.= $user->id."<br/>";
 			$output .= $link->print_summary('summary', true);
 		}
 	}
-
 	$main_smarty->assign('user_page', $output);
+	//}
 }
 
-/*** for Upcoming tab ***/
-// change it to search private data rather than orignal published data.
-function do_published() {
-	global $db, $main_smarty, $rows, $user, $offset, $page_size, $cached_links;
-
-	$output = '';
-	$link = new Link;
-	$rows = $db->get_var("SELECT count(*) FROM " . table_links
-		. " WHERE link_author=$user->id AND link_status='private'");
-	
-	$links = $db->get_results("SELECT * FROM " . table_links
-		. " WHERE link_author=$user->id AND link_status='private'"
-		. " ORDER BY link_published_date DESC, link_date DESC LIMIT $offset,$page_size");
-
-	if($links) {
-		foreach($links as $dblink) {
-			$link->id=$dblink->link_id;
-			$cached_links[$dblink->link_id] = $dblink;
-			$link->read();
-			$output .= $link->print_summary('summary', true);
-		}
-	}
-	
-	$main_smarty->assign('user_page', $output);
-}
-
-/*** for Commented tab ***/
-function do_commented () {
+function do_voted () {
 	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
 
 	$output = '';
 	$link = new Link;
-	$rows = $db->get_var("SELECT count(*) FROM " . table_links . ", " . table_comments
-		. " WHERE comment_status='published'"
-		. " AND comment_user_id=$user->id AND comment_link_id=link_id");
-	
-	$links = $db->get_results("SELECT DISTINCT * FROM " . table_links . ", " . table_comments
-		. " WHERE comment_status='published' AND comment_user_id=$user->id"
-		. " AND comment_link_id=link_id AND (link_status='published' OR link_status='queued')"
-		. " ORDER BY link_date DESC LIMIT $offset,$page_size");
-
-	if ($links) {
-		foreach($links as $dblink) {
-			$link->id=$dblink->link_id;
-			$cached_links[$dblink->link_id] = $dblink;
-			$link->read();
-			$output .= $link->print_summary('summary', true);
-		}
-	}
-
-	$main_smarty->assign('user_page', $output);
-}
-
-/*** for Voted tab ***/
-function do_voted() {
-	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
-
-	$output = '';
-	$link = new Link;
-	$rows = $db->get_var("SELECT count(*) FROM " . table_links . ", " . table_votes
-		. " WHERE vote_user_id=$user->id AND vote_link_id=link_id AND vote_value > 0"
-		. " AND (link_status='published' OR link_status='queued')");
-
-	$links = $db->get_results($sql = "SELECT DISTINCT * FROM " . table_links . ", " . table_votes
-		. " WHERE vote_user_id=$user->id AND vote_link_id=link_id AND vote_value > 0"
-		. " AND (link_status='published' OR link_status='queued')"
-		. " ORDER BY link_date DESC LIMIT $offset,$page_size");
-	
+	$rows = $db->get_var("SELECT count(*) FROM " . table_links . ", " . table_votes . " WHERE vote_user_id=$user->id AND vote_link_id=link_id AND vote_value > 0 AND (link_status='published' OR link_status='queued')");
+	$links = $db->get_results($sql="SELECT DISTINCT * FROM " . table_links . ", " . table_votes . " WHERE vote_user_id=$user->id AND vote_link_id=link_id AND vote_value > 0  AND (link_status='published' OR link_status='queued') ORDER BY link_date DESC LIMIT $offset,$page_size");
 	if ($links) {
 		foreach($links as $dblink) {
 			$link->id=$dblink->link_id;
@@ -517,70 +429,95 @@ function do_voted() {
 			$output .= $link->print_summary('summary', true);
 		}
 	}
-
 	$main_smarty->assign('user_page', $output);
 }
 
-/*** for Saved tab ***/
-function do_stories() {
-	global $db, $main_smarty, $rows, $user, $offset, $page_size,$current_user,$cached_links;
-	//if ($current_user->user_id == $user->id)
-	//{
+function do_history () {
+	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
+
 	$output = '';
 	$link = new Link;
-	$rows = $db->get_var("SELECT count(*) FROM " . table_saved_links . " WHERE saved_user_id=$user->id");
-
-	$fieldexists = checkforfield('saved_privacy', table_saved_links);
-	if($fieldexists) {
-		if ($current_user->user_id == $user->id) {
-			$links = $db->get_results("SELECT * FROM " . table_saved_links
-				. " LEFT JOIN " . table_links . " ON saved_link_id=link_id"
-				. " WHERE saved_user_id=$user->id ORDER BY saved_link_id DESC LIMIT $offset, $page_size");
-		} else {
-			$links = $db->get_results("SELECT * FROM " . table_saved_links
-				. " LEFT JOIN " . table_links . " ON saved_link_id=link_id"
-				. " WHERE saved_user_id = $user->id and saved_privacy = 'public'"
-				. " ORDER BY saved_link_id DESC LIMIT $offset,$page_size");
-		}
-	} else {
-		$links = $db->get_results("SELECT * FROM " . table_saved_links
-			. " LEFT JOIN " . table_links . " ON saved_link_id=link_id"
-			. " WHERE saved_user_id=$user->id ORDER BY saved_link_id DESC LIMIT $offset,$page_size");
-	}
-
-	if($links) {
+	$rows = $db->get_var("SELECT count(*) FROM " . table_links . " WHERE link_author=$user->id AND (link_status='private' OR link_status='queued')");
+	$links = $db->get_results("SELECT * FROM " . table_links . " WHERE link_author=$user->id AND (link_status='private' OR link_status='queued') ORDER BY link_date DESC LIMIT $offset,$page_size");
+	if ($links) {
 		foreach($links as $dblink) {
 			$link->id=$dblink->link_id;
 			$cached_links[$dblink->link_id] = $dblink;
 			$link->read();
-			//$output.= $current_user->user_id."<br/>";
-			//$output.= $user->id."<br/>";
 			$output .= $link->print_summary('summary', true);
 		}
 	}
-
 	$main_smarty->assign('user_page', $output);
-	//}
+}
+//change it to search private data rather than orignal published data.
+function do_published () {
+	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
+
+	$output = '';
+	$link = new Link;
+	$rows = $db->get_var("SELECT count(*) FROM " . table_links . " WHERE link_author=$user->id AND link_status='private'");
+	$links = $db->get_results("SELECT * FROM " . table_links . " WHERE link_author=$user->id AND link_status='private'  ORDER BY link_published_date DESC, link_date DESC LIMIT $offset,$page_size");
+	if ($links) {
+		foreach($links as $dblink) {
+			$link->id=$dblink->link_id;
+			$cached_links[$dblink->link_id] = $dblink;
+			$link->read();
+			$output .= $link->print_summary('summary', true);
+		}
+	}
+	$main_smarty->assign('user_page', $output);
+}
+
+function do_shaken () {
+	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
+
+	$output = '';
+	$link = new Link;
+	$rows = $db->get_var("SELECT count(*) FROM " . table_links . " WHERE link_author=$user->id AND link_status='queued'");
+	$links = $db->get_results("SELECT * FROM " . table_links . " WHERE link_author=$user->id AND link_status='queued' ORDER BY link_date DESC LIMIT $offset,$page_size");
+	if ($links) {
+		foreach($links as $dblink) {
+			$link->id=$dblink->link_id;
+			$cached_links[$dblink->link_id] = $dblink;
+			$link->read();
+			$output .= $link->print_summary('summary', true);
+		}
+	}
+	$main_smarty->assign('user_page', $output);
+}
+
+function do_commented () {
+	global $db, $main_smarty, $rows, $user, $offset, $page_size,$cached_links;
+
+	$output = '';
+	$link = new Link;
+	$rows = $db->get_var("SELECT count(*) FROM " . table_links . ", " . table_comments . " WHERE comment_status='published' AND comment_user_id=$user->id AND comment_link_id=link_id");
+	$links = $db->get_results("SELECT DISTINCT * FROM " . table_links . ", " . table_comments . " WHERE comment_status='published' AND comment_user_id=$user->id AND comment_link_id=link_id AND (link_status='published' OR link_status='queued')  ORDER BY link_date DESC LIMIT $offset,$page_size");
+	if ($links) {
+		foreach($links as $dblink) {
+			$link->id=$dblink->link_id;
+			$cached_links[$dblink->link_id] = $dblink;
+			$link->read();
+			$output .= $link->print_summary('summary', true);
+		}
+	}     
+	$main_smarty->assign('user_page', $output);
 }
 
 function do_removefriend (){
 	global $db, $main_smarty, $user, $the_template;
-
 	$friend = new Friend;
 	$friend->remove($user->id);
-	
 }
 
 function do_addfriend (){
 	global $db, $main_smarty, $user, $the_template;
-
 	$friend = new Friend;
 	$friend->add($user->id);
 }
 
 function do_viewfriends($user_id){
 	global $db, $main_smarty, $user, $the_template;
-
 	$friend = new Friend;
 	$friends = $friend->get_friend_list($user_id);
 
@@ -590,20 +527,21 @@ function do_viewfriends($user_id){
 
 function do_viewfriends2(){
 	global $db, $main_smarty, $user, $the_template;
-
 	$friend = new Friend;
-	$friends = $friend->get_friend_list_2();
+	$friends = $friend->get_friend_list_2();	
 
 	$main_smarty->assign('the_template',$the_template);
 	$main_smarty->assign('friends', $friends);
 }
-function do_member_groups(){
+function do_member_groups()
+{
 	global $db, $main_smarty, $rows, $user, $offset, $page_size;
-
 	//print_r(get_groupid_user($user->id));
 	$ids  = get_groupid_user($user->id);
-	if($ids) {
-		foreach($ids as $groupid) {
+	if($ids)
+	{
+		foreach($ids as $groupid)
+		{
 			//print_r($groupid);
 			//echo $groupid->group_id;
 			$output .= group_print_summary($groupid->group_id);
@@ -612,3 +550,19 @@ function do_member_groups(){
 	}
 }
 ?>
+
+<?php
+global $current_user;
+include_once(mnminclude.'login.php');
+if($current_user != null)
+	$user_id = $current_user->user_id;
+else
+	$user_id = null;
+echo "<input type=\"hidden\" name=\"user_id\" id=\"user_id\" value=\"$user_id\" />";
+?>
+<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+<script type="text/javascript" src="javascripts/jquery-1.9.1.min.js"></script>
+<script type="text/javascript" src="javascripts/bootstrap.min.js"></script>
+<script type="text/javascript" src="javascripts/knockout-2.3.0.js"></script>
+<script type="text/javascript" src="javascripts/knockout_models/StoryMetadataViewModel.js"></script>
+<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">

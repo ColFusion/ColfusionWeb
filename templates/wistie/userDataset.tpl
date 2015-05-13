@@ -57,7 +57,9 @@
                     <i data-bind="visible: !isStatusShown(), click: function () { isStatusShown(true) }" class="icon-collapse-top storyStatusCollapseIcon"></i>
                 </div>
                 {/literal}
-                {include file='storyStatusTableList.tpl'}
+
+                    {include file='storyStatusTableList.tpl'}
+                
                 {literal}
             </div>
         </div>
