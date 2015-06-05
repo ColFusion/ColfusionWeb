@@ -1,1 +1,0 @@
-ALTER TABLE `colfusion_notifications` ADD COLUMN `datetime` datetime DEFAULT NULL;

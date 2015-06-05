@@ -1,1 +1,0 @@
-ALTER TABLE colfusion_temporary MODIFY `Value` VARCHAR(5000)

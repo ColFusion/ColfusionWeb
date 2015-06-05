@@ -1,1 +1,0 @@
-DROP TABLE `colfusion`.`colfusion_dname_meta_data`;
