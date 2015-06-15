@@ -191,7 +191,7 @@
           <div class="modal-body">
             <div id="fetchInProgressDiv" data-bind="visible: isFetchHistoryInProgress">
                 <span id="fetchInProgressLoadingIcon" data-bind="visible: isFetchHistoryInProgress()">
-                    <img src="/images/ajax-loader.gif"/>
+                    <img src="images/ajax-loader.gif"/>
                 </span>
             </div>
             <div id="contentDiv" >
