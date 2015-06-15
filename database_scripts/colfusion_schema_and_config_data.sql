@@ -1503,9 +1503,9 @@ INSERT INTO `colfusion_widgets` (`id`, `name`, `version`, `latest_version`, `fol
 -- --------------------------------------------------------
 
 --
--- Stand-in structure for view `statOnVerdicts`
+-- Stand-in structure for view `statonverdicts`
 --
-CREATE TABLE IF NOT EXISTS `statOnVerdicts` (
+CREATE TABLE IF NOT EXISTS `statonverdicts` (
 `rel_id` int(11)
 ,`numberOfVerdicts` bigint(21)
 ,`numberOfApproved` decimal(23,0)
@@ -1516,11 +1516,11 @@ CREATE TABLE IF NOT EXISTS `statOnVerdicts` (
 -- --------------------------------------------------------
 
 --
--- Structure for view `statOnVerdicts`
+-- Structure for view `statonverdicts`
 --
-DROP TABLE IF EXISTS `statOnVerdicts`;
+DROP TABLE IF EXISTS `statonverdicts`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `statOnVerdicts` AS select `colfusion_user_relationship_verdict`.`rel_id` AS `rel_id`,count(0) AS `numberOfVerdicts`,sum(if((`colfusion_user_relationship_verdict`.`confidence` > 0),1,0)) AS `numberOfApproved`,sum(if((`colfusion_user_relationship_verdict`.`confidence` < 0),1,0)) AS `numberOfReject`,sum(if((`colfusion_user_relationship_verdict`.`confidence` = 0),1,0)) AS `numberOfNotSure`,avg(`colfusion_user_relationship_verdict`.`confidence`) AS `avgConfidence` from `colfusion_user_relationship_verdict` group by `colfusion_user_relationship_verdict`.`rel_id`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `statonverdicts` AS select `colfusion_user_relationship_verdict`.`rel_id` AS `rel_id`,count(0) AS `numberOfVerdicts`,sum(if((`colfusion_user_relationship_verdict`.`confidence` > 0),1,0)) AS `numberOfApproved`,sum(if((`colfusion_user_relationship_verdict`.`confidence` < 0),1,0)) AS `numberOfReject`,sum(if((`colfusion_user_relationship_verdict`.`confidence` = 0),1,0)) AS `numberOfNotSure`,avg(`colfusion_user_relationship_verdict`.`confidence`) AS `avgConfidence` from `colfusion_user_relationship_verdict` group by `colfusion_user_relationship_verdict`.`rel_id`;
 
 --
 -- Constraints for dumped tables

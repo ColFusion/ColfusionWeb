@@ -302,20 +302,20 @@ class RelationshipDAO
        siFrom.sid as sidFrom, siTo.sid as sidTo,
        siFrom.Title as titleFrom, siTo.Title as titleTo,
        rel.tableName1 as tableNameFrom, rel.tableName2 as tableNameTo,
-       statOnVerdicts.numberOfVerdicts, statOnVerdicts.numberOfApproved, statOnVerdicts.numberOfReject,
-       statOnVerdicts.numberOfNotSure, statOnVerdicts.avgConfidence
+       statonverdicts.numberOfVerdicts, statonverdicts.numberOfApproved, statonverdicts.numberOfReject,
+       statonverdicts.numberOfNotSure, statonverdicts.avgConfidence
 
 FROM
     colfusion_relationships as rel,
     colfusion_users as u,
     colfusion_sourceinfo as siFrom,
     colfusion_sourceinfo as siTo,
-    statOnVerdicts
+    statonverdicts
 
 where
         rel.creator = u.user_id
         and rel.status <> 1
-        and rel.rel_id = statOnVerdicts.rel_id
+        and rel.rel_id = statonverdicts.rel_id
         and rel.sid1 = siFrom.Sid
         and rel.sid2 = siTo.Sid
         and (rel.sid1 = $sid or rel.sid2 = $sid)
