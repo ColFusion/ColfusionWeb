@@ -3,7 +3,7 @@
 include_once(dirname(__FILE__) . '/../DAL/ExternalDBHandlers/MSSQLHandler.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 
-require_once(realpath(dirname(__FILE__)) . "/../vendor/autoload.php");
+require_once(realpath(dirname(__FILE__)) . '/../vendor/autoload.php');
 
 Logger::configure(realpath(dirname(__FILE__)) . '/../conf/log4php.xml');
 
