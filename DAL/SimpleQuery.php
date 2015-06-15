@@ -3,6 +3,10 @@
 include_once(dirname(__FILE__) . '/../DAL/ExternalDBHandlers/MSSQLHandler.php');
 include_once(dirname(__FILE__) . '/../DAL/LinkedServerCred.php');
 
+require_once(realpath(dirname(__FILE__)) . "../vendor/autoload.php");
+
+Logger::configure(realpath(dirname(__FILE__)) . '../conf/log4php.xml');
+
 class SimpleQuery
 {
     /**
@@ -195,11 +199,15 @@ class SimpleQuery
     public function addColumnTableInfo($cid, $tableName)
     {
         global $db;
+        $logger = Logger::getLogger("generalLog");
 
         $cid = $db->escape($cid);
         $tableName = $db->escape($tableName);
 
         $sql = sprintf("INSERT INTO %scolumnTableInfo (cid, tableName) VALUES (%d, '%s')", table_prefix, $cid, $tableName);
+
+        $logger->info("addColumnTableInfo SQL " . $sql);
+
         $db->query($sql);
     }
 
