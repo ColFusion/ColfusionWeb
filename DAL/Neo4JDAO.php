@@ -118,7 +118,8 @@ class Neo4JDAO
 
         $relationshipDao = new RelationshipDAO();
 
-        $relationship = $relationshipDao->getRelationship($rel_id);
+        //TODO: 1 should not be hardcoded in here
+        $relationship = $relationshipDao->getRelationship($rel_id, 1);
 
 //var_dump($relationship);
 
