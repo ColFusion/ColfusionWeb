@@ -1,3 +1,9 @@
+delete from colfusion_sourceinfo_table_ktr;
+delete from colfusion_sourceinfo_metadata_edit_history;
+delete from colfusion_sourceinfo_user;
+delete from colfusion_user_relationship_verdict;
+delete from colfusion_relationships_columns;
+delete from colfusion_dnameinfo_metadata_edit_history;
 delete from colfusion_columnTableInfo;
 delete from colfusion_dnameinfo;
 delete from colfusion_executeinfo;
@@ -8,7 +14,7 @@ delete from colfusion_sourceinfo;
 delete from colfusion_synonyms_from;
 delete from colfusion_synonyms_to;
 delete from colfusion_links;
-delete from colfusion_relationships_columns_cachingExecutionInfo;
+delete from colfusion_relationships_columns_cachingexecutioninfo;
 delete from colfusion_cached_queries_info;
 delete from colfusion_pentaho_log_logging_channels;
 delete from colfusion_pentaho_log_performance;
