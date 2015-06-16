@@ -52,7 +52,7 @@ class DataMatcher
     	$relationshipDAO = new RelationshipDAO();
 
     	foreach ($rel_ids as $key => $rel_id) {
-    		$rel = $relationshipDAO->getRelationship($rel_id); //this might too expensive, I don't need all infor about relationships, just sids, tablemes and links
+    		$rel = $relationshipDAO->getRelationship($rel_id, 1); //this might too expensive, I don't need all infor about relationships, just sids, tablemes and links
 
     		foreach ($rel->links as $key => $link) {
 
