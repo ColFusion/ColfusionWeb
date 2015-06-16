@@ -229,8 +229,10 @@ class ezSQL_mysql extends ezSQLcore {
         // If there is an error then take note of it..
         if ($str = @mysql_error($this->dbh)) {
             $is_insert = true;
-            $this->register_error($str);
-            $this->show_errors ? trigger_error($str, E_USER_WARNING) : null;
+            //I guess this will be the error message
+            $errorMessage = $str . " for query: " . $query;
+            $this->register_error($errorMessage);
+            $this->show_errors ? trigger_error($errorMessage, E_USER_WARNING) : null;
             return false;
         }
 
