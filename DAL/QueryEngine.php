@@ -397,8 +397,8 @@ class QueryEngine {
             $neo4JDAO->addRelationshipsByRelIds($newRelsMined);
 
             // triger background execution of data matching ration calcualtion.
-            $dataMatcher = new DataMatcher();
-            $dataMatcher->calculateDataMatchingRatios($newRelsMined);
+//            $dataMatcher = new DataMatcher();
+//            $dataMatcher->calculateDataMatchingRatios($newRelsMined);
         }
 
         // get info to display in Relatiosnhips table of all relationships for given sid.
