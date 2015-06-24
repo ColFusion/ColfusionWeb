@@ -40,6 +40,7 @@ if(isset($_GET["op"])){
 // if user tries to log in
 if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (isset($_GET["processlogin"]) && is_numeric($_GET["processlogin"])) ){
 	if($_POST["processlogin"] == 1) { // users logs in with username and password
+
 		$username = sanitize(trim($_POST['username']), 3);
 		$password = sanitize(trim($_POST['password']), 3);
 		if(isset($_POST['persistent'])){$persistent = sanitize($_POST['persistent'], 3);}else{$persistent = '';}
@@ -47,6 +48,7 @@ if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (is
 		$dbusername=sanitize($db->escape($username),4);
 		require_once(mnminclude.'check_behind_proxy.php');
 		$lastip=check_ip_behind_proxy();
+
 		$login=$db->get_row("SELECT *, UNIX_TIMESTAMP()-UNIX_TIMESTAMP(login_time) AS time FROM " . table_login_attempts . " WHERE login_ip='$lastip'");
 		if ($login->login_id)
 		{
@@ -60,8 +62,9 @@ if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (is
 		}
 		elseif (!is_ip_approved($lastip))
 		{
-		    $db->query("INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', login_time=NOW(), login_ip='$lastip'");
+		    $db->query("INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', login_count=0, login_time=NOW(), login_ip='$lastip'");
 		    $login_id = $db->insert_id;
+
 		    if (!$login_id) $errorMsg=sprintf($main_smarty->get_config_vars('PLIGG_Visual_Login_Error'),3);
 		}
 
@@ -70,7 +73,7 @@ if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (is
 		    if($current_user->Authenticate($username, $password, $persistent) == false) {
 		    {
 		    	$db->query("UPDATE ".table_login_attempts." SET login_username='$dbusername', login_count=login_count+1, login_time=NOW() WHERE login_id=".$login_id);
-			$errorMsg=$main_smarty->get_config_vars('PLIGG_Visual_Login_Error');
+				$errorMsg=$main_smarty->get_config_vars('PLIGG_Visual_Login_Error');
 		    }
 		    } else {
 			$sql = "DELETE FROM " . table_login_attempts . " WHERE login_ip='$lastip' ";
