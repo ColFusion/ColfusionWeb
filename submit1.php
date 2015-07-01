@@ -18,7 +18,6 @@ Logger::configure(realpath(dirname(__FILE__)) . '/conf/log4php.xml');
 
 $logger = Logger::getLogger("generalLog");
 
-
 include(mnminclude.'html1.php');
 include(mnminclude.'link.php');
 include(mnminclude.'tags.php');
@@ -29,7 +28,6 @@ include_once('DAL/QueryEngine.php');
 
 if (!$_COOKIE['referrer'])
 	check_referrer();
-
 
 // breadcrumbs and page titles
 $navwhere['text1'] = $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Submit');
