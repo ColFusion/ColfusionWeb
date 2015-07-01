@@ -554,11 +554,8 @@ function StoryMetadataViewModel(sid, userId){
             contentType: "application/json",
             crossDomain: true,
             success: function(data){
-                debugger;
                 if (data.isSuccessful) {
                     var payload = data.payload;
-
-                    debugger;
 
                     for (var i = 0; i < payload.length; i++){
                         newLicense = [];
@@ -584,8 +581,6 @@ function StoryMetadataViewModel(sid, userId){
     self.init();
 }
 
-var restBaseUrl = "http://localhost:8080/ColFusionServer/rest/";
-
 function StoryListViewModel(sid, title, description, createdBy, createdOn, lastUpdated, status) {
     var self = this;
     self.sid = ko.observable(sid);
@@ -601,13 +596,18 @@ function StoryListViewModel(sid, title, description, createdBy, createdOn, lastU
 function StoriesViewModel() {
     var self = this;
 
-    var typeUrl = 'all/';
-    var uid = $("#user_id").val();
+    self.typeUrl = 'all/';
+    self.uid = $("#user_id").val();
     //alert('in StoriesViewModel'+$("#user_id").val());
     //self.sample = "hi";
     self.folders = ["Drafts","Private","Published","Owned","Shared","All"];
     self.chosenFolderId = ko.observable();
+    
+    self.stories = ko.observableArray();
+    self.chosenStoryData = ko.observable(new StoryMetadataViewModel());
 
+    self.isLoading = ko.observable(false);
+    
     function getUrlParameter(sParam) {
         var sPageURL = window.location.search.substring(1);
         var sURLVariables = sPageURL.split('&');
@@ -622,61 +622,65 @@ function StoriesViewModel() {
 
     // Behaviours    
     self.goToFolder = function() { 
-debugger;
+
         var folder = getUrlParameter('folder');
 
         self.chosenFolderId(folder);
         //alert('in goToFolder'+folder);
         switch(folder){
         case "Drafts":
-            typeUrl = "alldrafts/";
+            self.typeUrl = "alldrafts/";
             break;
         case "Private":
-            typeUrl = "allprivate/";
+            self.typeUrl = "allprivate/";
             break;
         case "Published":
-            typeUrl = "allpublished/";
+            self.typeUrl = "allpublished/";
             break;
         case "Owned":
-            typeUrl = "allauthored/";
+            self.typeUrl = "allauthored/";
             break;
         case "Shared":
-            typeUrl = "allshared/";
+            self.typeUrl = "allshared/";
             break;
         default:
-            typeUrl = "all/";
+            self.typeUrl = "all/";
             break;
         }
-        self.findAll();
 
+        self.findAll();
     };
 
-    self.stories = ko.observableArray();
-    self.chosenStoryData = ko.observable(new StoryMetadataViewModel());
     self.findAll = function() {
+        self.isLoading(true);
+
         //alert('in findAll'+typeUrl);
         $.ajax({
-            url: restBaseUrl + "Story/" + typeUrl + uid,
+            url: ColFusionServerUrl + "/Story/" + self.typeUrl + self.uid,
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
             crossDomain: true,
             success: function(data) {
+                //TODO: check if the response is success of error
                 self.stories.removeAll();
                 var payload = data.payload;
+                self.isLoading(false);
                 for (var i = 0; i < payload.length; i++) {
                     var story = new StoryListViewModel(payload[i].sid, payload[i].title, payload[i].description, payload[i].user.userLogin, payload[i].entryDate, payload[i].lastUpdated, payload[i].status);
                     self.stories.push(story);
                 }
             },
             error: function(data) {
+                self.isLoading(false);
                 alert("Something went wrong while getting published stories. Please try again.");
             }
         });
     };
+
     self.editStory = function(story){
         $.ajax({
-            url: restBaseUrl + "Story/metadata/"+story.sid(),
+            url: ColFusionServerUrl + "/Story/metadata/"+story.sid(),
             type: 'GET',
             dataType: 'json',
             contentType: "application/json",
@@ -697,6 +701,4 @@ debugger;
     self.goToFolder();
 }
 
-var storiesVM = new StoriesViewModel();
-ko.applyBindings(storiesVM, $("#shruti")[0]);
-ko.applyBindings(storiesVM, $("#storiesContainer")[0]);
+// ko.applyBindings(vm2, $("#shruti")[0]); // This only needs folders
