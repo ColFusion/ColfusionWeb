@@ -71,9 +71,11 @@ define("mnmmodules", dirname(__FILE__).'/modules/');
 include_once mnminclude . 'pre_install_check.php';
 
 include_once 'settings.php';
+
 function sanit($var){
-return addslashes(htmlentities(strip_tags($var),ENT_QUOTES,'UTF-8'));
+	return addslashes(htmlentities(strip_tags($var),ENT_QUOTES,'UTF-8'));
 }
+
 if ($my_base_url == ''){
 	define('my_base_url', "http://" . $_SERVER["HTTP_HOST"]);
 	if(isset($_REQUEST['action'])){$action = sanit($_REQUEST['action']);}else{$action="";}

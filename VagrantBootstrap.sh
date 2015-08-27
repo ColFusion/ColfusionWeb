@@ -5,7 +5,7 @@ apt-get install -y apache2
 
 apt-get install -y php5 libapache2-mod-php5 php5-mcrypt php5-mysql
 
-cp /vagrant/VagrantBootstrapApacheVirtualHostConfig.conf /etc/apache2/sites-available/
+cp /Colfusion/VagrantBootstrapApacheVirtualHostConfig.conf /etc/apache2/sites-available/
 
 cd /etc/apache2/mods-available
 
@@ -20,8 +20,8 @@ sudo service apache2 restart
 
 if ! [ -L /var/www ]; then
   rm -rf /var/www
-  ln -fs /vagrant /var/www
+  ln -fs /Colfusion /var/www
 fi
 
-chmod -R 777 /vagrant/cache
-chmod -R 777 /vagrant/OriginalSmarty/templates_c
+chmod -R 777 /Colfusion/cache
+chmod -R 777 /Colfusion/OriginalSmarty/templates_c
