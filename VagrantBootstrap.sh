@@ -16,11 +16,12 @@ cd /etc/apache2/sites-available
 a2dissite 000-default
 a2ensite VagrantBootstrapApacheVirtualHostConfig
 
-
-
 sudo service apache2 restart
 
 if ! [ -L /var/www ]; then
   rm -rf /var/www
   ln -fs /vagrant /var/www
 fi
+
+chmod -R 777 /vagrant/cache
+chmod -R 777 /vagrant/OriginalSmarty/templates_c
