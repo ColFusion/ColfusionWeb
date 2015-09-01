@@ -26,6 +26,3 @@ if ! [ -L /var/www ]; then
   rm -rf /var/www
   ln -fs /Colfusion /var/www
 fi
-
-chmod -R 777 /Colfusion/cache
-chmod -R 777 /Colfusion/OriginalSmarty/templates_c
