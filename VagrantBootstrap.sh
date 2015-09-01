@@ -16,6 +16,10 @@ cd /etc/apache2/sites-available
 a2dissite 000-default
 a2ensite VagrantBootstrapApacheVirtualHostConfig
 
+sed -i 's/APACHE_RUN_USER=www-data/APACHE_RUN_USER=vagrant/' /etc/apache2/envvars
+sed -i 's/APACHE_RUN_GROUP=www-data/APACHE_RUN_GROUP=vagrant/' /etc/apache2/envvars
+chown -R vagrant:www-data /var/lock/apache2
+
 sudo service apache2 restart
 
 if ! [ -L /var/www ]; then
