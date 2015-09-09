@@ -567,12 +567,12 @@ function StoryMetadataViewModel(sid, userId){
                     }
                 }
                 else {
-                    alert("Could not load licenses from server. Pleaset try again later.");
+                    alert("Could not load licenses from server. Please try again later.");
                     colsole.log(data.message);
                 }
             },
             error: function(data) {
-                alert("Could not load licenses from server. Pleaset try again later.");
+                alert("Could not load licenses from server. Please try again later.");
                 //colsole.log(data);
             }
         });
