@@ -31,6 +31,7 @@ var wizardFromFile = (function() {
         var container = document.getElementById('divFromComputer');
         ko.applyBindings(wizardFromFile.fromComputerUploadFileViewModel, container);
 
+		
         // bind form using 'ajaxForm' 
         wizardFromFile.fromComputerUploadFileViewModel.initFileUploadForm($('#upload_form'));
     };
@@ -215,6 +216,7 @@ var wizardFromFile = (function() {
         ko.cleanNode(container);
         wizardFromFile.fromComputerUploadFileViewModel = new FromComputerUploadFileViewModel(wizardFromFile.sid);
         ko.applyBindings(wizardFromFile.fromComputerUploadFileViewModel, container);
+
     };
 
     wizardFromFile.toggleSourceSelectionPanel = function(liDom, contentSelector){
@@ -421,4 +423,6 @@ function FromComputerUploadFileViewModel(sid) {
             self.uploadMessage(data.message);
         });
     }
+	
+
 };

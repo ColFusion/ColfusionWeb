@@ -1,4 +1,7 @@
 {literal}
+
+
+			
 <div class='wizard' id='dataSubmissionWizardContainer'>
     <h1>Data Submission Wizard</h1>
 
@@ -16,6 +19,11 @@
                         <input id='computer' type='radio' name='place' value="computer" /> From this computer 
                         <img src='help.png' width='15' height='15' title='Select this option if you want to upload the data stored on your compuper in a data file (e.g., Excel file, CSV, or database dump file).'/>
                     </label>
+					
+					<label class="radio">
+						<input id='internet' type='radio' name='place' value="internet" /> From Harvard Dataverse 
+						<img src='help.png' width='15' height='15' title='Select this option if you want to upload the data stored on Harvard Dataverse.'/>
+					</label>
                     
                     <div id='divFromComputer' >
                         <form class='upload-form' name='upload_form[]' id='upload_form' action='http://localhost:8080/ColFusionServer/Wizard/acceptFileFromWizard' method='post' enctype='multipart/form-data'> 
@@ -70,7 +78,55 @@
                             <p id='uploadMessage' data-bind="text: uploadMessage, style: { color: isUploadSuccessful() ? 'green' : 'red' }"></p>
                         </form>
                     </div>
-                </div>
+					<div id='divFromInternet'>
+					<br> 
+							<input type='hidden' name='sid' id="uploadFormSid" data-bind="value: uploadFormSid">
+                            <input type='hidden' name='uploadTimestamp' id="uploadTimestamp" value=" uploadTimestamp">					
+									<div id='searchField' class="form-horizontal" >
+										<div class="control-group">
+											<label class="control-label" for="upload_file">File Name:  (Required)</label>
+											 <div class="controls">
+											<input id="dataverseFile" type="text" name="file_name" size="55" />
+											</div>
+										</div>
+										<div class="control-group">	
+											<label class="control-label" for="upload_file">Dataset Name: (Optional)</label>
+											 <div class="controls">
+											<input id="datasetName" type="text" name="dataset_name" size="55" />
+											</div>	
+										</div>
+										<div class="control-group">	
+											<label class="control-label" for="upload_file">Dataverse Name: (Required)</label>
+											 <div class="controls">
+											
+											<input id="dataverseName" type="text" name="dataverse_name" size="55" />
+											</div>
+										</div>
+										<div class="control-group">		
+											 <div class="controls">
+											<input type="button"  onclick="searchDataverse()"  value="Search"/>
+											</div>
+										</div>
+									</div>
+									<div id='searchResult'>
+						<h2 class="control-label">Search Result:</h2>
+						<p id="filenum">There is no file now! </p>
+						<div class="controls">
+							<input  id="uploadbtn" type="button" class='btn btn-primary'  onclick="downloadRequest()"  value="Upload"/>
+						</div>
+					</div>
+									<div id='downloadResult'>
+									<h2 id='downloadMessage' data-bind="text: downloadMessag, style: { color: 'Blue' }"></p>
+			
+										</h2>
+									</div>
+					
+					
+					
+					</div>
+				
+					
+           </div>
 
                 <!-- DONT DELETE THIS, just do more testing and then uncomment 
                 <div class="datasetTypeWrapper">
@@ -127,13 +183,14 @@
                     </div>
                 </div>
                 -->
-            </div>
+            </div>  <!--control-group -->
 
             <div id='result' >
                 
             </div>
         </div>
     </div>
+	
 
     <!-- End of Upload Your Dataset Step -->
 

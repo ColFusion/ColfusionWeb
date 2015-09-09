@@ -25,15 +25,19 @@ var importWizard = (function () {
         // });
 
         $("#computer").click(function () {
-            $('#divFromComputer').show();
             $('#divFromDatabase').hide();
             $('#divFromInternet').hide();
+			$('#divFromComputer').show();
         });
 
         $("#internet").click(function () {
             $('#divFromComputer').hide();
             $('#divFromDatabase').hide();
-            $('#divFromInternet').show();
+			$('#divFromInternet').show();
+			$('#searchField').show();
+			$('#searchResult').hide();
+			$('#downloadResult').hide();
+			
         });
 
         $("#database").click(function () {
@@ -183,8 +187,9 @@ var importWizard = (function () {
     };
     
     // ***********************************************************************************************
-
-    /** ********** */
+	
+	
+	/** ********** */
 
     /* Helper functions */
 
@@ -234,6 +239,11 @@ var importWizard = (function () {
                     wizard.enableNextButton();
                     $('#dataMatchingStepInProgress').hide();
                 });
+			 var dsourceSettings = wizardFromDataverse.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
+            importWizard.wizardDataMatchingStepViewModel.fetchVariables(getImportSource(), dsourceSettings, function () {
+                    wizard.enableNextButton();
+                    $('#dataMatchingStepInProgress').hide();
+                });
         });
 
         wizard.on("submit", function(wizard) {
@@ -241,6 +251,7 @@ var importWizard = (function () {
 
             importWizard.onWizardSubmitClick(wizard);
         });
+		
 
         wizard.on("reset", function (wizard) {
             wizardFromFile.resetFileUploadForm();
@@ -263,6 +274,7 @@ var importWizard = (function () {
             $('#sid', '#upload_form').val($('#sid', '#thisform').val());
 
             wizard.show();
+			//*******************************************************
             wizard.disableNextButton();
 
             importWizard.wizardDataMatchingStepViewModel.atLeastOneVariableChecked.subscribe(function(newValue) {

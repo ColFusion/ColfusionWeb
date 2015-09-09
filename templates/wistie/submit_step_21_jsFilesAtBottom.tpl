@@ -34,6 +34,7 @@
 <script type="text/javascript" src="{$my_pligg_base}/javascripts/knockout_models/StoryMetadataViewModel.js"></script>
 
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/importWizard.js"></script>
+<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/wizardFromDataverse.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/wizardFromFile.js"></script>
 <script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/wizardFromDB.js"></script>
    
