@@ -437,7 +437,7 @@
 
     <div class='wizard-success'>
         <div class='alert alert-success'>
-            <p id='exe' value=''> You have completed the wizard successfully. Your dataset is being processed now. Please click on the finish button to close the wizard and go to the original submit new data page to finish up your submission.  You might the message that there is no data in your submission. Don't worry about it, your data is loading in background and will appear on the screen after every 1000 records are processed. You will have to refresh the page to see it though.
+            <p id='exe' value=''> You have completed the wizard successfully. Your dataset is being processed now. Please click on the finish button to close the wizard and go to the original submit new data page to finish up your submission.  You might see a message that there is no data in your submission. Don't worry about it, your data is loading in the background and will appear on the screen after every 1000 records are processed. You will have to refresh the page to see it though.
             </p>
             <p id='exe'></p>
         </div>
