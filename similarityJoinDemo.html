@@ -79,7 +79,7 @@
 		var data = {sid: sid, table_name: tableName, perPage: 10, pageNo: 1};
 
         $.ajax({
-            url: ColFusionDomain + "/" + ColFusionAppName + "/visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
+            url: ColFusionAppPath + "visualization/VisualizationAPI.php?action=GetTableDataBySidAndName",
             type: 'POST',
             // dataType: 'json',
             //contentType: "application/json",
