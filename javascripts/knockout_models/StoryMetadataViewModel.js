@@ -690,7 +690,7 @@ function StoriesViewModel() {
                 //var dr = new DraftViewModel(payload.sid, payload.title, payload.userId, payload.description, payload.status, payload.licenseId, payload.sourceType, payload.tags, payload.storySubmitter);
                 var sr = new StoryMetadataViewModel(payload.sid, payload.userId);
                 self.chosenStoryData(sr);
-                window.location.href = "http://localhost/Colfusion/story.php?title="+sr.sid();
+                window.location.href = "/story.php?title="+sr.sid();
             },
             error: function(data) {
                 alert("Something went wrong while getting the story. Please try again.");
