@@ -13,7 +13,8 @@
 			<input type="password" name="password" class="login" tabindex="11" /><br />
 		<input type="hidden" name="processlogin" value="1"/>
 		<input type="hidden" name="return" value="{$get.return}"/>
-		<input type="checkbox" name="persistent" tabindex="12" /> {#PLIGG_Visual_Login_Remember#}
+		<input type="checkbox" name="persistent" tabindex="12" id="checkbox_persistent" />
+		  <label for="checkbox_persistent" id="label_persistent">{#PLIGG_Visual_Login_Remember#}</label>
 		<br /><br />
 		<input type="submit" value="{#PLIGG_Visual_Login_LoginButton#}" class="submit-s" tabindex="13" />
 	</form>

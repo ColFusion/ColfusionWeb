@@ -47,6 +47,10 @@ label {
     font-weight: bold;
 }
 
+#label_persistent {
+	font-weight: normal;
+}
+
 h1 {
     font-size: 24px;
     font-weight: bold;
