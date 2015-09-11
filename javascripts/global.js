@@ -1,8 +1,8 @@
-var ColFusionDomain = "http://localhost";
+var ColFusionDomain = "http://192.168.33.10";
 
 //e.g., "/" or "/Colfusion/"
 var ColFusionAppPath = "/";
 
-var ColFusionServerUrl = "http://localhost:8080/ColFusionServer/rest"; //"http://localhost/REST/ColFusionServer/rest";
-var OpenRefineUrl = "http://localhost/OpenRefine";
-var ColFusionServiceMonitorUrl = "http://localhost:7473/rest";
+var ColFusionServerUrl = "http://192.168.33.10/REST/ColFusionServer/rest"; //"http://localhost:8080/ColFusionServer/rest"; 
+var OpenRefineUrl = "http://192.168.33.10/OpenRefine";
+var ColFusionServiceMonitorUrl = "http://192.168.33.10:7473/rest";
