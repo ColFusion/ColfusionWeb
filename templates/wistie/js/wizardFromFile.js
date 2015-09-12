@@ -423,6 +423,4 @@ function FromComputerUploadFileViewModel(sid) {
             self.uploadMessage(data.message);
         });
     }
-	
-
 };
