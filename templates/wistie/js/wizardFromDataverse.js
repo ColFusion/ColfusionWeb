@@ -85,7 +85,7 @@ var wizardFromDataverse = (function() {
 
             self.showUploadLoading(true);
             self.showSearchLoading(false);
-            self.showUploadLoading(false);
+            self.showUploadErrorMessage(false);
             self.showUploadSuccessMessage(false);
 
             var data = {'sid': self.sid, 'fileId': self.selectedFile().fileId(), 'fileName': self.selectedFile().fileName()};
@@ -100,11 +100,11 @@ var wizardFromDataverse = (function() {
                         self.showUploadErrorMessage(false);
                         self.showUploadSuccessMessage(true);
 
-                        wizard.enableNextButton();
-                        // var resultJson = JSON.parse(data);
                         wizardFromFile.fromComputerUploadFileViewModel.uploadedFileInfos.push(data.payload[0]);
                         wizardFromFile.fromComputerUploadFileViewModel.isUploadSuccessful(data.isSuccessful);
                         wizardFromFile.fromComputerUploadFileViewModel.uploadMessage(data.message);
+
+                        wizard.enableNextButton();
                     }
                     else {
                         self.showUploadErrorMessage(true); 
@@ -117,7 +117,7 @@ var wizardFromDataverse = (function() {
                     else {
                         self.showUploadErrorMessage403(false);    
                     }
-                    
+
                     self.showUploadErrorMessage(true); 
                 }
             })
