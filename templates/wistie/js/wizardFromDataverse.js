@@ -33,6 +33,7 @@ var wizardFromDataverse = (function() {
         self.showSearchLoading = ko.observable(false);
         self.showUploadLoading = ko.observable(false);
         self.showUploadErrorMessage = ko.observable(false);
+        self.showUploadErrorMessage403 = ko.observable(false);
         self.showUploadSuccessMessage = ko.observable(false);
         
 
@@ -110,6 +111,13 @@ var wizardFromDataverse = (function() {
                     }
                 },
                 error: function(data) {
+                    if (data.status == 403) {
+                        self.showUploadErrorMessage403(true);
+                    }
+                    else {
+                        self.showUploadErrorMessage403(false);    
+                    }
+                    
                     self.showUploadErrorMessage(true); 
                 }
             })

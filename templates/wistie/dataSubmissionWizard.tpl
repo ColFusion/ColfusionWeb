@@ -159,7 +159,13 @@
                             <br/>
                             <!-- ko if: showUploadErrorMessage() -->
                                 <div class="alert alert-error">
-                                    <span>Something went wrong. Please try again and if doesn't work, please contact us.</span>
+                                    <!-- ko if: showUploadErrorMessage403() -->
+                                        <span>Access to the file <strong><span data-bind="text: selectedFile().fileName"></span></strong> has been forbidden.</span>
+                                    <!-- /ko -->
+
+                                    <!-- ko if: !showUploadErrorMessage403() -->
+                                        <span>Something went wrong. Please try again and if doesn't work, please contact us.</span>
+                                    <!-- /ko -->
                                 </div>
                             <!-- /ko -->
     					</div>
@@ -168,7 +174,7 @@
 
                         <!-- ko if: showUploadSuccessMessage() -->
                             <div class="alert alert-success">
-                                <span>The <span data-bind="text: selectedFile().fileName"></span> was uploaded successfully.</span>
+                                <span>The <strong><span data-bind="text: selectedFile().fileName"></span></strong> was uploaded successfully.</span>
                             </div>
                         <!-- /ko -->
 					</div>
