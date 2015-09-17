@@ -98,18 +98,28 @@
 							<div class="control-group">		
 								<div class="controls">
 								   <button class="btn btn-primary"  data-bind='click: searchForFile, enable: fileName()'>Search</button>
+                                    <!-- ko if: showSearchLoading() -->
+                                        <img src="images/ajax-loader.gif"/>
+                                    <!-- /ko -->
 								</div>
 							</div>
 						</div>
 
-                        <!-- ko if: (showNoFilesFoundMessage() || foundFiles().length > 0) -->
+                        <!-- ko if: showSearchErrorMessage() -->
+                        <div class="alert alert-error">
+                            <span>Something went wrong with the search. Please try again and if doesn't work, please contact us.</span>
+                        </div>
+                        <!-- /ko -->
+
+                        <!-- ko if: !showSearchLoading() && !showSearchErrorMessage() && !showUploadSuccessMessage() && (showNoFilesFoundMessage() || foundFiles().length > 0) -->
 
 						<div>
     						<h2 class="control-label">Search Result:</h2>
 
                             <!-- ko if: showNoFilesFoundMessage() -->
-
-    						  <p>No files found that correspond to the search parameters.</p>
+                                <div class="alert alert-warning">
+    						        <span>No files found that correspond to the search parameters.</span>
+                                </div>
 
                             <!-- /ko -->
 
@@ -142,14 +152,25 @@
 
     						<div class="controls">
     							<button  id="uploadSelectedFileFromDataverse" class='btn btn-primary' data-bind='click: getDataFile, enable: selectedFile(), visible: foundFiles().length > 0'>Upload Selected File</button>
+                                <!-- ko if: showUploadLoading() -->
+                                        <img src="images/ajax-loader.gif"/>
+                                <!-- /ko -->
     						</div>
+                            <br/>
+                            <!-- ko if: showUploadErrorMessage() -->
+                                <div class="alert alert-error">
+                                    <span>Something went wrong. Please try again and if doesn't work, please contact us.</span>
+                                </div>
+                            <!-- /ko -->
     					</div>
 
                         <!-- /ko -->
-						
-                        <div id='downloadResult'>
-						   <h2 id='downloadMessage' ></h2>
-						</div>
+
+                        <!-- ko if: showUploadSuccessMessage() -->
+                            <div class="alert alert-success">
+                                <span>The <span data-bind="text: selectedFile().fileName"></span> was uploaded successfully.</span>
+                            </div>
+                        <!-- /ko -->
 					</div>
            </div>
 

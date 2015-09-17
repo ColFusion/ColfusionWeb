@@ -29,19 +29,26 @@ var wizardFromDataverse = (function() {
         self.dataverseName = ko.observable("");
 
         self.showNoFilesFoundMessage = ko.observable(false);
-        self.showErrorMessage = ko.observable(false);
-        self.showSuccessMessage = ko.observable(false);
+        self.showSearchErrorMessage = ko.observable(false);
+        self.showSearchLoading = ko.observable(false);
+        self.showUploadLoading = ko.observable(false);
+        self.showUploadErrorMessage = ko.observable(false);
+        self.showUploadSuccessMessage = ko.observable(false);
+        
 
         self.selectedFile = ko.observable();
 
         self.searchForFile = function() {
+            self.showSearchLoading(true);
+            self.showUploadErrorMessage(false); 
+            self.showSearchErrorMessage(false); 
             $.ajax({
                 url: restApis.getDataverseSearch(self.fileName(), self.dataverseName(), self.datasetName()), 
                 type: 'GET',
                 contentType: 'application/json',
                 success: function(data) {
                     if (data.isSuccessful) {
-                        self.showErrorMessage(false); 
+                        self.showSearchErrorMessage(false); 
                         self.foundFiles.removeAll();
 
                         if (data.payload.length == 0) {
@@ -57,12 +64,15 @@ var wizardFromDataverse = (function() {
                         self.showNoFilesFoundMessage(false);
                     }
                     else {
-                        self.showErrorMessage(true); 
+                        self.showSearchErrorMessage(true); 
                     }
                 },
                 error: function(data) {
-                    self.showErrorMessage(true); 
+                    self.showSearchErrorMessage(true); 
                 }
+            })
+            .always(function() {
+                self.showSearchLoading(false);
             });
         }
 
@@ -71,6 +81,11 @@ var wizardFromDataverse = (function() {
                 alert('Please select a file first');
                 return;
             }
+
+            self.showUploadLoading(true);
+            self.showSearchLoading(false);
+            self.showUploadLoading(false);
+            self.showUploadSuccessMessage(false);
 
             var data = {'sid': self.sid, 'fileId': self.selectedFile().fileId(), 'fileName': self.selectedFile().fileName()};
 
@@ -81,8 +96,8 @@ var wizardFromDataverse = (function() {
                 contentType: 'application/json',
                 success: function(data) {
                     if (data.isSuccessful) {
-                        self.showErrorMessage(false);
-                        self.showSuccessMessage(true);
+                        self.showUploadErrorMessage(false);
+                        self.showUploadSuccessMessage(true);
 
                         wizard.enableNextButton();
                         // var resultJson = JSON.parse(data);
@@ -91,12 +106,15 @@ var wizardFromDataverse = (function() {
                         wizardFromFile.fromComputerUploadFileViewModel.uploadMessage(data.message);
                     }
                     else {
-                        self.showErrorMessage(true); 
+                        self.showUploadErrorMessage(true); 
                     }
                 },
                 error: function(data) {
-                    self.showErrorMessage(true); 
+                    self.showUploadErrorMessage(true); 
                 }
+            })
+            .always(function(){
+                self.showUploadLoading(false);
             });
         }
 
