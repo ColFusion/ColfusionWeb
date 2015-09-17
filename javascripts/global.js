@@ -16,8 +16,8 @@ var restApis = (function() {
 
 	var harvardDataverse = "HarvardDataverse";
 
-	restApis.getDataverseDownload = function(id, name, sid, uploadTimestamp) {
-		var url = ColFusionServerUrl + "/" + harvardDataverse + "/Download/" + id + "/" + name + "/" + sid + "/" + uploadTimestamp;
+	restApis.postGetDataFile = function() {
+		var url = ColFusionServerUrl + "/" + harvardDataverse + "/getDataFile";
 
 		console.log(url);
 
@@ -25,7 +25,7 @@ var restApis = (function() {
 	};
 
 	restApis.getDataverseSearch = function(fileName, dataverseName, datasetName) {
-		var url = ColFusionServerUrl + "/" + harvardDataverse + "/Search?dataverseName=" + dataverseName + 
+		var url = ColFusionServerUrl + "/" + harvardDataverse + "/searchForFile?dataverseName=" + dataverseName + 
 						"&fileName=" + fileName + "&datasetName=" + datasetName;
 
 		console.log(url);
