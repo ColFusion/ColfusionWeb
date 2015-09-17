@@ -122,7 +122,6 @@ var importWizard = (function () {
         
         initBootstrapWizard();
 
-        
         importWizard.loadingGif = "<img src='" + my_pligg_base + "/templates/wistie/images/ajax-loader_cp.gif'/>";
 
         //ko.applyBindings(importWizard.wizardUploadDatasetViewModel, document.getElementById('filenameListContainer'));

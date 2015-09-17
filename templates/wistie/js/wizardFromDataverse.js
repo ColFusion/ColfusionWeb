@@ -105,6 +105,7 @@ var wizardFromDataverse = (function() {
                         wizardFromFile.fromComputerUploadFileViewModel.uploadMessage(data.message);
 
                         wizard.enableNextButton();
+                        wizard.nextButton.click(); //Advance to the next page
                     }
                     else {
                         self.showUploadErrorMessage(true); 

@@ -317,7 +317,6 @@ function FromComputerUploadFileViewModel(sid) {
                 progressSingle = 0;
             },
             done: function(e, data) {
-
                 completeCount++;
                 progressAll += progressSingle;
                 var resultJson = data.result;
@@ -342,6 +341,7 @@ function FromComputerUploadFileViewModel(sid) {
                         } else {
                             self.uploadMessage(resultJson.message);
                             wizard.enableNextButton();
+                            wizard.nextButton.click(); //Advance to the next page
                         }
                     }
                 } else if (resultJson.isSuccessful === false) {
