@@ -79,9 +79,10 @@
             <li  {if $pagename eq "upcoming"}class="current"{/if}><a href="{$URL_upcoming}">{#PLIGG_Visual_Published_News#}</a></li>
 
             <li {if $pagename eq "submit"}class="current"{/if}><a href="{$my_base_url}{$my_pligg_base}/submit1.php">{#PLIGG_Visual_Submit_A_New_Story#}</a></li>
-
+<!--
 	        <li ><a href="{$my_base_url}{$my_pligg_base}/phpBB3" target="_blank">Forum</a></li>
 	        <li ><a href="{$my_base_url}{$my_pligg_base}/wiki/index.php/Welcome_to_Col*Fusion_Help" target="_blank">Help Wiki</a></li>
+-->
             <li ><a href="{$my_base_url}{$my_pligg_base}/advancedSearch/relationships.php" targer="_blank">Relationship Graph</a></li>
 
             {if $user_authenticated eq true}
