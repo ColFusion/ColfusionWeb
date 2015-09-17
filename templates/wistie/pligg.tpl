@@ -7,8 +7,8 @@
 
 	<link rel="stylesheet" type="text/css" href="{$my_pligg_base}/templates/{$the_template}/css/style.css" media="screen" />
 	<link rel="alternate" type="application/rss+xml" title="RSS 2.0" href="{$my_base_url}{$my_pligg_base}/rss.php"/>	
-	<link rel="shortcut icon" href="{$my_pligg_base}/favicon.ico" type="image/x-icon">
-	<link rel="icon" href="{$my_pligg_base}/favicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="{$my_pligg_base}/Cicon.png" >
+	<link rel="icon" href="{$my_pligg_base}/Cicon.png" >
 	
 	{if $pagename eq 'published'}<link rel="canonical" href="{$my_base_url}{$my_pligg_base}/{$navbar_where.text2}/" />{/if}
 	{if $pagename eq 'index'}<link rel="canonical" href="{$my_base_url}{$my_pligg_base}/" />{/if}
