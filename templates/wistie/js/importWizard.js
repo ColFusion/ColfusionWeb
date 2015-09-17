@@ -12,6 +12,7 @@ var importWizard = (function () {
     importWizard.Init = function (sid, userId) {
         importWizard.sid = sid;
         wizardFromFile.Init(sid);
+        wizardFromDataverse.init(sid);
 
        
 
@@ -26,6 +27,7 @@ var importWizard = (function () {
 
         $("#computer").click(function () {
             $('#divFromDatabase').hide();
+            $('#divFromDataverseKnockoutContainer').hide();
             $('#divFromInternet').hide();
 			$('#divFromComputer').show();
         });
@@ -34,21 +36,27 @@ var importWizard = (function () {
             $('#divFromComputer').hide();
             $('#divFromDatabase').hide();
 			$('#divFromInternet').show();
-			$('#searchField').show();
-			$('#searchResult').hide();
-			$('#downloadResult').hide();
-			
+            $('#divFromDataverseKnockoutContainer').hide();
+        });
+
+        $("#dataverse").click(function () {
+            $('#divFromComputer').hide();
+            $('#divFromDatabase').hide();
+            $('#divFromInternet').hide();
+            $('#divFromDataverseKnockoutContainer').show();
         });
 
         $("#database").click(function () {
             $('#divFromComputer').hide();
             $('#divFromDatabase').show();
             $('#divFromInternet').hide();
+            $('#divFromDataverse').hide();
         });
 
         $('#divFromComputer').hide();
         $('#divFromInternet').hide();
         $('#divFromDatabase').hide();
+        $('#divFromDataverseKnockoutContainer').hide();
         $('#h1').hide();
         $('#h2').hide();
         $('#h3').hide();

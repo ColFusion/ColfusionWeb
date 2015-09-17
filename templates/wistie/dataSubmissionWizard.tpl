@@ -1,7 +1,4 @@
 {literal}
-
-
-			
 <div class='wizard' id='dataSubmissionWizardContainer'>
     <h1>Data Submission Wizard</h1>
 
@@ -21,7 +18,7 @@
                     </label>
 					
 					<label class="radio">
-						<input id='internet' type='radio' name='place' value="internet" /> From Harvard Dataverse 
+						<input id='dataverse' type='radio' name='place' value="dataverse" /> From Harvard Dataverse 
 						<img src='help.png' width='15' height='15' title='Select this option if you want to upload the data stored on Harvard Dataverse.'/>
 					</label>
                     
@@ -30,7 +27,6 @@
                             
                             <input type='hidden' name='sid' id="uploadFormSid" data-bind="value: uploadFormSid">
                             <input type='hidden' name='uploadTimestamp' id="uploadTimestamp" data-bind="value: uploadTimestamp">
-                            
                             
                             <div class="form-horizontal" >
                                 <div class="control-group">
@@ -78,54 +74,83 @@
                             <p id='uploadMessage' data-bind="text: uploadMessage, style: { color: isUploadSuccessful() ? 'green' : 'red' }"></p>
                         </form>
                     </div>
-					<div id='divFromInternet'>
-					<br> 
-							<input type='hidden' name='sid' id="uploadFormSid" data-bind="value: uploadFormSid">
-                            <input type='hidden' name='uploadTimestamp' id="uploadTimestamp" value=" uploadTimestamp">					
-									<div id='searchField' class="form-horizontal" >
-										<div class="control-group">
-											<label class="control-label" for="upload_file">File Name:  (Required)</label>
-											 <div class="controls">
-											<input id="dataverseFile" type="text" name="file_name" size="55" />
-											</div>
-										</div>
-										<div class="control-group">	
-											<label class="control-label" for="upload_file">Dataset Name: (Optional)</label>
-											 <div class="controls">
-											<input id="datasetName" type="text" name="dataset_name" size="55" />
-											</div>	
-										</div>
-										<div class="control-group">	
-											<label class="control-label" for="upload_file">Dataverse Name: (Required)</label>
-											 <div class="controls">
-											
-											<input id="dataverseName" type="text" name="dataverse_name" size="55" />
-											</div>
-										</div>
-										<div class="control-group">		
-											 <div class="controls">
-											<input type="button"  onclick="searchDataverse()"  value="Search"/>
-											</div>
-										</div>
-									</div>
-									<div id='searchResult'>
-						<h2 class="control-label">Search Result:</h2>
-						<p id="filenum">There is no file now! </p>
-						<div class="controls">
-							<input  id="uploadbtn" type="button" class='btn btn-primary'  onclick="downloadRequest()"  value="Upload"/>
+					<div id='divFromDataverseKnockoutContainer'>
+					    <br/> 					
+						<div id='searchField' class="form-horizontal" >
+							<div class="control-group">
+								<label class="control-label" for="upload_file">File Name*:</label>
+								<div class="controls">
+								   <input id="dataverseFileName" type="text" size="55" data-bind="value: fileName"/>
+								</div>
+							</div>
+							<div class="control-group">	
+								<label class="control-label" for="upload_file">Dataset Name: </label>
+								<div class="controls">
+								   <input id="dataverseDatasetName" type="text" size="55" data-bind="value: datasetName"/>
+								</div>	
+							</div>
+							<div class="control-group">	
+								<label class="control-label" for="upload_file">Dataverse Name:</label>
+								<div class="controls">
+								   <input id="dataverseDataverseName" type="text" size="55" data-bind="value: dataverseName"/>
+								</div>
+							</div>
+							<div class="control-group">		
+								<div class="controls">
+								   <button class="btn btn-primary"  data-bind='click: searchForFile, enable: fileName()'>Search</button>
+								</div>
+							</div>
+						</div>
+
+                        <!-- ko if: (showNoFilesFoundMessage() || foundFiles().length > 0) -->
+
+						<div>
+    						<h2 class="control-label">Search Result:</h2>
+
+                            <!-- ko if: showNoFilesFoundMessage() -->
+
+    						  <p>No files found that correspond to the search parameters.</p>
+
+                            <!-- /ko -->
+
+                            <!-- ko if: foundFiles().length > 0 -->
+                            <div class="dataver-files-list-group-container">
+                                <table id="tableDataverseFiles" class="table table-hover">
+                                    <tbody>
+                                    <!-- ko foreach: foundFiles -->
+                                            <tr>
+                                                <td>
+                                                    <div>
+                                                        <input type="radio" name="file" data-bind="checkedValue: $data, radioChecked: $parent.selectedFile, event: {change: $parent.updateSelectedBackground}" />
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <span data-bind="text: fileName"></span>
+                                                        <span data-bind="text: citation"></span>
+                                                    </div>
+                                                </td>
+                                            </tr>                                       
+                                    <!-- /ko -->
+                                    </tbody>
+                                </table>
+                     
+
+                            </div>
+
+                            <!-- /ko -->
+
+    						<div class="controls">
+    							<button  id="uploadSelectedFileFromDataverse" class='btn btn-primary' data-bind='click: getDataFile, enable: selectedFile(), visible: foundFiles().length > 0'>Upload Selected File</button>
+    						</div>
+    					</div>
+
+                        <!-- /ko -->
+						
+                        <div id='downloadResult'>
+						   <h2 id='downloadMessage' ></h2>
 						</div>
 					</div>
-									<div id='downloadResult'>
-									<h2 id='downloadMessage' data-bind="text: downloadMessag, style: { color: 'Blue' }"></p>
-			
-										</h2>
-									</div>
-					
-					
-					
-					</div>
-				
-					
            </div>
 
                 <!-- DONT DELETE THIS, just do more testing and then uncomment 
@@ -191,7 +216,6 @@
         </div>
     </div>
 	
-
     <!-- End of Upload Your Dataset Step -->
 
     <!-- =============================================================================================== -->

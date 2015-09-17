@@ -1597,3 +1597,18 @@ a:active {
     float: left;
     font-size: 16px;
 }
+
+.dataver-files-list-group-container {
+    max-height: 280px;
+    overflow-y: auto;
+    margin-bottom: 1em;
+}
+
+.dataver-files-list-group-item:hover {
+    background-color: rgba(188, 204, 208, 0.32);
+}
+
+.selectedDataverseFile {
+    background-color: rgba(180, 194, 220, 0.59);;
+    font-weight: 600;
+}

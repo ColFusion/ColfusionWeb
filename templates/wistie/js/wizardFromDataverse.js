@@ -1,84 +1,112 @@
-/**
- * Download file from Harvard Dataverse to server.
- * @return {[type]} [description]
- */
-function downloadRequest() {
-    debugger;
-    $('#uploadTimestamp').val(new Date().getTime()); // Why do we need it?
+var wizardFromDataverse = (function() {
+    var wizardFromDataverse = {};
 
-    //TODO figure exactly what it is and give it a better name
-    var ids = $("input[name='fileid']:checked").val();
-    var name = $("input[name='fileid']:checked").attr("data-value");
-    var sid = $("#uploadFormSid").val();
-    var uploadTimestamp = $("#uploadTimestamp").val(); // Why do we need it?
-	
-    $.ajax({
-        url: restApis.getDataverseDownload(ids, name, sid, uploadTimestamp),
-        type: 'GET',
-        dataType: 'application/json',
-        contentType: 'application/json',
-        success: function(data) {
-			//console.log(data);
-			$('#downloadMessage').text("Upload Successfully!");
-			wizard.enableNextButton();
-			var resultJson = JSON.parse(data);
-            wizardFromFile.fromComputerUploadFileViewModel.uploadedFileInfos.push(resultJson.payload[0]);
-			wizardFromFile.fromComputerUploadFileViewModel.isUploadSuccessful(resultJson.isSuccessful);
-			wizardFromFile.fromComputerUploadFileViewModel.uploadMessage(resultJson.message);
-        },
-        error: function(data) {
-            alert("Something went wrong while getting files list. Please try again.");
+    wizardFromDataverse.fromDataverseViewModel;
+
+    wizardFromDataverse.init = function(sid) {
+        wizardFromDataverse.fromDataverseViewModel = new FromDataverseViewModel(sid);
+        var viewModelDom = document.getElementById('divFromDataverseKnockoutContainer');
+        ko.applyBindings(wizardFromDataverse.fromDataverseViewModel, viewModelDom);
+    }
+
+    function DataverseFileInfoViewModel(fileId, fileName, size, citation, publishedAt) {
+        var self = this;
+        self.fileId = ko.observable(fileId);
+        self.fileName = ko.observable(fileName);
+        self.size = ko.observable(size);
+        self.citation = ko.observable(citation);
+        self.publishedAt = ko.observable(publishedAt);
+    }
+
+    function FromDataverseViewModel(sid) {
+        var self = this;
+        self.sid = sid;
+
+        self.foundFiles = ko.observableArray();
+
+        self.fileName = ko.observable();
+        self.datasetName = ko.observable("");
+        self.dataverseName = ko.observable("");
+
+        self.showNoFilesFoundMessage = ko.observable(false);
+        self.showErrorMessage = ko.observable(false);
+        self.showSuccessMessage = ko.observable(false);
+
+        self.selectedFile = ko.observable();
+
+        self.searchForFile = function() {
+            $.ajax({
+                url: restApis.getDataverseSearch(self.fileName(), self.dataverseName(), self.datasetName()), 
+                type: 'GET',
+                contentType: 'application/json',
+                success: function(data) {
+                    if (data.isSuccessful) {
+                        self.showErrorMessage(false); 
+                        self.foundFiles.removeAll();
+
+                        if (data.payload.length == 0) {
+                            self.showNoFilesFoundMessage(true);
+                            return;
+                        }
+
+                        for (i = 0; i < data.payload.length; i++){
+                            self.foundFiles.push(new DataverseFileInfoViewModel(data.payload[i].fileId,
+                                data.payload[i].fileName, data.payload[i].size, 
+                                data.payload[i].citation, data.payload[i].publishedAt));
+                        }
+                        self.showNoFilesFoundMessage(false);
+                    }
+                    else {
+                        self.showErrorMessage(true); 
+                    }
+                },
+                error: function(data) {
+                    self.showErrorMessage(true); 
+                }
+            });
         }
-    });
-}
-		
-/**
- * Search files on the Harvard Dataverse
- * @return {[type]} [description]
- */
-function searchDataverse() {
-    debugger;
-	$('#searchField').hide();
-	$('#searchResult').show();
-	
-    if($('#filenum').text().indexOf("no") > -1){
-		$('#uploadbtn').hide();
-	}
 
-	if($('#filenum').text().indexOf("0") > -1){
-		$('#uploadbtn').hide();
-	}
+        self.getDataFile = function() {
+            if (!self.selectedFile()) {
+                alert('Please select a file first');
+                return;
+            }
 
-	$('#downloadResult').show();
+            var data = {'sid': self.sid, 'fileId': self.selectedFile().fileId(), 'fileName': self.selectedFile().fileName()};
 
-    var fileName = $("#dataverseFile").val();
-    var dataverseName = $("#dataverseName").val();
-    var datasetName = $("#datasetName").val();
+            $.ajax({
+                url: restApis.postGetDataFile(), 
+                type: 'POST',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function(data) {
+                    if (data.isSuccessful) {
+                        self.showErrorMessage(false);
+                        self.showSuccessMessage(true);
 
-	$.ajax({
-		url: restApis.getDataverseSearch(fileName, dataverseName, datasetName),	
-		type: 'GET',
-		dataType: 'application/json',
-		success: function(data) {
-            var json = JSON.parse(data);
-            $('#filenum').text("There are " + json.length + " files.");
-            $('<p>  </p>' ).appendTo($('#filenum'));
-            for (i = 0; i < json.length; i++){
-                var obj = JSON.parse(json[i]);
-                var id = obj.file_id;
-                var name = obj.name;
-                var radioBtn = $('<input type="radio" name="fileid" value="' + id + '" data-value="' + name + '"/>');
+                        wizard.enableNextButton();
+                        // var resultJson = JSON.parse(data);
+                        wizardFromFile.fromComputerUploadFileViewModel.uploadedFileInfos.push(data.payload[0]);
+                        wizardFromFile.fromComputerUploadFileViewModel.isUploadSuccessful(data.isSuccessful);
+                        wizardFromFile.fromComputerUploadFileViewModel.uploadMessage(data.message);
+                    }
+                    else {
+                        self.showErrorMessage(true); 
+                    }
+                },
+                error: function(data) {
+                    self.showErrorMessage(true); 
+                }
+            });
+        }
 
-                var s = " FILE NAME: " + obj.name + ";    SIZE: " + obj.size_in_bytes + ";    INFORMATION: " + obj.dataset_citation + "</br>";
-                
-                radioBtn.appendTo($('#filenum'));
-                $('#filenum').append(s);            
-           }
+        self.updateSelectedBackground = function(data, event) {
+            $('#tableDataverseFiles tr').removeClass('selectedDataverseFile');
+            $(event.target).parent().closest('tr').addClass('selectedDataverseFile');
+            self.selectedFile(data);
+            $(event.target).prop("checked", true);
+        }
+    }
 
-		   $('#uploadbtn').show();    
-		},
-		error: function(data) {
-			alert("Something went wrong while getting services' list. Please try again.");
-		}
-	});
-}			
+    return wizardFromDataverse;
+})();

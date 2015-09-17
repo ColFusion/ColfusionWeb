@@ -195,7 +195,7 @@ var wizardFromFile = (function() {
         $('#uploadProgressText').text('0%').hide();
         $('#uploadProgressBar').hide().find('.bar').css('width', '0');
         $('input[name="place"]').removeAttr('checked');
-        $('#divFromComputer').add('#divFromInternet').add('#divFromDatabase').hide();
+        $('#divFromComputer').add('#divFromInternet').add('#divFromDatabase').add('#divFromDataverseKnockoutContainer').hide();
         $('#selectDBServer')
                 .add('#dbServerName')
                 .add('#dbServerPort')
