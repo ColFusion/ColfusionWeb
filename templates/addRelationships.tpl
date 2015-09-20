@@ -112,9 +112,9 @@
                                     <button type="button" data-bind="click: addLink" class="btn" >
                                         Add row
                                     </button>                                  
-                                    <button type="button" data-bind="click: checkDataMatching" class="btn" >
+<!--                                    <button type="button" data-bind="click: checkDataMatching" class="btn" >
                                         Check data matching
-                                    </button>                                                  
+                                    </button>   -->
                                 </td>
                             </tr>
                         </tfoot>
