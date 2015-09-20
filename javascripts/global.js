@@ -1,9 +1,9 @@
-var ColFusionDomain = "http://colfusion.exp.sis.pitt.edu/colfusion"; //"http://192.168.33.10";
+var ColFusionDomain = "http://192.168.33.10"; //for prod on poirot: "http://colfusion.exp.sis.pitt.edu/colfusion"; 
 
 //e.g., "/" or "/Colfusion/"
-var ColFusionAppPath = "/";
+var ColFusionAppPath = "/colfusion/";
 
-var ColFusionServerUrl = "http://colfusion.exp.sis.pitt.edu/REST"; //"http://192.168.33.10/REST"; //"http://localhost:8080/ColFusionServer/rest"; 
+var ColFusionServerUrl = "http://192.168.33.10/REST"; // for prod on poirot: "http://colfusion.exp.sis.pitt.edu/REST";  //"http://localhost:8080/ColFusionServer/rest"; 
 var OpenRefineUrl = "http://192.168.33.10/OpenRefine";
 var ColFusionServiceMonitorUrl = "http://192.168.33.10:7473/rest";
 

@@ -239,18 +239,19 @@ var importWizard = (function () {
             wizard.disableNextButton();
 
             $('#dataMatchingStepInProgress').show();
-            
+            debugger;
             //TODO: the settings should be send as a general json, so it should not depend on the source type.
             var sourceSettings = wizardFromFile.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
             importWizard.wizardDataMatchingStepViewModel.fetchVariables(getImportSource(), sourceSettings, function () {
                     wizard.enableNextButton();
                     $('#dataMatchingStepInProgress').hide();
                 });
-			 var dsourceSettings = wizardFromDataverse.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
-            importWizard.wizardDataMatchingStepViewModel.fetchVariables(getImportSource(), dsourceSettings, function () {
-                    wizard.enableNextButton();
-                    $('#dataMatchingStepInProgress').hide();
-                });
+
+			// var dsourceSettings = wizardFromDataverse.sourceWorksheetSettingsViewModel.getSourceWorksheetSettings();
+   //          importWizard.wizardDataMatchingStepViewModel.fetchVariables(getImportSource(), dsourceSettings, function () {
+   //                  wizard.enableNextButton();
+   //                  $('#dataMatchingStepInProgress').hide();
+   //              });
         });
 
         wizard.on("submit", function(wizard) {

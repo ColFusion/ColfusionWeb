@@ -32,6 +32,7 @@ var DataPreviewViewModelProperties = {
         self.tableName = ko.observable(tableName);
     },
     Table: function(sid, tableName, cols, rows, rawData, totalPage, currentPage, perPage) {
+        debugger;
         var self = this;
         self.metabutton=1;
         self.sid = sid;
@@ -553,7 +554,7 @@ function DataPreviewViewModel(sid) {
         self.isError(false);
 
         dataSourceUtil.getTableDataBySidAndName(self.sid, tableName, perPage, pageNo).done(function(data) {
-            
+debugger;
 		transformedData = dataSourceUtil.mapSertverTableToDataPreviewTable(data);
 			
 		createDataTable(tableName, transformedData);
@@ -599,6 +600,7 @@ function DataPreviewViewModel(sid) {
     };
 
     function createDataTable(tableName, tableData) {
+    debugger;
         if (!tableData.Control || !tableData.Control.cols || tableData.Control.cols.length === 0) {
             self.isNoData(true);
             self.currentTable(null);
