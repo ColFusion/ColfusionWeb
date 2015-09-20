@@ -54,14 +54,12 @@
 		{/if}
 	{/if}	
 	
-    <script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
-	<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/vis.js"></script>
-
-	{if $tpl_jsFilesAtBottom}
+    {if $tpl_jsFilesAtBottom}
 		{include file=$tpl_jsFilesAtBottom.".tpl"}
 	{/if}
 
-	
+	<script type="text/javascript" src="{$my_pligg_base}/javascripts/jquery.form.js"></script> 
+	<script type="text/javascript" src="{$my_pligg_base}/templates/{$the_template}/js/vis.js"></script>
 
 	{if preg_match('/index.php$/',$templatelite.server.SCRIPT_NAME)}	
 		{if $get.category}
