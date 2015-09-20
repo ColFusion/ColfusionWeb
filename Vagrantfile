@@ -25,6 +25,7 @@ Vagrant.configure(2) do |config|
   # using a specific IP. The host OS is available to the guest
   # at the "192.168.33.1" IP address.
   config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "forwarded_port", guest: 80, host: 50001
 
   # Share an additional folder to the guest VM. The first argument is
   # the path on the host to the actual folder. The second argument is
