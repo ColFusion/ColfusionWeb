@@ -12,18 +12,18 @@
     <tr>
         <td align="center">
             <video width="420" height="315" controls>
-                <source src="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/6/64/ColFusionFirst_h264.mov" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'/>
-                <source src="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/4/4b/ColFusionFirst_h264_vlc_secondtry.ogg" type="video/ogg"/>
+                <source src="http://colfusion.exp.sis.pitt.edu/media/ColFusionFirst_h264.mov" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'/>
+                <source src="http://colfusion.exp.sis.pitt.edu/media/ColFusionFirst_h264_vlc_secondtry.ogg" type="video/ogg"/>
                 Your browser does not support the video tag.
-                <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/4/4b/ColFusionFirst_h264_vlc_secondtry.ogg" class="internal" title="ColFusionFirst h264 vlc secondtry.ogg"> Introduction to Col*Fusion</a>
+                <a href="http://colfusion.exp.sis.pitt.edu/media/ColFusionFirst_h264_vlc_secondtry.ogg" class="internal" title="ColFusionFirst h264 vlc secondtry.ogg"> Introduction to Col*Fusion</a>
             </video>
         </td>
          <td align="center">
             <video width="420" height="315" controls>
-                <source src="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/a/a6/ColFusionSecond_h264.mov" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'/>
-                <source src="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/9/9b/ColFusionSecond_vlc.ogg" type="video/ogg"/>
+                <source src="http://colfusion.exp.sis.pitt.edu/media/ColFusionSecond_h264.mov" type='video/mp4; codecs="avc1.42E01E, mp4a.40.2"'/>
+                <source src="http://colfusion.exp.sis.pitt.edu/media/ColFusionSecond_vlc.ogg" type="video/ogg"/>
                 Your browser does not support the video tag.
-                <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/images/9/9b/ColFusionSecond_vlc.ogg" class="internal" title="ColFusionSecond vlc.ogg"> Introduction to Col*Fusion web interface</a>
+                <a href="http://colfusion.exp.sis.pitt.edu/media/ColFusionSecond_vlc.ogg" class="internal" title="ColFusionSecond vlc.ogg"> Introduction to Col*Fusion web interface</a>
             </video>
         </td>
     </tr>
