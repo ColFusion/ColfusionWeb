@@ -84,8 +84,9 @@ if ($my_base_url == ''){
 	$path = substr($_SERVER["SCRIPT_NAME"], 0, $pos);
 	if ($path == "/"){$path = "";}
 
-	define('my_pligg_base', $path);
-	$my_pligg_base = $path;
+	define('my_pligg_base', $my_pligg_base);
+	//define('my_pligg_base', $path);
+	//$my_pligg_base = $path;
 } else {
 	define('my_base_url', $my_base_url);
 	define('my_pligg_base', $my_pligg_base);
