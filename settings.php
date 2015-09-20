@@ -1,6 +1,6 @@
 <?php
 $my_base_url = '';//'http://192.168.33.10'; // Used to be localhost on localhost and host name when deployed to colfusion server
-$my_pligg_base = ''; // Used to be: /Colfusion
+$my_pligg_base = 'colfusion'; // Used to be: /Colfusion
 $my_pligg_base_no_slash = ''; //Used to be: colfusion //should be lower case
 $dblang = 'en';
 define('table_prefix', 'colfusion_');

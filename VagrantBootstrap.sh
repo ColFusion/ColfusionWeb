@@ -24,5 +24,6 @@ sudo service apache2 restart
 
 if ! [ -L /var/www ]; then
   rm -rf /var/www
-  ln -fs /Colfusion /var/www
+  mkdir /var/www
+  ln -fs /Colfusion /var/www/colfusion
 fi
