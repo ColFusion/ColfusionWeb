@@ -36,38 +36,45 @@ function RelationshipViewModel(userid,sid) {
         self.isNoRelationshipData(false);
         self.isMiningRelationshipsError(false);
 
-        dataSourceUtil.mineRelationship(self.userid, self.sid, perPage, pageNo).done(function (data) {
+debugger;
+        dataSourceUtil.mineRelationship(self.userid, self.sid, perPage, pageNo).done(function() {
+debugger;
+        })
+        .always(function() {
+            debugger;
+            dataSourceUtil.getRelationshipsList(self.userid, self.sid, perPage, pageNo).done(function (data) {
+debugger;
+                if (!data || !data.Control || !data.Control.cols || data.Control.cols.length === 0) {
+                    // Show 'no data' text;
+                    self.isRelationshipDataLoading(false);
+                    self.isNoRelationshipData(true);
+                    return;
+                }
 
-            if (!data || !data.Control || !data.Control.cols || data.Control.cols.length === 0) {
-                // Show 'no data' text;
+                $.each(data.data, function (i, relObj) {
+                    self.isError[relObj.rel_id] = ko.observable(false);
+                });
+
+                self.isNoRelationshipData(false);
+                // Controls.
+                var perPage = data.Control.perPage;
+                var totalPage = data.Control.totalPage;
+                var currentPage = data.Control.pageNo;
+
+                var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
+
+                for (var i = 0; i < data.data.length; i++) {
+                    self.isRelationshipInfoLoaded[data.data[i].rel_id] = ko.observable(false);
+                }
+
+                self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table(self.sid, 'mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
+               
+            }).error(function() {
+                self.isMiningRelationshipsError(true);
+            }).always(function() {
                 self.isRelationshipDataLoading(false);
-                self.isNoRelationshipData(true);
-                return;
-            }
-
-            $.each(data.data, function (i, relObj) {
-                self.isError[relObj.rel_id] = ko.observable(false);
             });
-
-            self.isNoRelationshipData(false);
-            // Controls.
-            var perPage = data.Control.perPage;
-            var totalPage = data.Control.totalPage;
-            var currentPage = data.Control.pageNo;
-
-            var transformedData = dataSourceUtil.transformRawDataToColsAndRows(data);
-
-            for (var i = 0; i < data.data.length; i++) {
-                self.isRelationshipInfoLoaded[data.data[i].rel_id] = ko.observable(false);
-            }
-
-            self.mineRelationshipsTable(new DataPreviewViewModelProperties.Table(self.sid, 'mineRelationships', transformedData.columns, transformedData.rows, data.data, totalPage, currentPage, perPage));
-           
-        }).error(function() {
-            self.isMiningRelationshipsError(true);
-        }).always(function() {
-            self.isRelationshipDataLoading(false);
-        });
+        });        
     };
 
     /*

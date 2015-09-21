@@ -97,26 +97,29 @@ var dataSourceUtil = (function() {
     dataSourceUtil.mineRelationship = function(userid, sid, perPage, pageNo) {
        // This mining relationships funcitonality is not yet implmented in java. The ajax query below just return the 
        // existing relationships from db, it doesn't trigger mining the relationships.
-        // $.ajax({
-        //     type: 'POST',
-        //     url: my_pligg_base + "/DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
-        //     data: {'sid': sid, 'perPage': perPage, 'pageNo': pageNo},
-        //     dataType: 'json',
-        //     success: function(data) {
-        //         console.log("Finished mining relationshps");
-        //     },
-        //     error: function(data) {
-        //         console.log("error while mining relationshps");
-        //     }
-        // });
-
+debugger;
         return $.ajax({
-            url: ColFusionServerUrl + "/Story/" + userid + "/" + sid + "/MineRelationships/" + perPage + "/" + pageNo, //my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
-            type: 'GET',
+            type: 'POST',
+            url: my_pligg_base + "/DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
+            data: {'sid': sid, 'perPage': perPage, 'pageNo': pageNo},
             dataType: 'json',
-            contentType: "application/json",
+            success: function(data) {
+                console.log("Finished mining relationshps");
+            },
+            error: function(data) {
+                console.log("error while mining relationshps");
+            }
         });
     };
+
+    dataSourceUtil.getRelationshipsList = function(userid, sid, perPage, pageNo) {
+        return $.ajax({
+                url: ColFusionServerUrl + "/Story/" + userid + "/" + sid + "/MineRelationships/" + perPage + "/" + pageNo, //my_pligg_base + '/DataImportWizard/ImportWizardAPI.php?action=GetStoryStatus',
+                type: 'GET',
+                dataType: 'json',
+                contentType: "application/json",
+            });
+    }
 
     dataSourceUtil.checkDataMatching = function(fromData, toData) {
         return $.ajax({
