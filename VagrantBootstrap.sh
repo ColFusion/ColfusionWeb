@@ -3,7 +3,7 @@
 apt-get update
 apt-get install -y apache2
 
-apt-get install -y php5 libapache2-mod-php5 php5-mcrypt php5-mysql php5-curl
+apt-get install -y php5 libapache2-mod-php5 php5-mcrypt php5-mysql php5-curl php-pear
 
 cp /Colfusion/VagrantBootstrapApacheVirtualHostConfig.conf /etc/apache2/sites-available/
 
@@ -27,3 +27,5 @@ if ! [ -L /var/www ]; then
   mkdir /var/www
   ln -fs /Colfusion /var/www/colfusion
 fi
+
+pear install Mail-1.2.0

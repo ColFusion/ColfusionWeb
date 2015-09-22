@@ -1,8 +1,8 @@
 <?php
 
-include_once('Net/SMTP.php');
-include_once('Mail.php');
-include_once '../DAL/ValidationCodeGateway.php';
+require_once('Net/SMTP.php');
+require_once('Mail.php');
+require_once '../DAL/ValidationCodeGateway.php';
 
 $password = $_POST['password'];
 $names = $_POST['names'];
