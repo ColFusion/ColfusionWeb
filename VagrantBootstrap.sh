@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 apt-get update
-apt-get install -y apache2
+apt-get install -y apache2 sendmail
 
 apt-get install -y php5 libapache2-mod-php5 php5-mcrypt php5-mysql php5-curl php-pear
 
@@ -29,3 +29,4 @@ if ! [ -L /var/www ]; then
 fi
 
 pear install Mail-1.2.0
+pear install Net_SMTP

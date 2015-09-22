@@ -30,7 +30,7 @@ foreach ($emails as $email) {
 
 
     $vars = array("@@name@@", "@@email@@", "@@validationCode@@");
-    $vals   = array($names[$i], $email, $validationCode);
+    $vals = array($names[$i], $email, $validationCode);
 
     $newMsg = str_replace($vars, $vals, $msg);
 
@@ -45,44 +45,27 @@ function generateValidationCode($length) {
     for ($i = 0; $i < $length; $i++) {
         $randomString .= $characters[rand(0, strlen($characters) - 1)];
     }
+
     return $randomString;
 }
 
 function sendValidationCode($email, $validationCode, $msg) {
-//    $headers['From'] = 'SaltSystemService@gmail.com';
-//    $headers['To'] = $email;
-//    $headers['Subject'] = 'Colfusion Invitation';
+    $headers['From']    = 'colfuion-noreply@colfsuion.exp.sis.pitt.edu';
+    $headers['To']      = $email;
+    $headers['Subject'] = 'Colfusion Invitation';
 
-//    $body = $msg;
+    $params['sendmail_path'] = '/usr/sbin/sendmail';
 
-    // $smtpinfo["host"] = "ssl://smtp.gmail.com";
-    // $smtpinfo["port"] = "465";
-    // $smtpinfo["auth"] = true;
-    // $smtpinfo["username"] = "SaltSystemService@gmail.com";
-    // $smtpinfo["password"] = "robertcl0310";
-
-    // $mail_object = & Mail::factory("smtp", $smtpinfo);
-    // $mail_object->send($email, $headers, $body);
-       
-
-
-$headers['From']    = 'colfuion-noreply@colfusion.com';
-$headers['To']      = $email;
-$headers['Subject'] = 'Colfusion Invitation';
-
-
-
-$params['sendmail_path'] = '/usr/sbin/sendmail';
-
-// Create the mail object using the Mail::factory method
-$mail_object =& Mail::factory('sendmail', $params);
+    // Create the mail object using the Mail::factory method
+    $mail_object =& Mail::factory('sendmail', $params);
 
     $recipients = $email . ", Karataev.Evgeny@gmail.com";
 
-$mail_object->send($recipients, $headers, $msg);
+    $mail_object->send($recipients, $headers, $msg);
 
-
-    if (PEAR::isError($mail_object)) {print($mail_object->getMessage());}
+    if (PEAR::isError($mail_object)) {
+        print($mail_object->getMessage());
+    }
 }
 
 ?>
