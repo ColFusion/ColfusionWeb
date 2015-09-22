@@ -43,10 +43,11 @@ if(isset($_GET["op"])){
 	}
 }
 
-$logger->error("at user tries to log in ");
-
 // if user tries to log in
 if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (isset($_GET["processlogin"]) && is_numeric($_GET["processlogin"])) ){
+
+$logger->info("at user tries to log in ");
+
 	if($_POST["processlogin"] == 1) { // users logs in with username and password
 		$username = sanitize(trim($_POST['username']), 3);
 		$password = sanitize(trim($_POST['password']), 3);
@@ -59,13 +60,13 @@ if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (is
 		
 		$lastip = check_ip_behind_proxy();
 
-echo $lastip;
+$logger->info("Last ip: $lastip");
 
 		$login = $db->get_row("SELECT *, UNIX_TIMESTAMP()-UNIX_TIMESTAMP(login_time) AS time FROM " . table_login_attempts . " WHERE login_ip='$lastip'");
-		
+$logger->info($login);
 		if ($login->login_id) {
 		    $login_id = $login->login_id;
-		
+$logger->info("login_id = $login_id");
 		    if ($login->time < 3) {
 		    	$errorMsg=sprintf($main_smarty->get_config_vars('PLIGG_Visual_Login_Error'),3);
 		    }
@@ -76,8 +77,8 @@ echo $lastip;
 		    }
 		}
 		elseif (!is_ip_approved($lastip)) {
-echo "not approved";
-echo "INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', login_time=NOW(), login_ip='$lastip'";
+$logger->info("last ip $lastip is not approved");
+$logger->info("INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', login_time=NOW(), login_ip='$lastip'");
 
 		    $db->query("INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', login_time=NOW(), login_ip='$lastip', login_count=0");
 		    $login_id = $db->insert_id;
@@ -88,18 +89,20 @@ echo "INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', l
 		    }
 		}
 
-	echo $errorMsg;
+$logger->error("error message: $errorMsg");
 
 		if (!$errorMsg)
 		{
-			echo "before auth";
+$logger->info("before auth");
 
 		    if($current_user->Authenticate($username, $password, $persistent) == false) {
 		    {
 		    	$db->query("UPDATE ".table_login_attempts." SET login_username='$dbusername', login_count=login_count+1, login_time=NOW() WHERE login_id=".$login_id);
-				$errorMsg=$main_smarty->get_config_vars('PLIGG_Visual_Login_Error');
+			$errorMsg=$main_smarty->get_config_vars('PLIGG_Visual_Login_Error');
+$logger->info("auth == false. Error message $errorMsg");
 		    }
 		    } else {
+$logger->info("auth == true");
 				$sql = "DELETE FROM " . table_login_attempts . " WHERE login_ip='$lastip' ";
 				$db->query($sql);
 
@@ -108,18 +111,26 @@ echo "INSERT INTO ".table_login_attempts." SET login_username = '$dbusername', l
 				} else {
 					$return =  my_pligg_base.'/';
 				}
-				
+
+$logger->info("return");
+$logger->info($return);
+
 				define('logindetails', $username . ";" . $password . ";" . $return);
 
 				$vars = '';
 				check_actions('login_success_pre_redirect', $vars);
 
+$logger->info("vars");
+$logger->info($vars);
+
 				if(strpos($_SERVER['SERVER_SOFTWARE'], "IIS") && strpos(php_sapi_name(), "cgi") >= 0){
 					echo '<SCRIPT LANGUAGE="JavaScript">window.location="' . $return . '";</script>';
 					echo $main_smarty->get_config_vars('PLIGG_Visual_IIS_Logged_In') . '<a href = "'.$return.'">' . $main_smarty->get_config_vars('PLIGG_Visual_IIS_Continue') . '</a>';
 				} else {
+$logger->info("setting header to $return");
 					header('Location: '.$return);
 				}
+$logger->info("before die");
 				die;
 		    }
 		}
