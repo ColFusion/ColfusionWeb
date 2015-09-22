@@ -14,6 +14,12 @@ include(mnminclude.'html1.php');
 include(mnminclude.'link.php');
 include(mnminclude.'smartyvariables.php');
 
+require_once(realpath(dirname(__FILE__)) . "/vendor/autoload.php");
+
+Logger::configure(realpath(dirname(__FILE__)) . '/conf/log4php.xml');
+
+$logger = Logger::getLogger("generalLog");
+
 // breadcrumbs and page title
 $navwhere['text1'] = $main_smarty->get_config_vars('PLIGG_Visual_Breadcrumb_Login');
 $navwhere['link1'] = getmyurl('loginNoVar', '');
@@ -36,6 +42,8 @@ if(isset($_GET["op"])){
 		$current_user->Logout(sanitize($_GET['return'], 3));
 	}
 }
+
+$logger->error("at user tries to log in ");
 
 // if user tries to log in
 if( (isset($_POST["processlogin"]) && is_numeric($_POST["processlogin"])) || (isset($_GET["processlogin"]) && is_numeric($_GET["processlogin"])) ){
