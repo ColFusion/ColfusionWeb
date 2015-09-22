@@ -68,7 +68,9 @@
                    <span class="pull-right btn-link" data-bind="visible: isProjectLoading()">
                      <img src="images/ajax-loader.gif" style="width:15px; height:15px;padding-left:10px"/>
                     </span>
-                    <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: swithToOpenRefine">&nbsp;&nbsp;[Edit]</span>
+                    <!-- 
+                    <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: swithToOpenRefine">&nbsp;&nbsp;[Edit]</span> 
+                    -->
                      <!--Alex-->
                     <span class="pull-right btn-link" data-bind="click: $root.refreshTablePreview">[Refresh]</span><!--Alex-->
                     <span id="isEditingMsg" class="pull-right"></span>
