@@ -590,6 +590,13 @@ function StoryListViewModel(sid, title, description, createdBy, createdOn, lastU
     self.createdOn = ko.observable(createdOn);
     self.lastUpdated = ko.observable(lastUpdated);
     self.status = ko.observable(status);
+
+    self.shortDescription = ko.computed(function() {
+        if (this.description().length > 250) {
+            return this.description().substring(0, 250) + "...";
+        }
+        return this.description();
+    }, this);
     //self.url = ko.observable("http://localhost/Colfusion/story.php?title="+self.sid());
 }
 
@@ -700,5 +707,3 @@ function StoriesViewModel() {
     
     self.goToFolder();
 }
-
-// ko.applyBindings(vm2, $("#shruti")[0]); // This only needs folders

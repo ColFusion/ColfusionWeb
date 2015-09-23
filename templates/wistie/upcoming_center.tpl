@@ -6,40 +6,50 @@
 	
 	<!-- ko ifnot:isLoading -->
 
-		<!-- ko foreach: stories -->
-		<div class="summaryline" style="padding-left: 20px;width: inherit;">		
-			<a href="#" data-bind="click: $root.editStory">
-				<!-- ko if: title -->
-				<h2 data-bind="text: title()" class="title"></h2>
+		
+
+		<table class="table table-striped table-hover">
+			<tbody>
+				<!-- ko foreach: stories -->
+					<tr>
+						<td>
+							<div>							
+								<p>
+									<a href="#" data-bind="click: $root.editStory">
+										<!-- ko if: title -->
+										<span data-bind="text: title()"></span>
+										<!-- /ko -->
+
+										<!-- ko ifnot: title -->
+										&lt;No title&gt;
+										<!-- /ko -->
+									</a>
+								</p>
+								<div>
+									<span>
+										<!-- ko if: description -->
+										<span data-bind="text: shortDescription()"></span>
+										<!-- /ko -->
+										<!-- ko ifnot: description -->
+										&lt;No description&gt;
+										<!-- /ko -->
+									</span><br />
+									<div class="pull-right">
+										Created By <span data-bind="text: createdBy()"></span>
+										<br/>
+										<span data-bind="text: createdOn()"></span>
+										<!-- ko if: status() == 'private' -->
+										<p style="background-color: #FFCCCC; font-weight: bold;">Status is <span data-bind="text: status()"></span></p>
+										<!-- /ko -->
+									</div>
+								</div>
+							</div>
+						</td>
+					</tr>
 				<!-- /ko -->
-				<!-- ko ifnot: title -->
-				&lt;No title&gt;
-				<!-- /ko -->
-			</a>
-			<br/>
-			<span class="storycontent">
-				<!-- ko if: description -->
-				<span data-bind="text: description()"></span>
-				<!-- /ko -->
-				<!-- ko ifnot: description -->
-				&lt;No description&gt;
-				<!-- /ko -->
-			</span><br />
-			<span class="subtext" style="float:left;">
-				Created By <span data-bind="text: createdBy()"></span>
-				On <span data-bind="text: createdOn()"></span><br />
-				<!-- ko if: lastUpdated -->
-				Last Updated On <span data-bind="text: lastUpdated()"></span><br/>
-				<!-- /ko -->
-				<!-- ko if: status() == 'queued' -->
-				<p style="background-color: #CCFFFF; font-weight: bold;">Status is <span data-bind="text: status()"></span></p>
-				<!-- /ko -->
-				<!-- ko if: status() == 'private' -->
-				<p style="background-color: #FFCCCC; font-weight: bold;">Status is <span data-bind="text: status()"></span></p>
-				<!-- /ko -->
-			</span>
-		</div>
-		<!-- /ko -->	
+			</tbody>
+		</table>
+
 	<!-- /ko -->
 </div>
 <?php

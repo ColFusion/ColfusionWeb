@@ -690,7 +690,7 @@ iframe.invisible {
 }
 
 .title {
-
+    line-height: 1em;
 }
 
 .adminlinks {
@@ -706,6 +706,7 @@ iframe.invisible {
     font-size: 14px;
     color: black;
     overflow: auto;
+    text-align: justify;
 }
 
 .storycontent p {
