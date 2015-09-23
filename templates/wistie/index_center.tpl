@@ -5,8 +5,10 @@
     <i>Col*Fusion</i> addresses this challenge by utilizing the collective intelligence of research communities to “crowdsource” the large-scale historical data integration task.  It engages a large community of researches to share their data, collectively resolve the data heterogeneities, and harmonize their efforts in data reliability assessment and data fusion. <i>Col*Fusion</i> efficiently distributes the task of data integration among the data contributors and enables continuous growth of a global historical repository. 
 </p>
 
+<!-- our <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/index.php/Welcome_to_Col*Fusion_Help" target="_blank">Wiki</a> and <a href="http://colfusion.exp.sis.pitt.edu/colfusion/phpBB3" target="_blank">Forum</a>. Also  -->
+
 <p class="homePageIntroText">
-    To get started visit our <a href="http://colfusion.exp.sis.pitt.edu/colfusion/wiki/index.php/Welcome_to_Col*Fusion_Help" target="_blank">Wiki</a> and <a href="http://colfusion.exp.sis.pitt.edu/colfusion/phpBB3" target="_blank">Forum</a>. Also watch video tutorials: 
+    To get started visit watch video tutorials: 
 </p>
 <table style="width: 100%;">
     <tr>
