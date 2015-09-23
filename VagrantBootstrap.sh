@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-apt-get update
-apt-get install -y apache2 sendmail
+NEW_HOSTNAME=colfusionweb
+sed -i 's/127.0.0.1.*/127.0.0.1\t'"localhost localhost.localdomain $NEW_HOSTNAME"'/g' /etc/hosts
+echo $NEW_HOSTNAME > /etc/hostname
+service hostname start
 
-apt-get install -y php5 libapache2-mod-php5 php5-mcrypt php5-mysql php5-curl php-pear
+apt-get update
+apt-get install -y apache2 sendmail php5 libapache2-mod-php5 php5-mcrypt php5-mysql php5-curl php-pear
 
 cp /Colfusion/VagrantBootstrapApacheVirtualHostConfig.conf /etc/apache2/sites-available/
 
@@ -20,7 +23,10 @@ sed -i 's/APACHE_RUN_USER=www-data/APACHE_RUN_USER=vagrant/' /etc/apache2/envvar
 sed -i 's/APACHE_RUN_GROUP=www-data/APACHE_RUN_GROUP=vagrant/' /etc/apache2/envvars
 chown -R vagrant:www-data /var/lock/apache2
 
-sudo service apache2 restart
+echo "ServerName localhost" | sudo tee /etc/apache2/conf-available/fqdn.conf
+a2enconf fqdn
+
+service apache2 restart
 
 if ! [ -L /var/www ]; then
   rm -rf /var/www

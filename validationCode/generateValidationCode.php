@@ -50,22 +50,39 @@ function generateValidationCode($length) {
 }
 
 function sendValidationCode($email, $validationCode, $msg) {
-    $headers['From']    = 'colfuion-noreply@colfsuion.exp.sis.pitt.edu';
-    $headers['To']      = $email;
-    $headers['Subject'] = 'Colfusion Invitation';
+    $to = $email;
+    $subject = "Colfusion Invitation";
+    
+    $body = $msg;
 
-    $params['sendmail_path'] = '/usr/sbin/sendmail';
+    $headers = "From: no-reply@colfsuion.exp.sis.pitt.edu\r\n";
+    $headers .= "Content-type: text/html; charset=utf-8\r\n";
+    $headers .= "Bcc: Karataev.Evgeny@gmail.com\r\n";
 
-    // Create the mail object using the Mail::factory method
-    $mail_object =& Mail::factory('sendmail', $params);
-
-    $recipients = $email . ", Karataev.Evgeny@gmail.com";
-
-    $mail_object->send($recipients, $headers, $msg);
-
-    if (PEAR::isError($mail_object)) {
-        print($mail_object->getMessage());
+    if (mail($to, $subject, $body, $headers)) {
+        
+    }else{
+        print("Something failed.");
     }
+
+    echo $msg;
+
+    // $headers['From']    = 'colfuion-noreply@colfsuion.exp.sis.pitt.edu';
+    // $headers['To']      = $email;
+    // $headers['Subject'] = 'Colfusion Invitation';
+
+    // $params['sendmail_path'] = '/usr/sbin/sendmail';
+
+    // // Create the mail object using the Mail::factory method
+    // $mail_object =& Mail::factory('sendmail', $params);
+
+    // $recipients = $email . ", Karataev.Evgeny@gmail.com";
+
+    // $mail_object->send($recipients, $headers, $msg);
+
+    // if (PEAR::isError($mail_object)) {
+    //     print($mail_object->getMessage());
+    // }
 }
 
 ?>
