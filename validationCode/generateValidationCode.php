@@ -7,7 +7,7 @@ require_once '../DAL/ValidationCodeGateway.php';
 $password = $_POST['password'];
 $names = $_POST['names'];
 $emails = $_POST['emails'];
-$msg = $_POST['msg'];
+$msg = nl2br($_POST['msg']);
 $gateway = new ValidationCodeGateway();
 
 if ($password != 'Evgeny')
@@ -27,7 +27,6 @@ foreach ($emails as $email) {
 
     $validationCode = generateValidationCode(15);
     $gateway->insertValidationCode($email, $validationCode);
-
 
     $vars = array("@@name@@", "@@email@@", "@@validationCode@@");
     $vals = array($names[$i], $email, $validationCode);
@@ -64,25 +63,6 @@ function sendValidationCode($email, $validationCode, $msg) {
     }else{
         print("Something failed.");
     }
-
-    echo $msg;
-
-    // $headers['From']    = 'colfuion-noreply@colfsuion.exp.sis.pitt.edu';
-    // $headers['To']      = $email;
-    // $headers['Subject'] = 'Colfusion Invitation';
-
-    // $params['sendmail_path'] = '/usr/sbin/sendmail';
-
-    // // Create the mail object using the Mail::factory method
-    // $mail_object =& Mail::factory('sendmail', $params);
-
-    // $recipients = $email . ", Karataev.Evgeny@gmail.com";
-
-    // $mail_object->send($recipients, $headers, $msg);
-
-    // if (PEAR::isError($mail_object)) {
-    //     print($mail_object->getMessage());
-    // }
 }
 
 ?>
