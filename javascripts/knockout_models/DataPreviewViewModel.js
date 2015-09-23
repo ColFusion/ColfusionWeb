@@ -40,6 +40,11 @@ var DataPreviewViewModelProperties = {
         self.totalPage = ko.observable(totalPage);
         self.currentPage = ko.observable(currentPage);
         self.perPage = ko.observable(perPage);
+debugger;
+        if (typeof cols === "string") {
+            cols = cols.split(','); //TODO: this is quick hack that assumes if the cols is a string, then variables are comma separated, see issue #31
+        }
+
         self.headers = ko.observableArray($.map(cols, function(header) {
             return new DataPreviewViewModelProperties.Header(header);
         }));
@@ -146,7 +151,7 @@ var tempOpenRefineUrl;
                 crossDomain: true,
                 success: function(data) {
                     // alert("userId: " + data.testMsg);
-
+debugger;
                     if (data.successful) {
                         if(data.isEditing && !data.isTimeOut) {
                             alert(data.msg);
@@ -555,9 +560,9 @@ function DataPreviewViewModel(sid) {
 
         dataSourceUtil.getTableDataBySidAndName(self.sid, tableName, perPage, pageNo).done(function(data) {
 debugger;
-		transformedData = dataSourceUtil.mapSertverTableToDataPreviewTable(data);
-			
-		createDataTable(tableName, transformedData);
+    		transformedData = dataSourceUtil.mapSertverTableToDataPreviewTable(data);
+    			
+    		createDataTable(tableName, transformedData);
             self.isError(false);
         }).error(function() {
             self.isError(true);

@@ -36,14 +36,12 @@ function RelationshipViewModel(userid,sid) {
         self.isNoRelationshipData(false);
         self.isMiningRelationshipsError(false);
 
-debugger;
         dataSourceUtil.mineRelationship(self.userid, self.sid, perPage, pageNo).done(function() {
-debugger;
+
         })
         .always(function() {
-            debugger;
             dataSourceUtil.getRelationshipsList(self.userid, self.sid, perPage, pageNo).done(function (data) {
-debugger;
+
                 if (!data || !data.Control || !data.Control.cols || data.Control.cols.length === 0) {
                     // Show 'no data' text;
                     self.isRelationshipDataLoading(false);

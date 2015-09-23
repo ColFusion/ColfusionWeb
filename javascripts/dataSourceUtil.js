@@ -5,7 +5,6 @@ var dataSourceUtil = (function() {
     // NOTICE: This function caches table list.
     // If data source is changed manually, make sure the cache is also cleaned.
     dataSourceUtil.getTablesList = function(sid) {
-        debugger;
         // var tableListCache = dataSourceCache.get('tableList_' + sid);
         // if (tableListCache) {
         //     return $.Deferred().resolve(JSON.parse(tableListCache));
@@ -98,7 +97,6 @@ var dataSourceUtil = (function() {
     dataSourceUtil.mineRelationship = function(userid, sid, perPage, pageNo) {
        // This mining relationships funcitonality is not yet implmented in java. The ajax query below just return the 
        // existing relationships from db, it doesn't trigger mining the relationships.
-debugger;
         return $.ajax({
             type: 'POST',
             url: my_pligg_base + "/DataImportWizard/ImportWizardAPI.php?action=MineRelationships",
@@ -147,7 +145,7 @@ debugger;
         // }
 
         //TODO: comma is not good as column name separator, what if variable name has comma in it
-        var cols = rawData.Control.cols.split(',');
+        var cols = rawData.Control.cols;//.split(',');
         for (var i = 0; i < cols.length; i++) {
             cols[i] = cols[i].replace(/\`/g, '');
         }
@@ -221,7 +219,6 @@ debugger;
                     }
 
                     rowToAdd[columnName] = column.cell.value;
-
                 }
             }
 
@@ -229,15 +226,13 @@ debugger;
         }
 
         result.data = rows;
-        result.Control.cols = columnNames.join(",");
+        result.Control.cols = columnNames;//.join(",");
 		result.Control.perPage = serverTable.payload.perPage;
 		result.Control.totalPage = serverTable.payload.totalPage;
 		result.Control.pageNo =	serverTable.payload.pageNo;
 
         return result;
     };
-
-
 
     return dataSourceUtil;
 })();

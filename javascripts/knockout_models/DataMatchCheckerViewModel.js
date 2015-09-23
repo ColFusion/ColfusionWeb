@@ -351,6 +351,7 @@ function DataMatchCheckerViewModel() {
 
     // Handle json sent from server and creates DataTable object.
     function createDataTable(tableJson, tableName) {
+        debugger;
         var columns = tableJson.columns;
         var rows = [];
 
