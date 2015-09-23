@@ -5,21 +5,22 @@ var dataSourceUtil = (function() {
     // NOTICE: This function caches table list.
     // If data source is changed manually, make sure the cache is also cleaned.
     dataSourceUtil.getTablesList = function(sid) {
-        
-        var tableListCache = dataSourceCache.get('tableList_' + sid);
-        if (tableListCache) {
-            return $.Deferred().resolve(JSON.parse(tableListCache));
-        } else {
+        debugger;
+        // var tableListCache = dataSourceCache.get('tableList_' + sid);
+        // if (tableListCache) {
+        //     return $.Deferred().resolve(JSON.parse(tableListCache));
+        // } else {
             return $.ajax({
                 type: 'POST',
                 url: my_pligg_base + "/visualization/VisualizationAPI.php?action=GetTablesList",
                 data: {'sid': sid},
                 dataType: 'json'
-            }).pipe(function(data) {
-                dataSourceCache.set('tableList_' + sid, JSON.stringify(data));
-                return data;
             });
-        }
+            // .pipe(function(data) {
+            //     dataSourceCache.set('tableList_' + sid, JSON.stringify(data));
+            //     return data;
+            // });
+        // }
     };
 
     // Get colmuns and their metadata of a table.
