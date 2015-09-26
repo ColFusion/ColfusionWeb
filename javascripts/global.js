@@ -1,11 +1,11 @@
-var ColFusionDomain = "http://192.168.33.10"; //for prod on poirot: "http://colfusion.exp.sis.pitt.edu/colfusion"; 
+var ColFusionDomain = "http://192.168.33.11"; //for prod on poirot: "http://colfusion.exp.sis.pitt.edu/colfusion"; 
 
 //e.g., "/" or "/Colfusion/"
 var ColFusionAppPath = "/colfusion/";
 
-var ColFusionServerUrl = "http://192.168.33.10/REST"; // for prod on poirot: "http://colfusion.exp.sis.pitt.edu/REST";  //"http://localhost:8080/ColFusionServer/rest"; 
-var OpenRefineUrl = "http://192.168.33.10/OpenRefine";
-var ColFusionServiceMonitorUrl = "http://192.168.33.10:7473/rest";
+var ColFusionServerUrl = "http://192.168.33.11/REST"; // for prod on poirot: "http://colfusion.exp.sis.pitt.edu/REST";  //"http://localhost:8080/ColFusionServer/rest"; 
+var OpenRefineUrl = "http://192.168.33.11/OpenRefine";
+var ColFusionServiceMonitorUrl = "http://192.168.33.11:7473/rest";
 
 
 
