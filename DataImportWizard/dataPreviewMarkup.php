@@ -29,41 +29,28 @@
 
                 <span id="metabutton" class="pull-left btn-link" data-bind="click: showColumnMetaData">[Details]</span>
                 <span class="pull-right btn-link" data-bind="click: $root.refreshTablePreview">[Refresh]</span>
-                <!-- 
+                
                     <span class="pull-right btn-link" data-bind="visible: isEditLinkVisible(), click: swithToOpenRefine">&nbsp;&nbsp;[Edit]</span> 
-                -->
-
-                <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
-
-                    <div id="editpopup" class="lightbox hide fade"  tabindex="-1" role="dialog" aria-hidden="true">
-                       <div class='lightbox-content' height="1000">
-
-                            <div id="hintmessage">
-                                <div align="left" style="margin-top:15px">
+               
+                <div id="editpopup" hidden style="position: fixed; left: 2%; top: 4%; width: 96vw;height: 91vh;" tabindex="-1" role="dialog">
+                   <div class='lightbox-content' style="line-height: 1em; text-align: left;width: 94vw;height: 87vh; overflow-y: auto">
+                        <div style="margin-top:1em">
+                            <span id="closeDialog" class="pull-right" style="cursor: pointer;" data-bind="click: $root.refreshPreview">Close this dialog</span>
+                            <div align="pull-left" style="text-align: left;">
                                 <font size="5" color="#1ea4e9">Editing:</font>
-                                <font size="5"><span id="storyTitleOpenRefinePopUp"/> </font>    
-                            </div>
-                                                       
-                            <div align="right">
-                                <button id="closeDialog" class="btn btn-link" type="button" data-bind="click: $root.refreshPreview" aria-hidden="true">Close this dialog</button>
-                            </div><br>
-                           
-                            <div>
-                                <div align="left">
-                                <font size="2.5">Please click save button if you want the changes to be persistent. To learn how to edit data with OpenRefine, please visit: <a href="http://openrefine.org/" target="_blank">http://openrefine.org/</a></font>
-                            </div>
-                                <div align="right">
-                                    <button class="btn btn-link" type="button" data-dismiss="lightbox" data-bind="click: $root.refreshPreview" aria-hidden="true" style="visibility:hidden">Close this dialog</button>
-                                </div>
-                            </div>
-                               
-                            </div>
-                              
-                            <div>
-                                <iframe id="OpenRefineIframe" data-bind="attr: {'src':  openRefineURL()}"></iframe>
+                                <font size="5"><span id="storyTitleOpenRefinePopUp"/></font>    
                             </div>
                         </div>
+                        <br/>
+                        <div>
+                            <font size="2.5">Please click save button if you want the changes to be persistent. To learn how to edit data with OpenRefine, please visit: <a href="http://openrefine.org/" target="_blank">http://openrefine.org/</a></font>
+                        </div>
+                          
+                        <iframe id="OpenRefineIframe" style="height: 75vh; width: 93vw;" data-bind="attr: {'src':  openRefineURL()}"></iframe>                        
                     </div>
+                </div>
+
+                <div id="dataPreviewTableWrapper" data-bind="horizontalScrollable: $data, style: { width: $root.tableList().length > 1 ? '82%' : '100%' }">
 
                     <span class="pull-right btn-link" data-bind="visible: isProjectLoading()">
                         <img src="images/ajax-loader.gif" style="width:15px; height:15px;padding-left:10px"/>
@@ -221,9 +208,9 @@
 
     <script class="includeMouseWheelScript" type="text/javascript" src="javascripts/jquery.mousewheel.js"></script> 
     <script type="text/javascript" language="javascript">
-        var autoHeight = document.documentElement.clientHeight*0.8;
-        var autoWidth = document.documentElement.clientWidth*0.8;
-        $("#OpenRefineIframe").height(autoHeight);
-        $("#OpenRefineIframe").width(autoWidth);
+        // var autoHeight = document.documentElement.clientHeight*0.8;
+        // var autoWidth = document.documentElement.clientWidth*0.8;
+        // $("#OpenRefineIframe").height(autoHeight);
+        // $("#OpenRefineIframe").width(autoWidth);
     </script>
 </div>

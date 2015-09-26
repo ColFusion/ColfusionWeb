@@ -116,12 +116,12 @@ debugger;
             contentType: "application/json",
             crossDomain: true,
             success: function(data) {
-                if(data.isTableLocked) {
-                    // alert("{" + data.userLogin + "}");
-                    // var msgShown = "Table is being edited by <b><a href='user.php?login=" + data.userLogin + "'>" + data.userLogin + "</a></b>.";
-                    var msgShown = "<span style='font-size:12px'><i>You cannot edit this table now, because the table is being edited by </i></span><b><a href='user.php?login=" + data.userLogin  + "'>" + data.userLogin + "</a></b><span style='font-size:12px'><i>, but you can see latest changes by clicking on Refresh button.</i></span>"
-                    document.getElementById('isEditingMsg').innerHTML=msgShown;
-                }
+                    if(data.isTableLocked) {
+                        // alert("{" + data.userLogin + "}");
+                        // var msgShown = "Table is being edited by <b><a href='user.php?login=" + data.userLogin + "'>" + data.userLogin + "</a></b>.";
+                        var msgShown = "<span style='font-size:12px'><i>You cannot edit this table now, because the table is being edited by </i></span><b><a href='user.php?login=" + data.userLogin  + "'>" + data.userLogin + "</a></b><span style='font-size:12px'><i>, but you can see latest changes by clicking on Refresh button.</i></span>"
+                        document.getElementById('isEditingMsg').innerHTML=msgShown;
+                    }
                 }
             });
         };
@@ -131,20 +131,18 @@ debugger;
         // self.user_idFromPage = $("#user_id").val();
 
         self.swithToOpenRefine = function() {
-            // if(confirm("hello!")) {
-            //     alert("You selected Ok");
-            // } else {
-            //     alert("You selected cancel");
-            // }
             self.isProjectLoading(!self.isProjectLoading());
             self.isEditLinkVisible(!self.isEditLinkVisible());
 
-            if (self.sid == -1)
+            if (self.sid == -1) {
                 return;
-var myOpenRefineUrl;
-var tempOpenRefineUrl;
+            }
+
+            var myOpenRefineUrl;
+            var tempOpenRefineUrl;
+
             $.ajax({
-                url: OpenRefineUrl+"/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
+                url: OpenRefineUrl + "/command/core/create-project-from-colfusion-story?sid=" + self.sid + "&tableName=" + self.tableName + "&userId=" + $("#user_id").val(), 
                 type: 'GET',
                 dataType: 'json',
                 contentType: "application/json",
@@ -162,10 +160,9 @@ debugger;
                             self.openRefineURL(data.openrefineURL + "#" + $("#user_id").val() + "#" + myOpenRefineUrl + "#" + self.sid + "#" + self.tableName);
                             $("#storyTitleOpenRefinePopUp").text(storyMetadataViewModel.title());
 
-                            $('#editpopup').lightbox({resizeToFit: false});
+                            $('#editpopup').show();
                             self.isProjectLoading(!self.isProjectLoading());
-                            self.isEditLinkVisible(!self.isEditLinkVisible());
-                          
+                            self.isEditLinkVisible(!self.isEditLinkVisible());                          
                         }
                     }
                 }
@@ -669,7 +666,9 @@ debugger;
     }
    
     self.closeCurrentDialog = function() {
-        $("#closeDialog").attr('data-dismiss', "lightbox");
+        // $("#closeDialog").attr('data-dismiss', "lightbox");
+        $('#editpopup').hide();
+
         $.ajax({
             url: OpenRefineUrl + "/command/core/release-table?sid=" + self.sid + "&tableName=" + self.currentTable().tableName + "&userId=" + $("#user_id").val(), 
             type: 'GET',

@@ -12,6 +12,10 @@
     display:none;
 }
 
+html {
+    height:100%;
+}
+
 body {
     background-color: #b3d5f6 !important;
     background-repeat: repeat-x;
@@ -20,6 +24,7 @@ body {
     font-family: Tahoma, Arial, Helvetica, sans-serif;
     font-size: 12px;
     color: #707070;
+    height:100%;
 }
 
 ul {
