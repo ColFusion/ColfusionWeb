@@ -17,6 +17,11 @@ error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT);
 ini_set('display_errors', 0);
 ini_set('error_log','cache/log.php');
 
+$templatesCache = "cache/templates_c";
+if (!file_exists($templatesCache)) {
+	mkdir($templatesCache, 0755);
+}
+
 // experimental caching
 // 0 = off
 // 1 = on
