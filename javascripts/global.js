@@ -6,7 +6,7 @@ var ColFusionDomain = myprotocol + '//' + myhost;
 //e.g., "/" or "/Colfusion/"
 var ColFusionAppPath = "/colfusion/";
 
-var ColFusionServerUrl = "/REST"; // for prod on poirot: "http://colfusion.exp.sis.pitt.edu/REST";  //"http://localhost:8080/ColFusionServer/rest"; 
+var ColFusionServerUrl = "/REST"; 
 var OpenRefineUrl = "/OpenRefine";
 var ColFusionServiceMonitorUrl = myprotocol + '//' + myhost + ':7473/rest';
 
