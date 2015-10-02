@@ -125,7 +125,7 @@ debugger;
                 }
             });
         };
-
+        
         self.openRefineURL = ko.observable();
 
         // self.user_idFromPage = $("#user_id").val();
@@ -154,10 +154,10 @@ debugger;
                         if(data.isEditing && !data.isTimeOut) {
                             alert(data.msg);
                         } else {
-                            myOpenRefineUrl = data.openrefineURL;
-                            tempOpenRefineUrl = data.openrefineURL + "#" + $("#user_id").val();
+                            myOpenRefineUrl = OpenRefineUrl + data.openrefinePath;
+                            tempOpenRefineUrl = OpenRefineUrl + data.openrefinePath + "#" + $("#user_id").val();
                             // use '#' to pass userid to OpenRefine page's 'save' button
-                            self.openRefineURL(data.openrefineURL + "#" + $("#user_id").val() + "#" + myOpenRefineUrl + "#" + self.sid + "#" + self.tableName);
+                            self.openRefineURL(OpenRefineUrl + data.openrefinePath + "#" + $("#user_id").val() + "#" + myOpenRefineUrl + "#" + self.sid + "#" + self.tableName);
                             $("#storyTitleOpenRefinePopUp").text(storyMetadataViewModel.title());
 
                             $('#editpopup').show();
