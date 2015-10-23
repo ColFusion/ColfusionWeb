@@ -13,6 +13,7 @@ class Smarty extends Template_Lite{
 
     function Smarty()
     {
+    	$this->assign('currentYear', date("Y"));
     }
 }
 ?>
